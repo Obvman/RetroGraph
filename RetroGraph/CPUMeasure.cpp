@@ -1,15 +1,27 @@
 #include "CPUMeasure.h"
 
+#include <iostream>
 #include <algorithm>
 #include <Windows.h>
+#include <GL/glew.h>
+#include <GL/gl.h>
+#include <GL/freeglut.h>
+
+#include "colors.h"
+#include "utils.h"
 
 static unsigned long long FileTimeToInt64(const FILETIME & ft) {return (((unsigned long long)(ft.dwHighDateTime))<<32)|((unsigned long long)ft.dwLowDateTime);}
 
 namespace rg {
 
-CPUMeasure::CPUMeasure() :
-    dataSize{ 30U },
-    m_usageData{ } {
+CPUMeasure::CPUMeasure(int32_t graphWidth, int32_t graphHeight) :
+    dataSize{ 80U },
+    m_usageData{ },
+    m_uptime{ std::chrono::milliseconds{GetTickCount64()} },
+    m_viewportStartX{ 0 },
+    m_viewportStartY{ 0 },
+    m_viewportWidth{ graphWidth },
+    m_viewportHeight{ graphHeight } {
 
     // fill vector with default values
     m_usageData.assign(dataSize, 0.5f);
@@ -19,7 +31,105 @@ CPUMeasure::~CPUMeasure() {
 }
 
 void CPUMeasure::update() {
+    m_uptime = std::chrono::milliseconds(GetTickCount64());
+
     getCPULoad();
+}
+
+void CPUMeasure::draw() const {
+    glPushMatrix();
+
+    // Preserve initial viewport settings
+    GLint vp[4];
+    glGetIntegerv(GL_VIEWPORT, vp);
+    GLfloat lineWidth;
+    glGetFloatv(GL_LINE_WIDTH, &lineWidth);
+
+    // Set up the view to a portion of the screen
+    glViewport(m_viewportStartX, m_viewportStartY,
+               m_viewportWidth, m_viewportHeight);
+
+    glLineWidth(3.0f);
+
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+
+    glBegin(GL_LINES); {
+        // Draw each node in the graph
+        for (auto i{ 0U }; i < m_usageData.size() - 1; ++i) {
+            glColor3f(BLUE1_R, BLUE1_G, BLUE1_B);
+
+            float x1 = (i / static_cast<float>(m_usageData.size() - 1)) * 2.0f - 1.0f;
+            float x2 = ((i + 1) / static_cast<float>(m_usageData.size() - 1)) * 2.0f - 1.0f;
+
+            float y1 = m_usageData[i] * 2.0f - 1.0f;
+            float y2 = m_usageData[i + 1] * 2.0f - 1.0f;
+
+            // If the vertex is at the border, add/subtract the border delta
+            if (i == 0) {
+                x1 += bDelta;
+            } else if (i == m_usageData.size() - 2) {
+                x2 -= bDelta;
+            }
+
+            glVertex3f(x1, y1, 0.0f);
+            glVertex3f(x2, y2, 0.0f);
+        }
+    } glEnd();
+
+    drawUptime();
+
+    glLineWidth(lineWidth);
+    glViewport(vp[0], vp[1], vp[2], vp[3]);
+
+    glPopMatrix();
+
+
+    #if _DEBUG
+    drawGraphBox();
+    #endif
+
+}
+
+void CPUMeasure::drawUptime() const {
+    // Draw text
+    const auto rasterX = float{ 0.1f };
+    const auto rasterY = float{ 0.1f };
+    auto uptime = getUptimeStr();
+
+    glRasterPos2f(rasterX, rasterY);
+    for (const auto c : uptime) {
+        glutBitmapCharacter(GLUT_BITMAP_8_BY_13, c);
+    }
+}
+
+void CPUMeasure::drawGraphBox() const {
+
+    glColor3f(PINK3_R, PINK3_G, PINK3_B);
+
+    // Preserve initial line width
+    GLint vp[4];
+    glGetIntegerv(GL_VIEWPORT, vp);
+    GLfloat lineWidth;
+    glGetFloatv(GL_LINE_WIDTH, &lineWidth);
+
+    glLineWidth(5.0f);
+
+    glBegin(GL_LINES);
+    glVertex2f(-1.0f + bDelta, -1.0f + bDelta);
+    glVertex2f(-1.0f + bDelta,  1.0f - bDelta);
+
+    glVertex2f(-1.0f + bDelta, 1.0f - bDelta);
+    glVertex2f(1.0f - bDelta, 1.0f - bDelta);
+
+    glVertex2f(1.0f - bDelta, 1.0f - bDelta);
+    glVertex2f(1.0f - bDelta, -1.0f + bDelta);
+
+    glVertex2f(1.0f - bDelta, -1.0f + bDelta);
+    glVertex2f(-1.0f + bDelta, -1.0f + bDelta);
+    glEnd();
+
+    glLineWidth(lineWidth);
+    glViewport(vp[0], vp[1], vp[2], vp[3]);
 }
 
 float CPUMeasure::getCPULoad() {
@@ -43,6 +153,19 @@ float CPUMeasure::getCPULoad() {
 
     return GetSystemTimes(&idleTime, &kernelTime, &userTime) ?
         calculateCPULoad(FileTimeToInt64(idleTime), FileTimeToInt64(kernelTime) + FileTimeToInt64(userTime)) : -1.0f;
+}
+std::string CPUMeasure::getUptimeStr() const {
+    const auto uptimeS = (m_uptime / 1000) % 60;
+    const auto uptimeM = (m_uptime / (60 * 1000)) % 60;
+    const auto uptimeH = (m_uptime / (1000 * 60 * 60)) % 24;
+    const auto uptimeD = (m_uptime / (1000 * 60 * 60 * 24));
+
+    return std::string{
+        std::to_string(uptimeD.count()) + ":" +
+        std::to_string(uptimeH.count()) + ":" +
+        std::to_string(uptimeM.count()) + ":" +
+        std::to_string(uptimeS.count())
+    };
 }
 
 float CPUMeasure::calculateCPULoad(uint64_t idleTicks, uint64_t totalTicks) {

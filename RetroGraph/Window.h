@@ -11,7 +11,8 @@ namespace rg {
 
 class Window {
 public:
-    Window(HINSTANCE hInstance, const char* windowName);
+    Window(HINSTANCE hInstance, const char* windowName,
+           uint16_t width, uint16_t height, uint16_t startX, uint16_t startY);
     ~Window();
 
     static LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -37,6 +38,8 @@ private:
 
     const uint16_t m_width;
     const uint16_t m_height;
+    uint16_t m_startPosX;
+    uint16_t m_startPosY;
 
     CPUMeasure m_cpuMeasure;
     GPUMeasure m_gpuMeasure;

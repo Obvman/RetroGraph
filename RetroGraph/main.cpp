@@ -17,7 +17,7 @@ void test();
 //int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 int main() {
     HINSTANCE hInstance = GetModuleHandle(nullptr);
-    rg::Window mainWindow{ hInstance, "RetroGraph" };
+    rg::Window mainWindow{ hInstance, "RetroGraph", 1920U, 1170U, 2560, 0 };
 
     using namespace std::chrono;
     auto start = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
@@ -69,7 +69,7 @@ int main() {
         }
 
         // Lay off the CPU a little
-        Sleep(10);
+        Sleep(15);
     }
     return 0;
 }

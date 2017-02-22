@@ -1,5 +1,6 @@
 #include "Window.h"
 
+#include <GL/freeglut.h>
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <dwmapi.h>
@@ -8,18 +9,18 @@
 #include "utils.h"
 #include "colors.h"
 
-// Must draw the lines a slight distance from the window edge otherwise they
-// won't show up
-constexpr float bDelta{ 0.0001f };
 
 namespace rg {
 
 void drawBorder();
 
-Window::Window(HINSTANCE hInstance, const char* windowName) :
-    m_width{ 480U },
-    m_height{ 480U },
-    m_cpuMeasure{ },
+Window::Window(HINSTANCE hInstance, const char* windowName,
+           uint16_t width, uint16_t height, uint16_t startX, uint16_t startY) :
+    m_width{ width },
+    m_height{ height },
+    m_startPosX{ startX },
+    m_startPosY{ startY },
+    m_cpuMeasure{ m_width, m_height / 3 },
     m_gpuMeasure{ },
     m_ramMeasure{ },
     m_processMeasure{ } {
@@ -43,7 +44,7 @@ Window::Window(HINSTANCE hInstance, const char* windowName) :
     }
 
     m_hWnd = CreateWindowEx(WS_EX_APPWINDOW, "RetroGraph", "RetroGraph",
-                               WS_VISIBLE | WS_POPUP, 0, 0, m_width, m_height,
+                               WS_VISIBLE | WS_POPUP, m_startPosX, m_startPosY, m_width, m_height,
                                NULL, NULL, hInstance, NULL);
 
     if(!m_hWnd) {
@@ -98,12 +99,10 @@ LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
             EndPaint(hWnd, &ps);
             return 0;
         case WM_SIZE:
-            std::cout << "WM_SIZE\n";
             glViewport(0, 0, LOWORD(lParam), HIWORD(lParam));
             PostMessage(hWnd, WM_PAINT, 0, 0);
             return 0;
         case WM_CREATE:
-            std::cout << "WM_CREATE\n";
             break;
         case WM_SETCURSOR:
             break;
@@ -142,7 +141,7 @@ void Window::init() {
     m_cpuMeasure.update();
     m_gpuMeasure.update();
     m_ramMeasure.update();
-    m_processMeasure.update();
+    //m_processMeasure.update();
 
     draw();
 }
@@ -156,43 +155,17 @@ void Window::update(uint16_t ticks) {
 
     // Only update processes each second
     if (ticks % 10 == 0) {
-        m_processMeasure.update();
+        //m_processMeasure.update();
     }
 }
 
 void Window::draw() const {
-    auto floats = m_cpuMeasure.m_usageData;
-
     HDC hdc = GetDC(m_hWnd);
     wglMakeCurrent(hdc, m_hrc);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-    glPushMatrix();
-
-    glBegin(GL_LINES); {
-        // Draw each node in the graph
-        for (auto i{ 0U }; i < floats.size() - 1; ++i) {
-            glColor3f(BLUE1_R, BLUE1_G, BLUE1_B);
-
-            float x1 = (i / static_cast<float>(floats.size() - 1)) * 2.0f - 1.0f;
-            float x2 = ((i + 1) / static_cast<float>(floats.size() - 1)) * 2.0f - 1.0f;
-
-            float y1 = floats[i] * 2.0f - 1.0f;
-            float y2 = floats[i + 1] * 2.0f - 1.0f;
-
-            // If the vertex is at the border, add/subtract the border delta
-            if (i == 0) {
-                x1 += bDelta;
-            } else if (i == floats.size() - 2) {
-                x2 -= bDelta;
-            }
-
-            glVertex3f(x1, y1, 0.0f);
-            glVertex3f(x2, y2, 0.0f);
-        }
-    } glEnd();
-    glPopMatrix();
+    m_cpuMeasure.draw();
 
     drawBorder();
 
@@ -210,11 +183,15 @@ void Window::updateSize(int width, int height) {
 }
 
 void Window::initOpenGL() const {
+    char* gargv[1] = {""};
+    int gargc{ 1 };
+    glutInit(&gargc, gargv);
+
     glEnable(GL_ALPHA_TEST);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_COLOR_MATERIAL);
 
-    glEnable(GL_MULTISAMPLE);
+    //glEnable(GL_MULTISAMPLE);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
