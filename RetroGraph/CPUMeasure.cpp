@@ -8,15 +8,18 @@ static unsigned long long FileTimeToInt64(const FILETIME & ft) {return (((unsign
 namespace rg {
 
 CPUMeasure::CPUMeasure() :
-    dataSize{ 10U },
+    dataSize{ 30U },
     m_usageData{ } {
 
     // fill vector with default values
-    m_usageData.assign(dataSize, 0.0f);
+    m_usageData.assign(dataSize, 0.5f);
 }
 
-
 CPUMeasure::~CPUMeasure() {
+}
+
+void CPUMeasure::update() {
+    getCPULoad();
 }
 
 float CPUMeasure::getCPULoad() {
@@ -27,6 +30,7 @@ float CPUMeasure::getCPULoad() {
         // Add to the usageData vector by overwriting the oldest value and
         // shifting the elements in the vector
 
+        // TODO profile performance
         // option 1: shift elements left and add to the end afterwards
         // option 2: add then use std::rotate
         m_usageData[0] = load;
