@@ -8,9 +8,11 @@
 
 namespace rg {
 
+class Window;
+
 class CPUMeasure {
 public:
-    CPUMeasure(int32_t graphWidth, int32_t graphHeight);
+    CPUMeasure(Window* w, int32_t graphWidth, int32_t graphHeight);
     ~CPUMeasure();
 
     void update();
@@ -23,6 +25,7 @@ public:
 private:
     float calculateCPULoad(uint64_t idleTicks, uint64_t totalTicks);
 
+    Window* m_parentWindow;
     size_t dataSize; // max number of usage percentages to store
     std::vector<float> m_usageData;
 

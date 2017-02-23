@@ -1,12 +1,15 @@
 #include "CPUMeasure.h"
 
+#include <sstream>
 #include <iostream>
+#include <iomanip>
 #include <algorithm>
 #include <Windows.h>
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <GL/freeglut.h>
 
+#include "Window.h"
 #include "colors.h"
 #include "utils.h"
 
@@ -14,7 +17,8 @@ static unsigned long long FileTimeToInt64(const FILETIME & ft) {return (((unsign
 
 namespace rg {
 
-CPUMeasure::CPUMeasure(int32_t graphWidth, int32_t graphHeight) :
+CPUMeasure::CPUMeasure(Window* w, int32_t graphWidth, int32_t graphHeight) :
+    m_parentWindow{ w },
     dataSize{ 80U },
     m_usageData{ },
     m_uptime{ std::chrono::milliseconds{GetTickCount64()} },
@@ -51,28 +55,20 @@ void CPUMeasure::draw() const {
 
     glLineWidth(3.0f);
 
-    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-
-    glBegin(GL_LINES); {
+    glBegin(GL_LINE_STRIP); {
         // Draw each node in the graph
-        for (auto i{ 0U }; i < m_usageData.size() - 1; ++i) {
+        for (auto i{ 0U }; i < m_usageData.size(); ++i) {
             glColor3f(BLUE1_R, BLUE1_G, BLUE1_B);
 
-            float x1 = (i / static_cast<float>(m_usageData.size() - 1)) * 2.0f - 1.0f;
-            float x2 = ((i + 1) / static_cast<float>(m_usageData.size() - 1)) * 2.0f - 1.0f;
-
-            float y1 = m_usageData[i] * 2.0f - 1.0f;
-            float y2 = m_usageData[i + 1] * 2.0f - 1.0f;
+            float x = (i / static_cast<float>(m_usageData.size() - 1)) * 2.0f - 1.0f;
+            float y = m_usageData[i] * 2.0f - 1.0f;
 
             // If the vertex is at the border, add/subtract the border delta
             if (i == 0) {
-                x1 += bDelta;
-            } else if (i == m_usageData.size() - 2) {
-                x2 -= bDelta;
+                x += bDelta;
             }
 
-            glVertex3f(x1, y1, 0.0f);
-            glVertex3f(x2, y2, 0.0f);
+            glVertex3f(x, y, 0.0f);
         }
     } glEnd();
 
@@ -84,22 +80,22 @@ void CPUMeasure::draw() const {
     glPopMatrix();
 
 
-    #if _DEBUG
     drawGraphBox();
-    #endif
 
 }
 
 void CPUMeasure::drawUptime() const {
     // Draw text
-    const auto rasterX = float{ 0.1f };
+    const auto rasterX = float{ -0.95f };
     const auto rasterY = float{ 0.1f };
-    auto uptime = getUptimeStr();
+    auto uptime = "Uptime: " + getUptimeStr();
 
+    glColor3f(BLACK_R, BLACK_G, BLACK_B);
     glRasterPos2f(rasterX, rasterY);
     for (const auto c : uptime) {
-        glutBitmapCharacter(GLUT_BITMAP_8_BY_13, c);
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
     }
+
 }
 
 void CPUMeasure::drawGraphBox() const {
@@ -160,12 +156,14 @@ std::string CPUMeasure::getUptimeStr() const {
     const auto uptimeH = (m_uptime / (1000 * 60 * 60)) % 24;
     const auto uptimeD = (m_uptime / (1000 * 60 * 60 * 24));
 
-    return std::string{
-        std::to_string(uptimeD.count()) + ":" +
-        std::to_string(uptimeH.count()) + ":" +
-        std::to_string(uptimeM.count()) + ":" +
-        std::to_string(uptimeS.count())
-    };
+    std::stringstream formatStream;
+    // Format so each number is 2 digits with leading 0s when necessary
+    formatStream << std::setfill('0') << std::setw(2) << uptimeD.count() << ":"
+                 << std::setw(2) << uptimeH.count() << ":"
+                 << std::setw(2) << uptimeM.count() << ":"
+                 << std::setw(2) << uptimeS.count();
+
+    return formatStream.str();
 }
 
 float CPUMeasure::calculateCPULoad(uint64_t idleTicks, uint64_t totalTicks) {

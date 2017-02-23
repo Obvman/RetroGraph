@@ -20,9 +20,9 @@ Window::Window(HINSTANCE hInstance, const char* windowName,
     m_height{ height },
     m_startPosX{ startX },
     m_startPosY{ startY },
-    m_cpuMeasure{ m_width, m_height / 3 },
+    m_cpuMeasure{ this, m_width, m_height / 3 },
     m_gpuMeasure{ },
-    m_ramMeasure{ },
+    m_ramMeasure{ m_width / 3, m_height / 3, 0, 480 },
     m_processMeasure{ } {
 
     WNDCLASSEX m_wc;
@@ -141,12 +141,13 @@ void Window::init() {
     m_cpuMeasure.update();
     m_gpuMeasure.update();
     m_ramMeasure.update();
-    //m_processMeasure.update();
+
+    m_processMeasure.init();
 
     draw();
 }
 
-void Window::update(uint16_t ticks) {
+void Window::update(uint32_t ticks) {
     if (ticks % 5 == 0) {
         m_cpuMeasure.update();
         m_gpuMeasure.update();
@@ -166,6 +167,7 @@ void Window::draw() const {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
     m_cpuMeasure.draw();
+    m_ramMeasure.draw();
 
     drawBorder();
 

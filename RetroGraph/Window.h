@@ -1,5 +1,5 @@
 #pragma once
-#include <windows.h>
+#include <Windows.h>
 #include <vector>
 
 #include "CPUMeasure.h"
@@ -19,12 +19,13 @@ public:
     void show();
 
     void init();
-    void update(uint16_t ticks);
+    void update(uint32_t ticks);
     void draw() const;
     void updateSize(int width, int height);
 
     HWND& getHWND() { return m_hWnd; }
     HGLRC& getHRC() { return m_hrc; }
+    HDC getHDC() { return GetWindowDC(m_hWnd); }
 
     const CPUMeasure& getCPUMeasure() const { return m_cpuMeasure; }
     const GPUMeasure& getGPUMeasure() const { return m_gpuMeasure; }
