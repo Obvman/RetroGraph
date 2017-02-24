@@ -18,20 +18,25 @@ public:
 
     /* Returns FILETIME struct containing the time the processes was created */
     const FILETIME& getCreationTime() const { return m_creationTime; }
+
     /* Returns FILETIME struct containing the time the process exited */
     const FILETIME& getExitTime() const { return m_exitTime; }
+
     /* Returns FILETIME struct containing the CPU time the process has spent
        in the kernel mode */
     const FILETIME& getKernelTime() const { return m_kernelTime; }
+
     /* Returns FILETIME struct containing the CPU time the process has spent
        in the user mode */
     const FILETIME& getUserTime() const { return m_userTime; }
 
     /* Returns FILETIME struct containing the total system kernel cpu time at
        the point this object was last updated */
+
     const FILETIME& getLastSystemKernelTime() const { return m_lastSystemKernelTime; }
     /* Returns FILETIME struct containing the total system user cpu time at
        the point this object was last updated */
+
     const FILETIME& getLastSystemUserTime() const { return m_lastSystemUserTime; }
 
     /* Returns the CPU usage as a percentage of this processes over the
@@ -40,6 +45,7 @@ public:
 
     void setTimes(const FILETIME& cTime, const FILETIME& eTime,
                   const FILETIME& kTime, const FILETIME& uTime);
+
     void setCpuUsage(double u) { m_cpuUsage = u; }
 
 private:
