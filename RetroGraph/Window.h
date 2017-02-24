@@ -61,6 +61,9 @@ private:
 
     /* Creates OpenGL context for this window */
     bool createHGLRC();
+    bool InitMultisample(HINSTANCE hInstance,HWND hWnd,PIXELFORMATDESCRIPTOR pfd);
+    bool WGLisExtensionSupported(const char *extension);
+    bool DestroyWindowGL (Window* window);
 
     const uint16_t m_width;
     const uint16_t m_height;
@@ -73,11 +76,15 @@ private:
     ProcessMeasure m_processMeasure;
     SystemInfo m_systemInfo;
 
+    HINSTANCE m_hInstance;
     WNDCLASSEX m_wc;
     HWND m_hWnd;
     HDC m_hdc;
     HGLRC m_hrc;
     MSG m_msg;
+
+    bool m_arbMultisampleSupported{ false };
+    int m_arbMultisampleFormat{ 0 };
 };
 
 }

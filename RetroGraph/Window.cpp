@@ -2,6 +2,7 @@
 
 #include <GL/freeglut.h>
 #include <GL/glew.h>
+#include <GL/wglew.h>
 #include <GL/gl.h>
 #include <dwmapi.h>
 #include <iostream>
@@ -16,6 +17,7 @@ void drawBorder();
 
 Window::Window(HINSTANCE hInstance, const char* windowName,
                uint16_t width, uint16_t height, uint16_t startX, uint16_t startY) :
+    m_hInstance{ hInstance },
     m_width{ width },
     m_height{ height },
     m_startPosX{ startX },
@@ -34,7 +36,7 @@ Window::Window(HINSTANCE hInstance, const char* windowName,
     m_wc.lpfnWndProc = Window::WndProc;
     m_wc.cbClsExtra  = 0;
     m_wc.cbWndExtra  = 0;
-    m_wc.hInstance = hInstance;
+    m_wc.hInstance = m_hInstance;
     m_wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
     m_wc.hCursor = LoadCursor(NULL, IDC_ARROW);
     m_wc.hbrBackground = (HBRUSH)CreateSolidBrush(0x00000000);
@@ -44,28 +46,14 @@ Window::Window(HINSTANCE hInstance, const char* windowName,
         fatalMessageBox("RegisterClassEx - failed");
     }
 
-    m_hWnd = CreateWindowEx(WS_EX_APPWINDOW, "RetroGraph", "RetroGraph",
-                               WS_VISIBLE | WS_POPUP, m_startPosX, m_startPosY, m_width, m_height,
-                               NULL, NULL, hInstance, NULL);
-    // Display window at the desktop layer on startup
-    //SetWindowPos(m_hWnd, HWND_BOTTOM, m_startPosX, m_startPosY, m_width, m_height, 0);
 
-    if(!m_hWnd) {
-        fatalMessageBox("CreateWindowEx - failed");
+
+    if (!createHGLRC()) {
+        fatalMessageBox("Failed to create OpenGL Window");
     }
 
-    DWM_BLURBEHIND bb = {0};
-    HRGN hRgn = CreateRectRgn(0, 0, -1, -1);
-    bb.dwFlags = DWM_BB_ENABLE | DWM_BB_BLURREGION;
-    bb.hRgnBlur = hRgn;
-    bb.fEnable = TRUE;
-    DwmEnableBlurBehindWindow(m_hWnd, &bb);
-
-    createHGLRC();
-
-    m_hdc = GetDC(m_hWnd);
-    wglMakeCurrent(m_hdc, m_hrc);
     initOpenGL();
+
     updateSize(m_width, m_height);
 
     ReleaseDC(m_hWnd, m_hdc);
@@ -81,28 +69,10 @@ Window::~Window() {
 }
 
 LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-    // Do some silly casting magic so this function can access Window's members
-    // using the pThis pointer
-    /*Window* pThis{ nullptr };
-    if (msg == WM_CREATE) {
-        pThis = static_cast<Window*>(reinterpret_cast<CREATESTRUCT*>(lParam)->lpCreateParams);
-
-        SetLastError(0);
-        if (!SetWindowLongPtr(hWnd, GWL_USERDATA, reinterpret_cast<LONG_PTR>(pThis))) {
-            if (GetLastError() != 0) {
-                showMessageBox("Failed to set window pointer");
-                return false;
-            }
-        }
-    } else {
-        pThis = reinterpret_cast<Window*>(GetWindowLongPtr(hWnd, GWL_USERDATA));
-    }*/
 
     static PAINTSTRUCT ps;
     switch (msg) {
         case WM_PAINT:
-            /*std::cout << "Painting\n";
-            pThis->draw();*/
             BeginPaint(hWnd, &ps);
             EndPaint(hWnd, &ps);
             return 0;
@@ -119,20 +89,22 @@ LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
             LRESULT hit = DefWindowProc(hWnd, msg, wParam, lParam);
             if (hit == HTCLIENT) hit = HTCAPTION;
             return hit;
-            break;
         }
         case WM_MOUSEMOVE:
-            std::cout << "WM_MOUSEMOVE\n";
             break;
         case WM_GETTEXT:
             break;
         case WM_QUIT:
-        case WM_CLOSE:
-        case WM_DESTROY:
-            std::cout << "WM_DESTROY\n";
-            //pThis->releaseOpenGL();
             PostQuitMessage(0);
             exit(0);
+            break;
+        case WM_CLOSE:
+            PostQuitMessage(0);
+            exit(0);
+            break;
+        case WM_DESTROY:
+            //PostQuitMessage(0);
+            //exit(0);
             return 0;
         default:
             //std::cout << "Handling message code: " << msg << '\n';
@@ -203,7 +175,7 @@ void Window::initOpenGL() const {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_COLOR_MATERIAL);
 
-    //glEnable(GL_MULTISAMPLE);
+    glEnable(GL_MULTISAMPLE_ARB);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -216,6 +188,33 @@ void Window::releaseOpenGL() {
 }
 
 bool Window::createHGLRC() {
+    m_hWnd = CreateWindowEx(WS_EX_APPWINDOW, "RetroGraph", "RetroGraph",
+                            WS_VISIBLE | WS_POPUP, m_startPosX, m_startPosY, m_width, m_height,
+                            NULL, NULL, m_hInstance, NULL);
+
+    #if (!_DEBUG)
+    // Display window at the desktop layer on startup
+    SetWindowPos(m_hWnd, HWND_BOTTOM, m_startPosX, m_startPosY, m_width, m_height, 0);
+    #endif
+
+    if(!m_hWnd) {
+        fatalMessageBox("CreateWindowEx - failed");
+    }
+
+    // Make window transparent via dwm
+    DWM_BLURBEHIND bb = {0};
+    HRGN hRgn = CreateRectRgn(0, 0, -1, -1);
+    bb.dwFlags = DWM_BB_ENABLE | DWM_BB_BLURREGION;
+    bb.hRgnBlur = hRgn;
+    bb.fEnable = TRUE;
+    DwmEnableBlurBehindWindow(m_hWnd, &bb);
+
+    m_hdc = GetDC(m_hWnd);
+    if (m_hdc == 0) {
+        DestroyWindow(m_hWnd);
+        m_hWnd = 0;
+        return false;
+    }
 
     PIXELFORMATDESCRIPTOR pfd = {
         sizeof(PIXELFORMATDESCRIPTOR),
@@ -239,29 +238,193 @@ bool Window::createHGLRC() {
         0, 0, 0                           // Layer Masks Ignored
     };
 
-    HDC hdc = GetDC(m_hWnd);
-    int PixelFormat = ChoosePixelFormat(hdc, &pfd);
-    if (PixelFormat == 0) {
-        fatalMessageBox("ChoosePixelFormat - failed");
-        return false;
+    int PixelFormat;
+    if (!m_arbMultisampleSupported) {
+        PixelFormat = ChoosePixelFormat(m_hdc, &pfd);
+        if (PixelFormat == 0) {
+            ReleaseDC(m_hWnd, m_hdc);
+            DestroyWindow(m_hWnd);
+            fatalMessageBox("ChoosePixelFormat - failed");
+            return false;
+        }
+    } else {
+        std::cout << "Multisampling run begins\n";
+        PixelFormat = m_arbMultisampleFormat;
     }
 
-    if (!SetPixelFormat(hdc, PixelFormat, &pfd)) {
+
+    if (!SetPixelFormat(m_hdc, PixelFormat, &pfd)) {
+        ReleaseDC(m_hWnd, m_hdc);
+        m_hdc = 0;
+        DestroyWindow(m_hWnd);
+        m_hWnd = 0;
+
+        auto e = GetLastError();
+        std::cout << "Error: " << e << '\n';
+
         fatalMessageBox("SetPixelFormat - failed");
         return false;
     }
 
-    m_hrc = wglCreateContext(hdc);
+    m_hrc = wglCreateContext(m_hdc);
     if (!m_hrc){
+        ReleaseDC(m_hWnd, m_hdc);
+        m_hdc = 0;
+        DestroyWindow(m_hWnd);
+        m_hWnd = 0;
         fatalMessageBox("wglCreateContext - failed");
         return false;
     }
 
-    ReleaseDC(m_hWnd, hdc);
+    if (!wglMakeCurrent(m_hdc, m_hrc)) {
+        wglDeleteContext(m_hrc);
+        m_hrc = 0;
+        ReleaseDC(m_hWnd, m_hdc);
+        m_hdc = 0;
+        DestroyWindow(m_hWnd);
+        m_hWnd = 0;
+        fatalMessageBox("Failed to make current context with wglMakeCurrent");
+        return false;
+    }
+
+    if (!m_arbMultisampleSupported) {
+        if (InitMultisample(m_hInstance, m_hWnd, pfd)) {
+            DestroyWindowGL(this);
+            return createHGLRC();
+        }
+    }
 
     return true;
 }
+bool Window::WGLisExtensionSupported(const char *extension)
+{
+    const size_t extlen = strlen(extension);
+    const char *supported = NULL;
 
+    // Try To Use wglGetExtensionStringARB On Current DC, If Possible
+    PROC wglGetExtString = wglGetProcAddress("wglGetExtensionsStringARB");
+
+    if (wglGetExtString)
+        supported = ((char*(__stdcall*)(HDC))wglGetExtString)(wglGetCurrentDC());
+
+    // If That Failed, Try Standard Opengl Extensions String
+    if (supported == NULL)
+        supported = (char*)glGetString(GL_EXTENSIONS);
+
+    // If That Failed Too, Must Be No Extensions Supported
+    if (supported == NULL)
+        return false;
+
+    // Begin Examination At Start Of String, Increment By 1 On False Match
+    for (const char* p = supported; ; p++)
+    {
+        // Advance p Up To The Next Possible Match
+        p = strstr(p, extension);
+
+        if (p == NULL)
+            return false;															// No Match
+
+                                                                                    // Make Sure That Match Is At The Start Of The String Or That
+                                                                                    // The Previous Char Is A Space, Or Else We Could Accidentally
+                                                                                    // Match "wglFunkywglExtension" With "wglExtension"
+
+                                                                                    // Also, Make Sure That The Following Character Is Space Or NULL
+                                                                                    // Or Else "wglExtensionTwo" Might Match "wglExtension"
+        if ((p==supported || p[-1]==' ') && (p[extlen]=='\0' || p[extlen]==' '))
+            return true;															// Match
+    }
+}
+bool Window::InitMultisample(HINSTANCE hInstance,HWND hWnd,PIXELFORMATDESCRIPTOR pfd) {  
+    // See If The String Exists In WGL!
+    if (!WGLisExtensionSupported("WGL_ARB_multisample"))
+    {
+        m_arbMultisampleSupported=false;
+        return false;
+    }
+
+    // Get Our Pixel Format
+    PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB = 
+        (PFNWGLCHOOSEPIXELFORMATARBPROC)wglGetProcAddress("wglChoosePixelFormatARB");	
+    if (!wglChoosePixelFormatARB) 
+    {
+        m_arbMultisampleSupported=false;
+        return false;
+    }
+
+    // Get Our Current Device Context
+    HDC hDC = GetDC(hWnd);
+
+    int		pixelFormat;
+    int		valid;
+    UINT	numFormats;
+    float	fAttributes[] = {0,0};
+
+    // These Attributes Are The Bits We Want To Test For In Our Sample
+    // Everything Is Pretty Standard, The Only One We Want To 
+    // Really Focus On Is The SAMPLE BUFFERS ARB And WGL SAMPLES
+    // These Two Are Going To Do The Main Testing For Whether Or Not
+    // We Support Multisampling On This Hardware.
+    int iAttributes[] =
+    {
+        WGL_DRAW_TO_WINDOW_ARB,GL_TRUE,
+        WGL_SUPPORT_OPENGL_ARB,GL_TRUE,
+        WGL_ACCELERATION_ARB,WGL_FULL_ACCELERATION_ARB,
+        WGL_COLOR_BITS_ARB,24,
+        WGL_ALPHA_BITS_ARB,8,
+        WGL_DEPTH_BITS_ARB,16,
+        WGL_STENCIL_BITS_ARB,0,
+        WGL_DOUBLE_BUFFER_ARB,GL_TRUE,
+        WGL_SAMPLE_BUFFERS_ARB,GL_TRUE,
+        WGL_SAMPLES_ARB,16,
+        0,0
+    };
+
+    // First We Check To See If We Can Get A Pixel Format For 4 Samples
+    valid = wglChoosePixelFormatARB(hDC,iAttributes,fAttributes,1,&pixelFormat,&numFormats);
+
+    // If We Returned True, And Our Format Count Is Greater Than 1
+    if (valid && numFormats >= 1)
+    {
+        m_arbMultisampleSupported = true;
+        m_arbMultisampleFormat = pixelFormat;
+        return m_arbMultisampleSupported;
+    }
+
+    // Our Pixel Format With 4 Samples Failed, Test For 2 Samples
+    iAttributes[19] = 2;
+    valid = wglChoosePixelFormatARB(hDC,iAttributes,fAttributes,1,&pixelFormat,&numFormats);
+    if (valid && numFormats >= 1)
+    {
+        m_arbMultisampleSupported = true;
+        m_arbMultisampleFormat = pixelFormat;
+        return m_arbMultisampleSupported;
+    }
+
+    // Return The Valid Format
+    return m_arbMultisampleSupported;
+}
+
+bool Window::DestroyWindowGL(Window* window) {							// Destroy The OpenGL Window & Release Resources
+    if (m_hWnd != 0)												// Does The Window Have A Handle?
+    {	
+        if (m_hdc != 0)											// Does The Window Have A Device Context?
+        {
+            wglMakeCurrent(m_hdc, 0);							// Set The Current Active Rendering Context To Zero
+            if (m_hrc != 0)										// Does The Window Have A Rendering Context?
+            {
+                wglDeleteContext(m_hrc);							// Release The Rendering Context
+                m_hrc = 0;										// Zero The Rendering Context
+
+            }
+            ReleaseDC(m_hWnd, m_hdc);						// Release The Device Context
+            m_hdc = 0;											// Zero The Device Context
+        }
+        DestroyWindow(m_hWnd);									// Destroy The Window
+        m_hWnd = 0;												// Zero The Window Handle
+    }
+
+    return true;														// Return True
+}
 
 void drawBorder() {
 
@@ -280,4 +443,6 @@ void drawBorder() {
     glVertex2f(-1.0f + bDelta, -1.0f + bDelta);
     glEnd();
 }
+
+
 }

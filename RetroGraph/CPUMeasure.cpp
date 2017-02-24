@@ -55,9 +55,9 @@ void CPUMeasure::draw() const {
 
     glLineWidth(0.5f);
 
-    glShadeModel(GL_SMOOTH);
-    glEnable(GL_LINE_SMOOTH);
-    glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
+    //glShadeModel(GL_SMOOTH);
+    //glEnable(GL_LINE_SMOOTH);
+    //glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
 
     glBegin(GL_LINE_STRIP); {
         // Draw each node in the graph

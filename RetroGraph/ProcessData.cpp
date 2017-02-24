@@ -1,20 +1,14 @@
 #include "ProcessData.h"
 #include <iostream>
 
-#include "utils.h"
-
 namespace rg {
-
-constexpr uint64_t ftSecond{ 10000000 };
-constexpr uint64_t ftMinute{ 60 * ftSecond };
-constexpr uint64_t ftHour{ 60 * ftMinute };
-constexpr uint64_t ftDay{ 24 * ftHour };
 
 
 ProcessData::ProcessData(HANDLE pHandle, DWORD pID, const char* name) :
     m_pHandle{ pHandle },
     m_processID{ pID },
     m_procName{ name },
+    m_memCounters{},
     m_creationTime{},
     m_exitTime{},
     m_kernelTime{},
@@ -25,10 +19,7 @@ ProcessData::ProcessData(HANDLE pHandle, DWORD pID, const char* name) :
     GetSystemTimes(&sysIdle, &m_lastSystemKernelTime, &m_lastSystemUserTime);
 
     // Get memory information for the process
-    /*PROCESS_MEMORY_COUNTERS memCounters;
-    if (!GetProcessMemoryInfo(m_pHandle, &memCounters, sizeof(PROCESS_MEMORY_COUNTERS))) {
-        fatalMessageBox("Failed to get process memory information.");
-    }*/
+    updateMemCounters();
 
     // Get CPU time information
     if (!GetProcessTimes(m_pHandle, &m_creationTime, &m_exitTime, &m_kernelTime, &m_userTime)) {
@@ -52,5 +43,10 @@ void ProcessData::setTimes(const FILETIME& cTime, const FILETIME& eTime,
     GetSystemTimes(&sysIdle, &m_lastSystemKernelTime, &m_lastSystemUserTime);
 }
 
+void ProcessData::updateMemCounters() {
+    if (!GetProcessMemoryInfo(m_pHandle, &m_memCounters, sizeof(decltype(m_memCounters)))) {
+        fatalMessageBox("Failed to get process memory information.");
+    }
+}
 
 }

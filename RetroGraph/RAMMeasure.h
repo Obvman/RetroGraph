@@ -3,6 +3,8 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
+#include "utils.h"
+
 namespace rg {
 
 class RAMMeasure {
@@ -25,16 +27,16 @@ public:
     /* Gets the total size of the system's physical memory in different
        byte units */
     DWORDLONG getTotalPhysicalB() const { return m_memStatus.ullTotalPhys; }
-    DWORDLONG getTotalPhysicalKB() const { return m_memStatus.ullTotalPhys / 1024; }
-    DWORDLONG getTotalPhysicalMB() const { return m_memStatus.ullTotalPhys / (1024 * 1024); }
-    float getTotalPhysicalGB() const { return m_memStatus.ullTotalPhys / (1024.0f * 1024.0f * 1024.0f); }
+    DWORDLONG getTotalPhysicalKB() const { return m_memStatus.ullTotalPhys / KB; }
+    DWORDLONG getTotalPhysicalMB() const { return m_memStatus.ullTotalPhys / MB; }
+    float getTotalPhysicalGB() const { return m_memStatus.ullTotalPhys / static_cast<float>(GB); }
 
     /* Gets the remaining available amount of the system's physical memory in
        different byte units */
     DWORDLONG getAvailablePhysicalB() const { return m_memStatus.ullAvailPhys; }
-    DWORDLONG getAvailablePhysicalKB() const { return m_memStatus.ullAvailPhys / 1024; }
-    DWORDLONG getAvailablePhysicalMB() const { return m_memStatus.ullAvailPhys / (1024 * 1024); }
-    float getAvailablePhysicalGB() const { return m_memStatus.ullAvailPhys / (1024.0f * 1024.0f * 1024.0f); }
+    DWORDLONG getAvailablePhysicalKB() const { return m_memStatus.ullAvailPhys / KB; }
+    DWORDLONG getAvailablePhysicalMB() const { return m_memStatus.ullAvailPhys / MB; }
+    float getAvailablePhysicalGB() const { return m_memStatus.ullAvailPhys / static_cast<float>(GB); }
 
     /* Gets the currently used amount of the system's physical memory in
        different byte units */

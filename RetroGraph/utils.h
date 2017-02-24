@@ -5,6 +5,10 @@
 
 namespace rg {
 
+constexpr uint64_t KB{ 1024 };
+constexpr uint64_t MB{ KB * 1024 };
+constexpr uint64_t GB{ MB * 1024 };
+
 /* Lines drawn too close to the edge of the window will clip so this value
    is used to separate drawing bounds from the very edge */
 constexpr float bDelta{ 0.0001f };

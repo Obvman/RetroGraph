@@ -68,6 +68,7 @@ void ProcessMeasure::update(uint32_t ticks) {
             // Get new timing information and calculate the CPU usage
             const auto cpuUsage{ calculateCPUUsage(pHandle, pd) };
             pd.setCpuUsage(cpuUsage);
+            pd.updateMemCounters();
 
             ++it;
         }
@@ -105,7 +106,8 @@ void ProcessMeasure::drawUsageList() const {
 
         const auto& pd = *ppd;
         std::stringstream ss;
-        ss << pd.getName() << ": " << std::setprecision(3) << std::lround(pd.getCpuUsage()) << "%";
+        ss << pd.getName() << " (" << pd.getWorkingSetSizeMB() << "MB): "
+           << std::setprecision(3) << std::lround(pd.getCpuUsage()) << "%";
 
         glRasterPos2f(rasterX, rasterY);
         for (const auto c : ss.str()) {
