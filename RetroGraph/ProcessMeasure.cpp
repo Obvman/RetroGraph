@@ -15,7 +15,6 @@
 namespace rg {
 
 ProcessMeasure::ProcessMeasure(GLint vpX, GLint vpY, GLint vpW, GLint vpH) :
-    m_processSnapshot{},
     m_allProcessData{},
     m_viewportStartX{ vpX },
     m_viewportStartY{ vpY },
@@ -148,8 +147,8 @@ double ProcessMeasure::calculateCPUUsage(HANDLE pHandle, ProcessData& pd) {
 void ProcessMeasure::updateProcList() {
 
     // Get the system snapshot of processes handle
-    m_processSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-    if (m_processSnapshot == INVALID_HANDLE_VALUE) {
+    HANDLE processSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    if (processSnapshot == INVALID_HANDLE_VALUE) {
         fatalMessageBox("Failed to get process snapshot.");
         exit(1);
     }
@@ -157,13 +156,13 @@ void ProcessMeasure::updateProcList() {
     // Get the first process from the snapshot
     PROCESSENTRY32 pe{};
     pe.dwSize = sizeof(PROCESSENTRY32);
-    if (!Process32First(m_processSnapshot, &pe)) {
+    if (!Process32First(processSnapshot, &pe)) {
         fatalMessageBox("Failed to get first process from snapshot.");
-        CloseHandle(m_processSnapshot);
+        CloseHandle(processSnapshot);
         exit(1);
     }
 
-    CloseHandle(m_processSnapshot);
+    CloseHandle(processSnapshot);
 }
 
 
@@ -171,16 +170,16 @@ void ProcessMeasure::populateList() {
     m_allProcessData.clear();
 
     // Get the process snapshot
-    m_processSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-    if (m_processSnapshot == INVALID_HANDLE_VALUE) {
+    HANDLE processSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    if (processSnapshot == INVALID_HANDLE_VALUE) {
         fatalMessageBox("Failed to get process snapshot.");
     }
 
     // Get the first process from the snapshot
     PROCESSENTRY32 pe{};
     pe.dwSize = sizeof(PROCESSENTRY32);
-    if (!Process32First(m_processSnapshot, &pe)) {
-        CloseHandle(m_processSnapshot);
+    if (!Process32First(processSnapshot, &pe)) {
+        CloseHandle(processSnapshot);
         fatalMessageBox("Failed to get first process from snapshot.");
     }
 
@@ -200,9 +199,9 @@ void ProcessMeasure::populateList() {
         // Populate the vector
         m_allProcessData.emplace_back(std::make_unique<ProcessData>(pHandle, pe.th32ProcessID, pe.szExeFile));
 
-    } while (Process32Next(m_processSnapshot, &pe));
+    } while (Process32Next(processSnapshot, &pe));
 
-    CloseHandle(m_processSnapshot);
+    CloseHandle(processSnapshot);
 }
 
 }

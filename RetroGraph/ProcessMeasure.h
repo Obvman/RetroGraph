@@ -16,16 +16,24 @@ public:
     ProcessMeasure(GLint vpX, GLint vpY, GLint vpW, GLint vpH);
     ~ProcessMeasure();
 
+    /* Initialises the measure with system processes information */
     void init();
+    /* Updates the currently tracked processes and their CPU usage.
+       Stops tracking any processes that have exited */
     void update(uint32_t ticks);
+    /* Refreshes the list of tracked processes to begin tracking any
+       newly created processes */
     void updateProcList();
+    /* Draws the measure's components */
     void draw() const;
 private:
+    /* Draws sorted list of top CPU usage processes */
     void drawUsageList() const;
+    /* Calculates the CPU usage of the given process */
     double calculateCPUUsage(HANDLE pHandle, ProcessData& pd);
+    /* Fills m_allProcessData with new process information */
     void populateList();
 
-    HANDLE m_processSnapshot;
     std::vector<std::unique_ptr<ProcessData>> m_allProcessData;
 
     // Rendering members
