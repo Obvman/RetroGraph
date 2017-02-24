@@ -134,7 +134,11 @@ void CPUMeasure::drawGraphBox() const {
 }
 
 float CPUMeasure::getCPULoad() {
-    FILETIME idleTime, kernelTime, userTime;
+    // Credit to Jeremy Friesner - http://stackoverflow.com/questions/23143693/retrieving-cpu-load-percent-total-in-windows-with-c
+
+    FILETIME idleTime;
+    FILETIME kernelTime;
+    FILETIME userTime;
     if (GetSystemTimes(&idleTime, &kernelTime, &userTime)) {
         auto load = calculateCPULoad(FileTimeToInt64(idleTime), FileTimeToInt64(kernelTime) + FileTimeToInt64(userTime));
 
