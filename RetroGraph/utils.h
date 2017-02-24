@@ -14,4 +14,6 @@ void fatalMessageBox(const std::string& s);
 
 ULARGE_INTEGER ftToULI(const FILETIME& ft);
 
+uint64_t subtractTimes(const FILETIME& ftA, const FILETIME& ftB);
+
 }

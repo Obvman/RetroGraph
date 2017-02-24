@@ -6,6 +6,7 @@
 #include "GPUMeasure.h"
 #include "RAMMeasure.h"
 #include "ProcessMeasure.h"
+#include "SystemInfo.h"
 
 namespace rg {
 
@@ -46,6 +47,7 @@ private:
     GPUMeasure m_gpuMeasure;
     RAMMeasure m_ramMeasure;
     ProcessMeasure m_processMeasure;
+    SystemInfo m_systemInfo;
 
     WNDCLASSEX m_wc;
     HWND m_hWnd;

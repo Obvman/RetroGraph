@@ -19,4 +19,15 @@ ULARGE_INTEGER ftToULI(const FILETIME& ft) {
      return uli;
 }
 
+uint64_t subtractTimes(const FILETIME& ftA, const FILETIME& ftB) {
+     LARGE_INTEGER a, b;
+     a.LowPart = ftA.dwLowDateTime;
+     a.HighPart = ftA.dwHighDateTime;
+
+     b.LowPart = ftB.dwLowDateTime;
+     b.HighPart = ftB.dwHighDateTime;
+
+     return a.QuadPart - b.QuadPart;
+}
+
 }

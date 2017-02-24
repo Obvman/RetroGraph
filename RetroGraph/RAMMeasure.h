@@ -7,7 +7,7 @@ namespace rg {
 
 class RAMMeasure {
 public:
-    RAMMeasure(GLint ramWidth, GLint ramHeight, GLint startX, GLint startY);
+    RAMMeasure(GLint startX, GLint startY, GLint ramWidth, GLint ramHeight);
     ~RAMMeasure();
 
     void update();

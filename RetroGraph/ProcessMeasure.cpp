@@ -5,7 +5,6 @@
 #include <sstream>
 #include <algorithm>
 
-#include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <GL/gl.h>
 
@@ -15,9 +14,13 @@
 
 namespace rg {
 
-ProcessMeasure::ProcessMeasure() :
+ProcessMeasure::ProcessMeasure(GLint vpX, GLint vpY, GLint vpW, GLint vpH) :
     m_processSnapshot{},
-    m_allProcessData{} {
+    m_allProcessData{},
+    m_viewportStartX{ vpX },
+    m_viewportStartY{ vpY },
+    m_viewportWidth{ vpW },
+    m_viewportHeight{ vpH } {
 }
 
 
@@ -79,26 +82,38 @@ void ProcessMeasure::update(uint32_t ticks) {
 }
 
 void ProcessMeasure::draw() const {
+    GLint vp[4];
+    glGetIntegerv(GL_VIEWPORT, vp);
+
+    glViewport(m_viewportStartX, m_viewportStartY, m_viewportWidth, m_viewportHeight);
+
+    drawUsageList();
+
+    glViewport(vp[0], vp[1], vp[2], vp[3]);
+}
+
+void ProcessMeasure::drawUsageList() const {
+    static constexpr uint8_t numProcessesToDisplay{ 7 };
 
     const auto rasterX = float{ -0.95f };
-    auto rasterY = float{ 0.1f }; // Y changes for each process drawn
+    auto rasterY = float{ 1.0f }; // Y changes for each process drawn
 
-    glColor3f(BLACK_R, BLACK_G, BLACK_B);
+    glColor3f(TEXT_R, TEXT_G, TEXT_B);
 
     auto i{ 0U }; // counter for how many to draw
     for (const auto& ppd : m_allProcessData) {
-        if (i >= 7) break;
+        if (i >= numProcessesToDisplay) break;
 
         const auto& pd = *ppd;
         std::stringstream ss;
-        ss << pd.getName() << ": " << std::setprecision(3) << pd.getCpuUsage() << "%";
+        ss << pd.getName() << ": " << std::setprecision(3) << std::lround(pd.getCpuUsage()) << "%";
 
         glRasterPos2f(rasterX, rasterY);
         for (const auto c : ss.str()) {
             glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
         }
 
-        rasterY -= 0.05f;
+        rasterY -= 1.0 / numProcessesToDisplay;
         ++i;
     }
 }
@@ -151,16 +166,6 @@ void ProcessMeasure::updateProcList() {
     CloseHandle(m_processSnapshot);
 }
 
-uint64_t ProcessMeasure::subtractTimes(const FILETIME& ftA, const FILETIME& ftB) {
-     LARGE_INTEGER a, b;
-     a.LowPart = ftA.dwLowDateTime;
-     a.HighPart = ftA.dwHighDateTime;
-
-     b.LowPart = ftB.dwLowDateTime;
-     b.HighPart = ftB.dwHighDateTime;
-
-     return a.QuadPart - b.QuadPart;
-}
 
 void ProcessMeasure::populateList() {
     m_allProcessData.clear();

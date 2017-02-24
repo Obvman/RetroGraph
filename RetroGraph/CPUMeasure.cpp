@@ -63,7 +63,7 @@ void CPUMeasure::draw() const {
         // Draw each node in the graph
         for (auto i{ 0U }; i < m_usageData.size(); ++i) {
             //glColor3f(BLUE1_R, BLUE1_G, BLUE1_B);
-            glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+            glColor4f(LINE_R, LINE_G, LINE_B, 1.0f);
 
             float x = (i / static_cast<float>(m_usageData.size() - 1)) * 2.0f - 1.0f;
             float y = m_usageData[i] * 2.0f - 1.0f;
@@ -95,7 +95,7 @@ void CPUMeasure::drawUptime() const {
     const auto rasterY = float{ 0.1f };
     auto uptime = "Uptime: " + getUptimeStr();
 
-    glColor3f(BLACK_R, BLACK_G, BLACK_B);
+    glColor3f(TEXT_R, TEXT_G, TEXT_B);
     glRasterPos2f(rasterX, rasterY);
     for (const auto c : uptime) {
         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);

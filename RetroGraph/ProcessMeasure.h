@@ -5,6 +5,7 @@
 #include <Windows.h>
 #include <TlHelp32.h>
 #include <Psapi.h>
+#include <GL/glew.h>
 
 #include "ProcessData.h"
 
@@ -12,7 +13,7 @@ namespace rg {
 
 class ProcessMeasure {
 public:
-    ProcessMeasure();
+    ProcessMeasure(GLint vpX, GLint vpY, GLint vpW, GLint vpH);
     ~ProcessMeasure();
 
     void init();
@@ -20,12 +21,18 @@ public:
     void updateProcList();
     void draw() const;
 private:
-    uint64_t subtractTimes(const FILETIME& ftA, const FILETIME& ftB);
+    void drawUsageList() const;
     double calculateCPUUsage(HANDLE pHandle, ProcessData& pd);
     void populateList();
 
     HANDLE m_processSnapshot;
     std::vector<std::unique_ptr<ProcessData>> m_allProcessData;
+
+    // Rendering members
+    GLint m_viewportStartX;
+    GLint m_viewportStartY;
+    GLint m_viewportWidth;
+    GLint m_viewportHeight;
 };
 
 }

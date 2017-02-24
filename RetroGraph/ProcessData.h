@@ -37,11 +37,11 @@ private:
     FILETIME m_exitTime;
     FILETIME m_kernelTime;
     FILETIME m_userTime;
-
     FILETIME m_lastSystemKernelTime;
     FILETIME m_lastSystemUserTime;
 
     double m_cpuUsage;
+
 };
 
 }

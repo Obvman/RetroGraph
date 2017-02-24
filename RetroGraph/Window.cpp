@@ -15,15 +15,16 @@ namespace rg {
 void drawBorder();
 
 Window::Window(HINSTANCE hInstance, const char* windowName,
-           uint16_t width, uint16_t height, uint16_t startX, uint16_t startY) :
+               uint16_t width, uint16_t height, uint16_t startX, uint16_t startY) :
     m_width{ width },
     m_height{ height },
     m_startPosX{ startX },
     m_startPosY{ startY },
     m_cpuMeasure{ this, m_width, m_height / 3 },
     m_gpuMeasure{ },
-    m_ramMeasure{ m_width / 3, m_height / 3, 0, 480 },
-    m_processMeasure{ } {
+    m_ramMeasure{ 0, 480, m_width / 3, m_height / 3 },
+    m_processMeasure{ 0, 500, m_width / 3, m_height / 2 },
+    m_systemInfo{} {
 
     WNDCLASSEX m_wc;
     memset(&m_wc, 0, sizeof(m_wc));
@@ -46,6 +47,8 @@ Window::Window(HINSTANCE hInstance, const char* windowName,
     m_hWnd = CreateWindowEx(WS_EX_APPWINDOW, "RetroGraph", "RetroGraph",
                                WS_VISIBLE | WS_POPUP, m_startPosX, m_startPosY, m_width, m_height,
                                NULL, NULL, hInstance, NULL);
+    // Display window at the desktop layer on startup
+    //SetWindowPos(m_hWnd, HWND_BOTTOM, m_startPosX, m_startPosY, m_width, m_height, 0);
 
     if(!m_hWnd) {
         fatalMessageBox("CreateWindowEx - failed");
@@ -66,6 +69,9 @@ Window::Window(HINSTANCE hInstance, const char* windowName,
     updateSize(m_width, m_height);
 
     ReleaseDC(m_hWnd, m_hdc);
+
+    std::cout << m_systemInfo.getOSInfoStr() << '\n';
+    std::cout << m_systemInfo.getGPUDescription() << '\n';
 }
 
 

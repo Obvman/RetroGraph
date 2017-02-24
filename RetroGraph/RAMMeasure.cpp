@@ -8,7 +8,7 @@
 
 namespace rg {
 
-RAMMeasure::RAMMeasure(GLint ramWidth, GLint ramHeight, GLint startX, GLint startY) :
+RAMMeasure::RAMMeasure(GLint startX, GLint startY, GLint ramWidth, GLint ramHeight) :
     m_memStatus{},
     m_viewportStartX{ startX },
     m_viewportStartY{ startY },
@@ -62,7 +62,7 @@ void RAMMeasure::drawBar() const {
     glGetFloatv(GL_LINE_WIDTH, &lineWidth);
 
     glLineWidth(10.0f);
-    glColor3f(0.0f, 0.0f, 0.0f);
+    glColor3f(LINE_R, LINE_G, LINE_B);
     glBegin(GL_LINES); {
         glVertex2f(-0.95f, 0.0f);
         glVertex2f(-0.95f + percent, 0.0f);
@@ -78,7 +78,7 @@ void RAMMeasure::drawText() const {
 
     auto percent = "RAM: " + std::to_string(getLoadPercentage()) + "%";
 
-    glColor3f(BLACK_R, BLACK_G, BLACK_B);
+    glColor3f(TEXT_R, TEXT_G, TEXT_B);
     glRasterPos2f(rasterX, rasterY);
     for (const auto c : percent) {
         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
