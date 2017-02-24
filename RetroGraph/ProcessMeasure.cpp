@@ -113,7 +113,7 @@ void ProcessMeasure::drawUsageList() const {
             glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
         }
 
-        rasterY -= 1.0 / numProcessesToDisplay;
+        rasterY -= 1.0f / numProcessesToDisplay;
         ++i;
     }
 }

@@ -53,7 +53,7 @@ void RAMMeasure::draw() const {
 }
 
 void RAMMeasure::drawBar() const {
-    auto percent = static_cast<float>(getLoadPercentage()) / 100.0f;
+    auto percent = (static_cast<float>(getLoadPercentage()) / 100.0f) * 2.0f;
     /*static float percentInt = 10;
     percentInt += 5;
     float percent = percentInt / 100.0f;*/
@@ -64,8 +64,14 @@ void RAMMeasure::drawBar() const {
     glLineWidth(10.0f);
     glColor3f(LINE_R, LINE_G, LINE_B);
     glBegin(GL_LINES); {
+        // Draw usage section
         glVertex2f(-0.95f, 0.0f);
         glVertex2f(-0.95f + percent, 0.0f);
+
+        // Draw available section
+        glColor3f(0.2f, 0.2f, 0.2f);
+        glVertex2f(-0.95f + percent, 0.0f);
+        glVertex2f(0.95f, 0.0f);
     } glEnd();
 
     glLineWidth(lineWidth);
