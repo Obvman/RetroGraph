@@ -27,6 +27,7 @@ Window::Window(HINSTANCE hInstance, const char* windowName,
     m_ramMeasure{ 0, 480, m_width / 3, m_height / 3 },
     m_processMeasure{ 0, 500, m_width / 3, m_height / 2 },
     m_systemInfo{},
+    m_driveMeasure{},
     m_arbMultisampleSupported{ false },
     m_arbMultisampleFormat{ 0 },
     m_aaSamples{ 8 } {

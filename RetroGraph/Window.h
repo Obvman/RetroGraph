@@ -7,6 +7,7 @@
 #include "RAMMeasure.h"
 #include "ProcessMeasure.h"
 #include "SystemInfo.h"
+#include "DriveMeasure.h"
 
 namespace rg {
 
@@ -82,6 +83,7 @@ private:
     RAMMeasure m_ramMeasure;
     ProcessMeasure m_processMeasure;
     SystemInfo m_systemInfo;
+    DriveMeasure m_driveMeasure;
 
     HINSTANCE m_hInstance;
     WNDCLASSEX m_wc;
