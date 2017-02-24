@@ -134,30 +134,25 @@ void CPUMeasure::drawGraphBox() const {
 }
 
 float CPUMeasure::getCPULoad() {
-    // Credit to Jeremy Friesner - http://stackoverflow.com/questions/23143693/retrieving-cpu-load-percent-total-in-windows-with-c
-
     FILETIME idleTime;
     FILETIME kernelTime;
     FILETIME userTime;
-    if (GetSystemTimes(&idleTime, &kernelTime, &userTime)) {
-        auto load = calculateCPULoad(FileTimeToInt64(idleTime), FileTimeToInt64(kernelTime) + FileTimeToInt64(userTime));
-
-        // Add to the usageData vector by overwriting the oldest value and
-        // shifting the elements in the vector
-
-        // TODO profile performance
-        // option 1: shift elements left and add to the end afterwards
-        // option 2: add then use std::rotate
-        m_usageData[0] = load;
-        std::rotate(m_usageData.begin(), m_usageData.begin() + 1, m_usageData.end());
-
-        return load;
-    } else {
+    if (!GetSystemTimes(&idleTime, &kernelTime, &userTime)) {
         return -1.0f;
     }
+    const auto load{ calculateCPULoad(FileTimeToInt64(idleTime),
+                     FileTimeToInt64(kernelTime) + FileTimeToInt64(userTime))
+    };
 
-    return GetSystemTimes(&idleTime, &kernelTime, &userTime) ?
-        calculateCPULoad(FileTimeToInt64(idleTime), FileTimeToInt64(kernelTime) + FileTimeToInt64(userTime)) : -1.0f;
+    // TODO profile performance
+    // option 1: shift elements left and add to the end afterwards
+    // option 2: add then use std::rotate
+
+    // Add to the usageData vector by overwriting the oldest value and
+    // shifting the elements in the vector
+    m_usageData[0] = load;
+    std::rotate(m_usageData.begin(), m_usageData.begin() + 1, m_usageData.end());
+    return load;
 }
 std::string CPUMeasure::getUptimeStr() const {
     const auto uptimeS = (m_uptime / 1000) % 60;
@@ -176,18 +171,21 @@ std::string CPUMeasure::getUptimeStr() const {
 }
 
 float CPUMeasure::calculateCPULoad(uint64_t idleTicks, uint64_t totalTicks) {
+    /* Credit to Jeremy Friesner
+       http://stackoverflow.com/questions/23143693/retrieving-cpu-load-percent-total-in-windows-with-c */
     static uint64_t prevTotalTicks{ 0U };
     static uint64_t prevIdleTicks{ 0U };
 
-    uint64_t totalTicksSinceLastTime = totalTicks - prevTotalTicks;
-    uint64_t idleTicksSinceLastTime = idleTicks - prevIdleTicks;
+    const uint64_t totalTicksSinceLastTime{ totalTicks - prevTotalTicks };
+    const uint64_t idleTicksSinceLastTime{ idleTicks - prevIdleTicks };
 
-    float ret = 1.0f - ((totalTicksSinceLastTime > 0) ? (static_cast<float>(idleTicksSinceLastTime))/totalTicksSinceLastTime : 0);
+    const float cpuLoad{ 1.0f - ((totalTicksSinceLastTime > 0) ?
+                     (static_cast<float>(idleTicksSinceLastTime)) / totalTicksSinceLastTime : 0) };
 
     prevTotalTicks = totalTicks;
     prevIdleTicks = idleTicks;
 
-    return ret;
+    return cpuLoad;
 }
 
 }
