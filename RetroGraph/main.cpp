@@ -13,6 +13,7 @@
 #include <GL/glew.h> // openGL
 #include <GL/gl.h>
 
+#include "utils.h"
 #include "CPUMeasure.h"
 #include "Window.h"
 
@@ -85,193 +86,78 @@ int main() {
 }
 
 void test2() {
-    HRESULT hres;
-
-    // Step 1: --------------------------------------------------
-    // Initialize COM. ------------------------------------------
-
-    hres =  CoInitializeEx(0, COINIT_MULTITHREADED); 
-    if (FAILED(hres))
-    {
-        std::cout << "Failed to initialize COM library. Error code = 0x" 
-            << std::hex << hres << std::endl;
-        return;                  // Program has failed.
+    // Get the system snapshot of processes handle
+    HANDLE m_processSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    if (m_processSnapshot == INVALID_HANDLE_VALUE) {
+        rg::fatalMessageBox("Failed to get process snapshot.");
+        exit(1);
     }
 
-    // Step 2: --------------------------------------------------
-    // Set general COM security levels --------------------------
-
-    hres =  CoInitializeSecurity(
-        NULL, 
-        -1,                          // COM authentication
-        NULL,                        // Authentication services
-        NULL,                        // Reserved
-        RPC_C_AUTHN_LEVEL_DEFAULT,   // Default authentication 
-        RPC_C_IMP_LEVEL_IMPERSONATE, // Default Impersonation  
-        NULL,                        // Authentication info
-        EOAC_NONE,                   // Additional capabilities 
-        NULL                         // Reserved
-    );
-
-
-    if (FAILED(hres))
-    {
-        std::cout << "Failed to initialize security. Error code = 0x" 
-            << std::hex << hres << std::endl;
-        CoUninitialize();
-        return;                    // Program has failed.
+    // Get the first process from the snapshot
+    PROCESSENTRY32 pe{};
+    pe.dwSize = sizeof(PROCESSENTRY32);
+    if (!Process32First(m_processSnapshot, &pe)) {
+        rg::fatalMessageBox("Failed to get first process from snapshot.");
+        CloseHandle(m_processSnapshot);
+        exit(1);
     }
 
-    // Step 3: ---------------------------------------------------
-    // Obtain the initial locator to WMI -------------------------
+    DWORD processIDs[1024];
+    DWORD cbNeeded;
 
-    IWbemLocator *pLoc = NULL;
-
-    hres = CoCreateInstance(
-        CLSID_WbemLocator,
-        0,
-        CLSCTX_INPROC_SERVER,
-        IID_IWbemLocator, (LPVOID *) &pLoc);
-
-    if (FAILED(hres))
-    {
-        std::cout << "Failed to create IWbemLocator object."
-            << " Err code = 0x"
-            << std::hex << hres << std::endl;
-        CoUninitialize();
-        return;                 // Program has failed.
+    if (!EnumProcesses(processIDs, sizeof(processIDs), &cbNeeded)) {
+        rg::fatalMessageBox("Failed to Enumerate Processes");
     }
 
-    // Step 4: -----------------------------------------------------
-    // Connect to WMI through the IWbemLocator::ConnectServer method
+    // Check how many IDs were returned
+    auto numProcesses = DWORD{ cbNeeded / sizeof(DWORD) };
 
-    IWbemServices *pSvc = NULL;
-
-    // Connect to the root\cimv2 namespace with
-    // the current user and obtain pointer pSvc
-    // to make IWbemServices calls.
-    hres = pLoc->ConnectServer(
-        _bstr_t(L"ROOT\\CIMV2"), // Object path of WMI namespace
-        NULL,                    // User name. NULL = current user
-        NULL,                    // User password. NULL = current
-        0,                       // Locale. NULL indicates current
-        NULL,                    // Security flags.
-        0,                       // Authority (for example, Kerberos)
-        0,                       // Context object 
-        &pSvc                    // pointer to IWbemServices proxy
-    );
-
-    if (FAILED(hres))
-    {
-        std::cout << "Could not connect. Error code = 0x" 
-            << std::hex << hres << std::endl;
-        pLoc->Release();     
-        CoUninitialize();
-        return;                // Program has failed.
-    }
-
-    std::cout << "Connected to ROOT\\CIMV2 WMI namespace" << std::endl;
-
-
-    // Step 5: --------------------------------------------------
-    // Set security levels on the proxy -------------------------
-
-    hres = CoSetProxyBlanket(
-        pSvc,                        // Indicates the proxy to set
-        RPC_C_AUTHN_WINNT,           // RPC_C_AUTHN_xxx
-        RPC_C_AUTHZ_NONE,            // RPC_C_AUTHZ_xxx
-        NULL,                        // Server principal name 
-        RPC_C_AUTHN_LEVEL_CALL,      // RPC_C_AUTHN_LEVEL_xxx 
-        RPC_C_IMP_LEVEL_IMPERSONATE, // RPC_C_IMP_LEVEL_xxx
-        NULL,                        // client identity
-        EOAC_NONE                    // proxy capabilities 
-    );
-
-    if (FAILED(hres))
-    {
-        std::cout << "Could not set proxy blanket. Error code = 0x" 
-            << std::hex << hres << std::endl;
-        pSvc->Release();
-        pLoc->Release();     
-        CoUninitialize();
-        return;               // Program has failed.
-    }
-
-    // Step 6: --------------------------------------------------
-    // Use the IWbemServices pointer to make requests of WMI ----
-
-    // For example, get the name of the operating system
-    IEnumWbemClassObject* pEnumerator = NULL;
-    hres = pSvc->ExecQuery(
-        bstr_t("WQL"), 
-        bstr_t("SELECT * FROM Win32_PerfRawData_PerfProc_Process"),
-        WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY, 
-        NULL,
-        &pEnumerator);
-
-    if (FAILED(hres))
-    {
-        std::cout << "Query for operating system name failed."
-            << " Error code = 0x" 
-            << std::hex << hres << std::endl;
-        pSvc->Release();
-        pLoc->Release();
-        CoUninitialize();
-        return;               // Program has failed.
-    }
-
-    // Step 7: -------------------------------------------------
-    // Get the data from the query in step 6 -------------------
-
-    IWbemClassObject *pclsObj = NULL;
-    ULONG uReturn = 0;
-
-    while (pEnumerator)
-    {
-        HRESULT hr = pEnumerator->Next(WBEM_INFINITE, 1, 
-                                       &pclsObj, &uReturn);
-
-        if(0 == uReturn)
-        {
-            break;
+    for (auto i{ 0U }; i < numProcesses; ++i) {
+        auto pHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
+                                   false, processIDs[i]);
+        if (!pHandle) {
+            auto error = GetLastError();
+            // If access is denied or the process is the system idle process, just silently skip the process
+            if (error != ERROR_ACCESS_DENIED && processIDs[i] != 0) {
+                rg::fatalMessageBox("Failed to open process. Code: " + std::to_string(error));
+            }
+            continue;
         }
 
-        VARIANT vtProp;
+        // TODO check if the process is already stored before adding it to the vector
+        //m_allProcessData.emplace_back(std::make_unique<ProcessData>(pHandle, processIDs[i]));
 
-        // Get the value of the Name property
-
-        static uint64_t oldClocks{ 0U };
-
-        hr = pclsObj->Get(L"PercentProcessorTime", 0, &vtProp, 0, 0);
-        auto newClocks{ vtProp.ullVal };
-
-        //std::cout << vtProp.ullVal << ":" << vtProp.bstrVal << '\n';
-        auto delta = newClocks - oldClocks;
-        if (delta != 0) {
-            VariantClear(&vtProp);
-            hr = pclsObj->Get(L"Name", 0, &vtProp, 0, 0);
-
-            std::wcout << vtProp.bstrVal << ":\n";
-            //std::wcout << delta << '\n';
+        /*FILETIME creationFT;
+        FILETIME kernelFT;
+        FILETIME userFT;
+        FILETIME exitFT;
+        if (!GetProcessTimes(pHandle, &creationFT, &exitFT, &kernelFT, &userFT)) {
+            rg::fatalMessageBox("Failed to get process times.");
         }
+        auto creationTime = (static_cast<uint64_t>(creationFT.dwHighDateTime) << 32) + creationFT.dwLowDateTime;
+        auto kernelTime = (static_cast<uint64_t>(kernelFT.dwHighDateTime) << 32) + kernelFT.dwLowDateTime;
+        auto userTime = (static_cast<uint64_t>(userFT.dwHighDateTime) << 32) + userFT.dwLowDateTime;
+        auto exitTime = (static_cast<uint64_t>(exitFT.dwHighDateTime) << 32) + exitFT.dwLowDateTime;
+        auto total = kernelTime + userTime;*/
 
-        oldClocks = newClocks;
 
-        VariantClear(&vtProp);
+        //auto totalCPUTime = (kernelTime + userTime) * 100;
+        //std::cout << "sysTime: " << totalCPUTime << '\n';
 
-        pclsObj->Release();
+        //static FILETIME prevIdle;
+        //static FILETIME prevKernel;
+        //static FILETIME prevUser;
+        //GetSystemTimes(&idle, &kernel, &user);
+        //auto idleTotal = (static_cast<uint64_t>(idle.dwHighDateTime) << 32) + idle.dwLowDateTime;
+        //auto kernelTotal = (static_cast<uint64_t>(kernel.dwHighDateTime) << 32) + kernel.dwLowDateTime;
+        //auto userTotal = (static_cast<uint64_t>(user.dwHighDateTime) << 32) + user.dwLowDateTime;
+
+        // TODO get previous update cycles values for times and compare
     }
 
-    // Cleanup
-    // ========
-
-    pSvc->Release();
-    pLoc->Release();
-    pEnumerator->Release();
-    CoUninitialize();
-
-    return;
+    CloseHandle(m_processSnapshot);
 }
+
 typedef struct _SYSTEM_PROCESS_INFO
 {
     ULONG                   NextEntryOffset;
@@ -349,21 +235,22 @@ void test() {
     {
         //printf("\nProcess name: %ws | Process ID: %d\n",spi2->ImageName.Buffer,spi2->ProcessId); // Display process information.
 
-        printf("%ws : %ws:\n", spi->ImageName.Buffer, spi2->ImageName.Buffer);
-        auto cpuTime1 = spi->KernelTime.QuadPart + spi->UserTime.QuadPart;
-        auto cpuTime2 = spi2->KernelTime.QuadPart + spi2->UserTime.QuadPart;
+        //printf("%ws : %ws:\n", spi->ImageName.Buffer, spi2->ImageName.Buffer);
+        const auto cpuTime1 = spi->KernelTime.QuadPart + spi->UserTime.QuadPart;
+        const auto cpuTime2 = spi2->KernelTime.QuadPart + spi2->UserTime.QuadPart;
 
-        auto diffProc = cpuTime2 - cpuTime1;
+        const auto diffProc = cpuTime2 - cpuTime1;
 
-        auto sysKDiff = SubtractTimes(sysKernel2, sysKernel1);
-        auto sysUDiff = SubtractTimes(sysUser2, sysUser1);
-        auto diffSys = sysKDiff + sysUDiff;
+        const auto sysKDiff = SubtractTimes(sysKernel2, sysKernel1);
+        const auto sysUDiff = SubtractTimes(sysUser2, sysUser1);
+        const auto diffSys = sysKDiff + sysUDiff;
 
-        ULONGLONG cpuUse = (100.0 * diffProc) / diffSys;
-        std::cout << cpuUse << "%\n";
+        double cpuUse = static_cast<double>(100 * diffProc) / static_cast<double>(diffSys);
+        //std::cout << cpuUse << "%\n";
+        //std::cout << diffProc << '\n';
 
         spi2=(PSYSTEM_PROCESS_INFO)((LPBYTE)spi2+spi2->NextEntryOffset); // Calculate the address of the next entry.
-        spi=(PSYSTEM_PROCESS_INFO)((LPBYTE)spi+spi->NextEntryOffset); // Calculate the address of the next entry.
+        spi=(PSYSTEM_PROCESS_INFO)((LPBYTE)spi+spi->NextEntryOffset);
     }
 
     // Get the process list again

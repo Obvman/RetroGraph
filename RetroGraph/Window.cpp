@@ -122,8 +122,9 @@ LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
         case WM_CLOSE:
         case WM_DESTROY:
             std::cout << "WM_DESTROY\n";
-            pThis->releaseOpenGL();
+            //pThis->releaseOpenGL();
             PostQuitMessage(0);
+            exit(0);
             return 0;
         default:
             //std::cout << "Handling message code: " << msg << '\n';
@@ -156,7 +157,7 @@ void Window::update(uint32_t ticks) {
 
     // Only update processes each second
     if (ticks % 10 == 0) {
-        //m_processMeasure.update();
+        m_processMeasure.update(ticks);
     }
 }
 

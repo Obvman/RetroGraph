@@ -12,4 +12,6 @@ void showMessageBox(const std::string& s);
 
 void fatalMessageBox(const std::string& s);
 
+ULARGE_INTEGER ftToULI(const FILETIME& ft);
+
 }

@@ -14,63 +14,52 @@ constexpr uint64_t ftDay{ 24 * ftHour };
 ProcessData::ProcessData(HANDLE pHandle, DWORD pID) :
     m_pHandle{ pHandle },
     m_processID{ pID },
-    m_memCounters{},
     m_creationTime{},
+    m_exitTime{},
     m_kernelTime{},
     m_userTime{},
-    m_exitTime{},
-    m_lastCPUCycleCount{ 0U } {
+    m_procName{} {
+
+    FILETIME sysIdle;
+    GetSystemTimes(&sysIdle, &m_lastSystemKernelTime, &m_lastSystemUserTime);
+    //m_lastSystemCPUTime = { ftToULI(sysKernel).QuadPart + ftToULI(sysUser).QuadPart };
+
+    // TODO get the timestamp of this object's creation (not the process)
+    //m_lastSystemCPUTime = sysKernel.
 
     // Get memory information for the process
-    PROCESS_MEMORY_COUNTERS memCounters;
+    /*PROCESS_MEMORY_COUNTERS memCounters;
     if (!GetProcessMemoryInfo(m_pHandle, &memCounters, sizeof(PROCESS_MEMORY_COUNTERS))) {
         fatalMessageBox("Failed to get process memory information.");
-    }
-
-    FILETIME creationTime;
-    FILETIME kernelTime;
-    FILETIME userTime;
-    FILETIME exitTime;
+    }*/
 
     // Get CPU time information
-    if (!GetProcessTimes(m_pHandle, &creationTime, &exitTime, &kernelTime, &userTime)) {
+    if (!GetProcessTimes(m_pHandle, &m_creationTime, &m_exitTime, &m_kernelTime, &m_userTime)) {
         fatalMessageBox("Failed to get process times.");
     }
 
-    // Copy time into 64-bit type
-    m_creationTime = (static_cast<uint64_t>(creationTime.dwHighDateTime) << 32) + creationTime.dwLowDateTime;
-    m_kernelTime = (static_cast<uint64_t>(kernelTime.dwHighDateTime) << 32) + kernelTime.dwLowDateTime;
-    m_userTime = (static_cast<uint64_t>(userTime.dwHighDateTime) << 32) + userTime.dwLowDateTime;
-    m_exitTime = (static_cast<uint64_t>(exitTime.dwHighDateTime) << 32) + exitTime.dwLowDateTime;
+    // TODO get process name without full path
+    char procName[128];
+    GetModuleFileNameEx(m_pHandle, nullptr, procName, 128);
+    m_procName = std::string{ procName };
 
-    const auto sysTime{ m_kernelTime + m_userTime };
-    //std::cout << "SysTime: " << sysTime << '\n';
-
-    QueryProcessCycleTime(m_pHandle, &m_cycles);
-    //std::cout << "Process cycles: " << cycleTime << '\n';
-
-}
-
-void ProcessData::update() {
-    // Get updated process handle
-
-    //m_lastUpdate = getTimestamp();
-
-    uint64_t cycles{ 0U };
-    QueryProcessCycleTime(m_pHandle, &cycles);
-
-    auto cpuDelta = cycles - m_lastCPUCycleCount;
-
-    m_lastCPUCycleCount = cycles;
-}
-
-uint64_t ProcessData::getCPUUsagePercent() const {
-
-    return 0;
 }
 
 ProcessData::~ProcessData() {
+    std::cout << "ProcessData destructor called\n";
     CloseHandle(m_pHandle);
 }
+
+void ProcessData::setTimes(const FILETIME& cTime, const FILETIME& eTime,
+                           const FILETIME& kTime, const FILETIME& uTime) {
+    m_creationTime = cTime;
+    m_exitTime = eTime;
+    m_kernelTime = kTime;
+    m_userTime = uTime;
+
+    FILETIME sysIdle;
+    GetSystemTimes(&sysIdle, &m_lastSystemKernelTime, &m_lastSystemUserTime);
+}
+
 
 }

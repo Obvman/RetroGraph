@@ -53,12 +53,17 @@ void CPUMeasure::draw() const {
     glViewport(m_viewportStartX, m_viewportStartY,
                m_viewportWidth, m_viewportHeight);
 
-    glLineWidth(3.0f);
+    glLineWidth(0.5f);
+
+    glShadeModel(GL_SMOOTH);
+    glEnable(GL_LINE_SMOOTH);
+    glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
 
     glBegin(GL_LINE_STRIP); {
         // Draw each node in the graph
         for (auto i{ 0U }; i < m_usageData.size(); ++i) {
-            glColor3f(BLUE1_R, BLUE1_G, BLUE1_B);
+            //glColor3f(BLUE1_R, BLUE1_G, BLUE1_B);
+            glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
             float x = (i / static_cast<float>(m_usageData.size() - 1)) * 2.0f - 1.0f;
             float y = m_usageData[i] * 2.0f - 1.0f;
