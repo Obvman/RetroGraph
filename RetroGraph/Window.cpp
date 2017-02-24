@@ -72,6 +72,8 @@ Window::Window(HINSTANCE hInstance, const char* windowName,
 
     std::cout << m_systemInfo.getOSInfoStr() << '\n';
     std::cout << m_systemInfo.getGPUDescription() << '\n';
+    std::cout << m_systemInfo.getCPUDescription() << '\n';
+    std::cout << m_systemInfo.getRAMDescription() << '\n';
 }
 
 
@@ -81,7 +83,7 @@ Window::~Window() {
 LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     // Do some silly casting magic so this function can access Window's members
     // using the pThis pointer
-    Window* pThis{ nullptr };
+    /*Window* pThis{ nullptr };
     if (msg == WM_CREATE) {
         pThis = static_cast<Window*>(reinterpret_cast<CREATESTRUCT*>(lParam)->lpCreateParams);
 
@@ -94,7 +96,7 @@ LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
         }
     } else {
         pThis = reinterpret_cast<Window*>(GetWindowLongPtr(hWnd, GWL_USERDATA));
-    }
+    }*/
 
     static PAINTSTRUCT ps;
     switch (msg) {
