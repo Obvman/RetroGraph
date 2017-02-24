@@ -59,11 +59,18 @@ private:
     /* Releases the OpenGL context from the window */
     void releaseOpenGL();
 
-    /* Creates OpenGL context for this window */
+    /* Creates a dummy window to test if multisampling is supported. If so,
+       the dummy is destroyed and a new anti-aliased window is created */
     bool createHGLRC();
-    bool InitMultisample(HINSTANCE hInstance,HWND hWnd,PIXELFORMATDESCRIPTOR pfd);
-    bool WGLisExtensionSupported(const char *extension);
-    bool DestroyWindowGL (Window* window);
+
+    bool initMultisample(PIXELFORMATDESCRIPTOR& pfd);
+
+    /* Queries wgl to see if the given extension is supported on this device.
+       Must be called with an OpenGL context active */
+    bool wglIisExtensionSupported(const char *extension);
+
+    /* Destroys the win32 window and releases resources */
+    void destroy();
 
     const uint16_t m_width;
     const uint16_t m_height;
@@ -84,7 +91,8 @@ private:
     MSG m_msg;
 
     bool m_arbMultisampleSupported{ false };
-    int m_arbMultisampleFormat{ 0 };
+    int32_t m_arbMultisampleFormat{ 0 };
+    int32_t m_aaSamples{ 32 };
 };
 
 }

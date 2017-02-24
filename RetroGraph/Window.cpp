@@ -26,7 +26,10 @@ Window::Window(HINSTANCE hInstance, const char* windowName,
     m_gpuMeasure{ },
     m_ramMeasure{ 0, 480, m_width / 3, m_height / 3 },
     m_processMeasure{ 0, 500, m_width / 3, m_height / 2 },
-    m_systemInfo{} {
+    m_systemInfo{},
+    m_arbMultisampleSupported{ false },
+    m_arbMultisampleFormat{ 0 },
+    m_aaSamples{ 8 } {
 
     WNDCLASSEX m_wc;
     memset(&m_wc, 0, sizeof(m_wc));
@@ -188,6 +191,10 @@ void Window::releaseOpenGL() {
 }
 
 bool Window::createHGLRC() {
+    /* Much of this function and its children are based on the work by
+       Colt McAnlis. Code and explanations:
+       http://nehe.gamedev.net/tutorial/fullscreen_antialiasing/16008/ */
+
     m_hWnd = CreateWindowEx(WS_EX_APPWINDOW, "RetroGraph", "RetroGraph",
                             WS_VISIBLE | WS_POPUP, m_startPosX, m_startPosY, m_width, m_height,
                             NULL, NULL, m_hInstance, NULL);
@@ -238,7 +245,10 @@ bool Window::createHGLRC() {
         0, 0, 0                           // Layer Masks Ignored
     };
 
-    int PixelFormat;
+    // On the first run, create a regular window with the previous pfd
+    // If multisampling is supported on the second run, use the alternate
+    // pfd to create an anti-aliased window
+    int32_t PixelFormat;
     if (!m_arbMultisampleSupported) {
         PixelFormat = ChoosePixelFormat(m_hdc, &pfd);
         if (PixelFormat == 0) {
@@ -248,24 +258,20 @@ bool Window::createHGLRC() {
             return false;
         }
     } else {
-        std::cout << "Multisampling run begins\n";
         PixelFormat = m_arbMultisampleFormat;
     }
 
-
+    // Set the pixel format for the window
     if (!SetPixelFormat(m_hdc, PixelFormat, &pfd)) {
         ReleaseDC(m_hWnd, m_hdc);
         m_hdc = 0;
         DestroyWindow(m_hWnd);
         m_hWnd = 0;
-
-        auto e = GetLastError();
-        std::cout << "Error: " << e << '\n';
-
         fatalMessageBox("SetPixelFormat - failed");
         return false;
     }
 
+    // Create an opengl context for the window
     m_hrc = wglCreateContext(m_hdc);
     if (!m_hrc){
         ReleaseDC(m_hWnd, m_hdc);
@@ -276,6 +282,7 @@ bool Window::createHGLRC() {
         return false;
     }
 
+    // Make the context the current one for the window
     if (!wglMakeCurrent(m_hdc, m_hrc)) {
         wglDeleteContext(m_hrc);
         m_hrc = 0;
@@ -283,147 +290,151 @@ bool Window::createHGLRC() {
         m_hdc = 0;
         DestroyWindow(m_hWnd);
         m_hWnd = 0;
+
         fatalMessageBox("Failed to make current context with wglMakeCurrent");
         return false;
     }
 
+    // Once we've created the first window and found multisampling to be
+    // supported, we can destroy it and create a second window with a different
+    // pixel format that has multisampling
     if (!m_arbMultisampleSupported) {
-        if (InitMultisample(m_hInstance, m_hWnd, pfd)) {
-            DestroyWindowGL(this);
+        if (initMultisample(pfd)) {
+            destroy();
             return createHGLRC();
         }
     }
 
     return true;
 }
-bool Window::WGLisExtensionSupported(const char *extension)
-{
-    const size_t extlen = strlen(extension);
-    const char *supported = NULL;
+bool Window::wglIisExtensionSupported(const char *extension) {
+    const size_t extlen{ strlen(extension) };
+    const char *supported{ nullptr };
 
     // Try To Use wglGetExtensionStringARB On Current DC, If Possible
-    PROC wglGetExtString = wglGetProcAddress("wglGetExtensionsStringARB");
+    PROC wglGetExtString{ wglGetProcAddress("wglGetExtensionsStringARB") };
 
-    if (wglGetExtString)
+    if (wglGetExtString) {
         supported = ((char*(__stdcall*)(HDC))wglGetExtString)(wglGetCurrentDC());
+    }
 
     // If That Failed, Try Standard Opengl Extensions String
-    if (supported == NULL)
+    if (!supported) {
         supported = (char*)glGetString(GL_EXTENSIONS);
+    }
 
     // If That Failed Too, Must Be No Extensions Supported
-    if (supported == NULL)
+    if (!supported) {
         return false;
+    }
 
     // Begin Examination At Start Of String, Increment By 1 On False Match
-    for (const char* p = supported; ; p++)
-    {
+    for (const char* p = supported; ; p++) {
         // Advance p Up To The Next Possible Match
         p = strstr(p, extension);
+        if (!p) {
+            return false;
+        }
 
-        if (p == NULL)
-            return false;															// No Match
+        if ((p == supported || p[-1] == ' ') &&
+            (p[extlen] == '\0' || p[extlen] == ' ')) {
 
-                                                                                    // Make Sure That Match Is At The Start Of The String Or That
-                                                                                    // The Previous Char Is A Space, Or Else We Could Accidentally
-                                                                                    // Match "wglFunkywglExtension" With "wglExtension"
-
-                                                                                    // Also, Make Sure That The Following Character Is Space Or NULL
-                                                                                    // Or Else "wglExtensionTwo" Might Match "wglExtension"
-        if ((p==supported || p[-1]==' ') && (p[extlen]=='\0' || p[extlen]==' '))
-            return true;															// Match
+            return true;
+        }
     }
 }
-bool Window::InitMultisample(HINSTANCE hInstance,HWND hWnd,PIXELFORMATDESCRIPTOR pfd) {  
-    // See If The String Exists In WGL!
-    if (!WGLisExtensionSupported("WGL_ARB_multisample"))
-    {
-        m_arbMultisampleSupported=false;
+bool Window::initMultisample(PIXELFORMATDESCRIPTOR& pfd) {
+    // See If The String Exists In WGL
+    if (!wglIisExtensionSupported("WGL_ARB_multisample")) {
+        m_arbMultisampleSupported = false;
         return false;
     }
 
     // Get Our Pixel Format
-    PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB = 
-        (PFNWGLCHOOSEPIXELFORMATARBPROC)wglGetProcAddress("wglChoosePixelFormatARB");	
-    if (!wglChoosePixelFormatARB) 
-    {
-        m_arbMultisampleSupported=false;
+    PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB =
+        (PFNWGLCHOOSEPIXELFORMATARBPROC)wglGetProcAddress("wglChoosePixelFormatARB");
+    if (!wglChoosePixelFormatARB) {
+        m_arbMultisampleSupported = false;
         return false;
     }
 
     // Get Our Current Device Context
-    HDC hDC = GetDC(hWnd);
-
-    int		pixelFormat;
-    int		valid;
-    UINT	numFormats;
-    float	fAttributes[] = {0,0};
+    HDC hDC = GetDC(m_hWnd);
+    int32_t pixelFormat;
+    int32_t valid;
+    uint32_t numFormats;
+    float fAttributes[] = { 0, 0 };
 
     // These Attributes Are The Bits We Want To Test For In Our Sample
-    // Everything Is Pretty Standard, The Only One We Want To 
+    // Everything Is Pretty Standard, The Only One We Want To
     // Really Focus On Is The SAMPLE BUFFERS ARB And WGL SAMPLES
     // These Two Are Going To Do The Main Testing For Whether Or Not
     // We Support Multisampling On This Hardware.
-    int iAttributes[] =
-    {
-        WGL_DRAW_TO_WINDOW_ARB,GL_TRUE,
-        WGL_SUPPORT_OPENGL_ARB,GL_TRUE,
-        WGL_ACCELERATION_ARB,WGL_FULL_ACCELERATION_ARB,
-        WGL_COLOR_BITS_ARB,24,
-        WGL_ALPHA_BITS_ARB,8,
-        WGL_DEPTH_BITS_ARB,16,
-        WGL_STENCIL_BITS_ARB,0,
-        WGL_DOUBLE_BUFFER_ARB,GL_TRUE,
-        WGL_SAMPLE_BUFFERS_ARB,GL_TRUE,
-        WGL_SAMPLES_ARB,16,
-        0,0
+    int32_t iAttributes[] = {
+        WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
+        WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
+        WGL_ACCELERATION_ARB, WGL_FULL_ACCELERATION_ARB,
+        WGL_COLOR_BITS_ARB, 24,
+        WGL_ALPHA_BITS_ARB, 8,
+        WGL_DEPTH_BITS_ARB, 16,
+        WGL_STENCIL_BITS_ARB, 0,
+        WGL_DOUBLE_BUFFER_ARB, GL_TRUE,
+        WGL_SAMPLE_BUFFERS_ARB, GL_TRUE,
+        WGL_SAMPLES_ARB, m_aaSamples,
+        0, 0
     };
 
-    // First We Check To See If We Can Get A Pixel Format For 4 Samples
-    valid = wglChoosePixelFormatARB(hDC,iAttributes,fAttributes,1,&pixelFormat,&numFormats);
+    // First We Check To See If We Can Get A Pixel Format For 8 Samples
+    valid = wglChoosePixelFormatARB(hDC, iAttributes, fAttributes, 1,
+                                    &pixelFormat, &numFormats);
 
     // If We Returned True, And Our Format Count Is Greater Than 1
-    if (valid && numFormats >= 1)
-    {
+    if (valid && numFormats >= 1) {
         m_arbMultisampleSupported = true;
         m_arbMultisampleFormat = pixelFormat;
         return m_arbMultisampleSupported;
     }
 
-    // Our Pixel Format With 4 Samples Failed, Test For 2 Samples
+    // Our Pixel Format With 8 Samples Failed, Test For 4 Samples
+    iAttributes[19] = 4;
+    valid = wglChoosePixelFormatARB(hDC, iAttributes, fAttributes, 1,
+                                    &pixelFormat,&numFormats);
+    if (valid && numFormats >= 1) {
+        m_arbMultisampleSupported = true;
+        m_arbMultisampleFormat = pixelFormat;
+        return m_arbMultisampleSupported;
+    }
+
+    // Our Pixel Format With 2 Samples Failed, Test For 2 Samples
     iAttributes[19] = 2;
-    valid = wglChoosePixelFormatARB(hDC,iAttributes,fAttributes,1,&pixelFormat,&numFormats);
-    if (valid && numFormats >= 1)
-    {
+    valid = wglChoosePixelFormatARB(hDC, iAttributes, fAttributes, 1,
+                                    &pixelFormat,&numFormats);
+    if (valid && numFormats >= 1) {
         m_arbMultisampleSupported = true;
         m_arbMultisampleFormat = pixelFormat;
         return m_arbMultisampleSupported;
     }
 
-    // Return The Valid Format
     return m_arbMultisampleSupported;
 }
 
-bool Window::DestroyWindowGL(Window* window) {							// Destroy The OpenGL Window & Release Resources
-    if (m_hWnd != 0)												// Does The Window Have A Handle?
-    {	
-        if (m_hdc != 0)											// Does The Window Have A Device Context?
-        {
-            wglMakeCurrent(m_hdc, 0);							// Set The Current Active Rendering Context To Zero
-            if (m_hrc != 0)										// Does The Window Have A Rendering Context?
-            {
-                wglDeleteContext(m_hrc);							// Release The Rendering Context
-                m_hrc = 0;										// Zero The Rendering Context
-
+void Window::destroy() {
+    // Release and zero the device context, openGL context and window handle
+    if (m_hWnd != 0) {
+        if (m_hdc != 0) {
+            wglMakeCurrent(m_hdc, 0);
+            if (m_hrc != 0) {
+                wglDeleteContext(m_hrc);
+                m_hrc = 0;
             }
-            ReleaseDC(m_hWnd, m_hdc);						// Release The Device Context
-            m_hdc = 0;											// Zero The Device Context
-        }
-        DestroyWindow(m_hWnd);									// Destroy The Window
-        m_hWnd = 0;												// Zero The Window Handle
-    }
 
-    return true;														// Return True
+            ReleaseDC(m_hWnd, m_hdc);
+            m_hdc = 0;
+        }
+
+        DestroyWindow(m_hWnd);
+        m_hWnd = 0;
+    }
 }
 
 void drawBorder() {
