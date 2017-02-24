@@ -15,8 +15,7 @@ SystemInfo::SystemInfo() :
     m_osInfoStr{},
     m_gpuDescription{},
     m_cpuDescription{},
-    m_ramDescription{},
-    m_gpuInfoAttained{ false } {
+    m_ramDescription{} {
 
     getOSVersionInfo();
     getCPUInfo();
@@ -113,9 +112,7 @@ void SystemInfo::getRAMInfo() {
 }
 
 const std::string& SystemInfo::getGPUDescription() {
-    if (!m_gpuInfoAttained) {
-        getGPUInfo();
-    }
+    getGPUInfo();
     return m_gpuDescription;
 }
 
@@ -132,8 +129,6 @@ void SystemInfo::getGPUInfo() {
     std::stringstream ss;
     ss << gpuRenderer << ", " << gpuVendor;
     m_gpuDescription = "GPU: " + ss.str();
-
-    m_gpuInfoAttained = true;
 }
 
 }
