@@ -38,6 +38,7 @@ int main() {
     // immediately at startup instead of after a few ticks
     mainWindow.init();
 
+
     //test2();
     test();
 

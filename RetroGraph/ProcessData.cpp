@@ -11,21 +11,18 @@ constexpr uint64_t ftHour{ 60 * ftMinute };
 constexpr uint64_t ftDay{ 24 * ftHour };
 
 
-ProcessData::ProcessData(HANDLE pHandle, DWORD pID) :
+ProcessData::ProcessData(HANDLE pHandle, DWORD pID, const char* name) :
     m_pHandle{ pHandle },
     m_processID{ pID },
+    m_procName{ name },
     m_creationTime{},
     m_exitTime{},
     m_kernelTime{},
     m_userTime{},
-    m_procName{} {
+    m_cpuUsage{ 0.0 } {
 
-    FILETIME sysIdle;
+    FILETIME sysIdle; // Dummy ft, won't be used
     GetSystemTimes(&sysIdle, &m_lastSystemKernelTime, &m_lastSystemUserTime);
-    //m_lastSystemCPUTime = { ftToULI(sysKernel).QuadPart + ftToULI(sysUser).QuadPart };
-
-    // TODO get the timestamp of this object's creation (not the process)
-    //m_lastSystemCPUTime = sysKernel.
 
     // Get memory information for the process
     /*PROCESS_MEMORY_COUNTERS memCounters;
@@ -38,15 +35,9 @@ ProcessData::ProcessData(HANDLE pHandle, DWORD pID) :
         fatalMessageBox("Failed to get process times.");
     }
 
-    // TODO get process name without full path
-    char procName[128];
-    GetModuleFileNameEx(m_pHandle, nullptr, procName, 128);
-    m_procName = std::string{ procName };
-
 }
 
 ProcessData::~ProcessData() {
-    std::cout << "ProcessData destructor called\n";
     CloseHandle(m_pHandle);
 }
 

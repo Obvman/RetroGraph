@@ -18,10 +18,11 @@ public:
     void init();
     void update(uint32_t ticks);
     void updateProcList();
+    void draw() const;
 private:
-    void enumerate();
-    void slowLoop(PROCESSENTRY32* pe);
-    uint64_t SubtractTimes(const FILETIME& ftA, const FILETIME& ftB);
+    uint64_t subtractTimes(const FILETIME& ftA, const FILETIME& ftB);
+    double calculateCPUUsage(HANDLE pHandle, ProcessData& pd);
+    void populateList();
 
     HANDLE m_processSnapshot;
     std::vector<std::unique_ptr<ProcessData>> m_allProcessData;

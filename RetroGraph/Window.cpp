@@ -169,6 +169,7 @@ void Window::draw() const {
 
     m_cpuMeasure.draw();
     m_ramMeasure.draw();
+    m_processMeasure.draw();
 
     drawBorder();
 
