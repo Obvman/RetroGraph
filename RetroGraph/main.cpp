@@ -46,8 +46,6 @@ int main() {
 void mainLoop(rg::Window& mainWindow) {
     using namespace std::chrono;
     auto start = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-    constexpr uint32_t maxTicks{ 10000U };
-    constexpr uint32_t tickDuration{ 100U }; // tick length in milliseconds
     uint32_t ticks{ 1 };
     auto lastTick = ticks;
     MSG msg;
@@ -67,8 +65,8 @@ void mainLoop(rg::Window& mainWindow) {
         if (lastTick != ticks) {
             mainWindow.update(ticks);
 
-            // Draw every 5 ticks
-            if (lastTick % 5 == 0) {
+            // Draw every half second
+            if ((lastTick % (rg::ticksPerSecond/2)) == 0) {
                 mainWindow.draw();
             }
 
@@ -76,13 +74,13 @@ void mainLoop(rg::Window& mainWindow) {
         }
 
         // Reset the counter every tick
-        if (dt > tickDuration) {
+        if (dt > rg::tickDuration) {
             start = currTime;
             ++ticks;
         }
 
         // Keep the ticks counter range 1 - maxTicks to prevent overflow
-        if (ticks > maxTicks) {
+        if (ticks > rg::maxTicks) {
             ticks = 1U;
         }
 

@@ -26,8 +26,8 @@ Window::Window(HINSTANCE hInstance, const char* windowName,
     m_gpuMeasure{ },
     m_ramMeasure{ 0, 480, m_width / 3, m_height / 3 },
     m_processMeasure{ 0, 500, m_width / 3, m_height / 2 },
+    m_driveMeasure{ 0, 0, m_width / 3, m_height / 2 },
     m_systemInfo{},
-    m_driveMeasure{},
     m_arbMultisampleSupported{ false },
     m_arbMultisampleFormat{ 0 },
     m_aaSamples{ 8 } {
@@ -133,15 +133,17 @@ void Window::init() {
 }
 
 void Window::update(uint32_t ticks) {
+    // half-second updates
     if (ticks % 5 == 0) {
         m_cpuMeasure.update();
         m_gpuMeasure.update();
         m_ramMeasure.update();
     }
 
-    // Only update processes each second
+    // Full second updates
     if (ticks % 10 == 0) {
         m_processMeasure.update(ticks);
+        m_driveMeasure.update(ticks);
     }
 }
 
@@ -154,6 +156,7 @@ void Window::draw() const {
     m_cpuMeasure.draw();
     m_ramMeasure.draw();
     m_processMeasure.draw();
+    m_driveMeasure.draw();
 
     drawBorder();
 

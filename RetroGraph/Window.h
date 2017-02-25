@@ -82,8 +82,8 @@ private:
     GPUMeasure m_gpuMeasure;
     RAMMeasure m_ramMeasure;
     ProcessMeasure m_processMeasure;
-    SystemInfo m_systemInfo;
     DriveMeasure m_driveMeasure;
+    SystemInfo m_systemInfo;
 
     HINSTANCE m_hInstance;
     WNDCLASSEX m_wc;

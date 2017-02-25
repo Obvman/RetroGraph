@@ -33,8 +33,7 @@ void ProcessMeasure::init() {
 
 void ProcessMeasure::update(uint32_t ticks) {
     // Update the process list vector every 10 seconds
-    if (ticks % 100 == 0) {
-        std::cout << "Updating process list\n";
+    if ((ticks % (10 * 10)) == 0) {
         m_allProcessData.clear();
         populateList();
     }
@@ -56,14 +55,11 @@ void ProcessMeasure::update(uint32_t ticks) {
             continue;
         }
 
+        // Check for processes that have exited and remove them from the list
         DWORD exitCode{ 1UL };
         GetExitCodeProcess(pHandle, &exitCode);
         if (exitCode == 0 || exitCode == 1) {
-            std::cout << "Removing process " << pd.getName() << " with exit code " << exitCode << "\n";
-
             it = m_allProcessData.erase(it);
-
-            std::cout << "Vec Size: " << m_allProcessData.size() << '\n';
         } else {
             // Get new timing information and calculate the CPU usage
             const auto cpuUsage{ calculateCPUUsage(pHandle, pd) };
