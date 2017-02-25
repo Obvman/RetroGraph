@@ -51,7 +51,7 @@ void SystemInfo::drawText() const {
     glColor3f(TEXT_R, TEXT_G, TEXT_B);
 
     glRasterPos2f(rasterX, rasterY);
-    glCallLists(m_osInfoStr.length(), GL_UNSIGNED_BYTE, m_osInfoStr.c_str());
+    glCallLists(m_ramDescription.length(), GL_UNSIGNED_BYTE, m_ramDescription.c_str());
     rasterY += 2.0f / numLines;
 
     glRasterPos2f(rasterX, rasterY);
@@ -63,7 +63,8 @@ void SystemInfo::drawText() const {
     rasterY += 2.0f / numLines;
 
     glRasterPos2f(rasterX, rasterY);
-    glCallLists(m_ramDescription.length(), GL_UNSIGNED_BYTE, m_ramDescription.c_str());
+    glCallLists(m_osInfoStr.length(), GL_UNSIGNED_BYTE, m_osInfoStr.c_str());
+
 }
 
 void SystemInfo::getOSVersionInfo() {

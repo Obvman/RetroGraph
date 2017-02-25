@@ -60,7 +60,7 @@ void RAMMeasure::draw() const {
 }
 
 void RAMMeasure::drawBar() const {
-    auto percent = (static_cast<float>(getLoadPercentage()) / 100.0f) * 2.0f;
+    auto percent = getLoadPercentagef() * 2.0f;
 
     float lineWidth;
     glGetFloatv(GL_LINE_WIDTH, &lineWidth);

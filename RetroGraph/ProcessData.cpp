@@ -1,7 +1,6 @@
 #include "ProcessData.h"
 namespace rg {
 
-
 ProcessData::ProcessData(HANDLE pHandle, DWORD pID, const char* name) :
     m_pHandle{ pHandle },
     m_processID{ pID },
@@ -12,6 +11,12 @@ ProcessData::ProcessData(HANDLE pHandle, DWORD pID, const char* name) :
     m_kernelTime{},
     m_userTime{},
     m_cpuUsage{ 0.0 } {
+
+    // Remove the ".exe" extension from the process name
+    const auto p{ m_procName.find(".exe") };
+    if (p != std::string::npos) {
+        m_procName.erase(p, 4);
+    }
 
     FILETIME sysIdle; // Dummy ft, won't be used
     GetSystemTimes(&sysIdle, &m_lastSystemKernelTime, &m_lastSystemUserTime);
