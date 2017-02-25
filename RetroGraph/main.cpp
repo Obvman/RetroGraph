@@ -17,8 +17,8 @@
 #pragma comment(lib, "wbemuuid.lib")
 #pragma comment(lib, "ntdll.lib")
 
-void test();
-void test2();
+//void test();
+//void test2();
 void mainLoop(rg::Window& mainWindow);
 
 #if (!_DEBUG)

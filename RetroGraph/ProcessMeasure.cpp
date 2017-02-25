@@ -104,15 +104,15 @@ void ProcessMeasure::draw() const {
 void ProcessMeasure::drawUsageList() const {
 
     const auto rasterX = float{ -0.95f };
-    auto rasterY = float{ 1.0f }; // Y changes for each process drawn
+    auto rasterY = float{ -0.90f }; // Y changes for each process drawn
 
     glColor3f(TEXT_R, TEXT_G, TEXT_B);
 
-    for (const auto& str : m_processDrawStrings) {
+    for (auto it{ m_processDrawStrings.crbegin() }; it != m_processDrawStrings.crend(); ++it) {
         glRasterPos2f(rasterX, rasterY);
-        glCallLists(str.length(), GL_UNSIGNED_BYTE, str.c_str());
+        glCallLists(it->length(), GL_UNSIGNED_BYTE, it->c_str());
 
-        rasterY -= 1.0f / m_numProcessesToDisplay;
+        rasterY += 2.0f / (m_numProcessesToDisplay);
     }
 }
 
