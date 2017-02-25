@@ -56,6 +56,10 @@ DriveMeasure::DriveMeasure(GLint vpX, GLint vpY, GLint vpW, GLint vpH) :
 DriveMeasure::~DriveMeasure() {
 }
 
+void DriveMeasure::init() {
+    update(ticksPerSecond * 15);
+}
+
 void DriveMeasure::update(uint32_t ticks) {
     /* Refresh drive statistics. We won't consider drives being added/removed
        since these are fixed drives and the program shouldn't be running in
@@ -64,7 +68,7 @@ void DriveMeasure::update(uint32_t ticks) {
         char path[4] = { pdi->getDriveLetter(), ':', '\\', '\0'};
 
         // Only update drive capacity every 15 seconds
-        if ((ticks % (10 * 2)) == 0) {
+        if ((ticks % (ticksPerSecond * 15)) == 0) {
 
             ULARGE_INTEGER freeBytesAvailable;
             ULARGE_INTEGER totalBytes;
@@ -74,10 +78,18 @@ void DriveMeasure::update(uint32_t ticks) {
 
             pdi->setTotalBytes(totalBytes.QuadPart);
             pdi->setTotalFreeBytes(totalFreeBytes.QuadPart);
+
+            std::stringstream ss;
+            ss << std::fixed << std::setprecision(2)
+               << pdi->getDriveLetter() << ": "
+               << pdi->getVolumeName() << " ("
+               << static_cast<float>(pdi->getFreeBytes()) / GB << "GB/"
+               << static_cast<float>(pdi->getTotalBytes()) / GB << "GB)\n";
+            pdi->setDriveInfoStr(ss.str());
         }
 
         // Only check for drive name updates every 20 minutes
-        if ((ticks % (10 * 5)) == 0) {
+        if ((ticks % (ticksPerSecond * 20)) == 0) {
             char volumeNameBuff[maxVolumeNameSize];
             GetVolumeInformation(path, volumeNameBuff, maxVolumeNameSize,
                                  nullptr, nullptr, nullptr, nullptr, 0);
@@ -111,15 +123,9 @@ void DriveMeasure::drawText() const {
     glColor3f(TEXT_R, TEXT_G, TEXT_B);
 
     for (const auto& pdi : m_drives) {
-        std::stringstream ss;
-        ss << std::fixed << std::setprecision(2)
-           << pdi->getDriveLetter() << ": "
-           << pdi->getVolumeName() << " ("
-           << static_cast<float>(pdi->getFreeBytes()) / GB << "GB/"
-           << static_cast<float>(pdi->getTotalBytes()) / GB << "GB)\n";
 
         glRasterPos2f(rasterX, rasterY);
-        for (const auto c : ss.str()) {
+        for (const auto c : pdi->getDriveInfoStr()) {
             glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
         }
         rasterY -= 1.0f / numDrives;

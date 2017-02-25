@@ -15,6 +15,7 @@ public:
     DriveMeasure(GLint vpX, GLint vpY, GLint vpW, GLint vpH);
     ~DriveMeasure();
 
+    void init();
     void update(uint32_t ticks);
     void draw() const;
     void drawText() const;

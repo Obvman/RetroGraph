@@ -33,7 +33,7 @@ void ProcessMeasure::init() {
 
 void ProcessMeasure::update(uint32_t ticks) {
     // Update the process list vector every 10 seconds
-    if ((ticks % (10 * 10)) == 0) {
+    if ((ticks % (ticksPerSecond * 10)) == 0) {
         m_allProcessData.clear();
         populateList();
     }

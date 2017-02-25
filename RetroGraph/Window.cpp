@@ -128,6 +128,7 @@ void Window::init() {
     m_ramMeasure.update();
 
     m_processMeasure.init();
+    m_driveMeasure.init();
 
     draw();
 }
