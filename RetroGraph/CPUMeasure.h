@@ -21,11 +21,14 @@ public:
     /* Draws the components of the measure */
     void draw(GLuint shader) const;
 
+    /* Draws the line graph of system CPU usage */
+    void drawGraph(GLuint shader) const;
+
     /* Draws the total system uptime text */
     void drawUptime() const;
 
-    /* Draws the CPU usage graph */
-    void drawGraphBox() const;
+    /* Draws the system time in hh:mm:ss format */
+    void drawSystemTime() const;
 
     /* Returns the current system CPU load as a percentage */
     float getCPULoad();

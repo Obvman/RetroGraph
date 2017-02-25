@@ -1,9 +1,10 @@
 #include "CPUMeasure.h"
 
 #include <sstream>
-#include <iostream>
 #include <iomanip>
 #include <algorithm>
+#include <ctime>
+#include <time.h>
 #include <Windows.h>
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -46,14 +47,27 @@ void CPUMeasure::draw(GLuint shader) const {
     // Preserve initial viewport settings
     GLint vp[4];
     glGetIntegerv(GL_VIEWPORT, vp);
-    GLfloat lineWidth;
-    glGetFloatv(GL_LINE_WIDTH, &lineWidth);
-
 
     // Set up the view to a portion of the screen
     glViewport(m_viewportStartX, m_viewportStartY,
                m_viewportWidth, m_viewportHeight);
 
+    glLineWidth(0.5f);
+
+    drawGraph(shader);
+    drawUptime();
+    drawSystemTime();
+    //drawGraphBox();
+    drawViewportBorder();
+
+    glViewport(vp[0], vp[1], vp[2], vp[3]);
+
+    glPopMatrix();
+}
+
+void CPUMeasure::drawGraph(GLuint shader) const {
+    GLfloat lineWidth;
+    glGetFloatv(GL_LINE_WIDTH, &lineWidth);
     glLineWidth(0.5f);
 
     //glUseProgram(shader);
@@ -76,15 +90,7 @@ void CPUMeasure::draw(GLuint shader) const {
 
     glUseProgram(0);
 
-    drawUptime();
-
     glLineWidth(lineWidth);
-    glViewport(vp[0], vp[1], vp[2], vp[3]);
-
-    glPopMatrix();
-
-    drawGraphBox();
-
 }
 
 void CPUMeasure::drawUptime() const {
@@ -95,40 +101,22 @@ void CPUMeasure::drawUptime() const {
 
     glColor3f(TEXT_R, TEXT_G, TEXT_B);
     glRasterPos2f(rasterX, rasterY);
-    for (const auto c : uptime) {
-        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
-    }
-
+    glCallLists(uptime.size(), GL_UNSIGNED_BYTE, uptime.c_str());
 }
 
-void CPUMeasure::drawGraphBox() const {
+void CPUMeasure::drawSystemTime() const {
+    const auto rasterX = float{ -0.95f };
+    const auto rasterY = float{ -0.1f };
 
-    glColor3f(PINK3_R, PINK3_G, PINK3_B);
+    time_t now = time(0);
+    tm t;
+    char buf[9];
+    localtime_s(&t, &now);
+    strftime(buf, sizeof(buf), "%X", &t);
 
-    // Preserve initial line width
-    GLint vp[4];
-    glGetIntegerv(GL_VIEWPORT, vp);
-    GLfloat lineWidth;
-    glGetFloatv(GL_LINE_WIDTH, &lineWidth);
-
-    glLineWidth(5.0f);
-
-    glBegin(GL_LINES);
-    glVertex2f(-1.0f + bDelta, -1.0f + bDelta);
-    glVertex2f(-1.0f + bDelta,  1.0f - bDelta);
-
-    glVertex2f(-1.0f + bDelta, 1.0f - bDelta);
-    glVertex2f(1.0f - bDelta, 1.0f - bDelta);
-
-    glVertex2f(1.0f - bDelta, 1.0f - bDelta);
-    glVertex2f(1.0f - bDelta, -1.0f + bDelta);
-
-    glVertex2f(1.0f - bDelta, -1.0f + bDelta);
-    glVertex2f(-1.0f + bDelta, -1.0f + bDelta);
-    glEnd();
-
-    glLineWidth(lineWidth);
-    glViewport(vp[0], vp[1], vp[2], vp[3]);
+    glColor3f(TEXT_R, TEXT_G, TEXT_B);
+    glRasterPos2f(rasterX, rasterY);
+    glCallLists(sizeof(buf), GL_UNSIGNED_BYTE, buf);
 }
 
 float CPUMeasure::getCPULoad() {

@@ -59,6 +59,9 @@ private:
     /* Initialises OpenGL settings */
     void initOpenGL();
 
+    /* Gets and sets the text font */
+    void initFonts();
+
     /* Compiles and links shaders */
     void initShaders();
 

@@ -2,7 +2,6 @@
 
 #include <Windows.h>
 #include <sstream>
-#include <iostream>
 #include <iomanip>
 
 #include <GL/glew.h>
@@ -110,6 +109,7 @@ void DriveMeasure::draw() const {
     glViewport(m_viewportStartX, m_viewportStartY, m_viewportWidth, m_viewportHeight);
 
     drawText();
+    drawViewportBorder();
 
     glViewport(vp[0], vp[1], vp[2], vp[3]);
 }
@@ -126,9 +126,6 @@ void DriveMeasure::drawText() const {
         const auto& strToDraw{ pdi->getDriveInfoStr() };
 
         glRasterPos2f(rasterX, rasterY);
-        /*for (const auto c : strToDraw) {
-            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
-        }*/
         glCallLists(strToDraw.length(), GL_UNSIGNED_BYTE, strToDraw.c_str());
 
         rasterY -= 1.0f / numDrives;

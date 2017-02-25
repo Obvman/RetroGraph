@@ -1,5 +1,7 @@
 #include "utils.h"
 
+#include <GL/glew.h>
+
 namespace rg {
 
 void showMessageBox(const std::string& s) {
@@ -28,6 +30,37 @@ uint64_t subtractTimes(const FILETIME& ftA, const FILETIME& ftB) {
      b.HighPart = ftB.dwHighDateTime;
 
      return a.QuadPart - b.QuadPart;
+}
+
+void drawViewportBorder() {
+    float color[4];
+    glGetFloatv(GL_CURRENT_COLOR, color);
+
+    glColor3f(1.0f, 1.0f, 1.0f);
+
+    // Preserve initial line width
+    GLfloat lineWidth;
+    glGetFloatv(GL_LINE_WIDTH, &lineWidth);
+
+    glLineWidth(5.0f);
+
+    glBegin(GL_LINES);
+    glVertex2f(-1.0f + bDelta, -1.0f + bDelta);
+    glVertex2f(-1.0f + bDelta,  1.0f - bDelta);
+
+    glVertex2f(-1.0f + bDelta, 1.0f - bDelta);
+    glVertex2f(1.0f - bDelta, 1.0f - bDelta);
+
+    glVertex2f(1.0f - bDelta, 1.0f - bDelta);
+    glVertex2f(1.0f - bDelta, -1.0f + bDelta);
+
+    glVertex2f(1.0f - bDelta, -1.0f + bDelta);
+    glVertex2f(-1.0f + bDelta, -1.0f + bDelta);
+    glEnd();
+
+    glLineWidth(lineWidth);
+
+    glColor4f(color[0], color[1], color[2], color[3]);
 }
 
 }

@@ -30,4 +30,7 @@ ULARGE_INTEGER ftToULI(const FILETIME& ft);
 /* Subtracts the FILETIMES and returns result as 64 bit unsigned integer */
 uint64_t subtractTimes(const FILETIME& ftA, const FILETIME& ftB);
 
+/* When called after a viewport has been set, draws a white outline of the viewport */
+void drawViewportBorder();
+
 }

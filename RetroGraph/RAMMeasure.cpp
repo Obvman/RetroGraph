@@ -1,7 +1,6 @@
 #include "RAMMeasure.h"
 
 #include <string>
-#include <iostream>
 #include <GL/freeglut.h>
 
 #include "colors.h"
@@ -40,10 +39,9 @@ void RAMMeasure::draw() const {
     glViewport(m_viewportStartX, m_viewportStartY,
                m_viewportWidth, m_viewportHeight);
 
-    // TODO Draw
     drawText();
-
     drawBar();
+    //drawViewportBorder();
 
     // Reinstate previous settings
     glViewport(vp[0], vp[1], vp[2], vp[3]);
@@ -54,9 +52,6 @@ void RAMMeasure::draw() const {
 
 void RAMMeasure::drawBar() const {
     auto percent = (static_cast<float>(getLoadPercentage()) / 100.0f) * 2.0f;
-    /*static float percentInt = 10;
-    percentInt += 5;
-    float percent = percentInt / 100.0f;*/
 
     float lineWidth;
     glGetFloatv(GL_LINE_WIDTH, &lineWidth);

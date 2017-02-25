@@ -52,8 +52,10 @@ void mainLoop(rg::Window& mainWindow) {
 
     // Enter main update/draw loop
     while(true) {
-        const auto currTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-        auto dt = currTime - start;
+        const auto currTime{ duration_cast<milliseconds>(
+                                  system_clock::now().time_since_epoch()
+                              ).count() };
+        const auto dt{ currTime - start };
 
         // Handle windows messages
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
@@ -73,7 +75,7 @@ void mainLoop(rg::Window& mainWindow) {
             lastTick = ticks;
         }
 
-        // Reset the counter every tick
+        // Reset the millisecond counter every tick
         if (dt > rg::tickDuration) {
             start = currTime;
             ++ticks;
@@ -89,9 +91,7 @@ void mainLoop(rg::Window& mainWindow) {
     }
 }
 
-void test2() {
-}
-
+/*
 typedef struct _SYSTEM_PROCESS_INFO
 {
     ULONG                   NextEntryOffset;
@@ -131,11 +131,10 @@ void test() {
         return;
     }
 
-    /*while(spi->NextEntryOffset) // Loop over the list until we reach the last entry.
-    {
-        printf("\nProcess name: %ws | Process ID: %d\n",spi->ImageName.Buffer,spi->ProcessId); // Display process information.
-        spi=(PSYSTEM_PROCESS_INFO)((LPBYTE)spi+spi->NextEntryOffset); // Calculate the address of the next entry.
-    }*/
+    //while(spi->NextEntryOffset) // Loop over the list until we reach the last entry.  {
+        //printf("\nProcess name: %ws | Process ID: %d\n",spi->ImageName.Buffer,spi->ProcessId); // Display process information.
+        //spi=(PSYSTEM_PROCESS_INFO)((LPBYTE)spi+spi->NextEntryOffset); // Calculate the address of the next entry.
+    //}
 
     FILETIME sysIdle1, sysKernel1, sysUser1;
     GetSystemTimes(&sysIdle1, &sysKernel1, &sysUser1);
@@ -204,4 +203,4 @@ ULONGLONG SubtractTimes(const FILETIME& ftA, const FILETIME& ftB) {
      b.HighPart = ftB.dwHighDateTime;
 
      return a.QuadPart - b.QuadPart;
-}
+}*/

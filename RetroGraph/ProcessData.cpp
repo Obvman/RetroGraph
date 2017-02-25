@@ -1,6 +1,4 @@
 #include "ProcessData.h"
-#include <iostream>
-
 namespace rg {
 
 

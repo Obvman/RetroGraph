@@ -1,21 +1,25 @@
 #include "SystemInfo.h"
 
 #include <Winver.h>
-#include <iostream>
 #include <sstream>
 #include <GL/gl.h>
 
 #include "utils.h"
+#include "colors.h"
 
 #pragma comment(lib, "version.lib")
 
 namespace rg {
 
-SystemInfo::SystemInfo() :
+SystemInfo::SystemInfo(GLint vpX, GLint vpY, GLint vpW, GLint vpH) :
     m_osInfoStr{},
     m_gpuDescription{},
     m_cpuDescription{},
-    m_ramDescription{} {
+    m_ramDescription{},
+    m_viewportStartX{ vpX },
+    m_viewportStartY{ vpY },
+    m_viewportWidth{ vpW },
+    m_viewportHeight{ vpH } {
 
     getOSVersionInfo();
     getCPUInfo();
@@ -24,6 +28,42 @@ SystemInfo::SystemInfo() :
 
 
 SystemInfo::~SystemInfo() {
+}
+
+void SystemInfo::draw() const {
+    GLint vp[4];
+    glGetIntegerv(GL_VIEWPORT, vp);
+
+    glViewport(m_viewportStartX, m_viewportStartY, m_viewportWidth, m_viewportHeight);
+
+    drawText();
+    drawViewportBorder();
+
+    glViewport(vp[0], vp[1], vp[2], vp[3]);
+}
+
+void SystemInfo::drawText() const {
+    static constexpr auto numLines{ 4U };
+    const auto rasterX = float{ -0.95f };
+    auto rasterY = float{ 1.0f };
+
+    glColor3f(TEXT_R, TEXT_G, TEXT_B);
+
+    glRasterPos2f(rasterX, rasterY);
+    glCallLists(m_osInfoStr.length(), GL_UNSIGNED_BYTE, m_osInfoStr.c_str());
+    rasterY -= 1.0f / numLines;
+
+    glRasterPos2f(rasterX, rasterY);
+    glCallLists(m_gpuDescription.length(), GL_UNSIGNED_BYTE, m_gpuDescription.c_str());
+    rasterY -= 1.0f / numLines;
+
+    glRasterPos2f(rasterX, rasterY);
+    glCallLists(m_cpuDescription.length(), GL_UNSIGNED_BYTE, m_cpuDescription.c_str());
+    rasterY -= 1.0f / numLines;
+
+    glRasterPos2f(rasterX, rasterY);
+    glCallLists(m_ramDescription.length(), GL_UNSIGNED_BYTE, m_ramDescription.c_str());
+    rasterY -= 1.0f / numLines;
 }
 
 void SystemInfo::getOSVersionInfo() {

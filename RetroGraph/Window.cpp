@@ -25,9 +25,9 @@ Window::Window(HINSTANCE hInstance, const char* windowName,
     m_cpuMeasure{ this, m_width, m_height / 3 },
     m_gpuMeasure{ },
     m_ramMeasure{ 0, 480, m_width / 3, m_height / 3 },
-    m_processMeasure{ 0, 500, m_width / 3, m_height / 2 },
+    m_processMeasure{ 0, 550, m_width / 3, m_height / 3 },
     m_driveMeasure{ 0, 0, m_width / 3, m_height / 2 },
-    m_systemInfo{},
+    m_systemInfo{ 800, 0, m_width / 2, m_height / 2},
     m_arbMultisampleSupported{ false },
     m_arbMultisampleFormat{ 0 },
     m_aaSamples{ 8 },
@@ -55,16 +55,12 @@ Window::Window(HINSTANCE hInstance, const char* windowName,
         fatalMessageBox("Failed to create OpenGL Window");
     }
 
-    initOpenGL();
 
+
+    initOpenGL();
     updateSize(m_width, m_height);
 
     ReleaseDC(m_hWndMain, m_hdc);
-
-    std::cout << m_systemInfo.getOSInfoStr() << '\n';
-    std::cout << m_systemInfo.getGPUDescription() << '\n';
-    std::cout << m_systemInfo.getCPUDescription() << '\n';
-    std::cout << m_systemInfo.getRAMDescription() << '\n';
 }
 
 
@@ -98,15 +94,11 @@ LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
             break;
         case WM_QUIT:
             PostQuitMessage(0);
-            //exit(0);
             break;
         case WM_CLOSE:
             PostQuitMessage(0);
-            //exit(0);
             break;
         case WM_DESTROY:
-            //PostQuitMessage(0);
-            //exit(0);
             return 0;
         default:
             //std::cout << "Handling message code: " << msg << '\n';
@@ -133,17 +125,18 @@ void Window::init() {
 
 void Window::update(uint32_t ticks) {
     // half-second updates
-    if (ticks % 5 == 0) {
+    if ((ticks % (ticksPerSecond/2)) == 0) {
         m_cpuMeasure.update();
         m_gpuMeasure.update();
         m_ramMeasure.update();
     }
 
     // Full second updates
-    if (ticks % 10 == 0) {
+    if ((ticks % (ticksPerSecond * 2)) == 0) {
         m_processMeasure.update(ticks);
         m_driveMeasure.update(ticks);
     }
+
 }
 
 void Window::draw() const {
@@ -151,36 +144,18 @@ void Window::draw() const {
     wglMakeCurrent(hdc, m_hrc);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-    glRasterPos2f(0.0f, 0.0f);
-    glCallLists(12, GL_UNSIGNED_BYTE, "Test string right here boys");
+    glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
 
     m_cpuMeasure.draw(m_shaders.getCpuGraphProgram());
     m_ramMeasure.draw();
     m_processMeasure.draw();
     m_driveMeasure.draw();
+    m_systemInfo.draw();
 
     drawBorder();
 
     SwapBuffers(hdc);
     ReleaseDC(m_hWndMain, hdc);
-
-    /*hdc = GetDC(m_hWnd2);
-    wglMakeCurrent(hdc, m_hrc2);
-
-    drawBorder();
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-    glColor3f(1.0f, 0.0f, 0.0f);
-
-    glBegin(GL_LINES);
-    glVertex2f(-1.0f, 0.0f);
-    glVertex2f(1.0f, 0.0f);
-    glEnd();
-
-
-    SwapBuffers(hdc);
-    ReleaseDC(m_hWnd2, hdc);*/
 }
 
 void Window::updateSize(int width, int height) {
@@ -201,26 +176,43 @@ void Window::initOpenGL() {
     glutInit(&gargc, gargv);
 
     glEnable(GL_ALPHA_TEST);
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_COLOR_MATERIAL);
-
+    glEnable(GL_DEPTH_TEST); // 3D depth testing
     glEnable(GL_MULTISAMPLE_ARB);
-
-    HDC hdc = GetDC(m_hWndMain);
-    wglUseFontBitmaps(hdc, 0, 256, 1000);
-    glListBase(1000);
-
-    glEnable(GL_BLEND);
+    glEnable(GL_BLEND); // Alpha blending needed for transparency
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
+
+    initFonts();
 
     initShaders();
+
+}
+
+void Window::initFonts() {
+    // Array for conveniently testing different fonts
+    const char* const fonts[] = {
+        "Courier New",
+        "Lato Lights",
+        "Orator Std"
+        "Verdana"
+        //"OCR A Extended"
+        "Letter Gothic Std",
+        "Kozuka Gothic Pr6N L",
+        "Algerian",
+    };
+
+    HDC hdc = GetDC(m_hWndMain);
+    auto font = CreateFont(20, 10, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
+                           OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
+                           VARIABLE_PITCH | FF_MODERN /*DEFAULT_PITCH | FF_ROMAN*/, fonts[0]);
+    SelectObject(hdc, font);
+
+    wglUseFontBitmaps(hdc, 0, 256, 1000);
+    glListBase(1000);
 }
 
 void Window::initShaders() {
     m_shaders.loadShaders();
-
-    std::cout << "Shaders compiled successfully\n";
 }
 
 void Window::releaseOpenGL() {
@@ -345,17 +337,6 @@ bool Window::createHGLRC() {
             return createHGLRC();
         }
     }
-
-    // Create a second window
-    /*if (m_arbMultisampleSupported) {
-        m_hWnd2 = CreateWindowEx(WS_EX_TOOLWINDOW, "RetroGraph", "RetroGraph2",
-                                 WS_POPUP | WS_VISIBLE, 0, 0, 480, 480, nullptr, nullptr, m_hInstance, nullptr);
-        HDC hdc = GetDC(m_hWnd2);
-        SetPixelFormat(hdc, PixelFormat, &pfd);
-        m_hrc2 = wglCreateContext(hdc);
-
-        DwmEnableBlurBehindWindow(m_hWnd2, &bb);
-    }*/
 
     return true;
 }

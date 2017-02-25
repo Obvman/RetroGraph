@@ -1,6 +1,5 @@
 #include "ProcessMeasure.h"
 
-#include <iostream>
 #include <iomanip>
 #include <sstream>
 #include <algorithm>
@@ -97,6 +96,7 @@ void ProcessMeasure::draw() const {
     glViewport(m_viewportStartX, m_viewportStartY, m_viewportWidth, m_viewportHeight);
 
     drawUsageList();
+    drawViewportBorder();
 
     glViewport(vp[0], vp[1], vp[2], vp[3]);
 }
@@ -109,11 +109,7 @@ void ProcessMeasure::drawUsageList() const {
     glColor3f(TEXT_R, TEXT_G, TEXT_B);
 
     for (const auto& str : m_processDrawStrings) {
-
         glRasterPos2f(rasterX, rasterY);
-        /*for (const auto c : str) {
-            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
-        }*/
         glCallLists(str.length(), GL_UNSIGNED_BYTE, str.c_str());
 
         rasterY -= 1.0f / m_numProcessesToDisplay;

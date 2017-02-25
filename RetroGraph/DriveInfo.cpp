@@ -1,7 +1,5 @@
 #include "DriveInfo.h"
 
-#include <iostream>
-
 namespace rg {
 
 DriveInfo::DriveInfo(char _driveLetter, uint64_t initFreeBytes,
