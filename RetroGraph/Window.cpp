@@ -59,7 +59,7 @@ Window::Window(HINSTANCE hInstance, const char* windowName,
 
     updateSize(m_width, m_height);
 
-    ReleaseDC(m_hWnd, m_hdc);
+    ReleaseDC(m_hWndMain, m_hdc);
 
     std::cout << m_systemInfo.getOSInfoStr() << '\n';
     std::cout << m_systemInfo.getGPUDescription() << '\n';
@@ -72,7 +72,6 @@ Window::~Window() {
 }
 
 LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-
     static PAINTSTRUCT ps;
     switch (msg) {
         case WM_PAINT:
@@ -99,11 +98,11 @@ LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
             break;
         case WM_QUIT:
             PostQuitMessage(0);
-            exit(0);
+            //exit(0);
             break;
         case WM_CLOSE:
             PostQuitMessage(0);
-            exit(0);
+            //exit(0);
             break;
         case WM_DESTROY:
             //PostQuitMessage(0);
@@ -118,7 +117,7 @@ LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
 }
 
 void Window::show() {
-    ShowWindow(m_hWnd, SW_SHOW);
+    ShowWindow(m_hWndMain, SW_SHOW);
 }
 
 void Window::init() {
@@ -148,10 +147,13 @@ void Window::update(uint32_t ticks) {
 }
 
 void Window::draw() const {
-    HDC hdc = GetDC(m_hWnd);
+    HDC hdc = GetDC(m_hWndMain);
     wglMakeCurrent(hdc, m_hrc);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+    glRasterPos2f(0.0f, 0.0f);
+    glCallLists(12, GL_UNSIGNED_BYTE, "Test string right here boys");
 
     m_cpuMeasure.draw(m_shaders.getCpuGraphProgram());
     m_ramMeasure.draw();
@@ -161,7 +163,24 @@ void Window::draw() const {
     drawBorder();
 
     SwapBuffers(hdc);
-    ReleaseDC(m_hWnd, hdc);
+    ReleaseDC(m_hWndMain, hdc);
+
+    /*hdc = GetDC(m_hWnd2);
+    wglMakeCurrent(hdc, m_hrc2);
+
+    drawBorder();
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    glColor3f(1.0f, 0.0f, 0.0f);
+
+    glBegin(GL_LINES);
+    glVertex2f(-1.0f, 0.0f);
+    glVertex2f(1.0f, 0.0f);
+    glEnd();
+
+
+    SwapBuffers(hdc);
+    ReleaseDC(m_hWnd2, hdc);*/
 }
 
 void Window::updateSize(int width, int height) {
@@ -187,6 +206,10 @@ void Window::initOpenGL() {
 
     glEnable(GL_MULTISAMPLE_ARB);
 
+    HDC hdc = GetDC(m_hWndMain);
+    wglUseFontBitmaps(hdc, 0, 256, 1000);
+    glListBase(1000);
+
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -201,6 +224,8 @@ void Window::initShaders() {
 }
 
 void Window::releaseOpenGL() {
+    glDeleteLists(1000, 256);
+
     wglMakeCurrent(nullptr, nullptr);
     wglDeleteContext(m_hrc);
 }
@@ -210,16 +235,17 @@ bool Window::createHGLRC() {
        Colt McAnlis. Code and explanations:
        http://nehe.gamedev.net/tutorial/fullscreen_antialiasing/16008/ */
 
-    m_hWnd = CreateWindowEx(WS_EX_APPWINDOW, "RetroGraph", "RetroGraph",
-                            WS_VISIBLE | WS_POPUP, m_startPosX, m_startPosY, m_width, m_height,
-                            NULL, NULL, m_hInstance, NULL);
+    m_hWndMain = CreateWindowEx(WS_EX_TOOLWINDOW, "RetroGraph", "RetroGraph",
+                                WS_VISIBLE | WS_POPUP, m_startPosX, m_startPosY, m_width, m_height,
+                                NULL, NULL, m_hInstance, NULL);
+
 
     #if (!_DEBUG)
     // Display window at the desktop layer on startup
     SetWindowPos(m_hWnd, HWND_BOTTOM, m_startPosX, m_startPosY, m_width, m_height, 0);
     #endif
 
-    if(!m_hWnd) {
+    if(!m_hWndMain) {
         fatalMessageBox("CreateWindowEx - failed");
     }
 
@@ -229,12 +255,12 @@ bool Window::createHGLRC() {
     bb.dwFlags = DWM_BB_ENABLE | DWM_BB_BLURREGION;
     bb.hRgnBlur = hRgn;
     bb.fEnable = TRUE;
-    DwmEnableBlurBehindWindow(m_hWnd, &bb);
+    DwmEnableBlurBehindWindow(m_hWndMain, &bb);
 
-    m_hdc = GetDC(m_hWnd);
+    m_hdc = GetDC(m_hWndMain);
     if (m_hdc == 0) {
-        DestroyWindow(m_hWnd);
-        m_hWnd = 0;
+        DestroyWindow(m_hWndMain);
+        m_hWndMain = 0;
         return false;
     }
 
@@ -267,8 +293,8 @@ bool Window::createHGLRC() {
     if (!m_arbMultisampleSupported) {
         PixelFormat = ChoosePixelFormat(m_hdc, &pfd);
         if (PixelFormat == 0) {
-            ReleaseDC(m_hWnd, m_hdc);
-            DestroyWindow(m_hWnd);
+            ReleaseDC(m_hWndMain, m_hdc);
+            DestroyWindow(m_hWndMain);
             fatalMessageBox("ChoosePixelFormat - failed");
             return false;
         }
@@ -278,10 +304,10 @@ bool Window::createHGLRC() {
 
     // Set the pixel format for the window
     if (!SetPixelFormat(m_hdc, PixelFormat, &pfd)) {
-        ReleaseDC(m_hWnd, m_hdc);
+        ReleaseDC(m_hWndMain, m_hdc);
         m_hdc = 0;
-        DestroyWindow(m_hWnd);
-        m_hWnd = 0;
+        DestroyWindow(m_hWndMain);
+        m_hWndMain = 0;
         fatalMessageBox("SetPixelFormat - failed");
         return false;
     }
@@ -289,10 +315,10 @@ bool Window::createHGLRC() {
     // Create an opengl context for the window
     m_hrc = wglCreateContext(m_hdc);
     if (!m_hrc){
-        ReleaseDC(m_hWnd, m_hdc);
+        ReleaseDC(m_hWndMain, m_hdc);
         m_hdc = 0;
-        DestroyWindow(m_hWnd);
-        m_hWnd = 0;
+        DestroyWindow(m_hWndMain);
+        m_hWndMain = 0;
         fatalMessageBox("wglCreateContext - failed");
         return false;
     }
@@ -301,10 +327,10 @@ bool Window::createHGLRC() {
     if (!wglMakeCurrent(m_hdc, m_hrc)) {
         wglDeleteContext(m_hrc);
         m_hrc = 0;
-        ReleaseDC(m_hWnd, m_hdc);
+        ReleaseDC(m_hWndMain, m_hdc);
         m_hdc = 0;
-        DestroyWindow(m_hWnd);
-        m_hWnd = 0;
+        DestroyWindow(m_hWndMain);
+        m_hWndMain = 0;
 
         fatalMessageBox("Failed to make current context with wglMakeCurrent");
         return false;
@@ -319,6 +345,17 @@ bool Window::createHGLRC() {
             return createHGLRC();
         }
     }
+
+    // Create a second window
+    /*if (m_arbMultisampleSupported) {
+        m_hWnd2 = CreateWindowEx(WS_EX_TOOLWINDOW, "RetroGraph", "RetroGraph2",
+                                 WS_POPUP | WS_VISIBLE, 0, 0, 480, 480, nullptr, nullptr, m_hInstance, nullptr);
+        HDC hdc = GetDC(m_hWnd2);
+        SetPixelFormat(hdc, PixelFormat, &pfd);
+        m_hrc2 = wglCreateContext(hdc);
+
+        DwmEnableBlurBehindWindow(m_hWnd2, &bb);
+    }*/
 
     return true;
 }
@@ -374,7 +411,7 @@ bool Window::initMultisample(PIXELFORMATDESCRIPTOR& pfd) {
     }
 
     // Get Our Current Device Context
-    HDC hDC = GetDC(m_hWnd);
+    HDC hDC = GetDC(m_hWndMain);
     int32_t pixelFormat;
     int32_t valid;
     uint32_t numFormats;
@@ -435,7 +472,7 @@ bool Window::initMultisample(PIXELFORMATDESCRIPTOR& pfd) {
 
 void Window::destroy() {
     // Release and zero the device context, openGL context and window handle
-    if (m_hWnd != 0) {
+    if (m_hWndMain != 0) {
         if (m_hdc != 0) {
             wglMakeCurrent(m_hdc, 0);
             if (m_hrc != 0) {
@@ -443,12 +480,12 @@ void Window::destroy() {
                 m_hrc = 0;
             }
 
-            ReleaseDC(m_hWnd, m_hdc);
+            ReleaseDC(m_hWndMain, m_hdc);
             m_hdc = 0;
         }
 
-        DestroyWindow(m_hWnd);
-        m_hWnd = 0;
+        DestroyWindow(m_hWndMain);
+        m_hWndMain = 0;
     }
 }
 

@@ -111,9 +111,10 @@ void ProcessMeasure::drawUsageList() const {
     for (const auto& str : m_processDrawStrings) {
 
         glRasterPos2f(rasterX, rasterY);
-        for (const auto c : str) {
+        /*for (const auto c : str) {
             glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
-        }
+        }*/
+        glCallLists(str.length(), GL_UNSIGNED_BYTE, str.c_str());
 
         rasterY -= 1.0f / m_numProcessesToDisplay;
     }

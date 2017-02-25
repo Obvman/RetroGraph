@@ -86,9 +86,10 @@ void RAMMeasure::drawText() const {
 
     glColor3f(TEXT_R, TEXT_G, TEXT_B);
     glRasterPos2f(rasterX, rasterY);
-    for (const auto c : percent) {
+    /*for (const auto c : percent) {
         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
-    }
+    }*/
+    glCallLists(percent.length(), GL_UNSIGNED_BYTE, percent.c_str());
 }
 
 }

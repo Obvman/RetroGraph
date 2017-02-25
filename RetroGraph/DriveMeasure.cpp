@@ -123,11 +123,14 @@ void DriveMeasure::drawText() const {
     glColor3f(TEXT_R, TEXT_G, TEXT_B);
 
     for (const auto& pdi : m_drives) {
+        const auto& strToDraw{ pdi->getDriveInfoStr() };
 
         glRasterPos2f(rasterX, rasterY);
-        for (const auto c : pdi->getDriveInfoStr()) {
+        /*for (const auto c : strToDraw) {
             glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
-        }
+        }*/
+        glCallLists(strToDraw.length(), GL_UNSIGNED_BYTE, strToDraw.c_str());
+
         rasterY -= 1.0f / numDrives;
     }
 

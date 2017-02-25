@@ -56,7 +56,7 @@ void CPUMeasure::draw(GLuint shader) const {
 
     glLineWidth(0.5f);
 
-    glUseProgram(shader);
+    //glUseProgram(shader);
     glBegin(GL_LINE_STRIP); {
         // Draw each node in the graph
         for (auto i{ 0U }; i < m_usageData.size(); ++i) {

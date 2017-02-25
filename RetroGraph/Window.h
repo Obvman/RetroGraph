@@ -39,13 +39,13 @@ public:
     void updateSize(int width, int height);
 
     /* Returns the window handle*/
-    HWND& getHWND() { return m_hWnd; }
+    HWND& getHWND() { return m_hWndMain; }
 
     /* Returns the OpenGL context for the window */
     HGLRC& getHRC() { return m_hrc; }
 
     /* Returns the device context for the window */
-    HDC getHDC() { return GetWindowDC(m_hWnd); }
+    HDC getHDC() { return GetWindowDC(m_hWndMain); }
 
     /* Returns the CPU measurement member */
     const CPUMeasure& getCPUMeasure() const { return m_cpuMeasure; }
@@ -92,10 +92,13 @@ private:
 
     HINSTANCE m_hInstance;
     WNDCLASSEX m_wc;
-    HWND m_hWnd;
+    HWND m_hWndMain;
     HDC m_hdc;
     HGLRC m_hrc;
     MSG m_msg;
+
+    //HWND m_hWnd2;
+    //HGLRC m_hrc2;
 
     bool m_arbMultisampleSupported{ false };
     int32_t m_arbMultisampleFormat{ 0 };
