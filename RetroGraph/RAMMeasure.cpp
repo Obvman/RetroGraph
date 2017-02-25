@@ -60,7 +60,8 @@ void RAMMeasure::draw() const {
 }
 
 void RAMMeasure::drawBar() const {
-    auto percent = getLoadPercentagef() * 2.0f;
+    const auto percent = getLoadPercentagef() * 2.0f;
+    constexpr float xLoc{ -0.95f };
 
     float lineWidth;
     glGetFloatv(GL_LINE_WIDTH, &lineWidth);
@@ -69,13 +70,13 @@ void RAMMeasure::drawBar() const {
     glColor3f(LINE_R, LINE_G, LINE_B);
     glBegin(GL_LINES); {
         // Draw usage section
-        glVertex2f(-0.95f, 0.0f);
-        glVertex2f(-0.95f + percent, 0.0f);
+        glVertex2f(xLoc, -0.80f);
+        glVertex2f(xLoc, -0.80f + percent);
 
         // Draw available section
         glColor3f(0.2f, 0.2f, 0.2f);
-        glVertex2f(-0.95f + percent, 0.0f);
-        glVertex2f(0.95f, 0.0f);
+        glVertex2f(xLoc, -0.80f + percent);
+        glVertex2f(xLoc,  0.80f);
     } glEnd();
 
     glLineWidth(lineWidth);
@@ -83,8 +84,8 @@ void RAMMeasure::drawBar() const {
 }
 
 void RAMMeasure::drawText() const {
-    const auto rasterX = float{ -0.95f };
-    const auto rasterY = float{ 0.1f };
+    const auto rasterX = float{ -0.957f };
+    const auto rasterY = float{ 0.87f };
 
     auto percent = "RAM: " + std::to_string(getLoadPercentage()) + "%";
 

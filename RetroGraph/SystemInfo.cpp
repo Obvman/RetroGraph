@@ -17,6 +17,8 @@ SystemInfo::SystemInfo(GLint vpX, GLint vpY, GLint vpW, GLint vpH) :
     m_gpuDescription{},
     m_cpuDescription{},
     m_ramDescription{},
+    m_userName{ "User: " },
+    m_computerName{ "Computer Name: " },
     m_viewportStartX{ vpX },
     m_viewportStartY{ vpY },
     m_viewportWidth{ vpW },
@@ -25,6 +27,19 @@ SystemInfo::SystemInfo(GLint vpX, GLint vpY, GLint vpW, GLint vpH) :
     getOSVersionInfo();
     getCPUInfo();
     getRAMInfo();
+
+
+    // Get the current computer name
+    char uNameBuf[MAX_COMPUTERNAME_LENGTH+1];
+    DWORD uNameLen{ sizeof(uNameBuf) };
+    GetUserName(uNameBuf, &uNameLen);
+    m_userName.append(uNameBuf);
+
+    // Get the computer name
+    char cNameBuf[MAX_COMPUTERNAME_LENGTH+1];
+    DWORD cNameLen{ sizeof(cNameBuf) };
+    GetComputerName(cNameBuf, &cNameLen);
+    m_computerName.append(cNameBuf);
 }
 
 
@@ -44,11 +59,19 @@ void SystemInfo::draw() const {
 }
 
 void SystemInfo::drawText() const {
-    static constexpr auto numLines{ 4U };
+    static constexpr auto numLines{ 6U };
     const auto rasterX = float{ -0.95f };
     auto rasterY = float{ -0.9f };
 
     glColor3f(TEXT_R, TEXT_G, TEXT_B);
+
+    glRasterPos2f(rasterX, rasterY);
+    glCallLists(m_userName.length(), GL_UNSIGNED_BYTE, m_userName.c_str());
+    rasterY += 2.0f / numLines;
+
+    glRasterPos2f(rasterX, rasterY);
+    glCallLists(m_computerName.length(), GL_UNSIGNED_BYTE, m_computerName.c_str());
+    rasterY += 2.0f / numLines;
 
     glRasterPos2f(rasterX, rasterY);
     glCallLists(m_ramDescription.length(), GL_UNSIGNED_BYTE, m_ramDescription.c_str());
@@ -64,6 +87,7 @@ void SystemInfo::drawText() const {
 
     glRasterPos2f(rasterX, rasterY);
     glCallLists(m_osInfoStr.length(), GL_UNSIGNED_BYTE, m_osInfoStr.c_str());
+    rasterY += 2.0f / numLines;
 
 }
 

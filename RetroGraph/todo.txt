@@ -1,10 +1,15 @@
-network upload/download, DNS, VPN
-RAM graph
+rainmeter plugins github - https://github.com/rainmeter/rainmeter/tree/eeeef4a7f2695280ba3506e98a71d163e613b1da/Plugins
+
+network upload/download, DNS, VPN, hostname
+network connectivity status
 gpu load
 cpu/gpu temps
 text labelling graphs
 media - foobar status
+recycle bin monitor
 3D effects on graph
+
+use glScissor so we don't unnecessarily redraw static parts of the window
 
 BUG: after updating process list, all processes show 0% usage
 

@@ -21,10 +21,16 @@ public:
 
     /* Returns string of CPU information: Manufacturer, model, default clock
      * speed, architecture and core count */
-    const std::string& getCPUDescription() { return m_cpuDescription; }
+    const std::string& getCPUDescription() const { return m_cpuDescription; }
 
     /* Returns string with RAM capacity */
-    const std::string& getRAMDescription() { return m_ramDescription; }
+    const std::string& getRAMDescription() const { return m_ramDescription; }
+
+    /* Returns the windows user name of current user */
+    const std::string& getUserName() const { return m_userName; }
+
+    /* Returns the computer's name */
+    const std::string& getComputerName() const { return m_computerName; }
 
     void draw() const;
 
@@ -46,6 +52,8 @@ private:
     std::string m_gpuDescription;
     std::string m_cpuDescription;
     std::string m_ramDescription;
+    std::string m_userName;
+    std::string m_computerName;
 
     // Rendering members
     GLint m_viewportStartX;
