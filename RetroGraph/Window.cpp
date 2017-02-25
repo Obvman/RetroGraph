@@ -30,7 +30,8 @@ Window::Window(HINSTANCE hInstance, const char* windowName,
     m_systemInfo{},
     m_arbMultisampleSupported{ false },
     m_arbMultisampleFormat{ 0 },
-    m_aaSamples{ 8 } {
+    m_aaSamples{ 8 },
+    m_shaders{} {
 
     WNDCLASSEX m_wc;
     memset(&m_wc, 0, sizeof(m_wc));
@@ -49,8 +50,6 @@ Window::Window(HINSTANCE hInstance, const char* windowName,
     if(!RegisterClassEx(&m_wc)) {
         fatalMessageBox("RegisterClassEx - failed");
     }
-
-
 
     if (!createHGLRC()) {
         fatalMessageBox("Failed to create OpenGL Window");
@@ -154,7 +153,7 @@ void Window::draw() const {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-    m_cpuMeasure.draw();
+    m_cpuMeasure.draw(m_shaders.getCpuGraphProgram());
     m_ramMeasure.draw();
     m_processMeasure.draw();
     m_driveMeasure.draw();
@@ -174,7 +173,10 @@ void Window::updateSize(int width, int height) {
     glLoadIdentity();
 }
 
-void Window::initOpenGL() const {
+void Window::initOpenGL() {
+    glewInit();
+
+    // Make dummy command line arguments for glutInit
     char* gargv[1] = {""};
     int gargc{ 1 };
     glutInit(&gargc, gargv);
@@ -188,6 +190,14 @@ void Window::initOpenGL() const {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+    initShaders();
+}
+
+void Window::initShaders() {
+    m_shaders.loadShaders();
+
+    std::cout << "Shaders compiled successfully\n";
 }
 
 void Window::releaseOpenGL() {

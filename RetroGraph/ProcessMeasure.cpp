@@ -75,6 +75,19 @@ void ProcessMeasure::update(uint32_t ticks) {
     [](const auto& ppd1, const auto& ppd2) {
         return ppd1->getCpuUsage() > ppd2->getCpuUsage();
     });
+
+    // Update the strings to be drawn
+    m_processDrawStrings.clear();
+    for (const auto& ppd : m_allProcessData) {
+        std::stringstream ss;
+        ss << ppd->getName() << " (" << ppd->getWorkingSetSizeMB() << "MB): "
+           << std::setprecision(3) << std::lround(ppd->getCpuUsage()) << "%";
+
+        m_processDrawStrings.push_back(ss.str());
+        if (m_processDrawStrings.size() >= m_numProcessesToDisplay) {
+            break;
+        }
+    }
 }
 
 void ProcessMeasure::draw() const {
@@ -89,29 +102,20 @@ void ProcessMeasure::draw() const {
 }
 
 void ProcessMeasure::drawUsageList() const {
-    static constexpr uint8_t numProcessesToDisplay{ 7 };
 
     const auto rasterX = float{ -0.95f };
     auto rasterY = float{ 1.0f }; // Y changes for each process drawn
 
     glColor3f(TEXT_R, TEXT_G, TEXT_B);
 
-    auto i{ 0U }; // counter for how many to draw
-    for (const auto& ppd : m_allProcessData) {
-        if (i >= numProcessesToDisplay) break;
-
-        const auto& pd = *ppd;
-        std::stringstream ss;
-        ss << pd.getName() << " (" << pd.getWorkingSetSizeMB() << "MB): "
-           << std::setprecision(3) << std::lround(pd.getCpuUsage()) << "%";
+    for (const auto& str : m_processDrawStrings) {
 
         glRasterPos2f(rasterX, rasterY);
-        for (const auto c : ss.str()) {
+        for (const auto c : str) {
             glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
         }
 
-        rasterY -= 1.0f / numProcessesToDisplay;
-        ++i;
+        rasterY -= 1.0f / m_numProcessesToDisplay;
     }
 }
 

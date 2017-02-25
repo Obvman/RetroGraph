@@ -47,6 +47,9 @@ private:
     GLint m_viewportStartY;
     GLint m_viewportWidth;
     GLint m_viewportHeight;
+
+    uint16_t m_numProcessesToDisplay{ 7 };
+    std::vector<std::string> m_processDrawStrings{ m_numProcessesToDisplay };
 };
 
 }

@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <vector>
 
+#include "GLShaderHandler.h"
 #include "CPUMeasure.h"
 #include "GPUMeasure.h"
 #include "RAMMeasure.h"
@@ -56,7 +57,11 @@ public:
     const RAMMeasure& getRAMMeasure() const { return m_ramMeasure; }
 private:
     /* Initialises OpenGL settings */
-    void initOpenGL() const;
+    void initOpenGL();
+
+    /* Compiles and links shaders */
+    void initShaders();
+
     /* Releases the OpenGL context from the window */
     void releaseOpenGL();
 
@@ -95,6 +100,8 @@ private:
     bool m_arbMultisampleSupported{ false };
     int32_t m_arbMultisampleFormat{ 0 };
     int32_t m_aaSamples{ 32 };
+
+    GLShaderHandler m_shaders;
 };
 
 }

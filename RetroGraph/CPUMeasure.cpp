@@ -40,7 +40,7 @@ void CPUMeasure::update() {
     getCPULoad();
 }
 
-void CPUMeasure::draw() const {
+void CPUMeasure::draw(GLuint shader) const {
     glPushMatrix();
 
     // Preserve initial viewport settings
@@ -49,17 +49,17 @@ void CPUMeasure::draw() const {
     GLfloat lineWidth;
     glGetFloatv(GL_LINE_WIDTH, &lineWidth);
 
+
     // Set up the view to a portion of the screen
     glViewport(m_viewportStartX, m_viewportStartY,
                m_viewportWidth, m_viewportHeight);
 
     glLineWidth(0.5f);
 
-
+    glUseProgram(shader);
     glBegin(GL_LINE_STRIP); {
         // Draw each node in the graph
         for (auto i{ 0U }; i < m_usageData.size(); ++i) {
-            //glColor3f(BLUE1_R, BLUE1_G, BLUE1_B);
             glColor4f(LINE_R, LINE_G, LINE_B, 1.0f);
 
             float x = (i / static_cast<float>(m_usageData.size() - 1)) * 2.0f - 1.0f;
@@ -74,13 +74,14 @@ void CPUMeasure::draw() const {
         }
     } glEnd();
 
+    glUseProgram(0);
+
     drawUptime();
 
     glLineWidth(lineWidth);
     glViewport(vp[0], vp[1], vp[2], vp[3]);
 
     glPopMatrix();
-
 
     drawGraphBox();
 

@@ -19,7 +19,7 @@ public:
     void update();
 
     /* Draws the components of the measure */
-    void draw() const;
+    void draw(GLuint shader) const;
 
     /* Draws the total system uptime text */
     void drawUptime() const;
