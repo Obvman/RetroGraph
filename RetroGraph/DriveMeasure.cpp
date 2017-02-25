@@ -118,7 +118,7 @@ void DriveMeasure::drawText() const {
     const auto numDrives{ m_drives.size() };
 
     const auto rasterX = float{ -0.95f };
-    auto rasterY = float{ 1.0f };
+    auto rasterY = float{ -0.90f };
 
     glColor3f(TEXT_R, TEXT_G, TEXT_B);
 
@@ -128,7 +128,7 @@ void DriveMeasure::drawText() const {
         glRasterPos2f(rasterX, rasterY);
         glCallLists(strToDraw.length(), GL_UNSIGNED_BYTE, strToDraw.c_str());
 
-        rasterY -= 1.0f / numDrives;
+        rasterY += 2.0f / numDrives;
     }
 
 }

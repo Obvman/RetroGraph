@@ -1,7 +1,9 @@
 #pragma once
+
 #include <Windows.h>
 #include <GL/glew.h>
 #include <GL/gl.h>
+#include <vector>
 
 #include "utils.h"
 
@@ -18,11 +20,6 @@ public:
     /* Draws the components of this object */
     void draw() const;
 
-    /* Draws the RAM usage bar */
-    void drawBar() const;
-
-    /* Draws the RAM usage text */
-    void drawText() const;
 
     /* Gets the total size of the system's physical memory in different
        byte units */
@@ -46,9 +43,25 @@ public:
     float getUsedPhysicalGB() const { return getTotalPhysicalGB() - getAvailablePhysicalGB(); }
 
     /* Returns memory load as integer from 0 - 100 */
-    DWORD getLoadPercentage() const { return m_memStatus.dwMemoryLoad; }
+    uint32_t getLoadPercentage() const { return m_memStatus.dwMemoryLoad; }
+
 private:
+    /* Draws the RAM usage bar */
+    void drawBar() const;
+
+    /* Draws the RAM usage text */
+    void drawText() const;
+
+    /* Draws the RAM usage line graph */
+    void drawGraph() const;
+
+    /* Returns more accurate load percentage as a float from 0.0 - 1.0 */
+    float getLoadPercentagef() const;
+
     MEMORYSTATUSEX m_memStatus;
+
+    size_t dataSize; // max number of usage percentages to store
+    std::vector<float> m_usageData;
 
     // Rendering members
     GLint m_viewportStartX;

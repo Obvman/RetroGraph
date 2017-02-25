@@ -22,12 +22,16 @@ Window::Window(HINSTANCE hInstance, const char* windowName,
     m_height{ height },
     m_startPosX{ startX },
     m_startPosY{ startY },
-    m_cpuMeasure{ this, m_width, m_height / 3 },
+    m_cpuMeasure{ this, m_width, m_height/3 },
     m_gpuMeasure{ },
-    m_ramMeasure{ 0, 480, m_width / 3, m_height / 3 },
-    m_processMeasure{ 0, m_height - (m_height/6), m_width / 4, m_height / 6 },
-    m_driveMeasure{ 0, 0, m_width / 3, m_height / 2 },
-    m_systemInfo{ 800, 0, m_width / 2, m_height / 2},
+    m_ramMeasure{ 0, m_height/3,
+                  m_width, m_height/3 },
+    m_processMeasure{ 0, m_height - (m_height/6),
+                      2 * (m_width/3), m_height/6 },
+    m_driveMeasure{ 2 * (m_width/3), m_height - 2 * (m_height/6),
+                    m_width/3, m_height/6 },
+    m_systemInfo{ 2 * (m_width/3), m_height - (m_height/6),
+                  m_width / 3, m_height / 6},
     m_arbMultisampleSupported{ false },
     m_arbMultisampleFormat{ 0 },
     m_aaSamples{ 8 },
@@ -42,7 +46,7 @@ Window::Window(HINSTANCE hInstance, const char* windowName,
     m_wc.cbClsExtra  = 0;
     m_wc.cbWndExtra  = 0;
     m_wc.hInstance = m_hInstance;
-    m_wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+    m_wc.hIcon = LoadIcon(m_hInstance, IDI_ERROR);
     m_wc.hCursor = LoadCursor(NULL, IDC_ARROW);
     m_wc.hbrBackground = (HBRUSH)CreateSolidBrush(0x00000000);
     m_wc.lpszClassName = windowName;
@@ -54,8 +58,6 @@ Window::Window(HINSTANCE hInstance, const char* windowName,
     if (!createHGLRC()) {
         fatalMessageBox("Failed to create OpenGL Window");
     }
-
-
 
     initOpenGL();
     updateSize(m_width, m_height);
@@ -94,9 +96,11 @@ LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
             break;
         case WM_QUIT:
             PostQuitMessage(0);
+            exit(0);
             break;
         case WM_CLOSE:
             PostQuitMessage(0);
+            exit(0);
             break;
         case WM_DESTROY:
             return 0;
@@ -133,9 +137,10 @@ void Window::update(uint32_t ticks) {
 
     // Full second updates
     if ((ticks % (ticksPerSecond * 2)) == 0) {
-        m_processMeasure.update(ticks);
         m_driveMeasure.update(ticks);
     }
+
+    m_processMeasure.update(ticks);
 
 }
 
@@ -186,6 +191,7 @@ void Window::initOpenGL() {
 
     initShaders();
 
+    m_systemInfo.getGPUDescription();
 }
 
 void Window::initFonts() {
@@ -227,14 +233,23 @@ bool Window::createHGLRC() {
        Colt McAnlis. Code and explanations:
        http://nehe.gamedev.net/tutorial/fullscreen_antialiasing/16008/ */
 
-    m_hWndMain = CreateWindowEx(WS_EX_TOOLWINDOW, "RetroGraph", "RetroGraph",
+    m_hWndMain = CreateWindowEx(WS_EX_APPWINDOW, "RetroGraph", "RetroGraph",
                                 WS_VISIBLE | WS_POPUP, m_startPosX, m_startPosY, m_width, m_height,
                                 NULL, NULL, m_hInstance, NULL);
+
+    if (m_arbMultisampleSupported && false) {
+        // Show the second window in the toolbar
+        auto currStyle = GetWindowLong(m_hWndMain, GWL_STYLE);
+        currStyle &= ~WS_EX_TOOLWINDOW;
+        //currStyle |= WS_EX_APPWINDOW;
+        SetWindowLong(m_hWndMain, GWL_STYLE, WS_EX_APPWINDOW);
+
+    }
 
 
     #if (!_DEBUG)
     // Display window at the desktop layer on startup
-    SetWindowPos(m_hWnd, HWND_BOTTOM, m_startPosX, m_startPosY, m_width, m_height, 0);
+    SetWindowPos(m_hWndMain, HWND_BOTTOM, m_startPosX, m_startPosY, m_width, m_height, 0);
     #endif
 
     if(!m_hWndMain) {

@@ -76,7 +76,7 @@ void CPUMeasure::drawGraph(GLuint shader) const {
         for (auto i{ 0U }; i < m_usageData.size(); ++i) {
             glColor4f(LINE_R, LINE_G, LINE_B, 1.0f);
 
-            float x = (i / static_cast<float>(m_usageData.size() - 1)) * 2.0f - 1.0f;
+            float x = (static_cast<float>(i) / (m_usageData.size() - 1)) * 2.0f - 1.0f;
             float y = m_usageData[i] * 2.0f - 1.0f;
 
             // If the vertex is at the border, add/subtract the border delta
@@ -114,9 +114,12 @@ void CPUMeasure::drawSystemTime() const {
     localtime_s(&t, &now);
     strftime(buf, sizeof(buf), "%X", &t);
 
+    std::stringstream ss;
+    ss << "Time: " << buf;
+
     glColor3f(TEXT_R, TEXT_G, TEXT_B);
     glRasterPos2f(rasterX, rasterY);
-    glCallLists(sizeof(buf), GL_UNSIGNED_BYTE, buf);
+    glCallLists(ss.str().length(), GL_UNSIGNED_BYTE, ss.str().c_str());
 }
 
 float CPUMeasure::getCPULoad() {

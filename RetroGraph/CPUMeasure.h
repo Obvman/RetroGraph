@@ -21,6 +21,11 @@ public:
     /* Draws the components of the measure */
     void draw(GLuint shader) const;
 
+
+    /* Returns the current system CPU load as a percentage */
+    float getCPULoad();
+
+private:
     /* Draws the line graph of system CPU usage */
     void drawGraph(GLuint shader) const;
 
@@ -30,10 +35,6 @@ public:
     /* Draws the system time in hh:mm:ss format */
     void drawSystemTime() const;
 
-    /* Returns the current system CPU load as a percentage */
-    float getCPULoad();
-
-private:
     /* Returns string containing the current system uptime in
        dd:hh:mm:ss format */
     std::string getUptimeStr() const;

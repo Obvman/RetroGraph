@@ -8,7 +8,7 @@
 
 namespace rg {
 
-const std::string shaderPath{ "shaders\\" };
+const std::string shaderPath{ (IsDebuggerPresent()) ? "shaders\\" : "..\\RetroGraph\\shaders\\" };
 
 GLShaderHandler::GLShaderHandler() {
 }

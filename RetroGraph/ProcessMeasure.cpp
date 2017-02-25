@@ -15,6 +15,9 @@ namespace rg {
 
 ProcessMeasure::ProcessMeasure(GLint vpX, GLint vpY, GLint vpW, GLint vpH) :
     m_allProcessData{},
+    m_numProcessesToDisplay{ 7 },
+    m_processCPUDrawStrings{ m_numProcessesToDisplay },
+    m_processRAMDrawStrings{ m_numProcessesToDisplay },
     m_viewportStartX{ vpX },
     m_viewportStartY{ vpY },
     m_viewportWidth{ vpW },
@@ -27,6 +30,7 @@ ProcessMeasure::~ProcessMeasure() {
 
 void ProcessMeasure::init() {
     populateList();
+    fillRAMStrings();
 }
 // TODO benchmark using vector vs list
 
@@ -37,55 +41,45 @@ void ProcessMeasure::update(uint32_t ticks) {
         populateList();
     }
 
-    // Track iterator outside while scope for std::erase
-    auto it = m_allProcessData.begin();
-    while (it != m_allProcessData.end()) {
-        auto& pd = **it; // get reference to ProcessData for convenience
+    if ((ticks % (ticksPerSecond * 2)) == 0) {
 
-        // Get the process relating to the ProcessData object
-        HANDLE pHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
-                                     false, pd.getPID());
-        if (!pHandle) {
-            auto error = GetLastError();
-            // If access is denied or the process is the system idle process, just silently skip the process
-            if (error != ERROR_ACCESS_DENIED && pd.getPID() != 0) {
-                fatalMessageBox("Failed to open process. Code: " + std::to_string(error));
+        // Track iterator outside while scope for std::erase
+        auto it = m_allProcessData.begin();
+        while (it != m_allProcessData.end()) {
+            auto& pd = **it; // get reference to ProcessData for convenience
+
+            // Get the process relating to the ProcessData object
+            HANDLE pHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
+                                         false, pd.getPID());
+            if (!pHandle) {
+                auto error = GetLastError();
+                // If access is denied or the process is the system idle process, just silently skip the process
+                if (error != ERROR_ACCESS_DENIED && pd.getPID() != 0) {
+                    fatalMessageBox("Failed to open process. Code: " + std::to_string(error));
+                }
+                continue;
             }
-            continue;
+
+            // Check for processes that have exited and remove them from the list
+            DWORD exitCode{ 1UL };
+            GetExitCodeProcess(pHandle, &exitCode);
+            if (exitCode == 0 || exitCode == 1) {
+                it = m_allProcessData.erase(it);
+            } else {
+                // Get new timing information and calculate the CPU usage
+                const auto cpuUsage{ calculateCPUUsage(pHandle, pd) };
+                pd.setCpuUsage(cpuUsage);
+                pd.updateMemCounters();
+
+                ++it;
+            }
         }
 
-        // Check for processes that have exited and remove them from the list
-        DWORD exitCode{ 1UL };
-        GetExitCodeProcess(pHandle, &exitCode);
-        if (exitCode == 0 || exitCode == 1) {
-            it = m_allProcessData.erase(it);
-        } else {
-            // Get new timing information and calculate the CPU usage
-            const auto cpuUsage{ calculateCPUUsage(pHandle, pd) };
-            pd.setCpuUsage(cpuUsage);
-            pd.updateMemCounters();
-
-            ++it;
-        }
+        fillCPUStrings();
     }
 
-    // Sort the vector based on the current CPU usage of processes in descending order
-    std::sort(m_allProcessData.begin(), m_allProcessData.end(),
-    [](const auto& ppd1, const auto& ppd2) {
-        return ppd1->getCpuUsage() > ppd2->getCpuUsage();
-    });
-
-    // Update the strings to be drawn
-    m_processDrawStrings.clear();
-    for (const auto& ppd : m_allProcessData) {
-        std::stringstream ss;
-        ss << ppd->getName() << " (" << ppd->getWorkingSetSizeMB() << "MB): "
-           << std::setprecision(3) << std::lround(ppd->getCpuUsage()) << "%";
-
-        m_processDrawStrings.push_back(ss.str());
-        if (m_processDrawStrings.size() >= m_numProcessesToDisplay) {
-            break;
-        }
+    if ((ticks % (ticksPerSecond * 5)) == 0) {
+        fillRAMStrings();
     }
 }
 
@@ -95,24 +89,87 @@ void ProcessMeasure::draw() const {
 
     glViewport(m_viewportStartX, m_viewportStartY, m_viewportWidth, m_viewportHeight);
 
-    drawUsageList();
+    drawCPUUsageList();
+
+    // Draw Dividing line
+    glColor3f(TEXT_R, TEXT_G, TEXT_B);
+    glBegin(GL_LINES); {
+        glVertex2f(0.0f, 0.9f);
+        glVertex2f(0.0f, -0.9f);
+    } glEnd();
+
+    drawRAMUsageList();
     drawViewportBorder();
 
     glViewport(vp[0], vp[1], vp[2], vp[3]);
 }
 
-void ProcessMeasure::drawUsageList() const {
-
+void ProcessMeasure::drawCPUUsageList() const {
     const auto rasterX = float{ -0.95f };
     auto rasterY = float{ -0.90f }; // Y changes for each process drawn
 
     glColor3f(TEXT_R, TEXT_G, TEXT_B);
 
-    for (auto it{ m_processDrawStrings.crbegin() }; it != m_processDrawStrings.crend(); ++it) {
+    for (auto it{ m_processCPUDrawStrings.crbegin() }; it != m_processCPUDrawStrings.crend(); ++it) {
         glRasterPos2f(rasterX, rasterY);
         glCallLists(it->length(), GL_UNSIGNED_BYTE, it->c_str());
 
         rasterY += 2.0f / (m_numProcessesToDisplay);
+    }
+}
+
+void ProcessMeasure::drawRAMUsageList() const {
+    const auto rasterX = float{ 0.05f };
+    auto rasterY = float{ -0.90f }; // Y changes for each process drawn
+
+    glColor3f(TEXT_R, TEXT_G, TEXT_B);
+
+    for (auto it{ m_processRAMDrawStrings.crbegin() }; it != m_processRAMDrawStrings.crend(); ++it) {
+        glRasterPos2f(rasterX, rasterY);
+        glCallLists(it->length(), GL_UNSIGNED_BYTE, it->c_str());
+
+        rasterY += 2.0f / (m_numProcessesToDisplay);
+    }
+}
+
+void ProcessMeasure::fillCPUStrings() {
+    // Sort the vector based on the current CPU usage of processes in descending order
+    std::sort(m_allProcessData.begin(), m_allProcessData.end(),
+    [](const auto& ppd1, const auto& ppd2) {
+        return ppd1->getCpuUsage() > ppd2->getCpuUsage();
+    });
+
+    // Update the strings to be drawn
+    m_processCPUDrawStrings.clear();
+    for (const auto& ppd : m_allProcessData) {
+        std::stringstream ss;
+        ss << ppd->getName() << ": " << std::setprecision(3)
+           << std::lround(ppd->getCpuUsage()) << "%";
+
+        m_processCPUDrawStrings.push_back(ss.str());
+        if (m_processCPUDrawStrings.size() >= m_numProcessesToDisplay) {
+            break;
+        }
+    }
+}
+
+void ProcessMeasure::fillRAMStrings() {
+    // Now sort the list in terms of memory usage and build strings for that
+    std::sort(m_allProcessData.begin(), m_allProcessData.end(),
+    [](const auto& ppd1, const auto& ppd2) {
+        return ppd1->getWorkingSetSizeMB() > ppd2->getWorkingSetSizeMB();
+    });
+
+    m_processRAMDrawStrings.clear();
+    for (const auto& ppd : m_allProcessData) {
+        std::stringstream ss;
+        ss << ppd->getName() << ": " << ppd->getWorkingSetSizeMB() << "MB";
+
+        m_processRAMDrawStrings.push_back(ss.str());
+
+        if (m_processRAMDrawStrings.size() >= m_numProcessesToDisplay) {
+            break;
+        }
     }
 }
 

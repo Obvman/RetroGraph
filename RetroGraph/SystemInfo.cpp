@@ -1,5 +1,6 @@
 #include "SystemInfo.h"
 
+#include <iostream>
 #include <Winver.h>
 #include <sstream>
 #include <GL/gl.h>
@@ -45,25 +46,24 @@ void SystemInfo::draw() const {
 void SystemInfo::drawText() const {
     static constexpr auto numLines{ 4U };
     const auto rasterX = float{ -0.95f };
-    auto rasterY = float{ 1.0f };
+    auto rasterY = float{ -0.9f };
 
     glColor3f(TEXT_R, TEXT_G, TEXT_B);
 
     glRasterPos2f(rasterX, rasterY);
     glCallLists(m_osInfoStr.length(), GL_UNSIGNED_BYTE, m_osInfoStr.c_str());
-    rasterY -= 1.0f / numLines;
+    rasterY += 2.0f / numLines;
 
     glRasterPos2f(rasterX, rasterY);
     glCallLists(m_gpuDescription.length(), GL_UNSIGNED_BYTE, m_gpuDescription.c_str());
-    rasterY -= 1.0f / numLines;
+    rasterY += 2.0f / numLines;
 
     glRasterPos2f(rasterX, rasterY);
     glCallLists(m_cpuDescription.length(), GL_UNSIGNED_BYTE, m_cpuDescription.c_str());
-    rasterY -= 1.0f / numLines;
+    rasterY += 2.0f / numLines;
 
     glRasterPos2f(rasterX, rasterY);
     glCallLists(m_ramDescription.length(), GL_UNSIGNED_BYTE, m_ramDescription.c_str());
-    rasterY -= 1.0f / numLines;
 }
 
 void SystemInfo::getOSVersionInfo() {
@@ -168,7 +168,7 @@ void SystemInfo::getGPUInfo() {
 
     std::stringstream ss;
     ss << gpuRenderer << ", " << gpuVendor;
-    m_gpuDescription = "GPU: " + ss.str();
+    m_gpuDescription = std::string{ "GPU: " + ss.str() };
 }
 
 }

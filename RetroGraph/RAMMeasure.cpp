@@ -1,5 +1,6 @@
 #include "RAMMeasure.h"
 
+#include <iostream>
 #include <string>
 #include <GL/freeglut.h>
 
@@ -9,6 +10,8 @@ namespace rg {
 
 RAMMeasure::RAMMeasure(GLint startX, GLint startY, GLint ramWidth, GLint ramHeight) :
     m_memStatus{},
+    dataSize{ 80U },
+    m_usageData{},
     m_viewportStartX{ startX },
     m_viewportStartY{ startY },
     m_viewportWidth{ ramWidth },
@@ -18,6 +21,7 @@ RAMMeasure::RAMMeasure(GLint startX, GLint startY, GLint ramWidth, GLint ramHeig
     m_memStatus.dwLength = sizeof(m_memStatus);
     GlobalMemoryStatusEx(&m_memStatus);
 
+    m_usageData.assign(dataSize, 0.0f);
 }
 
 
@@ -26,6 +30,10 @@ RAMMeasure::~RAMMeasure() {
 
 void RAMMeasure::update() {
     GlobalMemoryStatusEx(&m_memStatus);
+
+    // Add value to the list of load values and shift the list left
+    m_usageData[0] = getLoadPercentagef();
+    std::rotate(m_usageData.begin(), m_usageData.begin() + 1, m_usageData.end());
 }
 
 void RAMMeasure::draw() const {
@@ -41,7 +49,8 @@ void RAMMeasure::draw() const {
 
     drawText();
     drawBar();
-    //drawViewportBorder();
+    drawGraph();
+    drawViewportBorder();
 
     // Reinstate previous settings
     glViewport(vp[0], vp[1], vp[2], vp[3]);
@@ -81,10 +90,41 @@ void RAMMeasure::drawText() const {
 
     glColor3f(TEXT_R, TEXT_G, TEXT_B);
     glRasterPos2f(rasterX, rasterY);
-    /*for (const auto c : percent) {
-        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
-    }*/
     glCallLists(percent.length(), GL_UNSIGNED_BYTE, percent.c_str());
+}
+
+void RAMMeasure::drawGraph() const {
+    GLfloat lineWidth;
+    glGetFloatv(GL_LINE_WIDTH, &lineWidth);
+    glLineWidth(0.5f);
+
+    //glUseProgram(shader);
+    glBegin(GL_LINE_STRIP); {
+        // Draw each node in the graph
+        for (auto i{ 0U }; i < m_usageData.size(); ++i) {
+            glColor4f(LINE_R, LINE_G, LINE_B, 1.0f);
+
+            float x = (static_cast<float>(i) / (m_usageData.size() - 1)) * 2.0f - 1.0f;
+            float y = (m_usageData[i]) * 2.0f - 1.0f;
+
+            // If the vertex is at the border, add/subtract the border delta
+            if (i == 0) {
+                x += bDelta;
+            }
+
+            glVertex3f(x, y, 0.0f);
+        }
+    } glEnd();
+
+    glUseProgram(0);
+
+    glLineWidth(lineWidth);
+}
+
+float RAMMeasure::getLoadPercentagef() const {
+    const auto used{ getUsedPhysicalB() };
+    const auto total{ getTotalPhysicalB() };
+    return (static_cast<float>(used) / static_cast<float>(total));
 }
 
 }
