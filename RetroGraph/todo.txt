@@ -1,0 +1,29 @@
+network upload/download, DNS, VPN
+RAM graph
+gpu load
+cpu/gpu temps
+text labelling graphs
+media - foobar status
+3D effects on graph
+
+BUG: after updating process list, all processes show 0% usage
+
+use offset updates to avoid CPU spikes
+
+use VBOs
+
+handle insertion and removal of usb drives
+
+right-click menu
+
+implement border delta into viewport bounds rather than draw calls
+
+store font sizes in each Measure
+
+make initial style WS_EX_TOOLWINDOW then set to WS_EX_APPWINDOW after creation is done to prevent fake window showing in toolbar
+
+multithreading
+
+use SetWindowPos to keep the window in the background all the time
+
+TODO store global system kernel/user timings rather than storing inside every ProcessData object

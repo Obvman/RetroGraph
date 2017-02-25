@@ -1,0 +1,12 @@
+.gitignore
+.vs/
+Debug/
+Release/
+*.opendb
+*.db
+*.sln
+*.swp
+*.aps
+*.rc
+*.vcxproj*
+deps/
