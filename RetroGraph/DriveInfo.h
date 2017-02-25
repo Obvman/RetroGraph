@@ -20,6 +20,7 @@ public:
 
     char getDriveLetter() const { return m_driveLetter; }
     uint64_t getFreeBytes() const { return m_totalFreeBytes; }
+    uint64_t getUsedBytes() const { return m_totalBytes - m_totalFreeBytes; }
     uint64_t getTotalBytes() const { return m_totalBytes; }
     const std::string& getVolumeName() const { return m_volumeName; }
     const std::string& getDriveInfoStr() const { return m_driveInfoStr; }

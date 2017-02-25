@@ -18,8 +18,10 @@ public:
     void init();
     void update(uint32_t ticks);
     void draw() const;
-    void drawText() const;
 private:
+    void drawText() const;
+    void drawBar(const DriveInfo& di, float x, float y) const;
+
     std::vector<std::string> m_drivePaths;
     std::vector<std::unique_ptr<DriveInfo>> m_drives;
 

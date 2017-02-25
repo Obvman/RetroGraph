@@ -2,6 +2,7 @@
 
 #include <Windows.h>
 #include <sstream>
+#include <iostream>
 #include <iomanip>
 
 #include <GL/glew.h>
@@ -82,7 +83,7 @@ void DriveMeasure::update(uint32_t ticks) {
             ss << std::fixed << std::setprecision(2)
                << pdi->getDriveLetter() << ": "
                << pdi->getVolumeName() << " ("
-               << static_cast<float>(pdi->getFreeBytes()) / GB << "GB/"
+               << static_cast<float>(pdi->getUsedBytes()) / GB << "GB/"
                << static_cast<float>(pdi->getTotalBytes()) / GB << "GB)\n";
             pdi->setDriveInfoStr(ss.str());
         }
@@ -118,7 +119,7 @@ void DriveMeasure::drawText() const {
     const auto numDrives{ m_drives.size() };
 
     const auto rasterX = float{ -0.95f };
-    auto rasterY = float{ -0.90f };
+    auto rasterY = float{ 0.85f };
 
     glColor3f(TEXT_R, TEXT_G, TEXT_B);
 
@@ -128,8 +129,36 @@ void DriveMeasure::drawText() const {
         glRasterPos2f(rasterX, rasterY);
         glCallLists(strToDraw.length(), GL_UNSIGNED_BYTE, strToDraw.c_str());
 
-        rasterY += 2.0f / numDrives;
+        drawBar(*pdi, rasterX, rasterY - 0.05f);
+
+        rasterY -= 2.0f / numDrives;
     }
+}
+
+void DriveMeasure::drawBar(const DriveInfo& di, float x, float y) const {
+    const float percentFilled{ 2.0f * (static_cast<float>(di.getUsedBytes()) / (di.getTotalBytes())) };
+
+    GLfloat lineWidth;
+    glGetFloatv(GL_LINE_WIDTH, &lineWidth);
+
+    float color[4];
+    glGetFloatv(GL_CURRENT_COLOR, color);
+
+    glColor3f(LINE_R, LINE_G, LINE_B);
+    glLineWidth(5.0f);
+
+    glBegin(GL_LINES); {
+        glVertex2f(-0.95f, y);
+        glVertex2f(-0.95f + percentFilled, y);
+
+        // Draw available section
+        glColor3f(0.2f, 0.2f, 0.2f);
+        glVertex2f(-0.95f + percentFilled, y);
+        glVertex2f(0.95f, y);
+    } glEnd();
+
+    glLineWidth(lineWidth);
+    glColor4f(color[0], color[1], color[2], color[3]);
 
 }
 
