@@ -32,6 +32,8 @@ Window::Window(HINSTANCE hInstance, const char* windowName,
                     m_width/3, m_height/6 },
     m_systemInfo{ 2 * (m_width/3), m_height - (m_height/6),
                   m_width / 3, m_height / 6},
+    m_renderer{ m_cpuMeasure, m_gpuMeasure, m_ramMeasure, m_processMeasure,
+                m_driveMeasure, m_systemInfo },
     m_arbMultisampleSupported{ false },
     m_arbMultisampleFormat{ 0 },
     m_aaSamples{ 8 },
@@ -148,14 +150,14 @@ void Window::draw() const {
     HDC hdc = GetDC(m_hWndMain);
     wglMakeCurrent(hdc, m_hrc);
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-    glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
+    m_renderer.draw(m_shaders);
 
-    m_cpuMeasure.draw(m_shaders.getCpuGraphProgram());
+
+    /*m_cpuMeasure.draw(m_shaders.getCpuGraphProgram());
     m_ramMeasure.draw();
     m_processMeasure.draw();
     m_driveMeasure.draw();
-    m_systemInfo.draw();
+    m_systemInfo.draw();*/
 
     //drawBorder();
 

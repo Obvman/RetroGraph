@@ -9,6 +9,7 @@
 #include "ProcessMeasure.h"
 #include "SystemInfo.h"
 #include "DriveMeasure.h"
+#include "Renderer.h"
 
 namespace rg {
 
@@ -93,15 +94,14 @@ private:
     DriveMeasure m_driveMeasure;
     SystemInfo m_systemInfo;
 
+    Renderer m_renderer;
+
     HINSTANCE m_hInstance;
     WNDCLASSEX m_wc;
     HWND m_hWndMain;
     HDC m_hdc;
     HGLRC m_hrc;
     MSG m_msg;
-
-    //HWND m_hWnd2;
-    //HGLRC m_hrc2;
 
     bool m_arbMultisampleSupported{ false };
     int32_t m_arbMultisampleFormat{ 0 };
