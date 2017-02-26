@@ -23,7 +23,6 @@ public:
     /* Draws the components of the measure */
     void draw(GLuint shader) const;
 
-
     /* Returns the current system CPU load as a percentage */
     float getCPULoad();
 
@@ -32,10 +31,7 @@ private:
     void drawGraph(GLuint shader) const;
 
     /* Draws the total system uptime text */
-    void drawUptime() const;
-
-    /* Draws the system time in hh:mm:ss format */
-    void drawSystemTime() const;
+    void drawText() const;
 
     /* Returns string containing the current system uptime in
        dd:hh:mm:ss format */

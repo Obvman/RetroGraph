@@ -157,7 +157,7 @@ void Window::draw() const {
     m_driveMeasure.draw();
     m_systemInfo.draw();
 
-    drawBorder();
+    //drawBorder();
 
     SwapBuffers(hdc);
     ReleaseDC(m_hWndMain, hdc);

@@ -1,5 +1,6 @@
 #include "CPUMeasure.h"
 
+#include <iostream>
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
@@ -57,9 +58,7 @@ void CPUMeasure::draw(GLuint shader) const {
     glLineWidth(0.5f);
 
     drawGraph(shader);
-    drawUptime();
-    drawSystemTime();
-    //drawGraphBox();
+    drawText();
     drawViewportBorder();
 
     glViewport(vp[0], vp[1], vp[2], vp[3]);
@@ -70,6 +69,11 @@ void CPUMeasure::draw(GLuint shader) const {
 void CPUMeasure::drawGraph(GLuint shader) const {
     GLfloat lineWidth;
     glGetFloatv(GL_LINE_WIDTH, &lineWidth);
+    GLint vp[4];
+    glGetIntegerv(GL_VIEWPORT, vp);
+
+    // Set viewport for the graph to right half of measure's viewport
+    glViewport(m_viewportWidth/2, m_viewportStartY, m_viewportWidth/2, m_viewportHeight);
     glLineWidth(0.5f);
 
     //glUseProgram(shader);
@@ -92,36 +96,104 @@ void CPUMeasure::drawGraph(GLuint shader) const {
 
     glUseProgram(0);
 
+    drawViewportBorder();
+
     glLineWidth(lineWidth);
+    glViewport(vp[0], vp[1], vp[2], vp[3]);
 }
 
-void CPUMeasure::drawUptime() const {
-    // Draw text
-    const auto rasterX = float{ -0.95f };
-    const auto rasterY = float{ 0.1f };
-    auto uptime = "Uptime: " + getUptimeStr();
+void CPUMeasure::drawText() const {
+    const auto numCores{ m_coreTempPlugin.getNumCores() };
+    const auto numLines = uint32_t{ 5U + numCores };
+    constexpr auto rasterX = float{ -0.95f };
+    auto rasterY = float{ -0.95f };
 
     glColor3f(TEXT_R, TEXT_G, TEXT_B);
+    // Set viewport for the graph to left half of measure's viewport
+    glViewport(0, m_viewportStartY, m_viewportWidth/2, m_viewportHeight);
+
+    // Draw the system uptime value
+    auto uptime = "Uptime: " + getUptimeStr();
     glRasterPos2f(rasterX, rasterY);
     glCallLists(uptime.size(), GL_UNSIGNED_BYTE, uptime.c_str());
-}
+    rasterY += 2.0f / numLines;
 
-void CPUMeasure::drawSystemTime() const {
-    const auto rasterX = float{ -0.95f };
-    const auto rasterY = float{ -0.1f };
+    // Draw the current system time
+    {
+        time_t now = time(0);
+        tm t;
+        char buf[9];
+        localtime_s(&t, &now);
+        strftime(buf, sizeof(buf), "%X", &t);
+        std::stringstream ss;
+        ss << "Time: " << buf;
 
-    time_t now = time(0);
-    tm t;
-    char buf[9];
-    localtime_s(&t, &now);
-    strftime(buf, sizeof(buf), "%X", &t);
+        glColor3f(TEXT_R, TEXT_G, TEXT_B);
+        glRasterPos2f(rasterX, rasterY);
+        glCallLists(ss.str().length(), GL_UNSIGNED_BYTE, ss.str().c_str());
+        rasterY += 2.0f / numLines;
+    }
 
-    std::stringstream ss;
-    ss << "Time: " << buf;
-
-    glColor3f(TEXT_R, TEXT_G, TEXT_B);
+    // Draw voltage
+    const std::string vStr{ "Voltage: " + std::to_string(m_coreTempPlugin.getVoltage()) + "v"};
     glRasterPos2f(rasterX, rasterY);
-    glCallLists(ss.str().length(), GL_UNSIGNED_BYTE, ss.str().c_str());
+    glCallLists(vStr.size(), GL_UNSIGNED_BYTE, vStr.c_str());
+    rasterY += 2.0f / numLines;
+
+    // Draw clock speed
+    const std::string clockStr{ "Clock: " + std::to_string(m_coreTempPlugin.getClockSpeed()) + "MHz"};
+    glRasterPos2f(rasterX, rasterY);
+    glCallLists(clockStr.size(), GL_UNSIGNED_BYTE, clockStr.c_str());
+    rasterY += 2.0f / numLines;
+
+    // Draw average core temp
+    auto maxTemp = uint32_t{ 0 };
+    for (auto i{ 0U }; i < numCores; ++i) {
+        if (m_coreTempPlugin.getTemp(i) > maxTemp) {
+            maxTemp = static_cast<uint32_t>(m_coreTempPlugin.getTemp(i));
+        }
+    }
+
+    const std::string tempStr{ "CPU Temp: " + std::to_string(maxTemp) + "C"};
+    glRasterPos2f(rasterX, rasterY);
+    glCallLists(tempStr.size(), GL_UNSIGNED_BYTE, tempStr.c_str());
+    rasterY += 2.0f / numLines;
+
+    // Draw usage % and bar for each core
+    for (auto i{ 0U }; i < numCores; ++i) {
+        const auto usage { m_coreTempPlugin.getLoad(i) };
+
+        const std::string usageStr{ "Core " + std::to_string(i) + ": " +
+                                    std::to_string(usage) + "%" };
+        glRasterPos2f(rasterX, rasterY);
+        glCallLists(usageStr.size(), GL_UNSIGNED_BYTE, usageStr.c_str());
+        rasterY += 2.0f / numLines;
+
+        // Draw a usage meter bar
+        const auto percentFilled = float{ (usage / 100.0f) * 2.0f };
+        GLfloat lineWidth;
+        glGetFloatv(GL_LINE_WIDTH, &lineWidth);
+
+        float color[4];
+        glGetFloatv(GL_CURRENT_COLOR, color);
+
+        glColor3f(LINE_R, LINE_G, LINE_B);
+        glLineWidth(5.0f);
+
+        const auto drawY{ rasterY - 0.3f };
+        glBegin(GL_LINES); {
+            glVertex2f(-0.95f, drawY);
+            glVertex2f(-0.95f + percentFilled, drawY);
+
+            // Draw available section
+            glColor3f(0.2f, 0.2f, 0.2f);
+            glVertex2f(-0.95f + percentFilled, drawY);
+            glVertex2f(0.95f, drawY);
+        } glEnd();
+
+        glLineWidth(lineWidth);
+        glColor4f(color[0], color[1], color[2], color[3]);
+    }
 }
 
 float CPUMeasure::getCPULoad() {

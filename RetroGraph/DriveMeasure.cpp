@@ -80,7 +80,7 @@ void DriveMeasure::update(uint32_t ticks) {
             pdi->setTotalFreeBytes(totalFreeBytes.QuadPart);
 
             std::stringstream ss;
-            ss << std::fixed << std::setprecision(2)
+            ss << std::fixed << std::setprecision(1)
                << pdi->getDriveLetter() << ": "
                << pdi->getVolumeName() << " ("
                << static_cast<float>(pdi->getUsedBytes()) / GB << "GB/"
