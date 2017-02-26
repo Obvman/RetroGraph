@@ -12,9 +12,10 @@ namespace rg {
 
 class Window;
 
+/* Measures statistics about the system CPU: Model name, total CPU load*/
 class CPUMeasure {
 public:
-    CPUMeasure(Window* w, int32_t graphWidth, int32_t graphHeight);
+    CPUMeasure(int32_t graphWidth, int32_t graphHeight);
     ~CPUMeasure();
 
     /* Updates the total system's CPU usage statistics */
@@ -40,7 +41,6 @@ private:
     /* Calculates the total CPU load with the given tick information */
     float calculateCPULoad(uint64_t idleTicks, uint64_t totalTicks);
 
-    Window* m_parentWindow;
     CPUPlugin m_coreTempPlugin;
     size_t dataSize; // max number of usage percentages to store
     std::vector<float> m_usageData;

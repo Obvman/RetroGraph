@@ -153,7 +153,7 @@ void Renderer::drawProcCPUList() const {
         glCallLists(pair.first.length(), GL_UNSIGNED_BYTE, pair.first.c_str());
 
         // Draw the process's CPU usage
-        glRasterPos2f(-0.13, rasterY);
+        glRasterPos2f(-0.13f, rasterY);
         char buff[5];
         snprintf(buff, sizeof(buff), "%.1f%%", pair.second);
         //const std::string usage{ std::to_string(static_cast<uint8_t>(pair.second)) + "%" };
@@ -183,7 +183,7 @@ void Renderer::drawProcRAMList() const {
         } else {
             snprintf(buff, sizeof(buff), "%dMB", pair.second);
         }
-        glRasterPos2f(0.84, rasterY);
+        glRasterPos2f(0.84f, rasterY);
         glCallLists(sizeof(buff), GL_UNSIGNED_BYTE, buff);
 
         rasterY -= 1.8f / (m_processMeasure.getProcCPUData().size());
