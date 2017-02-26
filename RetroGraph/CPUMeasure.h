@@ -26,16 +26,16 @@ public:
     /* Returns the current system CPU load as a percentage */
     float getCPULoad();
 
+    /* Returns string containing the current system uptime in
+       dd:hh:mm:ss format */
+    std::string getUptimeStr() const;
+
 private:
     /* Draws the line graph of system CPU usage */
     void drawGraph(GLuint shader) const;
 
     /* Draws the total system uptime text */
     void drawText() const;
-
-    /* Returns string containing the current system uptime in
-       dd:hh:mm:ss format */
-    std::string getUptimeStr() const;
 
     /* Calculates the total CPU load with the given tick information */
     float calculateCPULoad(uint64_t idleTicks, uint64_t totalTicks);

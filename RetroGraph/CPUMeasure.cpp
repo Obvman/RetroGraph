@@ -104,35 +104,13 @@ void CPUMeasure::drawGraph(GLuint shader) const {
 
 void CPUMeasure::drawText() const {
     const auto numCores{ m_coreTempPlugin.getNumCores() };
-    const auto numLines = uint32_t{ 5U + numCores };
+    const auto numLines = uint32_t{ 3U + numCores };
     constexpr auto rasterX = float{ -0.95f };
     auto rasterY = float{ -0.95f };
 
     glColor3f(TEXT_R, TEXT_G, TEXT_B);
     // Set viewport for the graph to left half of measure's viewport
     glViewport(0, m_viewportStartY, m_viewportWidth/2, m_viewportHeight);
-
-    // Draw the system uptime value
-    auto uptime = "Uptime: " + getUptimeStr();
-    glRasterPos2f(rasterX, rasterY);
-    glCallLists(uptime.size(), GL_UNSIGNED_BYTE, uptime.c_str());
-    rasterY += 2.0f / numLines;
-
-    // Draw the current system time
-    {
-        time_t now = time(0);
-        tm t;
-        char buf[9];
-        localtime_s(&t, &now);
-        strftime(buf, sizeof(buf), "%X", &t);
-        std::stringstream ss;
-        ss << "Time: " << buf;
-
-        glColor3f(TEXT_R, TEXT_G, TEXT_B);
-        glRasterPos2f(rasterX, rasterY);
-        glCallLists(ss.str().length(), GL_UNSIGNED_BYTE, ss.str().c_str());
-        rasterY += 2.0f / numLines;
-    }
 
     // Draw voltage
     const std::string vStr{ "Voltage: " + std::to_string(m_coreTempPlugin.getVoltage()) + "v"};

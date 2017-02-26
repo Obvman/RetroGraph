@@ -59,17 +59,23 @@ void Renderer::initFonts(HWND hWnd) {
     wglUseFontBitmaps(hdc, 0, 256, 1000);*/
 
     stdFontBase = glGenLists(256);
-    StandardFont = CreateFont(20, 10, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
+    HFONT standardFont = CreateFont(20, 10, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
+                              OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
+                              DEFAULT_PITCH | FF_DONTCARE, fonts[0]);
+    stdFontBoldBase = glGenLists(256);
+    HFONT standardFontBold = CreateFont(20, 10, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, ANSI_CHARSET,
                               OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
                               DEFAULT_PITCH | FF_DONTCARE, fonts[0]);
     lrgFontBase = glGenLists(256);
-    LargeFont = CreateFont(70, 30, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
+    HFONT largeFont = CreateFont(70, 30, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
                            OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
                            VARIABLE_PITCH | FF_MODERN, fonts[0]);
 
-    SelectObject(hdc, StandardFont);
+    SelectObject(hdc, standardFont);
     wglUseFontBitmaps(hdc, 0, 256, stdFontBase);
-    SelectObject(hdc, LargeFont);
+    SelectObject(hdc, standardFontBold);
+    wglUseFontBitmaps(hdc, 0, 256, stdFontBoldBase);
+    SelectObject(hdc, largeFont);
     wglUseFontBitmaps(hdc, 0, 256, lrgFontBase);
 
     // Set the standard font to be default
@@ -100,8 +106,6 @@ void Renderer::drawTimeWidget() const {
     glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
     glLineWidth(0.5f);
 
-    //drawViewportBorder();
-
     // Draw Dividers
     glBegin(GL_LINES); {
         glVertex2f(-1.0f, 1.0f); // Drawing at the very edge of the viewport like this leaves an even thinner line
@@ -130,17 +134,54 @@ void Renderer::drawTimeWidget() const {
 
         glRasterPos2f(-0.92f, 0.15f);
 
+        // Push the large font display list onto the attrib stack
         glPushAttrib(GL_LIST_BIT);
         glListBase(lrgFontBase);
         glCallLists(sizeof(buf), GL_UNSIGNED_BYTE, buf);
+        glPopAttrib(); // Pop back off to the default font
+
+        // Draw the date in the bottom-middle
+        char dateBuf[7];
+        strftime(dateBuf, sizeof(dateBuf), "%d %b", &t);
+        glRasterPos2f(-0.15f, -0.8f);
+        glCallLists(sizeof(dateBuf), GL_UNSIGNED_BYTE, dateBuf);
+
+        char yearBuf[5];
+        strftime(yearBuf, sizeof(yearBuf), "%Y", &t);
+
+        glRasterPos2f(-0.1f, -0.55f);
+        glPushAttrib(GL_LIST_BIT);
+        glListBase(stdFontBoldBase);
+        glCallLists(sizeof(yearBuf), GL_UNSIGNED_BYTE, yearBuf);
         glPopAttrib();
     }
 
     // Draw the uptime in bottom-left
     {
+        glRasterPos2f(-0.70f, -0.55f);
+        glPushAttrib(GL_LIST_BIT);
+        glListBase(stdFontBoldBase);
+        glCallLists(6, GL_UNSIGNED_BYTE, "UPTIME");
+        glPopAttrib();
 
+        const auto& uptime{ m_cpuMeasure.getUptimeStr() };
+        glRasterPos2f(-0.95f, -0.8f);
+        glCallLists(uptime.length(), GL_UNSIGNED_BYTE, uptime.c_str());
     }
 
+    // TODO draw something else useful in the bottom-right
+    {
+        glRasterPos2f(0.4f, -0.55f);
+
+        glPushAttrib(GL_LIST_BIT);
+        glListBase(stdFontBoldBase);
+        glCallLists(5, GL_UNSIGNED_BYTE, "TEMP");
+        glPopAttrib();
+
+        glRasterPos2f(0.4f, -0.8f);
+        glCallLists(10, GL_UNSIGNED_BYTE, "Temporary");
+
+    }
 }
 
 }

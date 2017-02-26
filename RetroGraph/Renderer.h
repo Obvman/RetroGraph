@@ -41,10 +41,9 @@ private:
 
     const GLint m_timeWidgetViewport[4];
 
-    GLint stdFontBase;
+    GLint stdFontBase; // The default font
+    GLint stdFontBoldBase;
     GLint lrgFontBase;
-    HFONT LargeFont;
-    HFONT StandardFont;
 };
 
 }
