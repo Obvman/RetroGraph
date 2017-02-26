@@ -16,6 +16,17 @@
 
 namespace rg {
 
+// Activates the given font for the lifetime of the given function f only, then
+// Returns to the previously selected font
+template<typename F>
+void fontScope(GLint fontBase, F f) {
+    glPushAttrib(GL_LIST_BIT);
+    glListBase(fontBase);
+    f();
+    glPopAttrib();
+}
+
+
 Renderer::Renderer(const CPUMeasure& _cpu, const GPUMeasure& _gpu,
                    const RAMMeasure& _ram, const ProcessMeasure& _proc,
                    const DriveMeasure& _drive, const SystemInfo& _sys,
@@ -31,7 +42,6 @@ Renderer::Renderer(const CPUMeasure& _cpu, const GPUMeasure& _gpu,
 {
 
 }
-
 
 Renderer::~Renderer() {
 }
@@ -50,27 +60,25 @@ void Renderer::initFonts(HWND hWnd) {
         "Kozuka Gothic Pr6N L",
         "Algerian",
     };
-    HDC hdc = GetDC(m_renderTargetHandle);
 
-    /*LargeFont = CreateFont(40, 20, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
-                           OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-                           VARIABLE_PITCH | FF_MODERN, fonts[0]);
-    SelectObject(hdc, LargeFont);
-    wglUseFontBitmaps(hdc, 0, 256, 1000);*/
-
+    // Generate the display lists for OpenGL to quickly draw the fonts
     stdFontBase = glGenLists(256);
+    stdFontBoldBase = glGenLists(256);
+    lrgFontBase = glGenLists(256);
+
+    // Create the different fonts
     HFONT standardFont = CreateFont(20, 10, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
                               OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
                               DEFAULT_PITCH | FF_DONTCARE, fonts[0]);
-    stdFontBoldBase = glGenLists(256);
     HFONT standardFontBold = CreateFont(20, 10, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, ANSI_CHARSET,
                               OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
                               DEFAULT_PITCH | FF_DONTCARE, fonts[0]);
-    lrgFontBase = glGenLists(256);
     HFONT largeFont = CreateFont(70, 30, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
                            OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
                            VARIABLE_PITCH | FF_MODERN, fonts[0]);
 
+    // Bind the fonts to the OpenGL display lists
+    HDC hdc = GetDC(m_renderTargetHandle);
     SelectObject(hdc, standardFont);
     wglUseFontBitmaps(hdc, 0, 256, stdFontBase);
     SelectObject(hdc, standardFontBold);
@@ -78,7 +86,12 @@ void Renderer::initFonts(HWND hWnd) {
     SelectObject(hdc, largeFont);
     wglUseFontBitmaps(hdc, 0, 256, lrgFontBase);
 
-    // Set the standard font to be default
+    // Cleanup the fonts
+    DeleteObject(largeFont);
+    DeleteObject(standardFont);
+    DeleteObject(standardFontBold);
+
+    // Set the default font
     glListBase(stdFontBase);
 }
 
@@ -133,12 +146,9 @@ void Renderer::drawTimeWidget() const {
         strftime(buf, sizeof(buf), "%X %p", &t);
 
         glRasterPos2f(-0.92f, 0.15f);
-
-        // Push the large font display list onto the attrib stack
-        glPushAttrib(GL_LIST_BIT);
-        glListBase(lrgFontBase);
-        glCallLists(sizeof(buf), GL_UNSIGNED_BYTE, buf);
-        glPopAttrib(); // Pop back off to the default font
+        fontScope(lrgFontBase, [&]() {
+            glCallLists(sizeof(buf), GL_UNSIGNED_BYTE, buf);
+        });
 
         // Draw the date in the bottom-middle
         char dateBuf[7];
@@ -150,19 +160,17 @@ void Renderer::drawTimeWidget() const {
         strftime(yearBuf, sizeof(yearBuf), "%Y", &t);
 
         glRasterPos2f(-0.1f, -0.55f);
-        glPushAttrib(GL_LIST_BIT);
-        glListBase(stdFontBoldBase);
-        glCallLists(sizeof(yearBuf), GL_UNSIGNED_BYTE, yearBuf);
-        glPopAttrib();
+        fontScope(stdFontBoldBase, [&]() {
+            glCallLists(sizeof(yearBuf), GL_UNSIGNED_BYTE, yearBuf);
+        });
     }
 
     // Draw the uptime in bottom-left
     {
         glRasterPos2f(-0.70f, -0.55f);
-        glPushAttrib(GL_LIST_BIT);
-        glListBase(stdFontBoldBase);
-        glCallLists(6, GL_UNSIGNED_BYTE, "UPTIME");
-        glPopAttrib();
+        fontScope(stdFontBoldBase, [&]() {
+            glCallLists(6, GL_UNSIGNED_BYTE, "UPTIME");
+        });
 
         const auto& uptime{ m_cpuMeasure.getUptimeStr() };
         glRasterPos2f(-0.95f, -0.8f);
@@ -173,10 +181,9 @@ void Renderer::drawTimeWidget() const {
     {
         glRasterPos2f(0.4f, -0.55f);
 
-        glPushAttrib(GL_LIST_BIT);
-        glListBase(stdFontBoldBase);
-        glCallLists(5, GL_UNSIGNED_BYTE, "TEMP");
-        glPopAttrib();
+        fontScope(stdFontBoldBase, [&]() {
+            glCallLists(5, GL_UNSIGNED_BYTE, "TEMP");
+        });
 
         glRasterPos2f(0.4f, -0.8f);
         glCallLists(10, GL_UNSIGNED_BYTE, "Temporary");
