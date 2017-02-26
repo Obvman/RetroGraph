@@ -33,7 +33,7 @@ Window::Window(HINSTANCE hInstance, const char* windowName,
     m_systemInfo{ 2 * (m_width/3), m_height - (m_height/6),
                   m_width / 3, m_height / 6},
     m_renderer{ m_cpuMeasure, m_gpuMeasure, m_ramMeasure, m_processMeasure,
-                m_driveMeasure, m_systemInfo },
+                m_driveMeasure, m_systemInfo, m_width, m_height },
     m_arbMultisampleSupported{ false },
     m_arbMultisampleFormat{ 0 },
     m_aaSamples{ 8 },
@@ -152,13 +152,6 @@ void Window::draw() const {
 
     m_renderer.draw(m_shaders);
 
-
-    /*m_cpuMeasure.draw(m_shaders.getCpuGraphProgram());
-    m_ramMeasure.draw();
-    m_processMeasure.draw();
-    m_driveMeasure.draw();
-    m_systemInfo.draw();*/
-
     //drawBorder();
 
     SwapBuffers(hdc);
@@ -197,26 +190,7 @@ void Window::initOpenGL() {
 }
 
 void Window::initFonts() {
-    // Array for conveniently testing different fonts
-    const char* const fonts[] = {
-        "Courier New",
-        "Lato Lights",
-        "Orator Std"
-        "Verdana"
-        //"OCR A Extended"
-        "Letter Gothic Std",
-        "Kozuka Gothic Pr6N L",
-        "Algerian",
-    };
-
-    HDC hdc = GetDC(m_hWndMain);
-    auto font = CreateFont(20, 10, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
-                           OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-                           VARIABLE_PITCH | FF_MODERN /*DEFAULT_PITCH | FF_ROMAN*/, fonts[0]);
-    SelectObject(hdc, font);
-
-    wglUseFontBitmaps(hdc, 0, 256, 1000);
-    glListBase(1000);
+    m_renderer.initFonts(m_hWndMain);
 }
 
 void Window::initShaders() {
@@ -224,7 +198,9 @@ void Window::initShaders() {
 }
 
 void Window::releaseOpenGL() {
-    glDeleteLists(1000, 256);
+    std::cout << "Releasing OpenGL\n";
+    m_renderer.release();
+    //glDeleteLists(1000, 256);
 
     wglMakeCurrent(nullptr, nullptr);
     wglDeleteContext(m_hrc);

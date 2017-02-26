@@ -2,6 +2,8 @@
 
 #include <GL/glew.h>
 
+#include "colors.h"
+
 namespace rg {
 
 void showMessageBox(const std::string& s) {
@@ -36,7 +38,7 @@ void drawViewportBorder() {
     float color[4];
     glGetFloatv(GL_CURRENT_COLOR, color);
 
-    glColor3f(1.0f, 1.0f, 1.0f);
+    glColor3f(DEBUG_BORDER_R, DEBUG_BORDER_G, DEBUG_BORDER_B);
 
     // Preserve initial line width
     GLfloat lineWidth;
@@ -44,21 +46,21 @@ void drawViewportBorder() {
 
     glLineWidth(5.0f);
 
-    /*glBegin(GL_LINES);
-    glVertex2f(-1.0f + bDelta, -1.0f + bDelta);
-    glVertex2f(-1.0f + bDelta,  1.0f - bDelta);
+    glBegin(GL_LINES); {
+        glVertex2f(-1.0f, -1.0f);
+        glVertex2f(-1.0f,  1.0f);
 
-    glVertex2f(-1.0f + bDelta, 1.0f - bDelta);
-    glVertex2f(1.0f - bDelta, 1.0f - bDelta);
+        glVertex2f(-1.0f,  1.0f);
+        glVertex2f( 1.0f,  1.0f);
 
-    glVertex2f(1.0f - bDelta, 1.0f - bDelta);
-    glVertex2f(1.0f - bDelta, -1.0f + bDelta);
+        glVertex2f( 1.0f,  1.0f);
+        glVertex2f( 1.0f, -1.0f);
 
-    glVertex2f(1.0f - bDelta, -1.0f + bDelta);
-    glVertex2f(-1.0f + bDelta, -1.0f + bDelta);
-    glEnd();
+        glVertex2f( 1.0f, -1.0f);
+        glVertex2f(-1.0f, -1.0f);
+    } glEnd();
 
-    glLineWidth(lineWidth);*/
+    glLineWidth(lineWidth);
 
     glColor4f(color[0], color[1], color[2], color[3]);
     glLineWidth(lineWidth);

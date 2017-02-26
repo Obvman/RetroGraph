@@ -36,9 +36,17 @@ constexpr float TEXT_R{ WHITE_R };
 constexpr float TEXT_G{ WHITE_G };
 constexpr float TEXT_B{ WHITE_B };
 
+constexpr float DEBUG_BORDER_R{ 0.2f };
+constexpr float DEBUG_BORDER_G{ 0.8f };
+constexpr float DEBUG_BORDER_B{ 0.2f };
+
 constexpr float LINE_R{ WHITE_R };
 constexpr float LINE_G{ WHITE_G };
 constexpr float LINE_B{ WHITE_B };
+
+constexpr float DIVIDER_R{ WHITE_R };
+constexpr float DIVIDER_G{ WHITE_G };
+constexpr float DIVIDER_B{ WHITE_B };
 
 constexpr float BGCOLOR_R{ BLACK_R };
 constexpr float BGCOLOR_G{ BLACK_G };
