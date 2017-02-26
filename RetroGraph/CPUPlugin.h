@@ -6,7 +6,8 @@
 namespace rg {
 
 /* CPUPlugin interfaces with CoreTemp's shared memory to get more detailed
-   statistics on the system's CPU */
+   statistics on the system's CPU: Clock speed, core count, voltage, model name,
+   individual core temperatures and loads */
 class CPUPlugin {
 public:
     CPUPlugin();

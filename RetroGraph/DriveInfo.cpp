@@ -10,7 +10,6 @@ DriveInfo::DriveInfo(char _driveLetter, uint64_t initFreeBytes,
     m_totalFreeBytes{ initFreeBytes },
     m_totalBytes{ totalBytes },
     m_volumeName{ volumeName },
-    //m_driveInfoStr{},
     m_capacityStr{} {
 
     const auto capacity{ totalBytes / GB };

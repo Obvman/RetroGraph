@@ -9,6 +9,7 @@
 
 namespace rg {
 
+/* Stores capacity totals and availability for system RAM */
 class RAMMeasure {
 public:
     RAMMeasure();

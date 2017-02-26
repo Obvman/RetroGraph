@@ -5,6 +5,7 @@
 
 namespace rg {
 
+/* Compiles, links and stores GLSL programs */
 class GLShaderHandler {
 public:
     GLShaderHandler();
@@ -17,6 +18,8 @@ public:
 private:
     /* Returns the contents of the shader file given */
     std::string readShaderFile(const std::string& filePath);
+
+    /* Compiles and links the given vertex and fragment shaders */
     GLuint loadShader(const std::string& vFile, const std::string& fFile);
 
     GLuint m_testProgram;

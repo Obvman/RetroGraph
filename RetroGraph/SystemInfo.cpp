@@ -43,10 +43,11 @@ SystemInfo::~SystemInfo() {
 }
 
 void SystemInfo::getOSVersionInfo() {
+    // Use kernel32.dll's meta information to get the OS version
     const char* filePath{ "kernel32.dll" };
 
     DWORD dummy;
-    const DWORD fileVersionInfoSize{ GetFileVersionInfoSize(filePath, &dummy) };
+    const auto fileVersionInfoSize{ GetFileVersionInfoSize(filePath, &dummy) };
     LPBYTE lpVersionInfo = new BYTE[fileVersionInfoSize];
     if (!GetFileVersionInfo(filePath, 0, fileVersionInfoSize, lpVersionInfo)) {
         fatalMessageBox("Could not get OS version\n");
@@ -54,7 +55,7 @@ void SystemInfo::getOSVersionInfo() {
 
     UINT uLen;
     VS_FIXEDFILEINFO* lpFfi;
-    const BOOL bVer = VerQueryValue(lpVersionInfo, "\\", (LPVOID*)&lpFfi, &uLen);
+    const auto bVer{ VerQueryValue(lpVersionInfo, "\\", (LPVOID*)&lpFfi, &uLen) };
     if (!bVer || uLen == 0) {
         fatalMessageBox("Failed to query OS value\n");
     }
@@ -124,7 +125,7 @@ void SystemInfo::getRAMInfo() {
     GlobalMemoryStatusEx(&memStatus);
 
     m_ramDescription = "RAM: " +
-        std::to_string(memStatus.ullTotalPhys / (1024 * 1024)) + "MB";
+        std::to_string(memStatus.ullTotalPhys / MB) + "MB";
 }
 
 const std::string& SystemInfo::getGPUDescription() {

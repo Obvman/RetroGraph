@@ -15,10 +15,11 @@
 namespace rg {
 
 DriveMeasure::DriveMeasure() :
-    m_drivePaths{} {
+    m_drivePaths{},
+    m_drives{} {
 
     // Enumerate all available logical drives and store the drive paths
-    auto driveMask = GetLogicalDrives();
+    const auto driveMask{ GetLogicalDrives() };
     for (int8_t i{ 0U }; i < 26; ++i) {
         if ((driveMask & (1 << i))) {
             char driveName[] = { 'A' + i, ':', '\\', '\0' };
@@ -75,14 +76,6 @@ void DriveMeasure::update(uint32_t ticks) {
             // We don't expect the max capacity of a fixed drive to change,
             // so only update the DriveInfo with the freeBytes
             pdi->setTotalFreeBytes(totalFreeBytes.QuadPart);
-
-            /*std::stringstream ss;
-            ss << std::fixed << std::setprecision(1)
-               << pdi->getDriveLetter() << ": "
-               << pdi->getVolumeName() << " ("
-               << static_cast<float>(pdi->getUsedBytes()) / GB << "GB/"
-               << static_cast<float>(pdi->getTotalBytes()) / GB << "GB)\n";
-            pdi->setDriveInfoStr(ss.str());*/
         }
 
         // Only check for drive name updates every 20 minutes

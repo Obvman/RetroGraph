@@ -8,6 +8,7 @@
 
 namespace rg {
 
+/* Storage class that contains various information about a system process */
 class ProcessData {
 public:
     ProcessData(HANDLE pHandle, DWORD pID, const char* name);
