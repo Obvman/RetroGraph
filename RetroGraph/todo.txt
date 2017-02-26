@@ -9,6 +9,8 @@ media - foobar status
 recycle bin monitor
 3D effects on graph
 
+Create alternate CPU measure display for when CoreTemp isn't running
+
 use glScissor so we don't unnecessarily redraw static parts of the window
 
 BUG: after updating process list, all processes show 0% usage

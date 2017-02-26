@@ -6,6 +6,8 @@
 #include <string>
 #include <chrono>
 
+#include "CPUPlugin.h"
+
 namespace rg {
 
 class Window;
@@ -43,6 +45,7 @@ private:
     float calculateCPULoad(uint64_t idleTicks, uint64_t totalTicks);
 
     Window* m_parentWindow;
+    CPUPlugin m_coreTempPlugin;
     size_t dataSize; // max number of usage percentages to store
     std::vector<float> m_usageData;
     std::chrono::milliseconds m_uptime;

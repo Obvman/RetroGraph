@@ -20,6 +20,7 @@ namespace rg {
 
 CPUMeasure::CPUMeasure(Window* w, int32_t graphWidth, int32_t graphHeight) :
     m_parentWindow{ w },
+    m_coreTempPlugin{},
     dataSize{ 80U },
     m_usageData{ },
     m_uptime{ std::chrono::milliseconds{GetTickCount64()} },
@@ -36,6 +37,7 @@ CPUMeasure::~CPUMeasure() {
 }
 
 void CPUMeasure::update() {
+    m_coreTempPlugin.update();
     m_uptime = std::chrono::milliseconds(GetTickCount64());
 
     getCPULoad();
