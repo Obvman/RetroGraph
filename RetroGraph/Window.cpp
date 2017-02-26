@@ -24,14 +24,10 @@ Window::Window(HINSTANCE hInstance, const char* windowName,
     m_startPosY{ startY },
     m_cpuMeasure{ this, m_width, m_height/3 },
     m_gpuMeasure{ },
-    m_ramMeasure{ 0, m_height/3,
-                  m_width, m_height/3 },
-    m_processMeasure{ 0, m_height - (m_height/6),
-                      2 * (m_width/3), m_height/6 },
-    m_driveMeasure{ 2 * (m_width/3), m_height - 2 * (m_height/6),
-                    m_width/3, m_height/6 },
-    m_systemInfo{ 2 * (m_width/3), m_height - (m_height/6),
-                  m_width / 3, m_height / 6},
+    m_ramMeasure{ },
+    m_processMeasure{ },
+    m_driveMeasure{},
+    m_systemInfo{ },
     m_renderer{ m_cpuMeasure, m_gpuMeasure, m_ramMeasure, m_processMeasure,
                 m_driveMeasure, m_systemInfo, m_width, m_height },
     m_arbMultisampleSupported{ false },
@@ -82,6 +78,10 @@ LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
             glViewport(0, 0, LOWORD(lParam), HIWORD(lParam));
             PostMessage(hWnd, WM_PAINT, 0, 0);
             return 0;
+        case WM_WINDOWPOSCHANGING:
+            break;
+        case WM_WINDOWPOSCHANGED:
+            break;
         case WM_CREATE:
             break;
         case WM_SETCURSOR:

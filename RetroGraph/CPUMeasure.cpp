@@ -26,7 +26,7 @@ CPUMeasure::CPUMeasure(Window* w, int32_t graphWidth, int32_t graphHeight) :
     m_usageData{ },
     m_uptime{ std::chrono::milliseconds{GetTickCount64()} },
     m_viewportStartX{ 0 },
-    m_viewportStartY{ 0 },
+    m_viewportStartY{ 480 },
     m_viewportWidth{ graphWidth },
     m_viewportHeight{ graphHeight } {
 

@@ -40,7 +40,9 @@ Renderer::Renderer(const CPUMeasure& _cpu, const GPUMeasure& _gpu,
     m_timeWidgetViewport{ marginX, 5 * windowHeight/6 - marginY,
                           windowWidth/5, windowHeight/6 }, // Top left
     m_hddWidgetViewport{ windowWidth - windowWidth/5 - marginX, 5 * windowHeight/6 - marginY,
-                         windowWidth/5, windowHeight/6} // Top right
+                         windowWidth/5, windowHeight/6}, // Top right
+    m_procWidgetViewport{ windowWidth/2 - windowWidth/5, marginY,
+                          2*windowWidth/5, windowHeight/6} // Bottom middle
 {
 
 }
@@ -105,15 +107,88 @@ void Renderer::draw(const GLShaderHandler& shaders) const {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
 
+    drawProcessWidget();
     drawTimeWidget();
     drawHDDWidget();
 
     m_cpuMeasure.draw(shaders.getCpuGraphProgram());
     //m_gpuMeasure.draw();
-    m_ramMeasure.draw();
+    //m_ramMeasure.draw();
     //m_processMeasure.draw();
     //m_driveMeasure.draw();
     //m_sysInfo.draw();
+}
+
+void Renderer::drawProcessWidget() const {
+    glViewport(m_procWidgetViewport[0], m_procWidgetViewport[1],
+               m_procWidgetViewport[2], m_procWidgetViewport[3]);
+    glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
+    glLineWidth(0.5f);
+
+    // Draw dividers
+    glBegin(GL_LINES); {
+        glVertex2f(-1.0f, 1.0f);
+        glVertex2f( 1.0f, 1.0f); // Top line
+
+        glVertex2f(-1.0f, -1.0f);
+        glVertex2f( 1.0f, -1.0f); // Bottom line
+
+        glVertex2f(0.0f, -1.0f);
+        glVertex2f(0.0f,  1.0f); // Middle line
+    } glEnd();
+
+    drawProcCPUList();
+    drawProcRAMList();
+}
+
+void Renderer::drawProcCPUList() const {
+    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
+
+    const auto rasterX = float{ -0.95f };
+    auto rasterY = float{ 0.74f }; // Y changes for each process drawn
+
+    for (const auto& pair : m_processMeasure.getProcCPUData()) {
+        // Draw the process name
+        glRasterPos2f(rasterX, rasterY);
+        glCallLists(pair.first.length(), GL_UNSIGNED_BYTE, pair.first.c_str());
+
+        // Draw the process's CPU usage
+        glRasterPos2f(-0.13, rasterY);
+        char buff[5];
+        snprintf(buff, sizeof(buff), "%.1f%%", pair.second);
+        //const std::string usage{ std::to_string(static_cast<uint8_t>(pair.second)) + "%" };
+        glCallLists(sizeof(buff), GL_UNSIGNED_BYTE, buff);
+
+        rasterY -= 1.8f / (m_processMeasure.getProcCPUData().size());
+    }
+}
+
+void Renderer::drawProcRAMList() const {
+    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
+
+    const auto rasterX = float{ 0.05f };
+    auto rasterY = float{ 0.74f }; // Y changes for each process drawn
+
+    for (const auto& pair : m_processMeasure.getProcRAMData()) {
+        // Draw the process name
+        glRasterPos2f(rasterX, rasterY);
+        glCallLists(pair.first.length(), GL_UNSIGNED_BYTE, pair.first.c_str());
+
+        // Draw the process's RAM usage
+        std::string usage;
+        // Format differently if RAM usage is over 1GB
+        char buff[6];
+        if (pair.second >= 1000) {
+            snprintf(buff, sizeof(buff), "%.1fGB", pair.second / 1024.0f);
+        } else {
+            snprintf(buff, sizeof(buff), "%dMB", pair.second);
+        }
+        glRasterPos2f(0.84, rasterY);
+        glCallLists(sizeof(buff), GL_UNSIGNED_BYTE, buff);
+
+        rasterY -= 1.8f / (m_processMeasure.getProcCPUData().size());
+    }
+
 }
 
 void Renderer::drawHDDWidget() const {

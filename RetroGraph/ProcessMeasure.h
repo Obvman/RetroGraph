@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include <utility>
 #include <Windows.h>
 #include <TlHelp32.h>
 #include <Psapi.h>
@@ -13,7 +14,7 @@ namespace rg {
 
 class ProcessMeasure {
 public:
-    ProcessMeasure(GLint vpX, GLint vpY, GLint vpW, GLint vpH);
+    ProcessMeasure();
     ~ProcessMeasure();
 
     /* Initialises the measure with system processes information */
@@ -23,22 +24,17 @@ public:
        Stops tracking any processes that have exited */
     void update(uint32_t ticks);
 
+
+    const std::vector<std::pair<std::string, double>>& getProcCPUData() const { return m_procCPUListData; }
+    const std::vector<std::pair<std::string, size_t>>& getProcRAMData() const { return m_procRAMListData; }
+
+private:
     /* Refreshes the list of tracked processes to begin tracking any
        newly created processes */
     void updateProcList();
 
-    /* Draws the measure's components */
-    void draw() const;
-
-private:
-    /* Draws sorted list of top CPU usage processes */
-    void drawCPUUsageList() const;
-
-    /* Draws sorted list of top RAM usage processes */
-    void drawRAMUsageList() const;
-
-    void fillCPUStrings();
-    void fillRAMStrings();
+    void fillCPUData();
+    void fillRAMData();
 
     /* Calculates the CPU usage of the given process */
     double calculateCPUUsage(HANDLE pHandle, ProcessData& pd);
@@ -49,14 +45,8 @@ private:
     std::vector<std::unique_ptr<ProcessData>> m_allProcessData;
 
     uint16_t m_numProcessesToDisplay{ 7 };
-    std::vector<std::string> m_processCPUDrawStrings{ m_numProcessesToDisplay };
-    std::vector<std::string> m_processRAMDrawStrings{ m_numProcessesToDisplay };
-
-    // Rendering members
-    GLint m_viewportStartX;
-    GLint m_viewportStartY;
-    GLint m_viewportWidth;
-    GLint m_viewportHeight;
+    std::vector<std::pair<std::string, double>> m_procCPUListData;
+    std::vector<std::pair<std::string, size_t>> m_procRAMListData;
 
 };
 

@@ -17,6 +17,12 @@ ProcessData::ProcessData(HANDLE pHandle, DWORD pID, const char* name) :
     if (p != std::string::npos) {
         m_procName.erase(p, 4);
     }
+    // If the name is too long, truncate and add ellipses
+    constexpr size_t cutoffLen{ 26U };
+    if (m_procName.length() >= cutoffLen) {
+        m_procName.erase(cutoffLen, m_procName.length() - cutoffLen);
+        m_procName.append("...");
+    }
 
     FILETIME sysIdle; // Dummy ft, won't be used
     GetSystemTimes(&sysIdle, &m_lastSystemKernelTime, &m_lastSystemUserTime);

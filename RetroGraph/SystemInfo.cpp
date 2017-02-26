@@ -12,17 +12,13 @@
 
 namespace rg {
 
-SystemInfo::SystemInfo(GLint vpX, GLint vpY, GLint vpW, GLint vpH) :
+SystemInfo::SystemInfo() :
     m_osInfoStr{},
     m_gpuDescription{},
     m_cpuDescription{},
     m_ramDescription{},
     m_userName{ "User: " },
-    m_computerName{ "Computer Name: " },
-    m_viewportStartX{ vpX },
-    m_viewportStartY{ vpY },
-    m_viewportWidth{ vpW },
-    m_viewportHeight{ vpH } {
+    m_computerName{ "Computer Name: " } {
 
     getOSVersionInfo();
     getCPUInfo();
@@ -44,51 +40,6 @@ SystemInfo::SystemInfo(GLint vpX, GLint vpY, GLint vpW, GLint vpH) :
 
 
 SystemInfo::~SystemInfo() {
-}
-
-void SystemInfo::draw() const {
-    GLint vp[4];
-    glGetIntegerv(GL_VIEWPORT, vp);
-
-    glViewport(m_viewportStartX, m_viewportStartY, m_viewportWidth, m_viewportHeight);
-
-    drawText();
-    drawViewportBorder();
-
-    glViewport(vp[0], vp[1], vp[2], vp[3]);
-}
-
-void SystemInfo::drawText() const {
-    static constexpr auto numLines{ 6U };
-    const auto rasterX = float{ -0.95f };
-    auto rasterY = float{ -0.9f };
-
-    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-
-    glRasterPos2f(rasterX, rasterY);
-    glCallLists(m_userName.length(), GL_UNSIGNED_BYTE, m_userName.c_str());
-    rasterY += 2.0f / numLines;
-
-    glRasterPos2f(rasterX, rasterY);
-    glCallLists(m_computerName.length(), GL_UNSIGNED_BYTE, m_computerName.c_str());
-    rasterY += 2.0f / numLines;
-
-    glRasterPos2f(rasterX, rasterY);
-    glCallLists(m_ramDescription.length(), GL_UNSIGNED_BYTE, m_ramDescription.c_str());
-    rasterY += 2.0f / numLines;
-
-    glRasterPos2f(rasterX, rasterY);
-    glCallLists(m_gpuDescription.length(), GL_UNSIGNED_BYTE, m_gpuDescription.c_str());
-    rasterY += 2.0f / numLines;
-
-    glRasterPos2f(rasterX, rasterY);
-    glCallLists(m_cpuDescription.length(), GL_UNSIGNED_BYTE, m_cpuDescription.c_str());
-    rasterY += 2.0f / numLines;
-
-    glRasterPos2f(rasterX, rasterY);
-    glCallLists(m_osInfoStr.length(), GL_UNSIGNED_BYTE, m_osInfoStr.c_str());
-    rasterY += 2.0f / numLines;
-
 }
 
 void SystemInfo::getOSVersionInfo() {

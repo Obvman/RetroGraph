@@ -13,15 +13,12 @@
 
 namespace rg {
 
-ProcessMeasure::ProcessMeasure(GLint vpX, GLint vpY, GLint vpW, GLint vpH) :
+ProcessMeasure::ProcessMeasure() :
     m_allProcessData{},
     m_numProcessesToDisplay{ 7 },
-    m_processCPUDrawStrings{ m_numProcessesToDisplay },
-    m_processRAMDrawStrings{ m_numProcessesToDisplay },
-    m_viewportStartX{ vpX },
-    m_viewportStartY{ vpY },
-    m_viewportWidth{ vpW },
-    m_viewportHeight{ vpH } {
+    m_procCPUListData{ m_numProcessesToDisplay },
+    m_procRAMListData{ m_numProcessesToDisplay } {
+
 }
 
 
@@ -30,7 +27,7 @@ ProcessMeasure::~ProcessMeasure() {
 
 void ProcessMeasure::init() {
     populateList();
-    fillRAMStrings();
+    fillRAMData();
 }
 // TODO benchmark using vector vs list
 
@@ -75,64 +72,16 @@ void ProcessMeasure::update(uint32_t ticks) {
             }
         }
 
-        fillCPUStrings();
+        fillCPUData();
     }
 
     if ((ticks % (ticksPerSecond * 5)) == 0) {
-        fillRAMStrings();
+        fillRAMData();
     }
 }
 
-void ProcessMeasure::draw() const {
-    GLint vp[4];
-    glGetIntegerv(GL_VIEWPORT, vp);
 
-    glViewport(m_viewportStartX, m_viewportStartY, m_viewportWidth, m_viewportHeight);
-
-    drawCPUUsageList();
-
-    // Draw Dividing line
-    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-    glBegin(GL_LINES); {
-        glVertex2f(0.0f, 0.9f);
-        glVertex2f(0.0f, -0.9f);
-    } glEnd();
-
-    drawRAMUsageList();
-    drawViewportBorder();
-
-    glViewport(vp[0], vp[1], vp[2], vp[3]);
-}
-
-void ProcessMeasure::drawCPUUsageList() const {
-    const auto rasterX = float{ -0.95f };
-    auto rasterY = float{ -0.90f }; // Y changes for each process drawn
-
-    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-
-    for (auto it{ m_processCPUDrawStrings.crbegin() }; it != m_processCPUDrawStrings.crend(); ++it) {
-        glRasterPos2f(rasterX, rasterY);
-        glCallLists(it->length(), GL_UNSIGNED_BYTE, it->c_str());
-
-        rasterY += 2.0f / (m_numProcessesToDisplay);
-    }
-}
-
-void ProcessMeasure::drawRAMUsageList() const {
-    const auto rasterX = float{ 0.05f };
-    auto rasterY = float{ -0.90f }; // Y changes for each process drawn
-
-    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-
-    for (auto it{ m_processRAMDrawStrings.crbegin() }; it != m_processRAMDrawStrings.crend(); ++it) {
-        glRasterPos2f(rasterX, rasterY);
-        glCallLists(it->length(), GL_UNSIGNED_BYTE, it->c_str());
-
-        rasterY += 2.0f / (m_numProcessesToDisplay);
-    }
-}
-
-void ProcessMeasure::fillCPUStrings() {
+void ProcessMeasure::fillCPUData() {
     // Sort the vector based on the current CPU usage of processes in descending order
     std::sort(m_allProcessData.begin(), m_allProcessData.end(),
     [](const auto& ppd1, const auto& ppd2) {
@@ -140,34 +89,29 @@ void ProcessMeasure::fillCPUStrings() {
     });
 
     // Update the strings to be drawn
-    m_processCPUDrawStrings.clear();
+    m_procCPUListData.clear();
     for (const auto& ppd : m_allProcessData) {
-        std::stringstream ss;
-        ss << ppd->getName() << ": " << std::setprecision(3)
-           << std::lround(ppd->getCpuUsage()) << "%";
 
-        m_processCPUDrawStrings.push_back(ss.str());
-        if (m_processCPUDrawStrings.size() >= m_numProcessesToDisplay) {
+        m_procCPUListData.emplace_back(ppd->getName(), ppd->getCpuUsage());
+
+        if (m_procCPUListData.size() >= m_numProcessesToDisplay) {
             break;
         }
     }
 }
 
-void ProcessMeasure::fillRAMStrings() {
+void ProcessMeasure::fillRAMData() {
     // Now sort the list in terms of memory usage and build strings for that
     std::sort(m_allProcessData.begin(), m_allProcessData.end(),
     [](const auto& ppd1, const auto& ppd2) {
         return ppd1->getWorkingSetSizeMB() > ppd2->getWorkingSetSizeMB();
     });
 
-    m_processRAMDrawStrings.clear();
+    m_procRAMListData.clear();
     for (const auto& ppd : m_allProcessData) {
-        std::stringstream ss;
-        ss << ppd->getName() << ": " << ppd->getWorkingSetSizeMB() << "MB";
+        m_procRAMListData.emplace_back(ppd->getName(), ppd->getWorkingSetSizeMB());
 
-        m_processRAMDrawStrings.push_back(ss.str());
-
-        if (m_processRAMDrawStrings.size() >= m_numProcessesToDisplay) {
+        if (m_procRAMListData.size() >= m_numProcessesToDisplay) {
             break;
         }
     }

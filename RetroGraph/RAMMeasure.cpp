@@ -8,14 +8,10 @@
 
 namespace rg {
 
-RAMMeasure::RAMMeasure(GLint startX, GLint startY, GLint ramWidth, GLint ramHeight) :
+RAMMeasure::RAMMeasure() :
     m_memStatus{},
     dataSize{ 80U },
-    m_usageData{},
-    m_viewportStartX{ startX },
-    m_viewportStartY{ startY },
-    m_viewportWidth{ ramWidth },
-    m_viewportHeight{ ramHeight } {
+    m_usageData{} {
 
     // Fill the memory stat struct with system information
     m_memStatus.dwLength = sizeof(m_memStatus);
@@ -44,8 +40,8 @@ void RAMMeasure::draw() const {
     glGetIntegerv(GL_VIEWPORT, vp);
 
     // Set up the view to a portion of the screen
-    glViewport(m_viewportStartX, m_viewportStartY,
-               m_viewportWidth, m_viewportHeight);
+    /*glViewport(m_viewportStartX, m_viewportStartY,
+               m_viewportWidth, m_viewportHeight);*/
 
     drawText();
     drawBar();
@@ -122,9 +118,8 @@ void RAMMeasure::drawGraph() const {
 }
 
 float RAMMeasure::getLoadPercentagef() const {
-    const auto used{ getUsedPhysicalB() };
-    const auto total{ getTotalPhysicalB() };
-    return (static_cast<float>(used) / static_cast<float>(total));
+    return (static_cast<float>(getUsedPhysicalB()) / 
+            static_cast<float>(getTotalPhysicalB()));
 }
 
 }

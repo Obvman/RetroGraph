@@ -9,7 +9,7 @@ namespace rg {
 /* Contains static information about the computer so no need to update */
 class SystemInfo {
 public:
-    SystemInfo(GLint vpX, GLint vpY, GLint vpW, GLint vpH);
+    SystemInfo();
     ~SystemInfo();
 
     /* Returns string of current operating system version/build number */
@@ -32,10 +32,6 @@ public:
     /* Returns the computer's name */
     const std::string& getComputerName() const { return m_computerName; }
 
-    void draw() const;
-
-    void drawText() const;
-
 private:
     /* Sets the contents of m_osInfoStr. Only needs to be called once */
     void getOSVersionInfo();
@@ -54,12 +50,6 @@ private:
     std::string m_ramDescription;
     std::string m_userName;
     std::string m_computerName;
-
-    // Rendering members
-    GLint m_viewportStartX;
-    GLint m_viewportStartY;
-    GLint m_viewportWidth;
-    GLint m_viewportHeight;
 };
 
 }

@@ -10,7 +10,9 @@ media - foobar status
 recycle bin monitor
 3D effects on graph
 
-draw with different transparencies so it looks like things blend in with background
+Remove viewport variables from measure members
+
+fix style inconsistencies
 
 truncate process names that are too long in CPU/RAM usage lists
 

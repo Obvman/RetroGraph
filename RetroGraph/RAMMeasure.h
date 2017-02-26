@@ -11,7 +11,7 @@ namespace rg {
 
 class RAMMeasure {
 public:
-    RAMMeasure(GLint startX, GLint startY, GLint ramWidth, GLint ramHeight);
+    RAMMeasure();
     ~RAMMeasure();
 
     /* Updates the system memory status values */
@@ -63,11 +63,6 @@ private:
     size_t dataSize; // max number of usage percentages to store
     std::vector<float> m_usageData;
 
-    // Rendering members
-    GLint m_viewportStartX;
-    GLint m_viewportStartY;
-    GLint m_viewportWidth;
-    GLint m_viewportHeight;
 };
 
 }
