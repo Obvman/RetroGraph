@@ -11,6 +11,7 @@ class GPUMeasure;
 class RAMMeasure;
 class ProcessMeasure;
 class DriveMeasure;
+class DriveInfo;
 class SystemInfo;
 class GLShaderHandler;
 
@@ -27,6 +28,10 @@ public:
 
     void draw(const GLShaderHandler& shaders) const;
 private:
+    void drawHDDWidget() const;
+
+    /* Draws a labelled capacity bar for the given DriveInfo object */
+    void drawHDDBar(const DriveInfo& di) const;
 
     void drawTimeWidget() const;
 
@@ -40,6 +45,7 @@ private:
     const SystemInfo& m_sysInfo;
 
     const GLint m_timeWidgetViewport[4];
+    const GLint m_hddWidgetViewport[4];
 
     GLint stdFontBase; // The default font
     GLint stdFontBoldBase;

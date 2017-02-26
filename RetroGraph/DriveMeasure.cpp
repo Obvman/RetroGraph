@@ -76,16 +76,17 @@ void DriveMeasure::update(uint32_t ticks) {
             GetDiskFreeSpaceEx(path, &freeBytesAvailable,
                                &totalBytes, &totalFreeBytes);
 
-            pdi->setTotalBytes(totalBytes.QuadPart);
+            // We don't expect the max capacity of a fixed drive to change,
+            // so only update the DriveInfo with the freeBytes
             pdi->setTotalFreeBytes(totalFreeBytes.QuadPart);
 
-            std::stringstream ss;
+            /*std::stringstream ss;
             ss << std::fixed << std::setprecision(1)
                << pdi->getDriveLetter() << ": "
                << pdi->getVolumeName() << " ("
                << static_cast<float>(pdi->getUsedBytes()) / GB << "GB/"
                << static_cast<float>(pdi->getTotalBytes()) / GB << "GB)\n";
-            pdi->setDriveInfoStr(ss.str());
+            pdi->setDriveInfoStr(ss.str());*/
         }
 
         // Only check for drive name updates every 20 minutes
@@ -121,13 +122,13 @@ void DriveMeasure::drawText() const {
     const auto rasterX = float{ -0.95f };
     auto rasterY = float{ 0.85f };
 
-    glColor3f(TEXT_R, TEXT_G, TEXT_B);
+    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
     for (const auto& pdi : m_drives) {
-        const auto& strToDraw{ pdi->getDriveInfoStr() };
+        //const auto& strToDraw{ pdi->getDriveInfoStr() };
 
-        glRasterPos2f(rasterX, rasterY);
-        glCallLists(strToDraw.length(), GL_UNSIGNED_BYTE, strToDraw.c_str());
+        //glRasterPos2f(rasterX, rasterY);
+        //glCallLists(strToDraw.length(), GL_UNSIGNED_BYTE, strToDraw.c_str());
 
         drawBar(*pdi, rasterX, rasterY - 0.05f);
 

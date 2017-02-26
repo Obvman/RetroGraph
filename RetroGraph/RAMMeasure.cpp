@@ -50,7 +50,6 @@ void RAMMeasure::draw() const {
     drawText();
     drawBar();
     drawGraph();
-    drawViewportBorder();
 
     // Reinstate previous settings
     glViewport(vp[0], vp[1], vp[2], vp[3]);
@@ -89,7 +88,7 @@ void RAMMeasure::drawText() const {
 
     auto percent = "RAM: " + std::to_string(getLoadPercentage()) + "%";
 
-    glColor3f(TEXT_R, TEXT_G, TEXT_B);
+    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
     glRasterPos2f(rasterX, rasterY);
     glCallLists(percent.length(), GL_UNSIGNED_BYTE, percent.c_str());
 }

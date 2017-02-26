@@ -59,7 +59,6 @@ void CPUMeasure::draw(GLuint shader) const {
 
     drawGraph(shader);
     drawText();
-    drawViewportBorder();
 
     glViewport(vp[0], vp[1], vp[2], vp[3]);
 
@@ -96,8 +95,6 @@ void CPUMeasure::drawGraph(GLuint shader) const {
 
     glUseProgram(0);
 
-    drawViewportBorder();
-
     glLineWidth(lineWidth);
     glViewport(vp[0], vp[1], vp[2], vp[3]);
 }
@@ -108,7 +105,7 @@ void CPUMeasure::drawText() const {
     constexpr auto rasterX = float{ -0.95f };
     auto rasterY = float{ -0.95f };
 
-    glColor3f(TEXT_R, TEXT_G, TEXT_B);
+    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
     // Set viewport for the graph to left half of measure's viewport
     glViewport(0, m_viewportStartY, m_viewportWidth/2, m_viewportHeight);
 

@@ -63,7 +63,7 @@ void SystemInfo::drawText() const {
     const auto rasterX = float{ -0.95f };
     auto rasterY = float{ -0.9f };
 
-    glColor3f(TEXT_R, TEXT_G, TEXT_B);
+    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
     glRasterPos2f(rasterX, rasterY);
     glCallLists(m_userName.length(), GL_UNSIGNED_BYTE, m_userName.c_str());

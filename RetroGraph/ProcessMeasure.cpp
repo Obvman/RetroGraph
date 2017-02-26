@@ -92,7 +92,7 @@ void ProcessMeasure::draw() const {
     drawCPUUsageList();
 
     // Draw Dividing line
-    glColor3f(TEXT_R, TEXT_G, TEXT_B);
+    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
     glBegin(GL_LINES); {
         glVertex2f(0.0f, 0.9f);
         glVertex2f(0.0f, -0.9f);
@@ -108,7 +108,7 @@ void ProcessMeasure::drawCPUUsageList() const {
     const auto rasterX = float{ -0.95f };
     auto rasterY = float{ -0.90f }; // Y changes for each process drawn
 
-    glColor3f(TEXT_R, TEXT_G, TEXT_B);
+    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
     for (auto it{ m_processCPUDrawStrings.crbegin() }; it != m_processCPUDrawStrings.crend(); ++it) {
         glRasterPos2f(rasterX, rasterY);
@@ -122,7 +122,7 @@ void ProcessMeasure::drawRAMUsageList() const {
     const auto rasterX = float{ 0.05f };
     auto rasterY = float{ -0.90f }; // Y changes for each process drawn
 
-    glColor3f(TEXT_R, TEXT_G, TEXT_B);
+    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
     for (auto it{ m_processRAMDrawStrings.crbegin() }; it != m_processRAMDrawStrings.crend(); ++it) {
         glRasterPos2f(rasterX, rasterY);

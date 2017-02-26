@@ -38,7 +38,9 @@ Renderer::Renderer(const CPUMeasure& _cpu, const GPUMeasure& _gpu,
     m_driveMeasure{ _drive },
     m_sysInfo{ _sys },
     m_timeWidgetViewport{ marginX, 5 * windowHeight/6 - marginY,
-                          windowWidth / 5, windowHeight / 6 } // Top left
+                          windowWidth/5, windowHeight/6 }, // Top left
+    m_hddWidgetViewport{ windowWidth - windowWidth/5 - marginX, 5 * windowHeight/6 - marginY,
+                         windowWidth/5, windowHeight/6} // Top right
 {
 
 }
@@ -104,13 +106,81 @@ void Renderer::draw(const GLShaderHandler& shaders) const {
     glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
 
     drawTimeWidget();
+    drawHDDWidget();
 
     m_cpuMeasure.draw(shaders.getCpuGraphProgram());
     //m_gpuMeasure.draw();
     m_ramMeasure.draw();
     //m_processMeasure.draw();
-    m_driveMeasure.draw();
-    m_sysInfo.draw();
+    //m_driveMeasure.draw();
+    //m_sysInfo.draw();
+}
+
+void Renderer::drawHDDWidget() const {
+    glViewport(m_hddWidgetViewport[0], m_hddWidgetViewport[1],
+               m_hddWidgetViewport[2], m_hddWidgetViewport[3]);
+    glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
+    glLineWidth(0.5f);
+
+    // Draw dividers
+    glBegin(GL_LINES); {
+        glVertex2f(-1.0f, 1.0f); // Drawing at the very edge of the viewport like this leaves an even thinner line
+        glVertex2f( 1.0f, 1.0f); // Top line
+
+        glVertex2f(-1.0f, -1.0f);
+        glVertex2f( 1.0f, -1.0f); // Bottom line
+    } glEnd();
+
+    glPushMatrix();
+    const auto numDrives{ m_driveMeasure.getNumDrives() };
+    // For each drive, draw a bar and label in the widget
+    for (const auto& pdi : m_driveMeasure.getDrives()) {
+        drawHDDBar(*pdi);
+
+        // Draw the drive label below the bar
+        const char label[3]{ pdi->getDriveLetter(), ':', '\0' };
+        glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
+        glRasterPos2f(-0.89f, -0.88f);
+        glCallLists(sizeof(label), GL_UNSIGNED_BYTE, label);
+
+        const auto capacityStr{ pdi->getCapacityStr() };
+
+        // Translate by the length of the string to keep it centerred
+        glPushMatrix();
+
+        glRasterPos2f(-0.95f, 0.80f);
+        glCallLists(capacityStr.size(), GL_UNSIGNED_BYTE, capacityStr.c_str());
+        glPopMatrix();
+
+        // Shift the bar to evenly fill the widget
+        glTranslatef((2.0f/numDrives), 0.0f, 0.0f);
+    }
+
+    glPopMatrix();
+}
+
+void Renderer::drawHDDBar(const DriveInfo& di) const {
+    const auto percentage{ static_cast<float>(di.getUsedBytes()) / di.getTotalBytes() };
+
+    constexpr auto x = float{ -0.85f };
+    constexpr auto yMax = float{ 0.7f };
+    constexpr auto yMin = float{ -0.7f };
+    constexpr auto yRange{ yMax - yMin };
+
+    glLineWidth(10.0f);
+
+    // Draw the bar
+    glBegin(GL_LINES); {
+        // Draw the filled section of the bar
+        glColor3f(BARFILLED_R, BARFILLED_G, BARFILLED_B);
+        glVertex2f(x, yMin);
+        glVertex2f(x, yMin + percentage * yRange);
+
+        // Draw the free section of the bar
+        glColor3f(BARFREE_R, BARFREE_G, BARFREE_B);
+        glVertex2f(x, yMin + percentage * yRange);
+        glVertex2f(x, yMax);
+    } glEnd();
 }
 
 void Renderer::drawTimeWidget() const {
@@ -119,9 +189,9 @@ void Renderer::drawTimeWidget() const {
     glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
     glLineWidth(0.5f);
 
-    // Draw Dividers
+    // Draw dividers
     glBegin(GL_LINES); {
-        glVertex2f(-1.0f, 1.0f); // Drawing at the very edge of the viewport like this leaves an even thinner line
+        glVertex2f(-1.0f, 1.0f);
         glVertex2f( 1.0f, 1.0f); // Top line
 
         glVertex2f(-1.0f, -1.0f);
@@ -136,6 +206,9 @@ void Renderer::drawTimeWidget() const {
         glVertex2f(0.33f, -1.0f);
         glVertex2f(0.33f, -0.3f); // Right vertical
     } glEnd();
+
+    // Draw all the text elements
+    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
     // Draw the big system time
     {

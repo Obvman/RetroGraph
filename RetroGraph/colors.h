@@ -10,6 +10,10 @@ constexpr float WHITE_R{ 0xFF / 255.0f };
 constexpr float WHITE_G{ 0xFF / 255.0f };
 constexpr float WHITE_B{ 0xFF / 255.0f };
 
+constexpr float GREY_R{ 0x22 / 255.0f };
+constexpr float GREY_G{ 0x22 / 255.0f };
+constexpr float GREY_B{ 0x22 / 255.0f };
+
 constexpr float BLUE1_R{ 0x01 / 255.0f };
 constexpr float BLUE1_G{ 0xB9 / 255.0f };
 constexpr float BLUE1_B{ 0xD2 / 255.0f };
@@ -35,6 +39,7 @@ constexpr float PINK3_B{ 0x43 / 255.0f };
 constexpr float TEXT_R{ WHITE_R };
 constexpr float TEXT_G{ WHITE_G };
 constexpr float TEXT_B{ WHITE_B };
+constexpr float TEXT_A{ 0.7f };
 
 constexpr float DEBUG_BORDER_R{ 0.2f };
 constexpr float DEBUG_BORDER_G{ 0.8f };
@@ -54,4 +59,11 @@ constexpr float BGCOLOR_B{ BLACK_B };
 constexpr float BGCOLOR_A{ 0.0f };
 
 
+constexpr float BARFILLED_R{ WHITE_R };
+constexpr float BARFILLED_G{ WHITE_G };
+constexpr float BARFILLED_B{ WHITE_B };
+
+constexpr float BARFREE_R{ GREY_R };
+constexpr float BARFREE_G{ GREY_G };
+constexpr float BARFREE_B{ GREY_B };
 }
