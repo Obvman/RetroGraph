@@ -184,19 +184,11 @@ void Window::initOpenGL() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
 
-    initFonts();
+    m_renderer.init(m_hWndMain);
 
-    initShaders();
+    m_shaders.loadShaders();
 
     m_systemInfo.getGPUDescription();
-}
-
-void Window::initFonts() {
-    m_renderer.initFonts(m_hWndMain);
-}
-
-void Window::initShaders() {
-    m_shaders.loadShaders();
 }
 
 void Window::releaseOpenGL() {

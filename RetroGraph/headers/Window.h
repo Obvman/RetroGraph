@@ -57,14 +57,8 @@ public:
     /* Returns the RAM measurement member */
     const RAMMeasure& getRAMMeasure() const { return m_ramMeasure; }
 private:
-    /* Initialises OpenGL settings */
+    /* Initialises OpenGL settings and renderer */
     void initOpenGL();
-
-    /* Gets and sets the text font */
-    void initFonts();
-
-    /* Compiles and links shaders */
-    void initShaders();
 
     /* Releases the OpenGL context from the window */
     void releaseOpenGL();

@@ -23,7 +23,9 @@ public:
              uint16_t windowWidth, uint16_t windowHeight);
     ~Renderer();
 
+    void init(HWND hWnd);
     void initFonts(HWND hWnd);
+    void initVBOs();
     void release();
 
     void draw(const GLShaderHandler& shaders) const;
@@ -60,9 +62,15 @@ private:
     const GLint m_graphWidgetViewport[4]; // Viewport of all graphs
     const GLint m_cpuGraphViewport[4]; // viewport of graph relative to graphWidgetViewport
 
+    // Font members
     GLint stdFontBase; // The default font
     GLint stdFontBoldBase;
     GLint lrgFontBase;
+
+    // VBO members
+    GLuint m_graphGridVertsID;
+    GLuint m_graphGridIndicesID;
+    GLsizei m_graphIndicesSize;
 };
 
 }

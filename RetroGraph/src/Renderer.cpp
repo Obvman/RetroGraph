@@ -26,6 +26,20 @@ void fontScope(GLint fontBase, F f) {
     glPopAttrib();
 }
 
+template<typename F>
+void vboDrawScope(GLuint vertID, GLuint indexID, F f) {
+    glBindBuffer(GL_ARRAY_BUFFER, vertID);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexID);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(2, GL_FLOAT, 0, 0);
+
+    f();
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
 
 Renderer::Renderer(const CPUMeasure& _cpu, const GPUMeasure& _gpu,
                    const RAMMeasure& _ram, const ProcessMeasure& _proc,
@@ -52,6 +66,11 @@ Renderer::Renderer(const CPUMeasure& _cpu, const GPUMeasure& _gpu,
 }
 
 Renderer::~Renderer() {
+}
+
+void Renderer::init(HWND hWnd) {
+    initFonts(hWnd);
+    initVBOs();
 }
 
 void Renderer::initFonts(HWND hWnd) {
@@ -103,7 +122,63 @@ void Renderer::initFonts(HWND hWnd) {
     glListBase(stdFontBase);
 }
 
+void Renderer::initVBOs() {
+    constexpr size_t numVertLines{ 14U };
+    constexpr size_t numHorizLines{ 7U };
+
+    std::vector<GLfloat> gVerts;
+    std::vector<GLuint> gIndices;
+    gVerts.reserve(4 * (numVertLines + numHorizLines) );
+    gIndices.reserve(2 * (numVertLines + numHorizLines) );
+
+    // Fill the vertex and index arrays with data for drawing grid as VBO
+    for (auto i{ 0U }; i < numVertLines; ++i) {
+        const float x{ (i)/static_cast<float>(numVertLines-1) * 2.0f - 1.0f };
+        gVerts.push_back(x);
+        gVerts.push_back(1.0f); // Vertical line top vert
+
+        gVerts.push_back(x);
+        gVerts.push_back(-1.0f); // Vertical line bottom vert
+
+        gIndices.push_back(2*i);
+        gIndices.push_back(2*i+1);
+    }
+
+    // Offset value for the index array
+    const auto vertLineIndexCount{ gIndices.size() };
+    for (auto i{ 0U }; i < numHorizLines; ++i) {
+        const float y{ static_cast<float>(i)/(numHorizLines-1) * 2.0f - 1.0f };
+        gVerts.push_back(-1.0f);
+        gVerts.push_back(y); // Horizontal line bottom vert
+
+        gVerts.push_back(1.0f);
+        gVerts.push_back(y); // Horizontal line bottom vert
+
+        gIndices.push_back(vertLineIndexCount + 2*i);
+        gIndices.push_back(vertLineIndexCount + 2*i+1);
+    }
+    m_graphIndicesSize = gIndices.size();
+
+    // Initialise the graph grid VBO
+    glGenBuffers(1, &m_graphGridVertsID);
+    glBindBuffer(GL_ARRAY_BUFFER, m_graphGridVertsID);
+    glBufferData(GL_ARRAY_BUFFER, gVerts.size() * sizeof(GLfloat),
+                 gVerts.data(), GL_STATIC_DRAW);
+
+    // Initialise graph grid index array
+    glGenBuffers(1, &m_graphGridIndicesID);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_graphGridIndicesID);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, gIndices.size() * sizeof(GLuint),
+                 gIndices.data(), GL_STATIC_DRAW);
+
+    // Unbind buffers
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
 void Renderer::release() {
+    glDeleteBuffers(1, &m_graphGridVertsID);
+    glDeleteBuffers(1, &m_graphGridIndicesID);
     glDeleteLists(stdFontBase, 96);
 }
 
@@ -112,16 +187,11 @@ void Renderer::draw(const GLShaderHandler& shaders) const {
     glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
 
     drawGraphWidget();
+
     drawProcessWidget();
     drawTimeWidget();
     drawHDDWidget();
 
-    //m_cpuMeasure.draw(shaders.getCpuGraphProgram());
-    //m_gpuMeasure.draw();
-    //m_ramMeasure.draw();
-    //m_processMeasure.draw();
-    //m_driveMeasure.draw();
-    //m_sysInfo.draw();
 }
 
 void Renderer::drawGraphWidget() const {
@@ -136,43 +206,12 @@ void Renderer::drawCpuGraph() const {
     glViewport(m_cpuGraphViewport[0], m_cpuGraphViewport[1],
                m_cpuGraphViewport[2], m_cpuGraphViewport[3]);
 
-    // Draw the graph border
-    glLineWidth(0.5f);
-    glColor4f(DIVIDER_R, DIVIDER_G, DIVIDER_B, DIVIDER_A);
-    glBegin(GL_LINES); {
-        glVertex2f(-1.0f, 1.0f);
-        glVertex2f( 1.0f, 1.0f); // Top
 
-        glVertex2f(-1.0f, -1.0f);
-        glVertex2f( 1.0f, -1.0f); // Bottom
-
-        glVertex2f(-1.0f,  1.0f);
-        glVertex2f(-1.0f, -1.0f); // Left
-
-        glVertex2f( 1.0f,  1.0f);
-        glVertex2f( 1.0f, -1.0f); // Right
-    } glEnd();
-
-    // Draw the graph background grid
-    constexpr float numRows{ 5.0f };
-    constexpr float numCols{ 12.0f };
-
-    glLineWidth(0.5f);
-    glColor4f(DIVIDER_R, DIVIDER_G, DIVIDER_B, 0.2f);
-    glBegin(GL_LINES); {
-        for (auto i{ 0U }; i < numRows; ++i) {
-            const auto y = float{ (i + 1)/(numRows + 1) * 2.0f - 1.0f };
-            glVertex2f(-1.0f, y);
-            glVertex2f( 1.0f, y);
-        }
-        for (auto i{ 0U }; i < numCols; ++i) {
-            const auto x = float{ (i + 1)/(numCols + 1) * 2.0f - 1.0f };
-            glVertex2f(x, -1.0f);
-            glVertex2f(x,  1.0f);
-        }
-    } glEnd();
-
-
+    vboDrawScope(m_graphGridVertsID, m_graphGridIndicesID, [this]() {
+        glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.2f);
+        glLineWidth(0.5f);
+        glDrawElements(GL_LINES, m_graphIndicesSize, GL_UNSIGNED_INT, 0);
+    });
 
     // Draw the line graph
     glLineWidth(0.5f);
