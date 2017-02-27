@@ -7,6 +7,7 @@
 #include <dwmapi.h>
 #include <iostream>
 
+#include "resource.h"
 #include "utils.h"
 #include "colors.h"
 
@@ -44,7 +45,7 @@ Window::Window(HINSTANCE hInstance, const char* windowName,
     m_wc.cbClsExtra  = 0;
     m_wc.cbWndExtra  = 0;
     m_wc.hInstance = m_hInstance;
-    m_wc.hIcon = LoadIcon(m_hInstance, IDI_ERROR);
+    m_wc.hIcon = LoadIcon(m_hInstance, MAKEINTRESOURCE(IDI_ICON1));
     m_wc.hCursor = LoadCursor(NULL, IDC_ARROW);
     m_wc.hbrBackground = (HBRUSH)CreateSolidBrush(0x00000000);
     m_wc.lpszClassName = windowName;

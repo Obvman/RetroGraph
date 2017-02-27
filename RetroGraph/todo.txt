@@ -10,8 +10,6 @@ media - foobar status
 recycle bin monitor
 3D effects on graph
 
-Remove viewport variables from measure members
-
 fix style inconsistencies
 
 truncate process names that are too long in CPU/RAM usage lists
@@ -29,10 +27,6 @@ use VBOs
 handle insertion and removal of usb drives
 
 right-click menu
-
-implement border delta into viewport bounds rather than draw calls
-
-store font sizes in each Measure
 
 make initial style WS_EX_TOOLWINDOW then set to WS_EX_APPWINDOW after creation is done to prevent fake window showing in toolbar
 
