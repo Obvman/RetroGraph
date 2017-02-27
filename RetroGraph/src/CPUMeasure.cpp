@@ -1,4 +1,4 @@
-#include "CPUMeasure.h"
+#include "../headers/CPUMeasure.h"
 
 #include <iostream>
 #include <sstream>
@@ -11,9 +11,9 @@
 #include <GL/gl.h>
 #include <GL/freeglut.h>
 
-#include "Window.h"
-#include "colors.h"
-#include "utils.h"
+#include "../headers/Window.h"
+#include "../headers/colors.h"
+#include "../headers/utils.h"
 
 static unsigned long long FileTimeToInt64(const FILETIME & ft) {return (((unsigned long long)(ft.dwHighDateTime))<<32)|((unsigned long long)ft.dwLowDateTime);}
 

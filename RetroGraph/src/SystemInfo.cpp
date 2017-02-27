@@ -1,12 +1,12 @@
-#include "SystemInfo.h"
+#include "../headers/SystemInfo.h"
 
 #include <iostream>
 #include <Winver.h>
 #include <sstream>
 #include <GL/gl.h>
 
-#include "utils.h"
-#include "colors.h"
+#include "../headers/utils.h"
+#include "../headers/colors.h"
 
 #pragma comment(lib, "version.lib")
 

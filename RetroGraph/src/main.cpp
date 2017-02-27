@@ -1,24 +1,19 @@
-#include <iostream> // std
+#include <iostream>
 #include <iomanip>
 #include <chrono>
 
-#include <Windows.h> // win32
+#include <Windows.h>
 #include <winternl.h>
 #include <Wbemidl.h>
 #include <comdef.h>
 
-#include <GL/glew.h> // openGL
+#include <GL/glew.h>
 #include <GL/gl.h>
 
-#include "utils.h"
-#include "CPUMeasure.h"
-#include "Window.h"
+#include "../headers/utils.h"
+#include "../headers/CPUMeasure.h"
+#include "../headers/Window.h"
 
-#pragma comment(lib, "wbemuuid.lib")
-#pragma comment(lib, "ntdll.lib")
-
-//void test();
-//void test2();
 void mainLoop(rg::Window& mainWindow);
 
 #if (!_DEBUG)
@@ -45,9 +40,9 @@ int main() {
 
 void mainLoop(rg::Window& mainWindow) {
     using namespace std::chrono;
-    auto start = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+    auto start{ duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count() };
     uint32_t ticks{ 1 };
-    auto lastTick = ticks;
+    auto lastTick{ ticks };
     MSG msg;
 
     // Enter main update/draw loop

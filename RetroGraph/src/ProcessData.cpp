@@ -1,4 +1,5 @@
-#include "ProcessData.h"
+#include "../headers/ProcessData.h"
+
 namespace rg {
 
 ProcessData::ProcessData(HANDLE pHandle, DWORD pID, const char* name) :

@@ -1,4 +1,4 @@
-#include "GPUMeasure.h"
+#include "../headers/GPUMeasure.h"
 
 namespace rg {
 

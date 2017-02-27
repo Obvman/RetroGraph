@@ -1,8 +1,6 @@
-#include "CPUPlugin.h"
+#include "../headers/CPUPlugin.h"
 
-#include <iostream>
-
-#include "utils.h"
+#include "../headers/utils.h"
 
 namespace rg {
 

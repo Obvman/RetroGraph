@@ -1,8 +1,8 @@
-#include "utils.h"
+#include "../headers/utils.h"
 
 #include <GL/glew.h>
 
-#include "colors.h"
+#include "../headers/colors.h"
 
 namespace rg {
 

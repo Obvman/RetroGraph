@@ -1,4 +1,4 @@
-#include "DriveMeasure.h"
+#include "../headers/DriveMeasure.h"
 
 #include <Windows.h>
 #include <sstream>
@@ -9,8 +9,8 @@
 #include <GL/gl.h>
 #include <GL/freeglut.h>
 
-#include "colors.h"
-#include "utils.h"
+#include "../headers/colors.h"
+#include "../headers/utils.h"
 
 namespace rg {
 

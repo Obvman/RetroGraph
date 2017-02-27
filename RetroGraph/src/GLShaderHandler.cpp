@@ -1,10 +1,10 @@
-#include "GLShaderHandler.h"
+#include "../headers/GLShaderHandler.h"
 
 #include <vector>
 #include <iostream>
 #include <fstream>
 
-#include "utils.h"
+#include "../headers/utils.h"
 
 namespace rg {
 

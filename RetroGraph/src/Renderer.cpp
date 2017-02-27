@@ -1,18 +1,18 @@
-#include "Renderer.h"
+#include "../headers/Renderer.h"
 
 #include <GL/gl.h>
 #include <sstream>
 #include <iostream>
 
-#include "CPUMeasure.h"
-#include "GPUMeasure.h"
-#include "RAMMeasure.h"
-#include "ProcessMeasure.h"
-#include "DriveMeasure.h"
-#include "SystemInfo.h"
-#include "GLShaderHandler.h"
-#include "colors.h"
-#include "utils.h"
+#include "../headers/CPUMeasure.h"
+#include "../headers/GPUMeasure.h"
+#include "../headers/RAMMeasure.h"
+#include "../headers/ProcessMeasure.h"
+#include "../headers/DriveMeasure.h"
+#include "../headers/SystemInfo.h"
+#include "../headers/GLShaderHandler.h"
+#include "../headers/colors.h"
+#include "../headers/utils.h"
 
 namespace rg {
 

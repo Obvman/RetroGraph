@@ -1,10 +1,10 @@
-#include "RAMMeasure.h"
+#include "../headers/RAMMeasure.h"
 
 #include <iostream>
 #include <string>
 #include <GL/freeglut.h>
 
-#include "colors.h"
+#include "../headers/colors.h"
 
 namespace rg {
 

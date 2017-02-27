@@ -1,4 +1,4 @@
-#include "Window.h"
+#include "../headers/Window.h"
 
 #include <GL/freeglut.h>
 #include <GL/glew.h>
@@ -7,9 +7,9 @@
 #include <dwmapi.h>
 #include <iostream>
 
-#include "resource.h"
-#include "utils.h"
-#include "colors.h"
+#include "../headers/resource.h"
+#include "../headers/utils.h"
+#include "../headers/colors.h"
 
 
 namespace rg {

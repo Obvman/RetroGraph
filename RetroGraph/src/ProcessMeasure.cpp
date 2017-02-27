@@ -1,4 +1,4 @@
-#include "ProcessMeasure.h"
+#include "../headers/ProcessMeasure.h"
 
 #include <iomanip>
 #include <sstream>
@@ -7,9 +7,9 @@
 #include <GL/freeglut.h>
 #include <GL/gl.h>
 
-#include "colors.h"
-#include "ProcessData.h"
-#include "utils.h"
+#include "../headers/colors.h"
+#include "../headers/ProcessData.h"
+#include "../headers/utils.h"
 
 namespace rg {
 
