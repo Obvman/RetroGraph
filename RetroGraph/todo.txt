@@ -1,5 +1,6 @@
 rainmeter plugins github - https://github.com/rainmeter/rainmeter/tree/eeeef4a7f2695280ba3506e98a71d163e613b1da/Plugins
 
+colour code high usage processes
 number of processes/number of threads
 network upload/download, DNS, VPN, hostname
 network connectivity status
@@ -7,12 +8,11 @@ gpu load
 cpu/gpu temps
 text labelling graphs
 media - foobar status
+volume, current sound output level bar
 recycle bin monitor
 3D effects on graph
 
-fix style inconsistencies
-
-truncate process names that are too long in CPU/RAM usage lists
+test suite
 
 Create alternate CPU measure display for when CoreTemp isn't running
 

@@ -6,6 +6,7 @@
 #include <winternl.h>
 #include <Wbemidl.h>
 #include <comdef.h>
+#pragma comment(lib, "Ntdll.lib")
 
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -15,6 +16,7 @@
 #include "../headers/Window.h"
 
 void mainLoop(rg::Window& mainWindow);
+void test();
 
 #if (!_DEBUG)
 // Release mode is a Win32 application, while Debug mode is a console application
@@ -85,3 +87,109 @@ void mainLoop(rg::Window& mainWindow) {
         Sleep(15);
     }
 }
+
+/*typedef struct _SYSTEM_PROCESS_INFO
+{
+    ULONG                   NextEntryOffset;
+    ULONG                   NumberOfThreads;
+    LARGE_INTEGER           Reserved[3];
+    LARGE_INTEGER           CreateTime;
+    LARGE_INTEGER           UserTime;
+    LARGE_INTEGER           KernelTime;
+    UNICODE_STRING          ImageName;
+    ULONG                   BasePriority;
+    HANDLE                  ProcessId;
+    HANDLE                  InheritedFromProcessId;
+}SYSTEM_PROCESS_INFO,*PSYSTEM_PROCESS_INFO;
+
+ULONGLONG SubtractTimes(const FILETIME& ftA, const FILETIME& ftB);
+
+void test() {
+    NTSTATUS status;
+    PVOID buffer;
+    PSYSTEM_PROCESS_INFO spi;
+
+    buffer=VirtualAlloc(NULL,1024*1024,MEM_COMMIT|MEM_RESERVE,PAGE_READWRITE); // We need to allocate a large buffer because the process list can be large.
+
+    if(!buffer)
+    {
+        std::cout << "Error: Unable to allocate memory for process list " << GetLastError() << '\n';
+        return;
+    }
+
+    spi=(PSYSTEM_PROCESS_INFO)buffer;
+
+    if(!NT_SUCCESS(status=NtQuerySystemInformation(SystemProcessInformation,spi,1024*1024,NULL)))
+    {
+        std::cout << "Error: Unable to query process list " << status << '\n';
+
+        VirtualFree(buffer,0,MEM_RELEASE);
+        return;
+    }
+
+    FILETIME sysIdle1, sysKernel1, sysUser1;
+    GetSystemTimes(&sysIdle1, &sysKernel1, &sysUser1);
+
+    Sleep(1000);
+    NTSTATUS status2;
+    PVOID buffer2;
+    PSYSTEM_PROCESS_INFO spi2;
+
+    buffer2=VirtualAlloc(NULL,1024*1024,MEM_COMMIT|MEM_RESERVE,PAGE_READWRITE); // We need to allocate a large buffer because the process list can be large.
+
+    if(!buffer2)
+    {
+        std::cout << "Error: Unable to allocate memory for process list " << GetLastError() << '\n';
+        return;
+    }
+
+    spi2=(PSYSTEM_PROCESS_INFO)buffer2;
+
+    if(!NT_SUCCESS(status2=NtQuerySystemInformation(SystemProcessInformation,spi2,1024*1024,NULL)))
+    {
+        std::cout << "Error: Unable to query process list " << status2 << '\n';
+
+        VirtualFree(buffer2,0,MEM_RELEASE);
+        return;
+    }
+
+    FILETIME sysIdle2, sysKernel2, sysUser2;
+    GetSystemTimes(&sysIdle2, &sysKernel2, &sysUser2);
+
+    // loop over both lists at the same time
+    while(spi2->NextEntryOffset && spi->NextEntryOffset) // Loop over the list until we reach the last entry.
+    {
+        //printf("\nProcess name: %ws | Process ID: %d\n",spi2->ImageName.Buffer,spi2->ProcessId); // Display process information.
+
+        printf("%ws : %ws:\n", spi->ImageName.Buffer, spi2->ImageName.Buffer);
+        const auto cpuTime1 = spi->KernelTime.QuadPart + spi->UserTime.QuadPart;
+        const auto cpuTime2 = spi2->KernelTime.QuadPart + spi2->UserTime.QuadPart;
+
+        const auto diffProc = cpuTime2 - cpuTime1;
+
+        const auto sysKDiff = SubtractTimes(sysKernel2, sysKernel1);
+        const auto sysUDiff = SubtractTimes(sysUser2, sysUser1);
+        const auto diffSys = sysKDiff + sysUDiff;
+
+        double cpuUse = static_cast<double>(100 * diffProc) / static_cast<double>(diffSys);
+        std::cout << cpuUse << "%\n";
+        //std::cout << diffProc << '\n';
+
+        spi2=(PSYSTEM_PROCESS_INFO)((LPBYTE)spi2+spi2->NextEntryOffset); // Calculate the address of the next entry.
+        spi=(PSYSTEM_PROCESS_INFO)((LPBYTE)spi+spi->NextEntryOffset);
+    }
+
+    VirtualFree(buffer2,0,MEM_RELEASE); // Free the allocated buffer.
+    VirtualFree(buffer,0,MEM_RELEASE); // Free the allocated buffer.
+}
+
+ULONGLONG SubtractTimes(const FILETIME& ftA, const FILETIME& ftB) {
+     LARGE_INTEGER a, b;
+     a.LowPart = ftA.dwLowDateTime;
+     a.HighPart = ftA.dwHighDateTime;
+
+     b.LowPart = ftB.dwLowDateTime;
+     b.HighPart = ftB.dwHighDateTime;
+
+     return a.QuadPart - b.QuadPart;
+}*/

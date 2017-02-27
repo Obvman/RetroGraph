@@ -1,8 +1,10 @@
 #include "../headers/ProcessMeasure.h"
 
+#include <iostream>
 #include <iomanip>
 #include <sstream>
 #include <algorithm>
+#include <utility>
 
 #include <GL/freeglut.h>
 #include <GL/gl.h>
@@ -32,14 +34,20 @@ void ProcessMeasure::init() {
 // TODO benchmark using vector vs list
 
 void ProcessMeasure::update(uint32_t ticks) {
+    //std::vector<std::shared_ptr<ProcessData>> oldData;
+
     // Update the process list vector every 10 seconds
     if ((ticks % (ticksPerSecond * 10)) == 0) {
+        /*oldData.reserve( m_allProcessData.size() );
+        for (const auto& spd : m_allProcessData) {
+            oldData.push_back(spd);
+        }*/
+
         m_allProcessData.clear();
         populateList();
     }
 
     if ((ticks % (ticksPerSecond * 2)) == 0) {
-
         // Track iterator outside while scope for std::erase
         auto it = m_allProcessData.begin();
         while (it != m_allProcessData.end()) {
@@ -63,10 +71,27 @@ void ProcessMeasure::update(uint32_t ticks) {
             if (exitCode == 0 || exitCode == 1) {
                 it = m_allProcessData.erase(it);
             } else {
-                // Get new timing information and calculate the CPU usage
-                const auto cpuUsage{ calculateCPUUsage(pHandle, pd) };
-                pd.setCpuUsage(cpuUsage);
-                pd.updateMemCounters();
+                /*if (oldData.size() > 0) {
+                    auto found{ std::find_if(m_allProcessData.begin(), m_allProcessData.end(),
+                                             [&pd](const auto& p) {
+                        return pd.getPID() == p->getPID();
+                    }) };
+
+                    if (found != m_allProcessData.end()) {
+                        // Use the old data to calculate CPU usage instead
+                        const auto cpuUsage{ calculateCPUUsage(pHandle, **found) };
+
+                        pd.setCpuUsage(cpuUsage);
+                        pd.updateMemCounters();
+                    }
+
+                } else*/ {
+                    // Get new timing information and calculate the CPU usage
+                    const auto cpuUsage{ calculateCPUUsage(pHandle, pd) };
+                    pd.setCpuUsage(cpuUsage);
+                    pd.updateMemCounters();
+                }
+
 
                 ++it;
             }
@@ -117,29 +142,29 @@ void ProcessMeasure::fillRAMData() {
     }
 }
 
-double ProcessMeasure::calculateCPUUsage(HANDLE pHandle, ProcessData& pd) {
+double ProcessMeasure::calculateCPUUsage(HANDLE pHandle, ProcessData& oldData) {
         // Find delta in the process's total CPU usage time
         FILETIME cTime;
         FILETIME eTime;
         FILETIME kTime;
         FILETIME uTime;
         GetProcessTimes(pHandle, &cTime, &eTime, &uTime, &kTime);
-        const auto procKernelDiff{ subtractTimes(kTime, pd.getKernelTime()) };
-        const auto procUserDiff{ subtractTimes(uTime, pd.getUserTime()) };
+        const auto procKernelDiff{ subtractTimes(kTime, oldData.getKernelTime()) };
+        const auto procUserDiff{ subtractTimes(uTime, oldData.getUserTime()) };
         const auto totalProc{ procKernelDiff + procUserDiff };
 
         // Find delta in the entire system's CPU usage time
         FILETIME sysIdle, sysKernel, sysUser;
         GetSystemTimes(&sysIdle, &sysKernel, &sysUser);
-        const auto sysKernelDiff{ subtractTimes(sysKernel, pd.getLastSystemKernelTime()) };
-        const auto sysUserDiff{ subtractTimes(sysUser, pd.getLastSystemUserTime()) };
+        const auto sysKernelDiff{ subtractTimes(sysKernel, oldData.getLastSystemKernelTime()) };
+        const auto sysUserDiff{ subtractTimes(sysUser, oldData.getLastSystemUserTime()) };
         const auto totalSys{ sysKernelDiff + sysUserDiff };
 
         // Get the CPU usage as a percentage
         const double cpuUse = static_cast<double>(100 * totalProc) / static_cast<double>(totalSys);
 
 
-        pd.setTimes(cTime, eTime, kTime, uTime);
+        oldData.setTimes(cTime, eTime, kTime, uTime);
 
         return cpuUse;
 }
@@ -197,7 +222,7 @@ void ProcessMeasure::populateList() {
         }
 
         // Populate the vector
-        m_allProcessData.emplace_back(std::make_unique<ProcessData>(pHandle, pe.th32ProcessID, pe.szExeFile));
+        m_allProcessData.emplace_back(std::make_shared<ProcessData>(pHandle, pe.th32ProcessID, pe.szExeFile));
 
     } while (Process32Next(processSnapshot, &pe));
 

@@ -42,12 +42,12 @@ private:
     void fillRAMData();
 
     /* Calculates the CPU usage of the given process */
-    double calculateCPUUsage(HANDLE pHandle, ProcessData& pd);
+    double calculateCPUUsage(HANDLE pHandle, ProcessData& oldData);
 
     /* Fills m_allProcessData with new process information */
     void populateList();
 
-    std::vector<std::unique_ptr<ProcessData>> m_allProcessData;
+    std::vector<std::shared_ptr<ProcessData>> m_allProcessData;
 
     uint16_t m_numProcessesToDisplay{ 7 };
     std::vector<std::pair<std::string, double>> m_procCPUListData;

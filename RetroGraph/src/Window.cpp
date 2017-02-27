@@ -6,6 +6,7 @@
 #include <GL/gl.h>
 #include <dwmapi.h>
 #include <iostream>
+#include <thread>
 
 #include "../headers/resource.h"
 #include "../headers/utils.h"
