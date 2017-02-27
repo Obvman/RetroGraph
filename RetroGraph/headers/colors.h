@@ -45,6 +45,11 @@ constexpr float DEBUG_BORDER_R{ 0.2f };
 constexpr float DEBUG_BORDER_G{ 0.8f };
 constexpr float DEBUG_BORDER_B{ 0.2f };
 
+constexpr float BORDER_R{ WHITE_R };
+constexpr float BORDER_G{ WHITE_G };
+constexpr float BORDER_B{ WHITE_B };
+constexpr float BORDER_A{ 1.0f };
+
 constexpr float LINE_R{ WHITE_R };
 constexpr float LINE_G{ WHITE_G };
 constexpr float LINE_B{ WHITE_B };

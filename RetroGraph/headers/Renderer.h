@@ -32,6 +32,7 @@ public:
 private:
     void drawGraphWidget() const;
     void drawCpuGraph() const;
+    void drawRamGraph() const;
 
     void drawProcessWidget() const;
     void drawProcCPUList() const;
@@ -61,10 +62,12 @@ private:
 
     const GLint m_graphWidgetViewport[4]; // Viewport of all graphs
     const GLint m_cpuGraphViewport[4]; // viewport of graph relative to graphWidgetViewport
+    const GLint m_ramGraphViewport[4]; // viewport of graph relative to graphWidgetViewport
 
     // Font members
     GLint stdFontBase; // The default font
     GLint stdFontBoldBase;
+    GLint smlFontBase;
     GLint lrgFontBase;
 
     // VBO members

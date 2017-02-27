@@ -60,6 +60,8 @@ Renderer::Renderer(const CPUMeasure& _cpu, const GPUMeasure& _gpu,
     m_graphWidgetViewport{ marginX, windowHeight/4 + 2*marginY,
                               windowWidth/5, windowHeight/2 }, // Left-Mid
     m_cpuGraphViewport{ m_graphWidgetViewport[0], m_graphWidgetViewport[1] + 3*m_graphWidgetViewport[3]/4,
+                        m_graphWidgetViewport[2], m_graphWidgetViewport[3]/4},
+    m_ramGraphViewport{ m_graphWidgetViewport[0], m_graphWidgetViewport[1] + 2*m_graphWidgetViewport[3]/4,
                         m_graphWidgetViewport[2], m_graphWidgetViewport[3]/4}
 {
 
@@ -92,17 +94,29 @@ void Renderer::initFonts(HWND hWnd) {
     stdFontBase = glGenLists(256);
     stdFontBoldBase = glGenLists(256);
     lrgFontBase = glGenLists(256);
+    smlFontBase = glGenLists(256);
+
+    RECT rect;
+    GetWindowRect(m_renderTargetHandle, &rect);
+    const auto width{ rect.right - rect.left };
+    const auto height{ rect.bottom - rect.top };
+
+    const auto stdFontHeight{ height / 100 - 1 };
+    const auto stdFontWidth{ width / 100 - 1};
 
     // Create the different fonts
-    HFONT standardFont = CreateFont(20, 10, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
+    HFONT standardFont = CreateFont(stdFontWidth, stdFontHeight, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
                               OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
                               DEFAULT_PITCH | FF_DONTCARE, fonts[0]);
-    HFONT standardFontBold = CreateFont(20, 10, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, ANSI_CHARSET,
+    HFONT standardFontBold = CreateFont(stdFontWidth, stdFontHeight, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, ANSI_CHARSET,
                               OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
                               DEFAULT_PITCH | FF_DONTCARE, fonts[0]);
-    HFONT largeFont = CreateFont(70, 30, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
+    HFONT largeFont = CreateFont(70, 35, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
                            OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
                            VARIABLE_PITCH | FF_MODERN, fonts[0]);
+    HFONT smallFont = CreateFont(stdFontWidth/2 + 2, stdFontHeight/2 + 2, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
+                           OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
+                           VARIABLE_PITCH | FF_MODERN, fonts[1]);
 
     // Bind the fonts to the OpenGL display lists
     HDC hdc = GetDC(m_renderTargetHandle);
@@ -112,8 +126,11 @@ void Renderer::initFonts(HWND hWnd) {
     wglUseFontBitmaps(hdc, 0, 256, stdFontBoldBase);
     SelectObject(hdc, largeFont);
     wglUseFontBitmaps(hdc, 0, 256, lrgFontBase);
+    SelectObject(hdc, smallFont);
+    wglUseFontBitmaps(hdc, 0, 256, smlFontBase);
 
     // Cleanup the fonts
+    DeleteObject(smallFont);
     DeleteObject(largeFont);
     DeleteObject(standardFont);
     DeleteObject(standardFontBold);
@@ -123,53 +140,56 @@ void Renderer::initFonts(HWND hWnd) {
 }
 
 void Renderer::initVBOs() {
-    constexpr size_t numVertLines{ 14U };
-    constexpr size_t numHorizLines{ 7U };
 
-    std::vector<GLfloat> gVerts;
-    std::vector<GLuint> gIndices;
-    gVerts.reserve(4 * (numVertLines + numHorizLines) );
-    gIndices.reserve(2 * (numVertLines + numHorizLines) );
+    {
+        constexpr size_t numVertLines{ 14U };
+        constexpr size_t numHorizLines{ 7U };
 
-    // Fill the vertex and index arrays with data for drawing grid as VBO
-    for (auto i{ 0U }; i < numVertLines; ++i) {
-        const float x{ (i)/static_cast<float>(numVertLines-1) * 2.0f - 1.0f };
-        gVerts.push_back(x);
-        gVerts.push_back(1.0f); // Vertical line top vert
+        std::vector<GLfloat> gVerts;
+        std::vector<GLuint> gIndices;
+        gVerts.reserve(4 * (numVertLines + numHorizLines) );
+        gIndices.reserve(2 * (numVertLines + numHorizLines) );
 
-        gVerts.push_back(x);
-        gVerts.push_back(-1.0f); // Vertical line bottom vert
+        // Fill the vertex and index arrays with data for drawing grid as VBO
+        for (auto i{ 0U }; i < numVertLines; ++i) {
+            const float x{ (i)/static_cast<float>(numVertLines-1) * 2.0f - 1.0f };
+            gVerts.push_back(x);
+            gVerts.push_back(1.0f); // Vertical line top vert
 
-        gIndices.push_back(2*i);
-        gIndices.push_back(2*i+1);
+            gVerts.push_back(x);
+            gVerts.push_back(-1.0f); // Vertical line bottom vert
+
+            gIndices.push_back(2*i);
+            gIndices.push_back(2*i+1);
+        }
+
+        // Offset value for the index array
+        const auto vertLineIndexCount{ gIndices.size() };
+        for (auto i{ 0U }; i < numHorizLines; ++i) {
+            const float y{ static_cast<float>(i)/(numHorizLines-1) * 2.0f - 1.0f };
+            gVerts.push_back(-1.0f);
+            gVerts.push_back(y); // Horizontal line bottom vert
+
+            gVerts.push_back(1.0f);
+            gVerts.push_back(y); // Horizontal line bottom vert
+
+            gIndices.push_back(vertLineIndexCount + 2*i);
+            gIndices.push_back(vertLineIndexCount + 2*i+1);
+        }
+        m_graphIndicesSize = gIndices.size();
+
+        // Initialise the graph grid VBO
+        glGenBuffers(1, &m_graphGridVertsID);
+        glBindBuffer(GL_ARRAY_BUFFER, m_graphGridVertsID);
+        glBufferData(GL_ARRAY_BUFFER, gVerts.size() * sizeof(GLfloat),
+                     gVerts.data(), GL_STATIC_DRAW);
+
+        // Initialise graph grid index array
+        glGenBuffers(1, &m_graphGridIndicesID);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_graphGridIndicesID);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, gIndices.size() * sizeof(GLuint),
+                     gIndices.data(), GL_STATIC_DRAW);
     }
-
-    // Offset value for the index array
-    const auto vertLineIndexCount{ gIndices.size() };
-    for (auto i{ 0U }; i < numHorizLines; ++i) {
-        const float y{ static_cast<float>(i)/(numHorizLines-1) * 2.0f - 1.0f };
-        gVerts.push_back(-1.0f);
-        gVerts.push_back(y); // Horizontal line bottom vert
-
-        gVerts.push_back(1.0f);
-        gVerts.push_back(y); // Horizontal line bottom vert
-
-        gIndices.push_back(vertLineIndexCount + 2*i);
-        gIndices.push_back(vertLineIndexCount + 2*i+1);
-    }
-    m_graphIndicesSize = gIndices.size();
-
-    // Initialise the graph grid VBO
-    glGenBuffers(1, &m_graphGridVertsID);
-    glBindBuffer(GL_ARRAY_BUFFER, m_graphGridVertsID);
-    glBufferData(GL_ARRAY_BUFFER, gVerts.size() * sizeof(GLfloat),
-                 gVerts.data(), GL_STATIC_DRAW);
-
-    // Initialise graph grid index array
-    glGenBuffers(1, &m_graphGridIndicesID);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_graphGridIndicesID);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, gIndices.size() * sizeof(GLuint),
-                 gIndices.data(), GL_STATIC_DRAW);
 
     // Unbind buffers
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -177,9 +197,15 @@ void Renderer::initVBOs() {
 }
 
 void Renderer::release() {
+    // Free VBO memory
     glDeleteBuffers(1, &m_graphGridVertsID);
     glDeleteBuffers(1, &m_graphGridIndicesID);
-    glDeleteLists(stdFontBase, 96);
+
+    // Delete font display lists from OpenGL memory
+    glDeleteLists(stdFontBase, 256);
+    glDeleteLists(stdFontBoldBase, 256);
+    glDeleteLists(lrgFontBase, 256);
+    glDeleteLists(smlFontBase, 256);
 }
 
 void Renderer::draw(const GLShaderHandler& shaders) const {
@@ -200,13 +226,34 @@ void Renderer::drawGraphWidget() const {
     glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
 
     drawCpuGraph();
+    drawRamGraph();
 }
 
 void Renderer::drawCpuGraph() const {
     glViewport(m_cpuGraphViewport[0], m_cpuGraphViewport[1],
-               m_cpuGraphViewport[2], m_cpuGraphViewport[3]);
+               m_cpuGraphViewport[2] , m_cpuGraphViewport[3]);
+    // Draw border
+    glLineWidth(0.5f);
+    glColor4f(BORDER_R, BORDER_G, BORDER_B, BORDER_A);
+    glBegin(GL_LINES); {
+        glVertex2f(-1.0f, 1.0f); // Top
+        glVertex2f(1.0f, 1.0f);
 
+        glVertex2f(-1.0f, -1.0f); // Bottom
+        glVertex2f(1.0f, -1.0f);
 
+        glVertex2f(-1.0f, 1.0f); // Left
+        glVertex2f(-1.0f, -1.0f);
+
+        glVertex2f(1.0f, 1.0f); // Right
+        glVertex2f(1.0f, -1.0f);
+    } glEnd();
+
+    // Set the viewport for the graph to be left section
+    glViewport(m_cpuGraphViewport[0], m_cpuGraphViewport[1],
+               (m_cpuGraphViewport[2]*4)/5 , m_cpuGraphViewport[3]);
+
+    // Draw the background grid for the graph
     vboDrawScope(m_graphGridVertsID, m_graphGridIndicesID, [this]() {
         glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.2f);
         glLineWidth(0.5f);
@@ -226,14 +273,98 @@ void Renderer::drawCpuGraph() const {
             auto x = float{ (static_cast<float>(i) / (data.size() - 1)) * 2.0f - 1.0f };
             const auto y = float{ data[i] * 2.0f - 1.0f };
 
-            // If the vertex is at the border, add/subtract the border delta
-            /*if (i == 0) {
-                x += bDelta;
-            }*/
+            glVertex3f(x, y, 0.0f);
+        }
+    } glEnd();
+
+    // Set viewport for text drawing
+    glViewport(m_cpuGraphViewport[0] + (4*m_cpuGraphViewport[2])/5, m_cpuGraphViewport[1],
+               m_cpuGraphViewport[2]/5 , m_cpuGraphViewport[3]);
+    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
+
+    fontScope(smlFontBase, []() {
+        glRasterPos2f(-0.8f, -0.02f);
+        const char* str{ "Sys Load" };
+        glCallLists(strlen(str), GL_UNSIGNED_BYTE, str);
+
+        glRasterPos2f(-0.8f, -0.77f);
+        const char* min{ "0%" };
+        glCallLists(strlen(min), GL_UNSIGNED_BYTE, min);
+
+        glRasterPos2f(-0.8f, 0.70f);
+        const char* max{ "100%" };
+        glCallLists(strlen(max), GL_UNSIGNED_BYTE, max);
+    });
+
+}
+
+void Renderer::drawRamGraph() const {
+    glViewport(m_ramGraphViewport[0], m_ramGraphViewport[1],
+               m_ramGraphViewport[2] , m_ramGraphViewport[3]);
+    // Draw border
+    glLineWidth(0.5f);
+    glColor4f(BORDER_R, BORDER_G, BORDER_B, BORDER_A);
+    glBegin(GL_LINES); {
+        glVertex2f(-1.0f, 1.0f); // Top
+        glVertex2f(1.0f, 1.0f);
+
+        glVertex2f(-1.0f, -1.0f); // Bottom
+        glVertex2f(1.0f, -1.0f);
+
+        glVertex2f(-1.0f, 1.0f); // Left
+        glVertex2f(-1.0f, -1.0f);
+
+        glVertex2f(1.0f, 1.0f); // Right
+        glVertex2f(1.0f, -1.0f);
+    } glEnd();
+
+    // Set the viewport for the graph to be left section
+    glViewport(m_ramGraphViewport[0], m_ramGraphViewport[1],
+               (m_ramGraphViewport[2]*4)/5 , m_ramGraphViewport[3]);
+
+    // Draw the background grid for the graph
+    vboDrawScope(m_graphGridVertsID, m_graphGridIndicesID, [this]() {
+        glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.2f);
+        glLineWidth(0.5f);
+        glDrawElements(GL_LINES, m_graphIndicesSize, GL_UNSIGNED_INT, 0);
+    });
+
+    // Draw the line graph
+    glLineWidth(0.5f);
+    glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
+    // TODO use VBOs instead
+    const auto& data{ m_ramMeasure.getUsageData() };
+    glBegin(GL_LINE_STRIP); {
+        // Draw each node in the graph
+        for (auto i{ 0U }; i < data.size(); ++i) {
+            glColor4f(LINE_R, LINE_G, LINE_B, 1.0f);
+
+            auto x = float{ (static_cast<float>(i) / (data.size() - 1)) * 2.0f - 1.0f };
+            const auto y = float{ data[i] * 2.0f - 1.0f };
 
             glVertex3f(x, y, 0.0f);
         }
     } glEnd();
+
+    // Set viewport for text drawing
+    glViewport(m_ramGraphViewport[0] + (4*m_ramGraphViewport[2])/5, m_ramGraphViewport[1],
+               m_ramGraphViewport[2]/5 , m_ramGraphViewport[3]);
+    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
+
+    fontScope(smlFontBase, []() {
+        glRasterPos2f(-0.8f, -0.02f);
+        const char* str{ "RAM Load" };
+        glCallLists(strlen(str), GL_UNSIGNED_BYTE, str);
+
+        glRasterPos2f(-0.8f, -0.77f);
+        const char* min{ "0%" };
+        glCallLists(strlen(min), GL_UNSIGNED_BYTE, min);
+
+        glRasterPos2f(-0.8f, 0.70f);
+        const char* max{ "100%" };
+        glCallLists(strlen(max), GL_UNSIGNED_BYTE, max);
+    });
+
 }
 
 void Renderer::drawProcessWidget() const {

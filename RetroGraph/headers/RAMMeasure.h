@@ -46,6 +46,8 @@ public:
     /* Returns memory load as integer from 0 - 100 */
     uint32_t getLoadPercentage() const { return m_memStatus.dwMemoryLoad; }
 
+    const std::vector<float> getUsageData() const { return m_usageData; }
+
 private:
     /* Draws the RAM usage bar */
     void drawBar() const;
