@@ -178,7 +178,7 @@ void Window::initOpenGL() {
     glutInit(&gargc, gargv);
 
     glEnable(GL_ALPHA_TEST);
-    glEnable(GL_DEPTH_TEST); // 3D depth testing
+    //glEnable(GL_DEPTH_TEST); // 3D depth testing
     glEnable(GL_MULTISAMPLE_ARB);
     glEnable(GL_BLEND); // Alpha blending needed for transparency
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

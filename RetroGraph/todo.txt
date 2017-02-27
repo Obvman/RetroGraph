@@ -14,6 +14,8 @@ recycle bin monitor
 
 test suite
 
+create fonts in sizes relative to window size
+
 Create alternate CPU measure display for when CoreTemp isn't running
 
 use glScissor so we don't unnecessarily redraw static parts of the window, and stutter draw times for different draw frequencies

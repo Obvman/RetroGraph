@@ -42,7 +42,11 @@ Renderer::Renderer(const CPUMeasure& _cpu, const GPUMeasure& _gpu,
     m_hddWidgetViewport{ windowWidth - windowWidth/5 - marginX, 5 * windowHeight/6 - marginY,
                          windowWidth/5, windowHeight/6}, // Top right
     m_procWidgetViewport{ windowWidth/2 - windowWidth/5, marginY,
-                          2*windowWidth/5, windowHeight/6} // Bottom middle
+                          2*windowWidth/5, windowHeight/6}, // Bottom middle
+    m_graphWidgetViewport{ marginX, windowHeight/4 + 2*marginY,
+                              windowWidth/5, windowHeight/2 }, // Left-Mid
+    m_cpuGraphViewport{ m_graphWidgetViewport[0], m_graphWidgetViewport[1] + 3*m_graphWidgetViewport[3]/4,
+                        m_graphWidgetViewport[2], m_graphWidgetViewport[3]/4}
 {
 
 }
@@ -107,16 +111,90 @@ void Renderer::draw(const GLShaderHandler& shaders) const {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
 
+    drawGraphWidget();
     drawProcessWidget();
     drawTimeWidget();
     drawHDDWidget();
 
-    m_cpuMeasure.draw(shaders.getCpuGraphProgram());
+    //m_cpuMeasure.draw(shaders.getCpuGraphProgram());
     //m_gpuMeasure.draw();
     //m_ramMeasure.draw();
     //m_processMeasure.draw();
     //m_driveMeasure.draw();
     //m_sysInfo.draw();
+}
+
+void Renderer::drawGraphWidget() const {
+    glViewport(m_graphWidgetViewport[0], m_graphWidgetViewport[1],
+               m_graphWidgetViewport[2], m_graphWidgetViewport[3]);
+    glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
+
+    drawCpuGraph();
+}
+
+void Renderer::drawCpuGraph() const {
+    glViewport(m_cpuGraphViewport[0], m_cpuGraphViewport[1],
+               m_cpuGraphViewport[2], m_cpuGraphViewport[3]);
+
+    // Draw the graph border
+    glLineWidth(0.5f);
+    glColor4f(DIVIDER_R, DIVIDER_G, DIVIDER_B, DIVIDER_A);
+    glBegin(GL_LINES); {
+        glVertex2f(-1.0f, 1.0f);
+        glVertex2f( 1.0f, 1.0f); // Top
+
+        glVertex2f(-1.0f, -1.0f);
+        glVertex2f( 1.0f, -1.0f); // Bottom
+
+        glVertex2f(-1.0f,  1.0f);
+        glVertex2f(-1.0f, -1.0f); // Left
+
+        glVertex2f( 1.0f,  1.0f);
+        glVertex2f( 1.0f, -1.0f); // Right
+    } glEnd();
+
+    // Draw the graph background grid
+    constexpr float numRows{ 5.0f };
+    constexpr float numCols{ 12.0f };
+
+    glLineWidth(0.5f);
+    glColor4f(DIVIDER_R, DIVIDER_G, DIVIDER_B, 0.2f);
+    glBegin(GL_LINES); {
+        for (auto i{ 0U }; i < numRows; ++i) {
+            const auto y = float{ (i + 1)/(numRows + 1) * 2.0f - 1.0f };
+            glVertex2f(-1.0f, y);
+            glVertex2f( 1.0f, y);
+        }
+        for (auto i{ 0U }; i < numCols; ++i) {
+            const auto x = float{ (i + 1)/(numCols + 1) * 2.0f - 1.0f };
+            glVertex2f(x, -1.0f);
+            glVertex2f(x,  1.0f);
+        }
+    } glEnd();
+
+
+
+    // Draw the line graph
+    glLineWidth(0.5f);
+    glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
+    // TODO use VBOs instead
+    const auto& data{ m_cpuMeasure.getUsageData() };
+    glBegin(GL_LINE_STRIP); {
+        // Draw each node in the graph
+        for (auto i{ 0U }; i < data.size(); ++i) {
+            glColor4f(LINE_R, LINE_G, LINE_B, 1.0f);
+
+            auto x = float{ (static_cast<float>(i) / (data.size() - 1)) * 2.0f - 1.0f };
+            const auto y = float{ data[i] * 2.0f - 1.0f };
+
+            // If the vertex is at the border, add/subtract the border delta
+            /*if (i == 0) {
+                x += bDelta;
+            }*/
+
+            glVertex3f(x, y, 0.0f);
+        }
+    } glEnd();
 }
 
 void Renderer::drawProcessWidget() const {

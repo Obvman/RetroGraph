@@ -52,12 +52,17 @@ constexpr float LINE_B{ WHITE_B };
 constexpr float DIVIDER_R{ WHITE_R };
 constexpr float DIVIDER_G{ WHITE_G };
 constexpr float DIVIDER_B{ WHITE_B };
+constexpr float DIVIDER_A{ 1.0f };
+
+constexpr float GRAPHLINE_R{ WHITE_R };
+constexpr float GRAPHLINE_G{ WHITE_G };
+constexpr float GRAPHLINE_B{ WHITE_B };
+constexpr float GRAPHLINE_A{ 1.0f };
 
 constexpr float BGCOLOR_R{ BLACK_R };
 constexpr float BGCOLOR_G{ BLACK_G };
 constexpr float BGCOLOR_B{ BLACK_B };
 constexpr float BGCOLOR_A{ 0.0f };
-
 
 constexpr float BARFILLED_R{ WHITE_R };
 constexpr float BARFILLED_G{ WHITE_G };

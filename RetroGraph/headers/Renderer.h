@@ -28,6 +28,9 @@ public:
 
     void draw(const GLShaderHandler& shaders) const;
 private:
+    void drawGraphWidget() const;
+    void drawCpuGraph() const;
+
     void drawProcessWidget() const;
     void drawProcCPUList() const;
     void drawProcRAMList() const;
@@ -53,6 +56,9 @@ private:
     const GLint m_timeWidgetViewport[4];
     const GLint m_hddWidgetViewport[4];
     const GLint m_procWidgetViewport[4];
+
+    const GLint m_graphWidgetViewport[4]; // Viewport of all graphs
+    const GLint m_cpuGraphViewport[4]; // viewport of graph relative to graphWidgetViewport
 
     GLint stdFontBase; // The default font
     GLint stdFontBoldBase;

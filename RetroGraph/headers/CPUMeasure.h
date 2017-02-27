@@ -31,6 +31,8 @@ public:
        dd:hh:mm:ss format */
     std::string getUptimeStr() const;
 
+    const std::vector<float>& getUsageData() const { return m_usageData; }
+
 private:
     /* Draws the line graph of system CPU usage */
     void drawGraph(GLuint shader) const;
