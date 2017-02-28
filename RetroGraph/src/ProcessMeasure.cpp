@@ -6,6 +6,9 @@
 #include <algorithm>
 #include <utility>
 
+#include <winternl.h>
+#pragma comment(lib, "Ntdll.lib")
+
 #include <GL/freeglut.h>
 #include <GL/gl.h>
 
@@ -15,15 +18,29 @@
 
 namespace rg {
 
+typedef struct _SYSTEM_PROCESS_INFO {
+    ULONG                   NextEntryOffset;
+    ULONG                   NumberOfThreads;
+    LARGE_INTEGER           Reserved[3];
+    LARGE_INTEGER           CreateTime;
+    LARGE_INTEGER           UserTime;
+    LARGE_INTEGER           KernelTime;
+    UNICODE_STRING          ImageName;
+    ULONG                   BasePriority;
+    HANDLE                  ProcessId;
+    HANDLE                  InheritedFromProcessId;
+} SYSTEM_PROCESS_INFO, *PSYSTEM_PROCESS_INFO;
+
+ULONGLONG SubtractTimes(const FILETIME& ftA, const FILETIME& ftB);
+
+
 ProcessMeasure::ProcessMeasure() :
     m_allProcessData{},
     m_numProcessesToDisplay{ 7 },
     m_procCPUListData{ m_numProcessesToDisplay },
     m_procRAMListData{ m_numProcessesToDisplay } {
 
-    // Hook into process creation function to get notifications on creation event
 }
-
 
 ProcessMeasure::~ProcessMeasure() {
 }
@@ -35,19 +52,9 @@ void ProcessMeasure::init() {
 // TODO benchmark using vector vs list
 
 void ProcessMeasure::update(uint32_t ticks) {
-    //std::vector<std::shared_ptr<ProcessData>> oldData;
-
     // Update the process list vector every 10 seconds
-    if ((ticks % (ticksPerSecond * 10)) == 0) {
-        /*oldData.reserve( m_allProcessData.size() );
-        for (const auto& spd : m_allProcessData) {
-            oldData.push_back(spd);
-        }*/
-
-        //m_allProcessData.clear();
-        //populateList();
-
-        detectNewProcesses();
+    if ((ticks % (ticksPerSecond * 4)) == 0) {
+        detectNewProcesses2();
     }
 
     if ((ticks % (ticksPerSecond * 2)) == 0) {
@@ -74,27 +81,10 @@ void ProcessMeasure::update(uint32_t ticks) {
             if (exitCode == 0 || exitCode == 1) {
                 it = m_allProcessData.erase(it);
             } else {
-                /*if (oldData.size() > 0) {
-                    auto found{ std::find_if(m_allProcessData.begin(), m_allProcessData.end(),
-                                             [&pd](const auto& p) {
-                        return pd.getPID() == p->getPID();
-                    }) };
-
-                    if (found != m_allProcessData.end()) {
-                        // Use the old data to calculate CPU usage instead
-                        const auto cpuUsage{ calculateCPUUsage(pHandle, **found) };
-
-                        pd.setCpuUsage(cpuUsage);
-                        pd.updateMemCounters();
-                    }
-
-                } else*/ {
-                    // Get new timing information and calculate the CPU usage
-                    const auto cpuUsage{ calculateCPUUsage(pHandle, pd) };
-                    pd.setCpuUsage(cpuUsage);
-                    pd.updateMemCounters();
-                }
-
+                // Get new timing information and calculate the CPU usage
+                const auto cpuUsage{ calculateCPUUsage(pHandle, pd) };
+                pd.setCpuUsage(cpuUsage);
+                pd.updateMemCounters();
 
                 ++it;
             }
@@ -172,30 +162,8 @@ double ProcessMeasure::calculateCPUUsage(HANDLE pHandle, ProcessData& oldData) {
         return cpuUse;
 }
 
-void ProcessMeasure::updateProcList() {
-
-    // Get the system snapshot of processes handle
-    HANDLE processSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-    if (processSnapshot == INVALID_HANDLE_VALUE) {
-        fatalMessageBox("Failed to get process snapshot.");
-        exit(1);
-    }
-
-    // Get the first process from the snapshot
-    PROCESSENTRY32 pe{};
-    pe.dwSize = sizeof(PROCESSENTRY32);
-    if (!Process32First(processSnapshot, &pe)) {
-        fatalMessageBox("Failed to get first process from snapshot.");
-        CloseHandle(processSnapshot);
-        exit(1);
-    }
-
-    CloseHandle(processSnapshot);
-}
-
-
 void ProcessMeasure::populateList() {
-    m_allProcessData.clear();
+    /*m_allProcessData.clear();
 
     // Get the process snapshot
     HANDLE processSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
@@ -229,7 +197,57 @@ void ProcessMeasure::populateList() {
 
     } while (Process32Next(processSnapshot, &pe));
 
-    CloseHandle(processSnapshot);
+    CloseHandle(processSnapshot);*/
+
+    // Allocate buffer for the process list to fill
+    NTSTATUS status;
+    PVOID buffer;
+    PSYSTEM_PROCESS_INFO spi;
+    buffer = VirtualAlloc(NULL,1024*1024,MEM_COMMIT|MEM_RESERVE,PAGE_READWRITE); // We need to allocate a large buffer because the process list can be large.
+
+    if(!buffer) {
+        fatalMessageBox("Error: Unable to allocate memory for process list " +
+                        std::to_string(GetLastError()) + '\n');
+    }
+
+    spi = static_cast<PSYSTEM_PROCESS_INFO>(buffer);
+
+    // Fill the buffer with process information structs
+    if(!NT_SUCCESS(status=NtQuerySystemInformation(SystemProcessInformation,spi,1024*1024,NULL))) {
+        VirtualFree(buffer,0,MEM_RELEASE);
+        fatalMessageBox("Error: Unable to query process list: " +
+                        std::to_string(status) + '\n');
+    }
+
+    // Loop over the process list and fill allProcessData with new ProcessData
+    // object for each process
+    int chromeCount{ 0 };
+    while(spi->NextEntryOffset) {
+
+        auto pHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
+                                   false, (DWORD)spi->ProcessId);
+        if (!pHandle) {
+            const auto error = GetLastError();
+            // If access is denied or the process is the system idle process, just silently skip the process
+            if (error != ERROR_ACCESS_DENIED && (DWORD)spi->ProcessId != 0) {
+                fatalMessageBox("Failed to open process. Code: " + std::to_string(error));
+            }
+        } else {
+            // Convert the process name from wchar* to char*
+            size_t charsConverted{ 0U };
+            char* nameBuff = new char[spi->ImageName.Length];
+            wcstombs_s(&charsConverted, nameBuff, spi->ImageName.Length, spi->ImageName.Buffer, spi->ImageName.Length);
+
+            m_allProcessData.emplace_back(std::make_shared<ProcessData>(pHandle,
+                (DWORD)spi->ProcessId, nameBuff));
+
+            delete[] nameBuff;
+        }
+        spi=(PSYSTEM_PROCESS_INFO)((LPBYTE)spi+spi->NextEntryOffset);
+    }
+
+    VirtualFree(buffer,0,MEM_RELEASE); // Free the allocated buffer.
+
 }
 
 void ProcessMeasure::detectNewProcesses() {
@@ -248,6 +266,7 @@ void ProcessMeasure::detectNewProcesses() {
     }
 
     // Iterate over the rest of the processes in the snapshot to fill vector
+    int i = 0;
     do {
         // Check if the current PID is not in the ProcessData list
         const auto it{ std::find_if(m_allProcessData.cbegin(), m_allProcessData.cend(),
@@ -270,10 +289,79 @@ void ProcessMeasure::detectNewProcesses() {
 
             m_allProcessData.emplace_back(std::make_shared<ProcessData>(pHandle, pe.th32ProcessID, pe.szExeFile));
         }
-
+        ++i;
     } while (Process32Next(processSnapshot, &pe));
+    std::cout << "size of snapshot proc list: " << i << '\n';
 
     CloseHandle(processSnapshot);
+}
+
+void ProcessMeasure::detectNewProcesses2() {
+    // Allocate buffer for the process list to fill
+    NTSTATUS status;
+    PVOID buffer;
+    PSYSTEM_PROCESS_INFO spi;
+    buffer=VirtualAlloc(NULL,1024*1024,MEM_COMMIT|MEM_RESERVE,PAGE_READWRITE); // We need to allocate a large buffer because the process list can be large.
+
+    if(!buffer) {
+        std::cout << "Error: Unable to allocate memory for process list " << GetLastError() << '\n';
+        return;
+    }
+
+    spi = static_cast<PSYSTEM_PROCESS_INFO>(buffer);
+
+    // Fill the buffer with process information structs
+    if(!NT_SUCCESS(status=NtQuerySystemInformation(SystemProcessInformation,spi,1024*1024,NULL))) {
+        std::cout << "Error: Unable to query process list " << status << '\n';
+        VirtualFree(buffer,0,MEM_RELEASE);
+        return;
+    }
+
+    // Loop over the process list for any new processes
+    while (spi->NextEntryOffset) {
+        const auto it{ std::find_if(m_allProcessData.cbegin(), m_allProcessData.cend(),
+            [spi](const auto& ppd) {
+                return (DWORD)(spi->ProcessId) == ppd->getPID();
+            })};
+
+        // If it doesn't exist, create a new ProcessData object in the list
+        if (it == m_allProcessData.cend()) {
+            auto pHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
+                                       false, (DWORD)spi->ProcessId);
+            if (!pHandle) {
+                const auto error = GetLastError();
+                // If access is denied or the process is the system idle process, just silently skip the process
+                if (error != ERROR_ACCESS_DENIED && (DWORD)spi->ProcessId != 0) {
+                    fatalMessageBox("Failed to open process. Code: " + std::to_string(error));
+                }
+            } else {
+                // Convert the ImageName buffer from wchar* to char*
+                size_t charsConverted{ 0U };
+                char* nameBuff = new char[spi->ImageName.Length];
+                wcstombs_s(&charsConverted, nameBuff, spi->ImageName.Length, spi->ImageName.Buffer, spi->ImageName.Length);
+
+                m_allProcessData.emplace_back(std::make_shared<ProcessData>(pHandle,
+                    (DWORD)spi->ProcessId, nameBuff));
+
+                delete[] nameBuff;
+
+            }
+        }
+        spi=(PSYSTEM_PROCESS_INFO)((LPBYTE)spi+spi->NextEntryOffset);
+    }
+
+    VirtualFree(buffer,0,MEM_RELEASE); // Free the allocated buffer.
+}
+
+ULONGLONG SubtractTimes(const FILETIME& ftA, const FILETIME& ftB) {
+     LARGE_INTEGER a, b;
+     a.LowPart = ftA.dwLowDateTime;
+     a.HighPart = ftA.dwHighDateTime;
+
+     b.LowPart = ftB.dwLowDateTime;
+     b.HighPart = ftB.dwHighDateTime;
+
+     return a.QuadPart - b.QuadPart;
 }
 
 }

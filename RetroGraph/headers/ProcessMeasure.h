@@ -31,10 +31,6 @@ public:
     /* Gets vector containing top RAM using processes and their RAM usage */
     const std::vector<std::pair<std::string, size_t>>& getProcRAMData() const { return m_procRAMListData; }
 private:
-    /* Refreshes the list of tracked processes to begin tracking any
-       newly created processes */
-    void updateProcList();
-
     /* Fills the CPU usage process vector with top CPU using processes */
     void fillCPUData();
 
@@ -50,6 +46,7 @@ private:
     /* Polls window's process list to find any new processes and adds their
        process data to the list */
     void detectNewProcesses();
+    void detectNewProcesses2();
 
     std::vector<std::shared_ptr<ProcessData>> m_allProcessData;
 

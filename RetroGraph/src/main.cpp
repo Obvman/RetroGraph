@@ -4,8 +4,6 @@
 
 #include <Windows.h>
 #include <winternl.h>
-#include <Wbemidl.h>
-#include <comdef.h>
 #pragma comment(lib, "Ntdll.lib")
 
 #include <GL/glew.h>
@@ -88,7 +86,7 @@ void mainLoop(rg::Window& mainWindow) {
     }
 }
 
-/*typedef struct _SYSTEM_PROCESS_INFO
+typedef struct _SYSTEM_PROCESS_INFO
 {
     ULONG                   NextEntryOffset;
     ULONG                   NumberOfThreads;
@@ -192,4 +190,4 @@ ULONGLONG SubtractTimes(const FILETIME& ftA, const FILETIME& ftB) {
      b.HighPart = ftB.dwHighDateTime;
 
      return a.QuadPart - b.QuadPart;
-}*/
+}
