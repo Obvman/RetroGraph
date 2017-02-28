@@ -21,9 +21,10 @@ namespace rg {
 
 CPUMeasure::CPUMeasure(int32_t graphWidth, int32_t graphHeight) :
     m_coreTempPlugin{},
-    dataSize{ 80U },
+    dataSize{ 40U },
     m_usageData{ },
     m_uptime{ std::chrono::milliseconds{GetTickCount64()} },
+    m_cpuName{ },
     m_viewportStartX{ 0 },
     m_viewportStartY{ 480 },
     m_viewportWidth{ graphWidth },
@@ -39,6 +40,11 @@ CPUMeasure::~CPUMeasure() {
 void CPUMeasure::update() {
     m_coreTempPlugin.update();
     m_uptime = std::chrono::milliseconds(GetTickCount64());
+
+    if (m_cpuName.size() == 0) {
+        m_cpuName = "CPU: ";
+        m_cpuName.append(m_coreTempPlugin.getCPUName());
+    }
 
     getCPULoad();
 }

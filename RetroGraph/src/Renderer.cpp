@@ -57,6 +57,8 @@ Renderer::Renderer(const CPUMeasure& _cpu, const GPUMeasure& _gpu,
                          windowWidth/5, windowHeight/6}, // Top right
     m_procWidgetViewport{ windowWidth/2 - windowWidth/5, marginY,
                           2*windowWidth/5, windowHeight/6}, // Bottom middle
+    m_statsWidgetViewport{ marginX, marginY,
+                           windowWidth/5, windowHeight/6 }, // Bottom left
     m_graphWidgetViewport{ marginX, windowHeight/4 + 2*marginY,
                               windowWidth/5, windowHeight/2 }, // Left-Mid
     m_cpuGraphViewport{ m_graphWidgetViewport[0], m_graphWidgetViewport[1] + 3*m_graphWidgetViewport[3]/4,
@@ -95,14 +97,15 @@ void Renderer::initFonts(HWND hWnd) {
     stdFontBoldBase = glGenLists(256);
     lrgFontBase = glGenLists(256);
     smlFontBase = glGenLists(256);
+    timeFontBase = glGenLists(256);
 
     RECT rect;
     GetWindowRect(m_renderTargetHandle, &rect);
     const auto width{ rect.right - rect.left };
     const auto height{ rect.bottom - rect.top };
 
-    const auto stdFontHeight{ height / 100 - 1 };
-    const auto stdFontWidth{ width / 100 - 1};
+    const auto stdFontHeight{ std::lround(height / 100.0) - 2 };
+    const auto stdFontWidth{ std::lround(width / 100.0) - 2};
 
     // Create the different fonts
     HFONT standardFont = CreateFont(stdFontWidth, stdFontHeight, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
@@ -111,12 +114,16 @@ void Renderer::initFonts(HWND hWnd) {
     HFONT standardFontBold = CreateFont(stdFontWidth, stdFontHeight, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, ANSI_CHARSET,
                               OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
                               DEFAULT_PITCH | FF_DONTCARE, fonts[0]);
-    HFONT largeFont = CreateFont(70, 35, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
+    HFONT largeFont = CreateFont(70, 45, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
                            OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
                            VARIABLE_PITCH | FF_MODERN, fonts[0]);
     HFONT smallFont = CreateFont(stdFontWidth/2 + 2, stdFontHeight/2 + 2, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
                            OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
                            VARIABLE_PITCH | FF_MODERN, fonts[1]);
+    HFONT timeFont = CreateFont(stdFontWidth * 4, stdFontHeight * 4, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
+                           OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
+                           VARIABLE_PITCH | FF_MODERN, fonts[1]);
+
 
     // Bind the fonts to the OpenGL display lists
     HDC hdc = GetDC(m_renderTargetHandle);
@@ -128,8 +135,11 @@ void Renderer::initFonts(HWND hWnd) {
     wglUseFontBitmaps(hdc, 0, 256, lrgFontBase);
     SelectObject(hdc, smallFont);
     wglUseFontBitmaps(hdc, 0, 256, smlFontBase);
+    SelectObject(hdc, timeFont);
+    wglUseFontBitmaps(hdc, 0, 256, timeFontBase);
 
     // Cleanup the fonts
+    DeleteObject(timeFont);
     DeleteObject(smallFont);
     DeleteObject(largeFont);
     DeleteObject(standardFont);
@@ -217,6 +227,7 @@ void Renderer::draw(const GLShaderHandler& shaders) const {
     drawProcessWidget();
     drawTimeWidget();
     drawHDDWidget();
+    drawStatsWidget();
 
 }
 
@@ -400,11 +411,10 @@ void Renderer::drawProcCPUList() const {
         glRasterPos2f(rasterX, rasterY);
         glCallLists(pair.first.length(), GL_UNSIGNED_BYTE, pair.first.c_str());
 
-        // Draw the process's CPU usage
+        // Draw the process's CPU percentage
         glRasterPos2f(-0.13f, rasterY);
         char buff[5];
         snprintf(buff, sizeof(buff), "%.1f%%", pair.second);
-        //const std::string usage{ std::to_string(static_cast<uint8_t>(pair.second)) + "%" };
         glCallLists(sizeof(buff), GL_UNSIGNED_BYTE, buff);
 
         rasterY -= 1.8f / (m_processMeasure.getProcCPUData().size());
@@ -437,6 +447,64 @@ void Renderer::drawProcRAMList() const {
         rasterY -= 1.8f / (m_processMeasure.getProcCPUData().size());
     }
 
+}
+
+void Renderer::drawStatsWidget() const {
+    glViewport(m_statsWidgetViewport[0], m_statsWidgetViewport[1],
+               m_statsWidgetViewport[2], m_statsWidgetViewport[3]  );
+
+    // Draw dividers
+    glColor4f(DIVIDER_R, DIVIDER_G, DIVIDER_B, DIVIDER_A);
+    glLineWidth(0.5f);
+    glBegin(GL_LINES); {
+        glVertex2f(-1.0f, 1.0f);
+        glVertex2f(1.0f, 1.0f); // Top
+
+        glVertex2f(-1.0f, -1.0f);
+        glVertex2f( 1.0f, -1.0f); // Bottom
+    } glEnd();
+
+    constexpr auto numLinesToDraw{ 5U };
+    const auto rasterX = float{ -0.95f };
+    auto rasterY = float{ 0.80f };
+    const auto yRange{ 2.0f };
+
+    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
+    // Draw username@Computername, unix style
+    {
+        const auto& str{ m_sysInfo.getUserName() + "@" + m_sysInfo.getComputerName() };
+        glRasterPos2f(rasterX, rasterY);
+        glCallLists(str.length(), GL_UNSIGNED_BYTE, str.c_str());
+        rasterY -= yRange / numLinesToDraw;
+    }
+    // Draw Windows version
+    {
+        const auto& str{ m_sysInfo.getOSInfoStr() };
+        glRasterPos2f(rasterX, rasterY);
+        glCallLists(str.size(), GL_UNSIGNED_BYTE, str.c_str());
+        rasterY -= yRange / numLinesToDraw;
+    }
+    // Draw CPU name
+    {
+        const auto str = std::string{ m_cpuMeasure.getCPUName() };
+        glRasterPos2f(rasterX, rasterY);
+        glCallLists(str.length(), GL_UNSIGNED_BYTE, str.c_str());
+        rasterY -= yRange / numLinesToDraw;
+    }
+    // Draw GPU Name
+    {
+        const auto& str{ m_sysInfo.getGPUDescription() };
+        glRasterPos2f(rasterX, rasterY);
+        glCallLists(str.length(), GL_UNSIGNED_BYTE, str.c_str());
+        rasterY -= yRange / numLinesToDraw;
+    }
+    // Draw RAM capacity
+    {
+        const auto& str{ m_sysInfo.getRAMDescription() };
+        glRasterPos2f(rasterX, rasterY);
+        glCallLists(str.length(), GL_UNSIGNED_BYTE, str.c_str());
+        rasterY -= yRange / numLinesToDraw;
+    }
 }
 
 void Renderer::drawHDDWidget() const {
@@ -537,12 +605,12 @@ void Renderer::drawTimeWidget() const {
     {
         time_t now = time(0);
         tm t;
-        char buf[12];
+        char buf[9];
         localtime_s(&t, &now);
-        strftime(buf, sizeof(buf), "%X %p", &t);
+        strftime(buf, sizeof(buf), "%T", &t);
 
-        glRasterPos2f(-0.92f, 0.15f);
-        fontScope(lrgFontBase, [&]() {
+        glRasterPos2f(-0.95f, 0.15f);
+        fontScope(timeFontBase, [&]() {
             glCallLists(sizeof(buf), GL_UNSIGNED_BYTE, buf);
         });
 

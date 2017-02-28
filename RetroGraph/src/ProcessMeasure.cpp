@@ -21,6 +21,7 @@ ProcessMeasure::ProcessMeasure() :
     m_procCPUListData{ m_numProcessesToDisplay },
     m_procRAMListData{ m_numProcessesToDisplay } {
 
+    // Hook into process creation function to get notifications on creation event
 }
 
 
@@ -43,8 +44,10 @@ void ProcessMeasure::update(uint32_t ticks) {
             oldData.push_back(spd);
         }*/
 
-        m_allProcessData.clear();
-        populateList();
+        //m_allProcessData.clear();
+        //populateList();
+
+        detectNewProcesses();
     }
 
     if ((ticks % (ticksPerSecond * 2)) == 0) {
@@ -223,6 +226,50 @@ void ProcessMeasure::populateList() {
 
         // Populate the vector
         m_allProcessData.emplace_back(std::make_shared<ProcessData>(pHandle, pe.th32ProcessID, pe.szExeFile));
+
+    } while (Process32Next(processSnapshot, &pe));
+
+    CloseHandle(processSnapshot);
+}
+
+void ProcessMeasure::detectNewProcesses() {
+    // Get the process snapshot
+    HANDLE processSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    if (processSnapshot == INVALID_HANDLE_VALUE) {
+        fatalMessageBox("Failed to get process snapshot.");
+    }
+
+    // Get the first process from the snapshot
+    PROCESSENTRY32 pe{};
+    pe.dwSize = sizeof(PROCESSENTRY32);
+    if (!Process32First(processSnapshot, &pe)) {
+        CloseHandle(processSnapshot);
+        fatalMessageBox("Failed to get first process from snapshot.");
+    }
+
+    // Iterate over the rest of the processes in the snapshot to fill vector
+    do {
+        // Check if the current PID is not in the ProcessData list
+        const auto it{ std::find_if(m_allProcessData.cbegin(), m_allProcessData.cend(),
+            [&pe](const auto& ppd) {
+                return pe.th32ProcessID == ppd->getPID();
+            })};
+
+        // If it doesn't exist, create a new ProcessData object in the list
+        if (it == m_allProcessData.cend()) {
+            auto pHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
+                                       false, pe.th32ProcessID);
+            if (!pHandle) {
+                const auto error = GetLastError();
+                // If access is denied or the process is the system idle process, just silently skip the process
+                if (error != ERROR_ACCESS_DENIED && pe.th32ProcessID != 0) {
+                    fatalMessageBox("Failed to open process. Code: " + std::to_string(error));
+                }
+                continue;
+            }
+
+            m_allProcessData.emplace_back(std::make_shared<ProcessData>(pHandle, pe.th32ProcessID, pe.szExeFile));
+        }
 
     } while (Process32Next(processSnapshot, &pe));
 

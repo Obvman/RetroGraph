@@ -15,9 +15,12 @@ public:
     /* Returns string of current operating system version/build number */
     const std::string& getOSInfoStr() const { return m_osInfoStr; }
 
-    /* Returns string of GPU manufacturer and model information
+    /* Sets the  string of GPU manufacturer and model information
      * Must be called after OpenGL context has been created */
-    const std::string& getGPUDescription();
+    void updateGPUDescription();
+
+    /* Gets the string containing GPU model */
+    const std::string& getGPUDescription() const { return m_gpuDescription; }
 
     /* Returns string of CPU information: Manufacturer, model, default clock
      * speed, architecture and core count */

@@ -17,8 +17,8 @@ SystemInfo::SystemInfo() :
     m_gpuDescription{},
     m_cpuDescription{},
     m_ramDescription{},
-    m_userName{ "User: " },
-    m_computerName{ "Computer Name: " } {
+    m_userName{ },
+    m_computerName{ } {
 
     getOSVersionInfo();
     getCPUInfo();
@@ -124,28 +124,27 @@ void SystemInfo::getRAMInfo() {
     memStatus.dwLength = sizeof(MEMORYSTATUSEX);
     GlobalMemoryStatusEx(&memStatus);
 
-    m_ramDescription = "RAM: " +
-        std::to_string(memStatus.ullTotalPhys / MB) + "MB";
+    char buff[12];
+    snprintf(buff, sizeof(buff), "RAM: %2.1fGB", memStatus.ullTotalPhys/static_cast<float>(GB));
+    m_ramDescription = buff;
 }
 
-const std::string& SystemInfo::getGPUDescription() {
-    getGPUInfo();
-    return m_gpuDescription;
-}
-
-void SystemInfo::getGPUInfo() {
+void SystemInfo::updateGPUDescription() {
     // Use a stringstream because glGetString() returns GLubyte* which is messy
     // to deal with otherwise
-    const auto gpuVendor{ glGetString(GL_VENDOR) };
+    //const auto gpuVendor{ glGetString(GL_VENDOR) };
     const auto gpuRenderer{ glGetString(GL_RENDERER) };
 
-    if (!gpuVendor || !gpuRenderer) {
+    if (!gpuRenderer) {
         fatalMessageBox("Failed to query GPU information from OpenGL\n");
     }
 
-    std::stringstream ss;
-    ss << gpuRenderer << ", " << gpuVendor;
+    std::stringstream ss; // use a stream because OpenGL strings are weird
+    ss << gpuRenderer;
     m_gpuDescription = std::string{ "GPU: " + ss.str() };
+}
+
+void SystemInfo::getGPUInfo() {
 }
 
 }

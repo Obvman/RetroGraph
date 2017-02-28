@@ -37,6 +37,7 @@ private:
     void drawProcessWidget() const;
     void drawProcCPUList() const;
     void drawProcRAMList() const;
+    void drawStatsWidget() const;
 
     /* Draw labelled capacity bars of all fixed drives in the system */
     void drawHDDWidget() const;
@@ -59,6 +60,7 @@ private:
     const GLint m_timeWidgetViewport[4];
     const GLint m_hddWidgetViewport[4];
     const GLint m_procWidgetViewport[4];
+    const GLint m_statsWidgetViewport[4];
 
     const GLint m_graphWidgetViewport[4]; // Viewport of all graphs
     const GLint m_cpuGraphViewport[4]; // viewport of graph relative to graphWidgetViewport
@@ -69,6 +71,7 @@ private:
     GLint stdFontBoldBase;
     GLint smlFontBase;
     GLint lrgFontBase;
+    GLint timeFontBase;
 
     // VBO members
     GLuint m_graphGridVertsID;

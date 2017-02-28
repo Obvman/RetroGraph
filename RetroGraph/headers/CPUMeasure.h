@@ -31,6 +31,8 @@ public:
        dd:hh:mm:ss format */
     std::string getUptimeStr() const;
 
+    const std::string& getCPUName() const { return m_cpuName; }
+
     const std::vector<float>& getUsageData() const { return m_usageData; }
 
 private:
@@ -47,6 +49,8 @@ private:
     size_t dataSize; // max number of usage percentages to store
     std::vector<float> m_usageData;
     std::chrono::milliseconds m_uptime;
+
+    std::string m_cpuName;
 
     // Rendering members
     GLint m_viewportStartX;

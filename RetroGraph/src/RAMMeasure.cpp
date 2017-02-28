@@ -10,7 +10,7 @@ namespace rg {
 
 RAMMeasure::RAMMeasure() :
     m_memStatus{},
-    dataSize{ 80U },
+    dataSize{ 40U },
     m_usageData{} {
 
     // Fill the memory stat struct with system information

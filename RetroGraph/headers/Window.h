@@ -7,6 +7,7 @@
 #include "GPUMeasure.h"
 #include "RAMMeasure.h"
 #include "ProcessMeasure.h"
+#include "NetMeasure.h"
 #include "SystemInfo.h"
 #include "DriveMeasure.h"
 #include "Renderer.h"
@@ -86,6 +87,7 @@ private:
     RAMMeasure m_ramMeasure;
     ProcessMeasure m_processMeasure;
     DriveMeasure m_driveMeasure;
+    NetMeasure m_netMeasure;
     SystemInfo m_systemInfo;
 
     Renderer m_renderer;

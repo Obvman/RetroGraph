@@ -28,7 +28,8 @@ Window::Window(HINSTANCE hInstance, const char* windowName,
     m_gpuMeasure{ },
     m_ramMeasure{ },
     m_processMeasure{ },
-    m_driveMeasure{},
+    m_driveMeasure{ },
+    m_netMeasure{ },
     m_systemInfo{ },
     m_renderer{ m_cpuMeasure, m_gpuMeasure, m_ramMeasure, m_processMeasure,
                 m_driveMeasure, m_systemInfo, m_width, m_height },
@@ -60,6 +61,9 @@ Window::Window(HINSTANCE hInstance, const char* windowName,
     }
 
     initOpenGL();
+
+    m_systemInfo.updateGPUDescription();
+
     updateSize(m_width, m_height);
 
     ReleaseDC(m_hWndMain, m_hdc);

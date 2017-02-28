@@ -47,6 +47,10 @@ private:
     /* Fills m_allProcessData with new process information */
     void populateList();
 
+    /* Polls window's process list to find any new processes and adds their
+       process data to the list */
+    void detectNewProcesses();
+
     std::vector<std::shared_ptr<ProcessData>> m_allProcessData;
 
     uint16_t m_numProcessesToDisplay{ 7 };
