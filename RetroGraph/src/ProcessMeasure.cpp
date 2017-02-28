@@ -31,16 +31,11 @@ typedef struct _SYSTEM_PROCESS_INFO {
     HANDLE                  InheritedFromProcessId;
 } SYSTEM_PROCESS_INFO, *PSYSTEM_PROCESS_INFO;
 
-ULONGLONG SubtractTimes(const FILETIME& ftA, const FILETIME& ftB);
-
-
 ProcessMeasure::ProcessMeasure() :
     m_allProcessData{},
     m_numProcessesToDisplay{ 7 },
     m_procCPUListData{ m_numProcessesToDisplay },
-    m_procRAMListData{ m_numProcessesToDisplay } {
-
-}
+    m_procRAMListData{ m_numProcessesToDisplay } { }
 
 ProcessMeasure::~ProcessMeasure() {
 }
@@ -53,8 +48,9 @@ void ProcessMeasure::init() {
 
 void ProcessMeasure::update(uint32_t ticks) {
     // Update the process list vector every 10 seconds
-    if ((ticks % (ticksPerSecond * 4)) == 0) {
-        detectNewProcesses2();
+    if ((ticks % (ticksPerSecond * 10)) == 0) {
+        std::cout << "Detecting new processes\n";
+        detectNewProcesses();
     }
 
     if ((ticks % (ticksPerSecond * 2)) == 0) {
@@ -64,7 +60,7 @@ void ProcessMeasure::update(uint32_t ticks) {
             auto& pd = **it; // get reference to ProcessData for convenience
 
             // Get the process relating to the ProcessData object
-            HANDLE pHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
+            const auto pHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
                                          false, pd.getPID());
             if (!pHandle) {
                 auto error = GetLastError();
@@ -76,7 +72,7 @@ void ProcessMeasure::update(uint32_t ticks) {
             }
 
             // Check for processes that have exited and remove them from the list
-            DWORD exitCode{ 1UL };
+            auto exitCode = DWORD{ 1U };
             GetExitCodeProcess(pHandle, &exitCode);
             if (exitCode == 0 || exitCode == 1) {
                 it = m_allProcessData.erase(it);
@@ -153,9 +149,15 @@ double ProcessMeasure::calculateCPUUsage(HANDLE pHandle, ProcessData& oldData) {
         const auto sysUserDiff{ subtractTimes(sysUser, oldData.getLastSystemUserTime()) };
         const auto totalSys{ sysKernelDiff + sysUserDiff };
 
+        /*SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION sppi;
+        ULONG len;
+        NtQuerySystemInformation(SystemProcessorPerformanceInformation, &sppi, sizeof(sppi), &len);
+        auto sysTime = sppi.KernelTime.QuadPart + sppi.UserTime.QuadPart;
+        auto totalSys2 = sysTime - oldData.getLastSystemTime();
+        const double cpuUse2 = static_cast<double>(100 * totalProc) / static_cast<double>(totalSys2);*/
+
         // Get the CPU usage as a percentage
         const double cpuUse = static_cast<double>(100 * totalProc) / static_cast<double>(totalSys);
-
 
         oldData.setTimes(cTime, eTime, kTime, uTime);
 
@@ -163,42 +165,6 @@ double ProcessMeasure::calculateCPUUsage(HANDLE pHandle, ProcessData& oldData) {
 }
 
 void ProcessMeasure::populateList() {
-    /*m_allProcessData.clear();
-
-    // Get the process snapshot
-    HANDLE processSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-    if (processSnapshot == INVALID_HANDLE_VALUE) {
-        fatalMessageBox("Failed to get process snapshot.");
-    }
-
-    // Get the first process from the snapshot
-    PROCESSENTRY32 pe{};
-    pe.dwSize = sizeof(PROCESSENTRY32);
-    if (!Process32First(processSnapshot, &pe)) {
-        CloseHandle(processSnapshot);
-        fatalMessageBox("Failed to get first process from snapshot.");
-    }
-
-    // Iterate over the rest of the processes in the snapshot to fill vector
-    do {
-        auto pHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, 
-                                   false, pe.th32ProcessID);
-        if (!pHandle) {
-            const auto error = GetLastError();
-            // If access is denied or the process is the system idle process, just silently skip the process
-            if (error != ERROR_ACCESS_DENIED && pe.th32ProcessID != 0) {
-                fatalMessageBox("Failed to open process. Code: " + std::to_string(error));
-            }
-            continue;
-        }
-
-        // Populate the vector
-        m_allProcessData.emplace_back(std::make_shared<ProcessData>(pHandle, pe.th32ProcessID, pe.szExeFile));
-
-    } while (Process32Next(processSnapshot, &pe));
-
-    CloseHandle(processSnapshot);*/
-
     // Allocate buffer for the process list to fill
     NTSTATUS status;
     PVOID buffer;
@@ -221,15 +187,18 @@ void ProcessMeasure::populateList() {
 
     // Loop over the process list and fill allProcessData with new ProcessData
     // object for each process
-    int chromeCount{ 0 };
-    while(spi->NextEntryOffset) {
+    for ( ;
+          spi->NextEntryOffset;
+          spi = reinterpret_cast<PSYSTEM_PROCESS_INFO>(reinterpret_cast<LPBYTE>(spi) + spi->NextEntryOffset)) {
 
-        auto pHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
-                                   false, (DWORD)spi->ProcessId);
+        const auto procID{ reinterpret_cast<DWORD>(spi->ProcessId) };
+
+        const auto pHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
+                                         false, procID);
         if (!pHandle) {
             const auto error = GetLastError();
             // If access is denied or the process is the system idle process, just silently skip the process
-            if (error != ERROR_ACCESS_DENIED && (DWORD)spi->ProcessId != 0) {
+            if (error != ERROR_ACCESS_DENIED && procID != 0) {
                 fatalMessageBox("Failed to open process. Code: " + std::to_string(error));
             }
         } else {
@@ -239,64 +208,16 @@ void ProcessMeasure::populateList() {
             wcstombs_s(&charsConverted, nameBuff, spi->ImageName.Length, spi->ImageName.Buffer, spi->ImageName.Length);
 
             m_allProcessData.emplace_back(std::make_shared<ProcessData>(pHandle,
-                (DWORD)spi->ProcessId, nameBuff));
+                procID, nameBuff));
 
             delete[] nameBuff;
         }
-        spi=(PSYSTEM_PROCESS_INFO)((LPBYTE)spi+spi->NextEntryOffset);
     }
 
     VirtualFree(buffer,0,MEM_RELEASE); // Free the allocated buffer.
-
 }
 
 void ProcessMeasure::detectNewProcesses() {
-    // Get the process snapshot
-    HANDLE processSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-    if (processSnapshot == INVALID_HANDLE_VALUE) {
-        fatalMessageBox("Failed to get process snapshot.");
-    }
-
-    // Get the first process from the snapshot
-    PROCESSENTRY32 pe{};
-    pe.dwSize = sizeof(PROCESSENTRY32);
-    if (!Process32First(processSnapshot, &pe)) {
-        CloseHandle(processSnapshot);
-        fatalMessageBox("Failed to get first process from snapshot.");
-    }
-
-    // Iterate over the rest of the processes in the snapshot to fill vector
-    int i = 0;
-    do {
-        // Check if the current PID is not in the ProcessData list
-        const auto it{ std::find_if(m_allProcessData.cbegin(), m_allProcessData.cend(),
-            [&pe](const auto& ppd) {
-                return pe.th32ProcessID == ppd->getPID();
-            })};
-
-        // If it doesn't exist, create a new ProcessData object in the list
-        if (it == m_allProcessData.cend()) {
-            auto pHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
-                                       false, pe.th32ProcessID);
-            if (!pHandle) {
-                const auto error = GetLastError();
-                // If access is denied or the process is the system idle process, just silently skip the process
-                if (error != ERROR_ACCESS_DENIED && pe.th32ProcessID != 0) {
-                    fatalMessageBox("Failed to open process. Code: " + std::to_string(error));
-                }
-                continue;
-            }
-
-            m_allProcessData.emplace_back(std::make_shared<ProcessData>(pHandle, pe.th32ProcessID, pe.szExeFile));
-        }
-        ++i;
-    } while (Process32Next(processSnapshot, &pe));
-    std::cout << "size of snapshot proc list: " << i << '\n';
-
-    CloseHandle(processSnapshot);
-}
-
-void ProcessMeasure::detectNewProcesses2() {
     // Allocate buffer for the process list to fill
     NTSTATUS status;
     PVOID buffer;
@@ -318,20 +239,28 @@ void ProcessMeasure::detectNewProcesses2() {
     }
 
     // Loop over the process list for any new processes
-    while (spi->NextEntryOffset) {
-        const auto it{ std::find_if(m_allProcessData.cbegin(), m_allProcessData.cend(),
-            [spi](const auto& ppd) {
-                return (DWORD)(spi->ProcessId) == ppd->getPID();
-            })};
+    for ( ;
+          spi->NextEntryOffset;
+          spi = reinterpret_cast<PSYSTEM_PROCESS_INFO>(reinterpret_cast<LPBYTE>(spi) + spi->NextEntryOffset)) {
+
+        const auto procID{ reinterpret_cast<DWORD>(spi->ProcessId) };
+
+        const auto it{ std::find_if(m_allProcessData.cbegin(),
+                                    m_allProcessData.cend(),
+            [procID](const auto& ppd) {
+                return procID == ppd->getPID();
+        })};
 
         // If it doesn't exist, create a new ProcessData object in the list
         if (it == m_allProcessData.cend()) {
             auto pHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
-                                       false, (DWORD)spi->ProcessId);
+                                       false, procID);
             if (!pHandle) {
                 const auto error = GetLastError();
                 // If access is denied or the process is the system idle process, just silently skip the process
-                if (error != ERROR_ACCESS_DENIED && (DWORD)spi->ProcessId != 0) {
+                if (error != ERROR_ACCESS_DENIED &&
+                    procID != 0) {
+
                     fatalMessageBox("Failed to open process. Code: " + std::to_string(error));
                 }
             } else {
@@ -341,27 +270,14 @@ void ProcessMeasure::detectNewProcesses2() {
                 wcstombs_s(&charsConverted, nameBuff, spi->ImageName.Length, spi->ImageName.Buffer, spi->ImageName.Length);
 
                 m_allProcessData.emplace_back(std::make_shared<ProcessData>(pHandle,
-                    (DWORD)spi->ProcessId, nameBuff));
+                    procID, nameBuff));
 
                 delete[] nameBuff;
-
             }
         }
-        spi=(PSYSTEM_PROCESS_INFO)((LPBYTE)spi+spi->NextEntryOffset);
     }
 
     VirtualFree(buffer,0,MEM_RELEASE); // Free the allocated buffer.
-}
-
-ULONGLONG SubtractTimes(const FILETIME& ftA, const FILETIME& ftB) {
-     LARGE_INTEGER a, b;
-     a.LowPart = ftA.dwLowDateTime;
-     a.HighPart = ftA.dwHighDateTime;
-
-     b.LowPart = ftB.dwLowDateTime;
-     b.HighPart = ftB.dwHighDateTime;
-
-     return a.QuadPart - b.QuadPart;
 }
 
 }

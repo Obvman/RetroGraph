@@ -1,5 +1,6 @@
 rainmeter plugins github - https://github.com/rainmeter/rainmeter/tree/eeeef4a7f2695280ba3506e98a71d163e613b1da/Plugins
 
+display idle %
 colour code high usage processes
 hdd read/write usage
 number of processes/number of threads
@@ -14,6 +15,10 @@ recycle bin monitor
 3D effects on graph
 
 test suite
+
+BUG: format proc percentages for double digits
+
+use ingeritedfromprocessid value in processmeasure to limit chrome duplicates
 
 Create alternate CPU measure display for when CoreTemp isn't running
 

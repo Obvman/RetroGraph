@@ -1,5 +1,8 @@
 #include "../headers/ProcessData.h"
 
+#include <Winternl.h>
+#pragma comment(lib, "Ntdll.lib")
+
 namespace rg {
 
 ProcessData::ProcessData(HANDLE pHandle, DWORD pID, const char* name) :
@@ -36,6 +39,10 @@ ProcessData::ProcessData(HANDLE pHandle, DWORD pID, const char* name) :
         fatalMessageBox("Failed to get process times.");
     }
 
+    /*SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION sppi;
+    ULONG len;
+    NtQuerySystemInformation(SystemProcessorPerformanceInformation, &sppi, sizeof(sppi), &len);
+    m_lastSystemTime = sppi.KernelTime.QuadPart + sppi.UserTime.QuadPart;*/
 }
 
 ProcessData::~ProcessData() {
@@ -51,6 +58,11 @@ void ProcessData::setTimes(const FILETIME& cTime, const FILETIME& eTime,
 
     FILETIME sysIdle; // dummy
     GetSystemTimes(&sysIdle, &m_lastSystemKernelTime, &m_lastSystemUserTime);
+
+    /*SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION sppi;
+    ULONG len;
+    NtQuerySystemInformation(SystemProcessorPerformanceInformation, &sppi, sizeof(sppi), &len);
+    m_lastSystemTime = sppi.KernelTime.QuadPart + sppi.UserTime.QuadPart;*/
 }
 
 void ProcessData::updateMemCounters() {

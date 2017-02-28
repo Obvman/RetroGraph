@@ -46,7 +46,6 @@ private:
     /* Polls window's process list to find any new processes and adds their
        process data to the list */
     void detectNewProcesses();
-    void detectNewProcesses2();
 
     std::vector<std::shared_ptr<ProcessData>> m_allProcessData;
 

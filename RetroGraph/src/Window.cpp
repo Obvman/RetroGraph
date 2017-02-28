@@ -49,7 +49,7 @@ Window::Window(HINSTANCE hInstance, const char* windowName,
     m_wc.hInstance = m_hInstance;
     m_wc.hIcon = LoadIcon(m_hInstance, MAKEINTRESOURCE(IDI_ICON1));
     m_wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-    m_wc.hbrBackground = (HBRUSH)CreateSolidBrush(0x00000000);
+    m_wc.hbrBackground = static_cast<HBRUSH>(CreateSolidBrush(0x00000000));
     m_wc.lpszClassName = windowName;
 
     if(!RegisterClassEx(&m_wc)) {
@@ -94,8 +94,11 @@ LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
             break;
         case WM_NCHITTEST: {
             // TODO: limit how often this message is handled to lower CPU usage while dragging
-            LRESULT hit = DefWindowProc(hWnd, msg, wParam, lParam);
-            if (hit == HTCLIENT) hit = HTCAPTION;
+            // Allows click-to-drag on any part of the window
+            auto hit{ DefWindowProc(hWnd, msg, wParam, lParam) };
+            if (hit == HTCLIENT) {
+                hit = HTCAPTION;
+            }
             return hit;
         }
         case WM_MOUSEMOVE:
@@ -158,8 +161,6 @@ void Window::draw() const {
 
     m_renderer.draw(m_shaders);
 
-    //drawBorder();
-
     SwapBuffers(hdc);
     ReleaseDC(m_hWndMain, hdc);
 }
@@ -209,19 +210,15 @@ bool Window::createHGLRC() {
        Colt McAnlis. Code and explanations:
        http://nehe.gamedev.net/tutorial/fullscreen_antialiasing/16008/ */
 
-    m_hWndMain = CreateWindowEx(WS_EX_APPWINDOW, "RetroGraph", "RetroGraph",
-                                WS_VISIBLE | WS_POPUP, m_startPosX, m_startPosY, m_width, m_height,
-                                NULL, NULL, m_hInstance, NULL);
-
-    if (m_arbMultisampleSupported && false) {
-        // Show the second window in the toolbar
-        auto currStyle = GetWindowLong(m_hWndMain, GWL_STYLE);
-        currStyle &= ~WS_EX_TOOLWINDOW;
-        //currStyle |= WS_EX_APPWINDOW;
-        SetWindowLong(m_hWndMain, GWL_STYLE, WS_EX_APPWINDOW);
-
+    if (m_arbMultisampleSupported) {
+        m_hWndMain = CreateWindowEx(WS_EX_APPWINDOW, "RetroGraph", "RetroGraph",
+                                    WS_VISIBLE | WS_POPUP, m_startPosX, m_startPosY, m_width, m_height,
+                                    NULL, NULL, m_hInstance, NULL);
+    } else {
+        m_hWndMain = CreateWindowEx(WS_EX_TOOLWINDOW, "RetroGraph", "Dummy",
+                                    WS_VISIBLE | WS_POPUP, m_startPosX, m_startPosY, m_width, m_height,
+                                    NULL, NULL, m_hInstance, NULL);
     }
-
 
     #if (!_DEBUG)
     // Display window at the desktop layer on startup
@@ -234,7 +231,7 @@ bool Window::createHGLRC() {
 
     // Make window transparent via dwm
     DWM_BLURBEHIND bb = {0};
-    HRGN hRgn = CreateRectRgn(0, 0, -1, -1);
+    const auto hRgn = CreateRectRgn(0, 0, -1, -1);
     bb.dwFlags = DWM_BB_ENABLE | DWM_BB_BLURREGION;
     bb.hRgnBlur = hRgn;
     bb.fEnable = TRUE;
@@ -332,11 +329,11 @@ bool Window::createHGLRC() {
     return true;
 }
 bool Window::wglIisExtensionSupported(const char *extension) {
-    const size_t extlen{ strlen(extension) };
+    const auto extlen{ strlen(extension) };
     const char *supported{ nullptr };
 
     // Try To Use wglGetExtensionStringARB On Current DC, If Possible
-    PROC wglGetExtString{ wglGetProcAddress("wglGetExtensionsStringARB") };
+    const auto wglGetExtString{ wglGetProcAddress("wglGetExtensionsStringARB") };
 
     if (wglGetExtString) {
         supported = ((char*(__stdcall*)(HDC))wglGetExtString)(wglGetCurrentDC());
@@ -376,7 +373,7 @@ bool Window::initMultisample(PIXELFORMATDESCRIPTOR& pfd) {
 
     // Get Our Pixel Format
     PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB =
-        (PFNWGLCHOOSEPIXELFORMATARBPROC)wglGetProcAddress("wglChoosePixelFormatARB");
+        reinterpret_cast<PFNWGLCHOOSEPIXELFORMATARBPROC>(wglGetProcAddress("wglChoosePixelFormatARB"));
     if (!wglChoosePixelFormatARB) {
         m_arbMultisampleSupported = false;
         return false;

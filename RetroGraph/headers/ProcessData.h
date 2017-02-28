@@ -56,6 +56,8 @@ public:
     /* Updates memory status struct with current process memory stats */
     void updateMemCounters();
 
+    //int64_t getLastSystemTime() const { return m_lastSystemTime; }
+
 private:
     HANDLE m_pHandle;
     DWORD m_processID;
@@ -68,6 +70,8 @@ private:
     FILETIME m_userTime;
     FILETIME m_lastSystemKernelTime;
     FILETIME m_lastSystemUserTime;
+
+    //int64_t m_lastSystemTime;
 
     double m_cpuUsage;
 };
