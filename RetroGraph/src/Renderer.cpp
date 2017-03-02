@@ -515,7 +515,7 @@ void Renderer::drawStatsWidget() const {
     }
     // Draw GPU Temperature
     {
-        const auto& str{ "GPU Temp: " + std::to_string(m_gpuMeasure.getCurrentTemp()) + "C" };
+        const auto& str{ "GPU Temp: " + std::to_string(m_gpuMeasure.getCurrentTempC()) + "C" };
         glRasterPos2f(rasterX, rasterY);
         glCallLists(str.length(), GL_UNSIGNED_BYTE, str.c_str());
         rasterY -= yRange / numLinesToDraw;

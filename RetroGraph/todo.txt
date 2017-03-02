@@ -7,13 +7,12 @@ number of processes/number of threads
 network upload/download, DNS, VPN, hostname
 network connectivity status
 gpu load
-get GPU info from WMI Win32_VideoController
-gpu temps
 text labelling graphs
 media - foobar status
 volume, current sound output level bar - IAudioPeakMeter
 recycle bin monitor
 3D effects on graph
+maybe use NVIDIA Pstate to determine if GPU is idling?
 
 test suite
 

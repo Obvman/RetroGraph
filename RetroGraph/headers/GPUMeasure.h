@@ -8,31 +8,47 @@
 
 namespace rg {
 
-/* Stores statistics about the system's GPU
-   Assumes the system is running a single, NVIDIA GPU */
+/* Stores statistics about the system's GPU Assumes the system is running
+   a single, NVIDIA GPU */
 class GPUMeasure {
 public:
     GPUMeasure();
     ~GPUMeasure();
 
-    /* Get latest GPU stats from OpenGL */
+    /* Get latest GPU stats from OpenGL or nvapi and updates dynamic members */
     void update();
 
-    int32_t getTotalGPUMemoryKB() const { return m_totalGPUMemoryKB; }
-    int32_t getCurrAvailGPUMemoryKB() const { return m_currAvailableGPUMemoryKB; }
-    int32_t getUsedGPUMemoryKB() const { return getTotalGPUMemoryKB() - getCurrAvailGPUMemoryKB(); }
-
-    int32_t getCurrentTemp() const { return m_currentTemp; }
+    uint32_t getFrameBufferSizeKB() const { return m_frameBufferSize; }
+    uint32_t getCoreCount() const { return m_gpuCoreCount; }
+    uint32_t getMemoryClockHz() const { return m_memoryClock; }
+    uint32_t getGraphicsClockHz() const { return m_graphicsClock; }
+    uint32_t getCurrAvailableMemoryKB() const { return m_currAvailableMemory; }
+    uint32_t getTotalMemoryKB() const { return m_totalMemory; }
+    uint32_t getGpuUsage() const { return m_gpuUsage; }
+    float getMemUsagePercent() const;
+    int32_t getCurrentTempC() const { return m_currentTemp; }
     const std::string& getDriverVersion() const { return m_driverVersion; }
+    const std::string& getGpuName() const { return m_gpuName; }
 private:
-    int32_t m_totalGPUMemoryKB;
-    int32_t m_currAvailableGPUMemoryKB;
+    NvS32 updateGpuTemp();
+    NvPhysicalGpuHandle getGpuHandle() const;
+    void getClockFrequencies();
+    void getMemInformation();
+    void getGpuUsage();
 
     std::string m_driverVersion;
+    std::string m_gpuName;
 
     // NvAPI members
     NvPhysicalGpuHandle m_gpuHandle;
     NvS32 m_currentTemp;
+    NvU32 m_graphicsClock;
+    NvU32 m_memoryClock;
+    NvU32 m_gpuCoreCount;
+    NvU32 m_frameBufferSize;
+    NvU32 m_currAvailableMemory;
+    NvU32 m_totalMemory;
+    NvU32 m_gpuUsage;
 };
 
 }

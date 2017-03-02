@@ -49,7 +49,6 @@ void ProcessMeasure::init() {
 void ProcessMeasure::update(uint32_t ticks) {
     // Update the process list vector every 10 seconds
     if ((ticks % (ticksPerSecond * 10)) == 0) {
-        std::cout << "Detecting new processes\n";
         detectNewProcesses();
     }
 
