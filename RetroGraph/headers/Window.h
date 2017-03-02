@@ -77,6 +77,9 @@ private:
     /* Destroys the win32 window and releases resources */
     void destroy();
 
+    /* Creates the popup menu in response to a right click*/
+    static void createRClickMenu(HWND hWnd, DWORD cursorX, DWORD cursorY);
+
     const uint16_t m_width;
     const uint16_t m_height;
     uint16_t m_startPosX;

@@ -21,9 +21,6 @@ public:
     /* Updates the total system's CPU usage statistics */
     void update();
 
-    /* Draws the components of the measure */
-    void draw(GLuint shader) const;
-
     /* Returns the current system CPU load as a percentage */
     float getCPULoad();
 
@@ -36,9 +33,6 @@ public:
     const std::vector<float>& getUsageData() const { return m_usageData; }
 
 private:
-    /* Draws the line graph of system CPU usage */
-    void drawGraph(GLuint shader) const;
-
     /* Draws the total system uptime text */
     void drawText() const;
 

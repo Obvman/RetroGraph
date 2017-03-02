@@ -41,67 +41,13 @@ void CPUMeasure::update() {
     m_coreTempPlugin.update();
     m_uptime = std::chrono::milliseconds(GetTickCount64());
 
-    if (m_cpuName.size() == 0) {
+    // Fill CPU name if CoreTemp interfacing was successful
+    if (m_cpuName.size() == 0 && m_coreTempPlugin.getCoreTempInfoSuccess()) {
         m_cpuName = "CPU: ";
         m_cpuName.append(m_coreTempPlugin.getCPUName());
     }
 
     getCPULoad();
-}
-
-void CPUMeasure::draw(GLuint shader) const {
-    glPushMatrix();
-
-    // Preserve initial viewport settings
-    GLint vp[4];
-    glGetIntegerv(GL_VIEWPORT, vp);
-
-    // Set up the view to a portion of the screen
-    glViewport(m_viewportStartX, m_viewportStartY,
-               m_viewportWidth, m_viewportHeight);
-
-    glLineWidth(0.5f);
-
-    drawGraph(shader);
-    drawText();
-
-    glViewport(vp[0], vp[1], vp[2], vp[3]);
-
-    glPopMatrix();
-}
-
-void CPUMeasure::drawGraph(GLuint shader) const {
-    GLfloat lineWidth;
-    glGetFloatv(GL_LINE_WIDTH, &lineWidth);
-    GLint vp[4];
-    glGetIntegerv(GL_VIEWPORT, vp);
-
-    // Set viewport for the graph to right half of measure's viewport
-    glViewport(m_viewportWidth/2, m_viewportStartY, m_viewportWidth/2, m_viewportHeight);
-    glLineWidth(0.5f);
-
-    //glUseProgram(shader);
-    glBegin(GL_LINE_STRIP); {
-        // Draw each node in the graph
-        for (auto i{ 0U }; i < m_usageData.size(); ++i) {
-            glColor4f(LINE_R, LINE_G, LINE_B, 1.0f);
-
-            float x = (static_cast<float>(i) / (m_usageData.size() - 1)) * 2.0f - 1.0f;
-            float y = m_usageData[i] * 2.0f - 1.0f;
-
-            // If the vertex is at the border, add/subtract the border delta
-            if (i == 0) {
-                x += bDelta;
-            }
-
-            glVertex3f(x, y, 0.0f);
-        }
-    } glEnd();
-
-    glUseProgram(0);
-
-    glLineWidth(lineWidth);
-    glViewport(vp[0], vp[1], vp[2], vp[3]);
 }
 
 void CPUMeasure::drawText() const {
@@ -186,10 +132,6 @@ float CPUMeasure::getCPULoad() {
     const auto load{ calculateCPULoad(FileTimeToInt64(idleTime),
                      FileTimeToInt64(kernelTime) + FileTimeToInt64(userTime))
     };
-
-    // TODO profile performance
-    // option 1: shift elements left and add to the end afterwards
-    // option 2: add then use std::rotate
 
     // Add to the usageData vector by overwriting the oldest value and
     // shifting the elements in the vector

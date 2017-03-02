@@ -73,8 +73,12 @@ Window::Window(HINSTANCE hInstance, const char* windowName,
 Window::~Window() {
 }
 
+constexpr int32_t ID_CLOSE{ 1 };
+constexpr int32_t ID_EXIT{ 2 };
+
 LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     static PAINTSTRUCT ps;
+
     switch (msg) {
         case WM_PAINT:
             BeginPaint(hWnd, &ps);
@@ -90,6 +94,20 @@ LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
             break;
         case WM_CREATE:
             break;
+        /*case WM_COMMAND:
+            switch (LOWORD(wParam)) {
+                case ID_CLOSE: {
+                    std::cout << "Close\n";
+                    //auto control{ HMENU(lParam) };
+                    //DeleteMenu(control, );
+                    break;
+                }
+                case ID_EXIT:
+                    std::cout << "Exit\n";
+            }
+        case WM_CONTEXTMENU:
+            createRClickMenu((HWND)wParam, LOWORD(lParam), HIWORD(lParam));
+            break;*/
         case WM_SETCURSOR:
             break;
         case WM_NCHITTEST: {
@@ -123,6 +141,16 @@ LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
+void Window::createRClickMenu(HWND hWnd, DWORD cursorX, DWORD cursorY) {
+    auto hPopupMenu{ CreatePopupMenu() };
+    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_CLOSE, "Exit");
+    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_EXIT, "Play");
+    SetForegroundWindow(hWnd);
+
+    TrackPopupMenu(hPopupMenu, TPM_TOPALIGN | TPM_LEFTALIGN | TPM_RIGHTBUTTON, 
+                   cursorX, cursorY, 0, hWnd, NULL);
+}
+
 void Window::show() {
     ShowWindow(m_hWndMain, SW_SHOW);
 }
@@ -131,6 +159,7 @@ void Window::init() {
     m_cpuMeasure.update();
     m_gpuMeasure.update();
     m_ramMeasure.update();
+    m_gpuMeasure.update();
 
     m_processMeasure.init();
     m_driveMeasure.init();

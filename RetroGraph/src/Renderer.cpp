@@ -26,6 +26,7 @@ void fontScope(GLint fontBase, F f) {
     glPopAttrib();
 }
 
+// Automatically binds/unbinds given VBOs and executes the function given
 template<typename F>
 void vboDrawScope(GLuint vertID, GLuint indexID, F f) {
     glBindBuffer(GL_ARRAY_BUFFER, vertID);
@@ -108,21 +109,27 @@ void Renderer::initFonts(HWND hWnd) {
     const auto stdFontWidth{ std::lround(width / 100.0) - 2};
 
     // Create the different fonts
-    HFONT standardFont = CreateFont(stdFontWidth, stdFontHeight, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
-                              OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-                              DEFAULT_PITCH | FF_DONTCARE, fonts[0]);
-    HFONT standardFontBold = CreateFont(stdFontWidth, stdFontHeight, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, ANSI_CHARSET,
-                              OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-                              DEFAULT_PITCH | FF_DONTCARE, fonts[0]);
-    HFONT largeFont = CreateFont(70, 45, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
-                           OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-                           VARIABLE_PITCH | FF_MODERN, fonts[0]);
-    HFONT smallFont = CreateFont(stdFontWidth/2 + 2, stdFontHeight/2 + 2, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
-                           OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-                           VARIABLE_PITCH | FF_MODERN, fonts[1]);
-    HFONT timeFont = CreateFont(stdFontWidth * 4, stdFontHeight * 4, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
-                           OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-                           VARIABLE_PITCH | FF_MODERN, fonts[1]);
+    HFONT standardFont = CreateFont(
+        stdFontWidth, stdFontHeight, 0, 0, FW_NORMAL,
+        FALSE, FALSE, FALSE, ANSI_CHARSET,
+        OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
+        DEFAULT_PITCH | FF_DONTCARE, fonts[0]);
+    HFONT standardFontBold = CreateFont(
+        stdFontWidth, stdFontHeight, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
+        ANSI_CHARSET, OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
+        DEFAULT_PITCH | FF_DONTCARE, fonts[0]);
+    HFONT largeFont = CreateFont(
+        70, 45, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
+        OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
+        VARIABLE_PITCH | FF_MODERN, fonts[0]);
+    HFONT smallFont = CreateFont(
+        stdFontWidth/2 + 2, stdFontHeight/2 + 2, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
+        ANSI_CHARSET, OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
+        VARIABLE_PITCH | FF_MODERN, fonts[1]);
+    HFONT timeFont = CreateFont(
+        stdFontWidth * 4, stdFontHeight * 4, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
+        ANSI_CHARSET, OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
+        VARIABLE_PITCH | FF_MODERN, fonts[1]);
 
 
     // Bind the fonts to the OpenGL display lists
@@ -151,6 +158,7 @@ void Renderer::initFonts(HWND hWnd) {
 
 void Renderer::initVBOs() {
 
+    // Graph background grid VBO:
     {
         constexpr size_t numVertLines{ 14U };
         constexpr size_t numHorizLines{ 7U };
@@ -464,7 +472,7 @@ void Renderer::drawStatsWidget() const {
         glVertex2f( 1.0f, -1.0f); // Bottom
     } glEnd();
 
-    constexpr auto numLinesToDraw{ 5U };
+    constexpr auto numLinesToDraw{ 6U };
     const auto rasterX = float{ -0.95f };
     auto rasterY = float{ 0.80f };
     const auto yRange{ 2.0f };
@@ -501,6 +509,13 @@ void Renderer::drawStatsWidget() const {
     // Draw RAM capacity
     {
         const auto& str{ m_sysInfo.getRAMDescription() };
+        glRasterPos2f(rasterX, rasterY);
+        glCallLists(str.length(), GL_UNSIGNED_BYTE, str.c_str());
+        rasterY -= yRange / numLinesToDraw;
+    }
+    // Draw GPU Temperature
+    {
+        const auto& str{ "GPU Temp: " + std::to_string(m_gpuMeasure.getCurrentTemp()) + "C" };
         glRasterPos2f(rasterX, rasterY);
         glCallLists(str.length(), GL_UNSIGNED_BYTE, str.c_str());
         rasterY -= yRange / numLinesToDraw;
