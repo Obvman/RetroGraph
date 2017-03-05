@@ -1,4 +1,4 @@
-#include "../headers/GLShaderHandler.h"
+#include "../headers/GLShaders.h"
 
 #include <vector>
 #include <iostream>
@@ -12,20 +12,9 @@ namespace rg {
 // visual studio or debugger, so this handles the two cases
 const std::string shaderPath{ (IsDebuggerPresent()) ? "shaders\\" : "..\\RetroGraph\\shaders\\" };
 
-GLShaderHandler::GLShaderHandler() {
-}
+std::string readShaderFile(const std::string& filePath);
 
-
-GLShaderHandler::~GLShaderHandler() {
-}
-
-void GLShaderHandler::loadShaders() {
-    m_testProgram = loadShader("test.vert", "test.frag");
-    m_cpuGraphProgram = loadShader("cpuGraph.vert", "cpuGraph.frag");
-}
-
-GLuint GLShaderHandler::loadShader(const std::string& vFile,
-                                   const std::string& fFile) {
+GLuint loadShader(const std::string& vFile, const std::string& fFile) {
     const auto vShader{ glCreateShader(GL_VERTEX_SHADER) };
     const auto fShader{ glCreateShader(GL_FRAGMENT_SHADER) };
 
@@ -91,7 +80,7 @@ GLuint GLShaderHandler::loadShader(const std::string& vFile,
     return program;
 }
 
-std::string GLShaderHandler::readShaderFile(const std::string& filePath) {
+std::string readShaderFile(const std::string& filePath) {
     std::ifstream fileStream(filePath, std::ios::in);
     std::string fileContents{};
 

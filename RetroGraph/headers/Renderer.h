@@ -28,7 +28,7 @@ public:
     void initVBOs();
     void release();
 
-    void draw(uint32_t ticks, const GLShaderHandler& shaders) const;
+    void draw(uint32_t ticks) const;
 private:
     void drawGraphWidget() const;
     void drawCpuGraph() const;

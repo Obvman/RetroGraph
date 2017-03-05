@@ -196,7 +196,7 @@ int testWMITemp() {
 }
 
 void mainLoop(rg::Window& mainWindow) {
-    constexpr auto framesPerSecond{ 10U };
+    constexpr auto framesPerSecond = uint32_t{ 10U };
 
     using namespace std::chrono;
 

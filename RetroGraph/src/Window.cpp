@@ -35,8 +35,7 @@ Window::Window(HINSTANCE hInstance, const char* windowName,
                 m_driveMeasure, m_systemInfo, m_width, m_height },
     m_arbMultisampleSupported{ false },
     m_arbMultisampleFormat{ 0 },
-    m_aaSamples{ 8 },
-    m_shaders{} {
+    m_aaSamples{ 8 } {
 
     WNDCLASSEX m_wc;
     memset(&m_wc, 0, sizeof(m_wc));
@@ -165,7 +164,7 @@ void Window::init() {
     m_processMeasure.init();
     m_driveMeasure.init();
 
-    draw();
+    draw(0); // TODO change this value to guarantee drawing in the very first frame
 }
 
 void Window::update(uint32_t ticks) {
@@ -189,7 +188,7 @@ void Window::draw(uint32_t ticks) const {
     HDC hdc = GetDC(m_hWndMain);
     wglMakeCurrent(hdc, m_hrc);
 
-    m_renderer.draw(ticks, m_shaders);
+    m_renderer.draw(ticks);
 
     SwapBuffers(hdc);
     ReleaseDC(m_hWndMain, hdc);
@@ -220,8 +219,6 @@ void Window::initOpenGL() {
     glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
 
     m_renderer.init(m_hWndMain);
-
-    m_shaders.loadShaders();
 
     m_systemInfo.getGPUDescription();
 }

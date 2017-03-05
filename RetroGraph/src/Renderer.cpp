@@ -10,7 +10,6 @@
 #include "../headers/ProcessMeasure.h"
 #include "../headers/DriveMeasure.h"
 #include "../headers/SystemInfo.h"
-#include "../headers/GLShaderHandler.h"
 #include "../headers/colors.h"
 #include "../headers/utils.h"
 
@@ -230,7 +229,7 @@ void Renderer::release() {
     glDeleteLists(smlFontBase, 256);
 }
 
-void Renderer::draw(const GLShaderHandler& shaders) const {
+void Renderer::draw(uint32_t ticks) const {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
 
