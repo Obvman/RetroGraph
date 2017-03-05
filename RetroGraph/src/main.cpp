@@ -4,6 +4,9 @@
 
 #include <Windows.h>
 #include <winternl.h>
+#include <comdef.h>
+#include <Wbemidl.h>
+#pragma comment(lib, "wbemuuid.lib")
 #pragma comment(lib, "Ntdll.lib")
 
 #include <GL/glew.h>
@@ -35,8 +38,165 @@ int main() {
     return 0;
 }
 
+int testWMITemp() {
+    HRESULT hres;
+
+    // Initialize COM.
+    hres =  CoInitializeEx(0, COINIT_MULTITHREADED); 
+    if (FAILED(hres))
+    {
+        std::cout << "Failed to initialize COM library. " 
+            << "Error code = 0x" 
+            << std::hex << hres << '\n';
+        return 1;              // Program has failed.
+    }
+
+    // Initialize 
+    hres =  CoInitializeSecurity(
+        NULL,     
+        -1,      // COM negotiates service                  
+        NULL,    // Authentication services
+        NULL,    // Reserved
+        RPC_C_AUTHN_LEVEL_DEFAULT,    // authentication
+        RPC_C_IMP_LEVEL_IMPERSONATE,  // Impersonation
+        NULL,             // Authentication info 
+        EOAC_NONE,        // Additional capabilities
+        NULL              // Reserved
+    );
+
+
+    if (FAILED(hres))
+    {
+        std::cout << "Failed to initialize security. " 
+            << "Error code = 0x" 
+            << std::hex << hres << '\n';
+        CoUninitialize();
+        return 1;          // Program has failed.
+    }
+
+    // Obtain the initial locator to Windows Management
+    // on a particular host computer.
+    IWbemLocator *pLoc = 0;
+
+    hres = CoCreateInstance(
+        CLSID_WbemLocator,             
+        0, 
+        CLSCTX_INPROC_SERVER, 
+        IID_IWbemLocator, (LPVOID *) &pLoc);
+
+    if (FAILED(hres))
+    {
+        std::cout << "Failed to create IWbemLocator object. "
+            << "Error code = 0x"
+            << std::hex << hres << '\n';
+        CoUninitialize();
+        return 1;       // Program has failed.
+    }
+
+    IWbemServices *pSvc = 0;
+
+    // Connect to the root\cimv2 namespace with the
+    // current user and obtain pointer pSvc
+    // to make IWbemServices calls.
+
+    hres = pLoc->ConnectServer(
+
+        _bstr_t(L"ROOT\\CIMV2"), // WMI namespace
+        NULL,                    // User name
+        NULL,                    // User password
+        0,                       // Locale
+        NULL,                    // Security flags                 
+        0,                       // Authority       
+        0,                       // Context object
+        &pSvc                    // IWbemServices proxy
+    );                              
+
+    if (FAILED(hres))
+    {
+        std::cout << "Could not connect. Error code = 0x" 
+            << std::hex << hres << '\n';
+        pLoc->Release();     
+        CoUninitialize();
+        return 1;                // Program has failed.
+    }
+
+    std::cout << "Connected to ROOT\\CIMV2 WMI namespace" << '\n';
+
+    // Set the IWbemServices proxy so that impersonation
+    // of the user (client) occurs.
+    hres = CoSetProxyBlanket(
+
+        pSvc,                         // the proxy to set
+        RPC_C_AUTHN_WINNT,            // authentication service
+        RPC_C_AUTHZ_NONE,             // authorization service
+        NULL,                         // Server principal name
+        RPC_C_AUTHN_LEVEL_CALL,       // authentication level
+        RPC_C_IMP_LEVEL_IMPERSONATE,  // impersonation level
+        NULL,                         // client identity 
+        EOAC_NONE                     // proxy capabilities     
+    );
+
+    if (FAILED(hres))
+    {
+        std::cout << "Could not set proxy blanket. Error code = 0x" 
+            << std::hex << hres << '\n';
+        pSvc->Release();
+        pLoc->Release();     
+        CoUninitialize();
+        return 1;               // Program has failed.
+    }
+
+    IEnumWbemClassObject* pEnumerator = NULL;
+    hres = pSvc->ExecQuery(
+        bstr_t("WQL"), 
+        bstr_t("SELECT * FROM Win32_TemperatureProbe"),
+        WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY, 
+        NULL,
+        &pEnumerator);
+
+    if (FAILED(hres))
+    {
+        std::cout << "Query for temperature failed. "
+            << "Error code = 0x" 
+            << std::hex << hres << std::endl;
+        pSvc->Release();
+        pLoc->Release();     
+        CoUninitialize();
+        return 1;               // Program has failed.
+    }
+    else
+    { 
+        IWbemClassObject *pclsObj;
+        ULONG uReturn = 0;
+
+        while (pEnumerator)
+        {
+            hres = pEnumerator->Next(WBEM_INFINITE, 1, 
+                                     &pclsObj, &uReturn);
+
+            if(0 == uReturn)
+            {
+                break;
+            }
+
+            VARIANT vtProp;
+
+            // Get the value of the Name property
+            hres = pclsObj->Get(L"CurrentReading", 0, &vtProp, 0, 0);
+            std::wcout << "Process Name : " << vtProp.ullVal << std::endl;
+            VariantClear(&vtProp);
+        }
+
+    }
+
+    pSvc->Release();
+    pLoc->Release();
+    CoUninitialize();
+    return 0;
+}
+
 void mainLoop(rg::Window& mainWindow) {
-    constexpr auto framesPerSecond{ 2U };
+    constexpr auto framesPerSecond{ 10U };
 
     using namespace std::chrono;
 
@@ -44,6 +204,8 @@ void mainLoop(rg::Window& mainWindow) {
     auto ticks = uint32_t{ 1 };
     auto lastTick{ ticks };
     MSG msg;
+
+    //testWMITemp();
 
     // Enter main update/draw loop
     while(true) {
@@ -63,8 +225,8 @@ void mainLoop(rg::Window& mainWindow) {
             mainWindow.update(ticks);
 
             // Draw according to the framerate
-            if ((lastTick % (rg::ticksPerSecond/framesPerSecond)) == 0) {
-                mainWindow.draw();
+            if ((lastTick % std::lround(static_cast<float>(rg::ticksPerSecond)/framesPerSecond)) == 0) {
+                mainWindow.draw(ticks);
             }
 
             lastTick = ticks;

@@ -56,15 +56,19 @@ Renderer::Renderer(const CPUMeasure& _cpu, const GPUMeasure& _gpu,
                           windowWidth/5, windowHeight/6 }, // Top left
     m_hddWidgetViewport{ windowWidth - windowWidth/5 - marginX, 5 * windowHeight/6 - marginY,
                          windowWidth/5, windowHeight/6}, // Top right
-    m_procWidgetViewport{ windowWidth/2 - windowWidth/5, marginY,
+    m_procWidgetViewport{ marginX + windowWidth/2 - windowWidth/5, marginY,
                           2*windowWidth/5, windowHeight/6}, // Bottom middle
     m_statsWidgetViewport{ marginX, marginY,
                            windowWidth/5, windowHeight/6 }, // Bottom left
+    m_mainWidgetViewport{ marginX + windowWidth/2 - windowWidth/5, 2*marginY + windowHeight/4,
+                           2 * windowWidth/5, windowHeight/2 }, // Middle
     m_graphWidgetViewport{ marginX, windowHeight/4 + 2*marginY,
                               windowWidth/5, windowHeight/2 }, // Left-Mid
     m_cpuGraphViewport{ m_graphWidgetViewport[0], m_graphWidgetViewport[1] + 3*m_graphWidgetViewport[3]/4,
                         m_graphWidgetViewport[2], m_graphWidgetViewport[3]/4},
     m_ramGraphViewport{ m_graphWidgetViewport[0], m_graphWidgetViewport[1] + 2*m_graphWidgetViewport[3]/4,
+                        m_graphWidgetViewport[2], m_graphWidgetViewport[3]/4},
+    m_gpuGraphViewport{ m_graphWidgetViewport[0], m_graphWidgetViewport[1] + 1*m_graphWidgetViewport[3]/4,
                         m_graphWidgetViewport[2], m_graphWidgetViewport[3]/4}
 {
 
@@ -237,15 +241,34 @@ void Renderer::draw(const GLShaderHandler& shaders) const {
     drawHDDWidget();
     drawStatsWidget();
 
+    //drawMainWidget();
+}
+
+void Renderer::drawMainWidget() const {
+    glViewport(m_mainWidgetViewport[0], m_mainWidgetViewport[1],
+               m_mainWidgetViewport[2], m_mainWidgetViewport[3]);
+    drawViewportBorder();
+    glColor3f(WHITE_R, WHITE_G, WHITE_B);
+    glLineWidth(10.0f);
+
+    constexpr float radius{ 0.3f };
+    const int numLines{ 200 };
+    GLfloat twoPi = 2.0f * 3.141592f;
+    glBegin(GL_LINE_LOOP); {
+        for (auto i{ 0U }; i <= numLines; ++i) {
+            glVertex2f(radius * std::cos(i * twoPi / numLines),
+                       radius * std::sin(i * twoPi / numLines));
+        }
+    } glEnd();
 }
 
 void Renderer::drawGraphWidget() const {
     glViewport(m_graphWidgetViewport[0], m_graphWidgetViewport[1],
                m_graphWidgetViewport[2], m_graphWidgetViewport[3]);
-    glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
 
     drawCpuGraph();
     drawRamGraph();
+    drawGpuGraph();
 }
 
 void Renderer::drawCpuGraph() const {
@@ -254,18 +277,12 @@ void Renderer::drawCpuGraph() const {
     // Draw border
     glLineWidth(0.5f);
     glColor4f(BORDER_R, BORDER_G, BORDER_B, BORDER_A);
-    glBegin(GL_LINES); {
-        glVertex2f(-1.0f, 1.0f); // Top
+    glBegin(GL_LINE_STRIP); {
+        glVertex2f(-1.0f, 1.0f);
         glVertex2f(1.0f, 1.0f);
-
-        glVertex2f(-1.0f, -1.0f); // Bottom
         glVertex2f(1.0f, -1.0f);
-
-        glVertex2f(-1.0f, 1.0f); // Left
         glVertex2f(-1.0f, -1.0f);
-
-        glVertex2f(1.0f, 1.0f); // Right
-        glVertex2f(1.0f, -1.0f);
+        glVertex2f(-1.0f, 1.0f);
     } glEnd();
 
     // Set the viewport for the graph to be left section
@@ -323,18 +340,12 @@ void Renderer::drawRamGraph() const {
     // Draw border
     glLineWidth(0.5f);
     glColor4f(BORDER_R, BORDER_G, BORDER_B, BORDER_A);
-    glBegin(GL_LINES); {
-        glVertex2f(-1.0f, 1.0f); // Top
+    glBegin(GL_LINE_STRIP); {
+        glVertex2f(-1.0f, 1.0f);
         glVertex2f(1.0f, 1.0f);
-
-        glVertex2f(-1.0f, -1.0f); // Bottom
         glVertex2f(1.0f, -1.0f);
-
-        glVertex2f(-1.0f, 1.0f); // Left
         glVertex2f(-1.0f, -1.0f);
-
-        glVertex2f(1.0f, 1.0f); // Right
-        glVertex2f(1.0f, -1.0f);
+        glVertex2f(-1.0f, 1.0f);
     } glEnd();
 
     // Set the viewport for the graph to be left section
@@ -386,6 +397,69 @@ void Renderer::drawRamGraph() const {
 
 }
 
+void Renderer::drawGpuGraph() const {
+    glViewport(m_gpuGraphViewport[0], m_gpuGraphViewport[1],
+               m_gpuGraphViewport[2] , m_gpuGraphViewport[3]);
+    // Draw border
+    glLineWidth(0.5f);
+    glColor4f(BORDER_R, BORDER_G, BORDER_B, BORDER_A);
+    glBegin(GL_LINE_STRIP); {
+        glVertex2f(-1.0f, 1.0f);
+        glVertex2f(1.0f, 1.0f);
+        glVertex2f(1.0f, -1.0f);
+        glVertex2f(-1.0f, -1.0f);
+        glVertex2f(-1.0f, 1.0f);
+    } glEnd();
+
+    // Set the viewport for the graph to be left section
+    glViewport(m_gpuGraphViewport[0], m_gpuGraphViewport[1],
+               (m_gpuGraphViewport[2]*4)/5 , m_gpuGraphViewport[3]);
+
+    // Draw the background grid for the graph
+    vboDrawScope(m_graphGridVertsID, m_graphGridIndicesID, [this]() {
+        glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.2f);
+        glLineWidth(0.5f);
+        glDrawElements(GL_LINES, m_graphIndicesSize, GL_UNSIGNED_INT, 0);
+    });
+
+    // Draw the line graph
+    glLineWidth(0.5f);
+    glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
+    // TODO use VBOs instead
+    const auto& data{ m_gpuMeasure.getUsageData() };
+    glBegin(GL_LINE_STRIP); {
+        // Draw each node in the graph
+        for (auto i{ 0U }; i < data.size(); ++i) {
+            glColor4f(LINE_R, LINE_G, LINE_B, 1.0f);
+
+            auto x = float{ (static_cast<float>(i) / (data.size() - 1)) * 2.0f - 1.0f };
+            const auto y = float{ data[i] * 2.0f - 1.0f };
+
+            glVertex2f(x, y);
+        }
+    } glEnd();
+
+    // Set viewport for text drawing
+    glViewport(m_gpuGraphViewport[0] + (4*m_gpuGraphViewport[2])/5, m_gpuGraphViewport[1],
+               m_gpuGraphViewport[2]/5 , m_gpuGraphViewport[3]);
+    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
+
+    fontScope(smlFontBase, []() {
+        glRasterPos2f(-0.8f, -0.02f);
+        const char* str{ "GPU Load" };
+        glCallLists(strlen(str), GL_UNSIGNED_BYTE, str);
+
+        glRasterPos2f(-0.8f, -0.77f);
+        const char* min{ "0%" };
+        glCallLists(strlen(min), GL_UNSIGNED_BYTE, min);
+
+        glRasterPos2f(-0.8f, 0.70f);
+        const char* max{ "100%" };
+        glCallLists(strlen(max), GL_UNSIGNED_BYTE, max);
+    });
+
+}
+
 void Renderer::drawProcessWidget() const {
     glViewport(m_procWidgetViewport[0], m_procWidgetViewport[1],
                m_procWidgetViewport[2], m_procWidgetViewport[3]);
@@ -412,7 +486,7 @@ void Renderer::drawProcCPUList() const {
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
     const auto rasterX = float{ -0.95f };
-    auto rasterY = float{ 0.74f }; // Y changes for each process drawn
+    auto rasterY = float{ 0.79f }; // Y changes for each process drawn
 
     for (const auto& pair : m_processMeasure.getProcCPUData()) {
         // Draw the process name
@@ -421,8 +495,8 @@ void Renderer::drawProcCPUList() const {
 
         // Draw the process's CPU percentage
         glRasterPos2f(-0.13f, rasterY);
-        char buff[5];
-        snprintf(buff, sizeof(buff), "%.1f%%", pair.second);
+        char buff[6];
+        snprintf(buff, sizeof(buff), "%4.1f%%", pair.second);
         glCallLists(sizeof(buff), GL_UNSIGNED_BYTE, buff);
 
         rasterY -= 1.8f / (m_processMeasure.getProcCPUData().size());
@@ -433,7 +507,7 @@ void Renderer::drawProcRAMList() const {
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
     const auto rasterX = float{ 0.05f };
-    auto rasterY = float{ 0.74f }; // Y changes for each process drawn
+    auto rasterY = float{ 0.79f }; // Y changes for each process drawn
 
     for (const auto& pair : m_processMeasure.getProcRAMData()) {
         // Draw the process name
@@ -472,7 +546,7 @@ void Renderer::drawStatsWidget() const {
         glVertex2f( 1.0f, -1.0f); // Bottom
     } glEnd();
 
-    constexpr auto numLinesToDraw{ 6U };
+    constexpr auto numLinesToDraw{ 5U };
     const auto rasterX = float{ -0.95f };
     auto rasterY = float{ 0.80f };
     const auto yRange{ 2.0f };
@@ -509,13 +583,6 @@ void Renderer::drawStatsWidget() const {
     // Draw RAM capacity
     {
         const auto& str{ m_sysInfo.getRAMDescription() };
-        glRasterPos2f(rasterX, rasterY);
-        glCallLists(str.length(), GL_UNSIGNED_BYTE, str.c_str());
-        rasterY -= yRange / numLinesToDraw;
-    }
-    // Draw GPU Temperature
-    {
-        const auto& str{ "GPU Temp: " + std::to_string(m_gpuMeasure.getCurrentTempC()) + "C" };
         glRasterPos2f(rasterX, rasterY);
         glCallLists(str.length(), GL_UNSIGNED_BYTE, str.c_str());
         rasterY -= yRange / numLinesToDraw;

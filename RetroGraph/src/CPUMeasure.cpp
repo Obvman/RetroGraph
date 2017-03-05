@@ -145,14 +145,12 @@ std::string CPUMeasure::getUptimeStr() const {
     const auto uptimeH = (m_uptime / (1000 * 60 * 60)) % 24;
     const auto uptimeD = (m_uptime / (1000 * 60 * 60 * 24));
 
-    std::stringstream formatStream;
-    // Format so each number is 2 digits with leading 0s when necessary
-    formatStream << std::setfill('0') << std::setw(2) << uptimeD.count() << ":"
-                 << std::setw(2) << uptimeH.count() << ":"
-                 << std::setw(2) << uptimeM.count() << ":"
-                 << std::setw(2) << uptimeS.count();
+    // TODO use snprintf
+    char buff[12];
+    snprintf(buff, sizeof(buff), "%02lld:%02lld:%02lld:%02lld",
+             uptimeD.count(), uptimeH.count(), uptimeM.count(), uptimeS.count());
 
-    return formatStream.str();
+    return std::string{ buff };
 }
 
 float CPUMeasure::calculateCPULoad(uint64_t idleTicks, uint64_t totalTicks) {

@@ -28,16 +28,19 @@ public:
     void initVBOs();
     void release();
 
-    void draw(const GLShaderHandler& shaders) const;
+    void draw(uint32_t ticks, const GLShaderHandler& shaders) const;
 private:
     void drawGraphWidget() const;
     void drawCpuGraph() const;
     void drawRamGraph() const;
+    void drawGpuGraph() const;
 
     void drawProcessWidget() const;
     void drawProcCPUList() const;
     void drawProcRAMList() const;
     void drawStatsWidget() const;
+
+    void drawMainWidget() const;
 
     /* Draw labelled capacity bars of all fixed drives in the system */
     void drawHDDWidget() const;
@@ -61,10 +64,12 @@ private:
     const GLint m_hddWidgetViewport[4];
     const GLint m_procWidgetViewport[4];
     const GLint m_statsWidgetViewport[4];
+    const GLint m_mainWidgetViewport[4];
 
     const GLint m_graphWidgetViewport[4]; // Viewport of all graphs
     const GLint m_cpuGraphViewport[4]; // viewport of graph relative to graphWidgetViewport
-    const GLint m_ramGraphViewport[4]; // viewport of graph relative to graphWidgetViewport
+    const GLint m_ramGraphViewport[4];
+    const GLint m_gpuGraphViewport[4];
 
     // Font members
     GLint stdFontBase; // The default font

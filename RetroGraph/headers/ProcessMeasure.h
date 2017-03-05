@@ -25,6 +25,8 @@ public:
        Stops tracking any processes that have exited */
     void update(uint32_t ticks);
 
+    uint32_t getNumProcessesRunning() const { return m_allProcessData.size(); }
+
     /* Gets vector containing top CPU using processes and their CPU usage */
     const std::vector<std::pair<std::string, double>>& getProcCPUData() const { return m_procCPUListData; }
 

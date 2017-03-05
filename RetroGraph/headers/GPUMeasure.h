@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <GL/glew.h>
 #include <NVAPI/nvapi.h>
+#include <vector>
 
 #include "utils.h"
 
@@ -29,9 +30,10 @@ public:
     int32_t getCurrentTempC() const { return m_currentTemp; }
     const std::string& getDriverVersion() const { return m_driverVersion; }
     const std::string& getGpuName() const { return m_gpuName; }
+    const std::vector<float>& getUsageData() const { return m_usageData; }
 private:
-    NvS32 updateGpuTemp();
     NvPhysicalGpuHandle getGpuHandle() const;
+    void updateGpuTemp();
     void getClockFrequencies();
     void getMemInformation();
     void getGpuUsage();
@@ -41,6 +43,10 @@ private:
 
     // NvAPI members
     NvPhysicalGpuHandle m_gpuHandle;
+    NV_GPU_THERMAL_SETTINGS_V2 m_thermalSettings;
+    NV_GPU_CLOCK_FREQUENCIES m_clockFreqs;
+    NV_DISPLAY_DRIVER_MEMORY_INFO m_memInfo;
+    NV_GPU_DYNAMIC_PSTATES_INFO_EX m_pStateInfo;
     NvS32 m_currentTemp;
     NvU32 m_graphicsClock;
     NvU32 m_memoryClock;
@@ -49,6 +55,9 @@ private:
     NvU32 m_currAvailableMemory;
     NvU32 m_totalMemory;
     NvU32 m_gpuUsage;
+
+    const size_t dataSize;
+    std::vector<float> m_usageData;
 };
 
 }

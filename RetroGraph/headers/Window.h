@@ -35,7 +35,7 @@ public:
     void update(uint32_t ticks);
 
     /* Draws the window's components*/
-    void draw() const;
+    void draw(uint32_t ticks) const;
 
     /* Updates the OpenGL viewport when the window size changes */
     void updateSize(int width, int height);

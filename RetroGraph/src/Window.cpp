@@ -94,23 +94,23 @@ LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
             break;
         case WM_CREATE:
             break;
-        /*case WM_COMMAND:
+        case WM_COMMAND:
             switch (LOWORD(wParam)) {
                 case ID_CLOSE: {
                     std::cout << "Close\n";
-                    //auto control{ HMENU(lParam) };
-                    //DeleteMenu(control, );
                     break;
                 }
                 case ID_EXIT:
                     std::cout << "Exit\n";
+                    SendMessage(hWnd, WM_QUIT, wParam, lParam);
+                    break;
             }
         case WM_CONTEXTMENU:
             createRClickMenu((HWND)wParam, LOWORD(lParam), HIWORD(lParam));
-            break;*/
+            break;
         case WM_SETCURSOR:
             break;
-        case WM_NCHITTEST: {
+        /*case WM_NCHITTEST: {
             // TODO: limit how often this message is handled to lower CPU usage while dragging
             // Allows click-to-drag on any part of the window
             auto hit{ DefWindowProc(hWnd, msg, wParam, lParam) };
@@ -118,7 +118,7 @@ LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
                 hit = HTCAPTION;
             }
             return hit;
-        }
+        }*/
         case WM_MOUSEMOVE:
             break;
         case WM_GETTEXT:
@@ -143,12 +143,13 @@ LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
 
 void Window::createRClickMenu(HWND hWnd, DWORD cursorX, DWORD cursorY) {
     auto hPopupMenu{ CreatePopupMenu() };
-    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_CLOSE, "Exit");
-    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_EXIT, "Play");
+    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_CLOSE, "Close");
+    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_EXIT, "Exit");
     SetForegroundWindow(hWnd);
 
-    TrackPopupMenu(hPopupMenu, TPM_TOPALIGN | TPM_LEFTALIGN | TPM_RIGHTBUTTON, 
-                   cursorX, cursorY, 0, hWnd, NULL);
+    TrackPopupMenuEx(hPopupMenu, TPM_TOPALIGN | TPM_LEFTALIGN | TPM_RIGHTBUTTON,
+                   cursorX, cursorY, hWnd, NULL);
+
 }
 
 void Window::show() {
@@ -184,11 +185,11 @@ void Window::update(uint32_t ticks) {
 
 }
 
-void Window::draw() const {
+void Window::draw(uint32_t ticks) const {
     HDC hdc = GetDC(m_hWndMain);
     wglMakeCurrent(hdc, m_hrc);
 
-    m_renderer.draw(m_shaders);
+    m_renderer.draw(ticks, m_shaders);
 
     SwapBuffers(hdc);
     ReleaseDC(m_hWndMain, hdc);

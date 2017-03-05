@@ -1,42 +1,33 @@
 rainmeter plugins github - https://github.com/rainmeter/rainmeter/tree/eeeef4a7f2695280ba3506e98a71d163e613b1da/Plugins
 
-display idle %
+animate on startup
 colour code high usage processes
 hdd read/write usage
-number of processes/number of threads
 network upload/download, DNS, VPN, hostname
 network connectivity status
-gpu load
-text labelling graphs
 media - foobar status
 volume, current sound output level bar - IAudioPeakMeter
-recycle bin monitor
 3D effects on graph
-maybe use NVIDIA Pstate to determine if GPU is idling?
+framerate of currently focussed window
+
+BUG: right click menu pauses drawing.
 
 test suite
 
 dynamic window resizing
 
-
-BUG: format proc percentages for double digits
-
-use ingeritedfromprocessid value in processmeasure to limit chrome duplicates
+use inheritedfromprocessid value in processmeasure to limit chrome duplicates
 
 Create alternate CPU measure display for when CoreTemp isn't running
 
-use glScissor so we don't unnecessarily redraw static parts of the window, and stutter draw times for different draw frequencies
+use glScissor so we don't unnecessarily redraw static parts of the window,
+and stutter draw times for different draw frequencies
 
 use offset updates to avoid CPU spikes
 
 handle insertion and removal of usb drives
 
-right-click menu
-
-make initial style WS_EX_TOOLWINDOW then set to WS_EX_APPWINDOW after creation is done to prevent fake window showing in toolbar
-
-multithreading
+make initial style WS_EX_TOOLWINDOW then set to WS_EX_APPWINDOW after creation
+is done to prevent fake window showing in toolbar
 
 use SetWindowPos to keep the window in the background all the time
-
-TODO store global system kernel/user timings rather than storing inside every ProcessData object

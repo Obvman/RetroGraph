@@ -13,7 +13,11 @@ typedef int (*NvAPI_GPU_GetUsages_t)(NvPhysicalGpuHandle handle, NvU32* usages);
 NvAPI_QueryInterface_t NvAPI_QueryInterface{ nullptr };
 NvAPI_GPU_GetUsages_t NvAPI_GPU_GetUsages{ nullptr };
 
-GPUMeasure::GPUMeasure() {
+GPUMeasure::GPUMeasure() :
+    dataSize{ 40U },
+    m_usageData{} {
+
+    m_usageData.assign(dataSize, 0.5f);
 
     auto result{ NvAPI_Initialize() };
     if (result != NVAPI_OK) {
@@ -39,6 +43,16 @@ GPUMeasure::GPUMeasure() {
     NvAPI_GPU_GetFullName(m_gpuHandle, gpuName);
     m_gpuName = gpuName;
 
+    // Initialise updating member structs
+    m_thermalSettings.version = NV_GPU_THERMAL_SETTINGS_VER;
+    m_thermalSettings.sensor[0].target = NVAPI_THERMAL_TARGET_GPU;
+    m_thermalSettings.sensor[0].controller = NVAPI_THERMAL_CONTROLLER_GPU_INTERNAL;
+
+    m_clockFreqs.version = NV_GPU_CLOCK_FREQUENCIES_VER;
+
+    m_memInfo.version = NV_DISPLAY_DRIVER_MEMORY_INFO_VER;
+
+    m_pStateInfo.version = NV_GPU_DYNAMIC_PSTATES_INFO_EX_VER;
 }
 
 
@@ -48,10 +62,13 @@ GPUMeasure::~GPUMeasure() {
 
 void GPUMeasure::update() {
 
-    m_currentTemp = updateGpuTemp();
-    getClockFrequencies();
+    //updateGpuTemp(); // High CPU usage function
+    //getClockFrequencies(); // High CPU usage function
     getMemInformation();
     getGpuUsage();
+
+    m_usageData[0] = m_gpuUsage / 100.0f;
+    std::rotate(m_usageData.begin(), m_usageData.begin() + 1, m_usageData.end());
 }
 
 float GPUMeasure::getMemUsagePercent() const {
@@ -59,15 +76,13 @@ float GPUMeasure::getMemUsagePercent() const {
         (static_cast<float>(m_currAvailableMemory) / m_totalMemory) * 100.0f;
 }
 
-NvS32 GPUMeasure::updateGpuTemp() {
-    NV_GPU_THERMAL_SETTINGS_V2 thermal;
-    thermal.version = NV_GPU_THERMAL_SETTINGS_VER;
-    auto result{ NvAPI_GPU_GetThermalSettings(m_gpuHandle, 0, &thermal) };
+void GPUMeasure::updateGpuTemp() {
+    auto result{ NvAPI_GPU_GetThermalSettings(m_gpuHandle, NVAPI_THERMAL_TARGET_NONE, &m_thermalSettings) };
     if (result != NVAPI_OK) {
-        std::cout << result << '\n';
-        fatalMessageBox("Failed to get thermal information from NVAPI\n");
+        std::cout << "Failed to get thermal information from NVAPI: " << result << '\n';
+        return;
     }
-    return thermal.sensor[0].currentTemp;
+    m_currentTemp = m_thermalSettings.sensor[0].currentTemp;
 }
 
 NvPhysicalGpuHandle GPUMeasure::getGpuHandle() const {
@@ -84,36 +99,32 @@ NvPhysicalGpuHandle GPUMeasure::getGpuHandle() const {
 }
 
 void GPUMeasure::getClockFrequencies() {
-    NV_GPU_CLOCK_FREQUENCIES clockFreqs;
-    clockFreqs.version = NV_GPU_CLOCK_FREQUENCIES_VER;
-    const auto result{ NvAPI_GPU_GetAllClockFrequencies(m_gpuHandle, &clockFreqs) };
+    const auto result{ NvAPI_GPU_GetAllClockFrequencies(m_gpuHandle, &m_clockFreqs) };
     if (result != NVAPI_OK) {
-        std::cout << result << '\n';
-        fatalMessageBox("Failed to get GPU clock frequencies");
+        std::cout << "Failed to get GPU clock frequencies" << result << '\n';
+        return;
     }
 
-    m_graphicsClock = clockFreqs.domain[NVAPI_GPU_PUBLIC_CLOCK_GRAPHICS].frequency;
-    m_memoryClock = clockFreqs.domain[NVAPI_GPU_PUBLIC_CLOCK_MEMORY].frequency;
+    m_graphicsClock = m_clockFreqs.domain[NVAPI_GPU_PUBLIC_CLOCK_GRAPHICS].frequency;
+    m_memoryClock = m_clockFreqs.domain[NVAPI_GPU_PUBLIC_CLOCK_MEMORY].frequency;
 }
 
 void GPUMeasure::getMemInformation() {
-    NV_DISPLAY_DRIVER_MEMORY_INFO memInfo;
-    memInfo.version = NV_DISPLAY_DRIVER_MEMORY_INFO_VER;
-    if (NvAPI_GPU_GetMemoryInfo(m_gpuHandle, &memInfo) != NVAPI_OK) {
-        fatalMessageBox("Failed to get GPU memory information");
+    if (NvAPI_GPU_GetMemoryInfo(m_gpuHandle, &m_memInfo) != NVAPI_OK) {
+        std::cout << "Failed to get GPU memory information\n";
+        return;
     }
 
-    m_currAvailableMemory = memInfo.curAvailableDedicatedVideoMemory;
-    m_totalMemory = memInfo.availableDedicatedVideoMemory;
+    m_currAvailableMemory = m_memInfo.curAvailableDedicatedVideoMemory;
+    m_totalMemory = m_memInfo.availableDedicatedVideoMemory;
 }
 
 void GPUMeasure::getGpuUsage() {
-    NV_GPU_DYNAMIC_PSTATES_INFO_EX pStateInfo;
-    pStateInfo.version = NV_GPU_DYNAMIC_PSTATES_INFO_EX_VER;
-    if (NvAPI_GPU_GetDynamicPstatesInfoEx(m_gpuHandle, &pStateInfo) != NVAPI_OK) {
-        fatalMessageBox("Failed to get GPU usage percentage");
+    if (NvAPI_GPU_GetDynamicPstatesInfoEx(m_gpuHandle, &m_pStateInfo) != NVAPI_OK) {
+        std::cout << "Failed to get GPU usage percentage\n";
+        return;
     }
-    m_gpuUsage = pStateInfo.utilization[NVAPI_GPU_UTILIZATION_DOMAIN_GPU].percentage;
+    m_gpuUsage = m_pStateInfo.utilization[NVAPI_GPU_UTILIZATION_DOMAIN_GPU].percentage;
 }
 
 }

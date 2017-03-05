@@ -33,7 +33,7 @@ typedef struct _SYSTEM_PROCESS_INFO {
 
 ProcessMeasure::ProcessMeasure() :
     m_allProcessData{},
-    m_numProcessesToDisplay{ 7 },
+    m_numProcessesToDisplay{ 10 },
     m_procCPUListData{ m_numProcessesToDisplay },
     m_procRAMListData{ m_numProcessesToDisplay } { }
 
