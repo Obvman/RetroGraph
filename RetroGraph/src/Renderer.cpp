@@ -12,6 +12,7 @@
 #include "../headers/SystemInfo.h"
 #include "../headers/colors.h"
 #include "../headers/utils.h"
+#include "../headers/GLShaders.h"
 
 namespace rg {
 
@@ -39,7 +40,6 @@ void vboDrawScope(GLuint vertID, GLuint indexID, F f) {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
-
 
 Renderer::Renderer(const CPUMeasure& _cpu, const GPUMeasure& _gpu,
                    const RAMMeasure& _ram, const ProcessMeasure& _proc,
@@ -79,6 +79,7 @@ Renderer::~Renderer() {
 void Renderer::init(HWND hWnd) {
     initFonts(hWnd);
     initVBOs();
+    initShaders();
 }
 
 void Renderer::initFonts(HWND hWnd) {
@@ -212,9 +213,26 @@ void Renderer::initVBOs() {
                      gIndices.data(), GL_STATIC_DRAW);
     }
 
+    { // VBO for CPU line graph
+        /*glGenBuffers(1, &m_graphLineVertsID);
+        glBindBuffer(GL_ARRAY_BUFFER, m_graphLineVertsID);
+        glBufferData(GL_ARRAY_BUFFER, m_cpuMeasure.getUsageData().size() * sizeof(GLfloat),
+                     m_cpuMeasure.getUsageData().data(), GL_DYNAMIC_DRAW);*/
+    }
+
     // Unbind buffers
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+void Renderer::initShaders() {
+    m_cpuGraphShader = loadShader("cpuGraph.vert", "cpuGraph.frag");
+
+    m_graphAlphaLoc = glGetUniformLocation(m_cpuGraphShader, "lineAlpha");
+
+    if (m_graphAlphaLoc == -1) {
+        std::cout << "Failed to get uniform location for \'lineAlpha\'\n";
+    }
 }
 
 void Renderer::release() {
@@ -271,65 +289,73 @@ void Renderer::drawGraphWidget() const {
 }
 
 void Renderer::drawCpuGraph() const {
-    glViewport(m_cpuGraphViewport[0], m_cpuGraphViewport[1],
-               m_cpuGraphViewport[2] , m_cpuGraphViewport[3]);
-    // Draw border
-    glLineWidth(0.5f);
-    glColor4f(BORDER_R, BORDER_G, BORDER_B, BORDER_A);
-    glBegin(GL_LINE_STRIP); {
-        glVertex2f(-1.0f, 1.0f);
-        glVertex2f(1.0f, 1.0f);
-        glVertex2f(1.0f, -1.0f);
-        glVertex2f(-1.0f, -1.0f);
-        glVertex2f(-1.0f, 1.0f);
-    } glEnd();
+    { // Graph grid/border
+        glViewport(m_cpuGraphViewport[0], m_cpuGraphViewport[1],
+                   m_cpuGraphViewport[2], m_cpuGraphViewport[3]);
 
-    // Set the viewport for the graph to be left section
-    glViewport(m_cpuGraphViewport[0], m_cpuGraphViewport[1],
-               (m_cpuGraphViewport[2]*4)/5 , m_cpuGraphViewport[3]);
-
-    // Draw the background grid for the graph
-    vboDrawScope(m_graphGridVertsID, m_graphGridIndicesID, [this]() {
-        glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.2f);
+        // Draw border
         glLineWidth(0.5f);
-        glDrawElements(GL_LINES, m_graphIndicesSize, GL_UNSIGNED_INT, 0);
-    });
+        glColor4f(BORDER_R, BORDER_G, BORDER_B, BORDER_A);
+        glBegin(GL_LINE_STRIP); {
+            glVertex2f(-1.0f, 1.0f);
+            glVertex2f(1.0f, 1.0f);
+            glVertex2f(1.0f, -1.0f);
+            glVertex2f(-1.0f, -1.0f);
+            glVertex2f(-1.0f, 1.0f);
+        } glEnd();
 
-    // Draw the line graph
-    glLineWidth(0.5f);
-    glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
-    // TODO use VBOs instead
-    const auto& data{ m_cpuMeasure.getUsageData() };
-    glBegin(GL_LINE_STRIP); {
-        // Draw each node in the graph
-        for (auto i{ 0U }; i < data.size(); ++i) {
-            glColor4f(LINE_R, LINE_G, LINE_B, 1.0f);
+        // Set the viewport for the graph to be left section
+        glViewport(m_cpuGraphViewport[0], m_cpuGraphViewport[1],
+            (m_cpuGraphViewport[2] * 4) / 5, m_cpuGraphViewport[3]);
 
-            auto x = float{ (static_cast<float>(i) / (data.size() - 1)) * 2.0f - 1.0f };
-            const auto y = float{ data[i] * 2.0f - 1.0f };
+        // Draw the background grid for the graph
+        vboDrawScope(m_graphGridVertsID, m_graphGridIndicesID, [this]() {
+            glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.2f);
+            glLineWidth(0.5f);
+            glDrawElements(GL_LINES, m_graphIndicesSize, GL_UNSIGNED_INT, 0);
+        });
+    }
 
-            glVertex3f(x, y, 0.0f);
-        }
-    } glEnd();
+    { // Line graph
+        glLineWidth(0.5f);
 
-    // Set viewport for text drawing
-    glViewport(m_cpuGraphViewport[0] + (4*m_cpuGraphViewport[2])/5, m_cpuGraphViewport[1],
-               m_cpuGraphViewport[2]/5 , m_cpuGraphViewport[3]);
-    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
+        const auto& data{ m_cpuMeasure.getUsageData() };
 
-    fontScope(smlFontBase, []() {
-        glRasterPos2f(-0.8f, -0.02f);
-        const char* str{ "Sys Load" };
-        glCallLists(strlen(str), GL_UNSIGNED_BYTE, str);
+        //glUseProgram(m_cpuGraphShader);
 
-        glRasterPos2f(-0.8f, -0.77f);
-        const char* min{ "0%" };
-        glCallLists(strlen(min), GL_UNSIGNED_BYTE, min);
+        glBegin(GL_LINE_STRIP); {
+            for (auto i{ 0U }; i < data.size(); ++i) {
+                glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, static_cast<float>(i) / data.size());
+                auto x = float{ (static_cast<float>(i) / (data.size() - 1)) * 2.0f - 1.0f };
+                const auto y = float{ data[i] * 2.0f - 1.0f };
 
-        glRasterPos2f(-0.8f, 0.70f);
-        const char* max{ "100%" };
-        glCallLists(strlen(max), GL_UNSIGNED_BYTE, max);
-    });
+                glVertex3f(x, y, 0.0f);
+            }
+        } glEnd();
+
+        //glUseProgram(0);
+
+    }
+
+    { // Text
+        glViewport(m_cpuGraphViewport[0] + (4 * m_cpuGraphViewport[2]) / 5, m_cpuGraphViewport[1],
+                   m_cpuGraphViewport[2] / 5, m_cpuGraphViewport[3]);
+        glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
+
+        fontScope(smlFontBase, []() {
+            glRasterPos2f(-0.8f, -0.02f);
+            const char* str{ "Sys Load" };
+            glCallLists(strlen(str), GL_UNSIGNED_BYTE, str);
+
+            glRasterPos2f(-0.8f, -0.77f);
+            const char* min{ "0%" };
+            glCallLists(strlen(min), GL_UNSIGNED_BYTE, min);
+
+            glRasterPos2f(-0.8f, 0.70f);
+            const char* max{ "100%" };
+            glCallLists(strlen(max), GL_UNSIGNED_BYTE, max);
+        });
+    }
 
 }
 
@@ -358,42 +384,42 @@ void Renderer::drawRamGraph() const {
         glDrawElements(GL_LINES, m_graphIndicesSize, GL_UNSIGNED_INT, 0);
     });
 
-    // Draw the line graph
-    glLineWidth(0.5f);
-    glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
-    // TODO use VBOs instead
-    const auto& data{ m_ramMeasure.getUsageData() };
-    glBegin(GL_LINE_STRIP); {
-        // Draw each node in the graph
-        for (auto i{ 0U }; i < data.size(); ++i) {
-            glColor4f(LINE_R, LINE_G, LINE_B, 1.0f);
+    {// Draw the line graph
+        glLineWidth(0.5f);
 
-            auto x = float{ (static_cast<float>(i) / (data.size() - 1)) * 2.0f - 1.0f };
-            const auto y = float{ data[i] * 2.0f - 1.0f };
+        const auto& data{ m_ramMeasure.getUsageData() };
+        glBegin(GL_LINE_STRIP); {
+            // Draw each node in the graph
+            for (auto i{ 0U }; i < data.size(); ++i) {
+                glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, static_cast<float>(i) / data.size());
 
-            glVertex3f(x, y, 0.0f);
-        }
-    } glEnd();
+                auto x = float{ (static_cast<float>(i) / (data.size() - 1)) * 2.0f - 1.0f };
+                const auto y = float{ data[i] * 2.0f - 1.0f };
 
-    // Set viewport for text drawing
-    glViewport(m_ramGraphViewport[0] + (4*m_ramGraphViewport[2])/5, m_ramGraphViewport[1],
-               m_ramGraphViewport[2]/5 , m_ramGraphViewport[3]);
-    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
+                glVertex3f(x, y, 0.0f);
+            }
+        } glEnd();
+    }
 
-    fontScope(smlFontBase, []() {
-        glRasterPos2f(-0.8f, -0.02f);
-        const char* str{ "RAM Load" };
-        glCallLists(strlen(str), GL_UNSIGNED_BYTE, str);
+    {// Set viewport for text drawing
+        glViewport(m_ramGraphViewport[0] + (4 * m_ramGraphViewport[2]) / 5, m_ramGraphViewport[1],
+                   m_ramGraphViewport[2] / 5, m_ramGraphViewport[3]);
+        glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
-        glRasterPos2f(-0.8f, -0.77f);
-        const char* min{ "0%" };
-        glCallLists(strlen(min), GL_UNSIGNED_BYTE, min);
+        fontScope(smlFontBase, []() {
+            glRasterPos2f(-0.8f, -0.02f);
+            const char* str{ "RAM Load" };
+            glCallLists(strlen(str), GL_UNSIGNED_BYTE, str);
 
-        glRasterPos2f(-0.8f, 0.70f);
-        const char* max{ "100%" };
-        glCallLists(strlen(max), GL_UNSIGNED_BYTE, max);
-    });
+            glRasterPos2f(-0.8f, -0.77f);
+            const char* min{ "0%" };
+            glCallLists(strlen(min), GL_UNSIGNED_BYTE, min);
 
+            glRasterPos2f(-0.8f, 0.70f);
+            const char* max{ "100%" };
+            glCallLists(strlen(max), GL_UNSIGNED_BYTE, max);
+        });
+    }
 }
 
 void Renderer::drawGpuGraph() const {
@@ -421,41 +447,41 @@ void Renderer::drawGpuGraph() const {
         glDrawElements(GL_LINES, m_graphIndicesSize, GL_UNSIGNED_INT, 0);
     });
 
-    // Draw the line graph
-    glLineWidth(0.5f);
-    glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
-    // TODO use VBOs instead
-    const auto& data{ m_gpuMeasure.getUsageData() };
-    glBegin(GL_LINE_STRIP); {
-        // Draw each node in the graph
-        for (auto i{ 0U }; i < data.size(); ++i) {
-            glColor4f(LINE_R, LINE_G, LINE_B, 1.0f);
+    {// Draw the line graph
+        glLineWidth(0.5f);
+        const auto& data{ m_gpuMeasure.getUsageData() };
+        glBegin(GL_LINE_STRIP); {
+            // Draw each node in the graph
+            for (auto i{ 0U }; i < data.size(); ++i) {
+                glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, static_cast<float>(i) / data.size());
 
-            auto x = float{ (static_cast<float>(i) / (data.size() - 1)) * 2.0f - 1.0f };
-            const auto y = float{ data[i] * 2.0f - 1.0f };
+                auto x = float{ (static_cast<float>(i) / (data.size() - 1)) * 2.0f - 1.0f };
+                const auto y = float{ data[i] * 2.0f - 1.0f };
 
-            glVertex2f(x, y);
-        }
-    } glEnd();
+                glVertex2f(x, y);
+            }
+        } glEnd();
+    }
 
-    // Set viewport for text drawing
-    glViewport(m_gpuGraphViewport[0] + (4*m_gpuGraphViewport[2])/5, m_gpuGraphViewport[1],
-               m_gpuGraphViewport[2]/5 , m_gpuGraphViewport[3]);
-    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
+    {// Set viewport for text drawing
+        glViewport(m_gpuGraphViewport[0] + (4 * m_gpuGraphViewport[2]) / 5, m_gpuGraphViewport[1],
+                   m_gpuGraphViewport[2] / 5, m_gpuGraphViewport[3]);
+        glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
-    fontScope(smlFontBase, []() {
-        glRasterPos2f(-0.8f, -0.02f);
-        const char* str{ "GPU Load" };
-        glCallLists(strlen(str), GL_UNSIGNED_BYTE, str);
+        fontScope(smlFontBase, []() {
+            glRasterPos2f(-0.8f, -0.02f);
+            const char* str{ "GPU Load" };
+            glCallLists(strlen(str), GL_UNSIGNED_BYTE, str);
 
-        glRasterPos2f(-0.8f, -0.77f);
-        const char* min{ "0%" };
-        glCallLists(strlen(min), GL_UNSIGNED_BYTE, min);
+            glRasterPos2f(-0.8f, -0.77f);
+            const char* min{ "0%" };
+            glCallLists(strlen(min), GL_UNSIGNED_BYTE, min);
 
-        glRasterPos2f(-0.8f, 0.70f);
-        const char* max{ "100%" };
-        glCallLists(strlen(max), GL_UNSIGNED_BYTE, max);
-    });
+            glRasterPos2f(-0.8f, 0.70f);
+            const char* max{ "100%" };
+            glCallLists(strlen(max), GL_UNSIGNED_BYTE, max);
+        });
+    }
 
 }
 
@@ -661,23 +687,24 @@ void Renderer::drawTimeWidget() const {
     glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
     glLineWidth(0.5f);
 
-    // Draw dividers
-    glBegin(GL_LINES); {
-        glVertex2f(-1.0f, 1.0f);
-        glVertex2f( 1.0f, 1.0f); // Top line
+    {// Draw dividers
+        glBegin(GL_LINES); {
+            glVertex2f(-1.0f, 1.0f);
+            glVertex2f(1.0f, 1.0f); // Top line
 
-        glVertex2f(-1.0f, -1.0f);
-        glVertex2f( 1.0f, -1.0f); // Bottom line
+            glVertex2f(-1.0f, -1.0f);
+            glVertex2f(1.0f, -1.0f); // Bottom line
 
-        glVertex2f(-0.9f, -0.3f);
-        glVertex2f( 0.9f, -0.3f); // Mid-divider
+            glVertex2f(-0.9f, -0.3f);
+            glVertex2f(0.9f, -0.3f); // Mid-divider
 
-        glVertex2f(-0.33f, -1.0f);
-        glVertex2f(-0.33f, -0.3f); // Left vertical
+            glVertex2f(-0.33f, -1.0f);
+            glVertex2f(-0.33f, -0.3f); // Left vertical
 
-        glVertex2f(0.33f, -1.0f);
-        glVertex2f(0.33f, -0.3f); // Right vertical
-    } glEnd();
+            glVertex2f(0.33f, -1.0f);
+            glVertex2f(0.33f, -0.3f); // Right vertical
+        } glEnd();
+    }
 
     // Draw all the text elements
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
@@ -718,7 +745,7 @@ void Renderer::drawTimeWidget() const {
         });
 
         const auto& uptime{ m_cpuMeasure.getUptimeStr() };
-        glRasterPos2f(-0.95f, -0.8f);
+        glRasterPos2f(-0.90f, -0.8f);
         glCallLists(uptime.length(), GL_UNSIGNED_BYTE, uptime.c_str());
     }
 

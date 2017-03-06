@@ -24,11 +24,7 @@ CPUMeasure::CPUMeasure(int32_t graphWidth, int32_t graphHeight) :
     dataSize{ 40U },
     m_usageData{ },
     m_uptime{ std::chrono::milliseconds{GetTickCount64()} },
-    m_cpuName{ },
-    m_viewportStartX{ 0 },
-    m_viewportStartY{ 480 },
-    m_viewportWidth{ graphWidth },
-    m_viewportHeight{ graphHeight } {
+    m_cpuName{ } {
 
     // fill vector with default values
     m_usageData.assign(dataSize, 0.5f);
@@ -58,7 +54,7 @@ void CPUMeasure::drawText() const {
 
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
     // Set viewport for the graph to left half of measure's viewport
-    glViewport(0, m_viewportStartY, m_viewportWidth/2, m_viewportHeight);
+    //glViewport(0, m_viewportStartY, m_viewportWidth/2, m_viewportHeight);
 
     // Draw voltage
     const std::string vStr{ "Voltage: " + std::to_string(m_coreTempPlugin.getVoltage()) + "v"};

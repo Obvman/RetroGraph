@@ -10,7 +10,11 @@ volume, current sound output level bar - IAudioPeakMeter
 3D effects on graph
 framerate of currently focussed window
 
+fragment shader: fade out line as it gets further left
+
 BUG: right click menu pauses drawing.
+
+SHADERS! experiment with them!
 
 test suite
 

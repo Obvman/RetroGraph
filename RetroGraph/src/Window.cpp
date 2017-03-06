@@ -159,7 +159,6 @@ void Window::init() {
     m_cpuMeasure.update();
     m_gpuMeasure.update();
     m_ramMeasure.update();
-    m_gpuMeasure.update();
 
     m_processMeasure.init();
     m_driveMeasure.init();
@@ -173,6 +172,7 @@ void Window::update(uint32_t ticks) {
         m_cpuMeasure.update();
         m_gpuMeasure.update();
         m_ramMeasure.update();
+        m_netMeasure.update();
     }
 
     // Full second updates

@@ -32,6 +32,9 @@ public:
 
     const std::vector<float>& getUsageData() const { return m_usageData; }
 
+    /* Returns the maximum number of CPU usage samples stored */
+    size_t getDataSize() const { return dataSize; }
+
 private:
     /* Draws the total system uptime text */
     void drawText() const;
@@ -45,12 +48,6 @@ private:
     std::chrono::milliseconds m_uptime;
 
     std::string m_cpuName;
-
-    // Rendering members
-    GLint m_viewportStartX;
-    GLint m_viewportStartY;
-    GLint m_viewportWidth;
-    GLint m_viewportHeight;
 };
 
 }

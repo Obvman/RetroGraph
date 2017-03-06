@@ -12,7 +12,8 @@ void showMessageBox(const std::string& s) {
 
 void fatalMessageBox(const std::string& s) {
     showMessageBox(s);
-    exit(1);
+    throw std::runtime_error(s);
+    //exit(1);
 }
 
 ULARGE_INTEGER ftToULI(const FILETIME& ft) {

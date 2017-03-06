@@ -24,12 +24,17 @@ public:
     ~Renderer();
 
     void init(HWND hWnd);
-    void initFonts(HWND hWnd);
-    void initVBOs();
     void release();
 
     void draw(uint32_t ticks) const;
 private:
+    /* Creates font data and loads draw data into OpenGL call lists */
+    void initFonts(HWND hWnd);
+    /* Fill VBOs with intial vertex data */
+    void initVBOs();
+    /* Compiles and retrieves uniform locations */
+    void initShaders();
+
     void drawGraphWidget() const;
     void drawCpuGraph() const;
     void drawRamGraph() const;
@@ -53,6 +58,7 @@ private:
 
     HWND m_renderTargetHandle;
 
+    // References to data objects
     const CPUMeasure& m_cpuMeasure;
     const GPUMeasure& m_gpuMeasure;
     const RAMMeasure& m_ramMeasure;
@@ -60,12 +66,14 @@ private:
     const DriveMeasure& m_driveMeasure;
     const SystemInfo& m_sysInfo;
 
+    // Viewports for each widget
     const GLint m_timeWidgetViewport[4];
     const GLint m_hddWidgetViewport[4];
     const GLint m_procWidgetViewport[4];
     const GLint m_statsWidgetViewport[4];
     const GLint m_mainWidgetViewport[4];
 
+    // Graph widget viewport and sub-viewports
     const GLint m_graphWidgetViewport[4]; // Viewport of all graphs
     const GLint m_cpuGraphViewport[4]; // viewport of graph relative to graphWidgetViewport
     const GLint m_ramGraphViewport[4];
@@ -82,6 +90,16 @@ private:
     GLuint m_graphGridVertsID;
     GLuint m_graphGridIndicesID;
     GLsizei m_graphIndicesSize;
+
+    GLuint m_graphLineVertsID;
+    GLuint m_graphLineIndicesID;
+    GLsizei m_graphLineIndicesSize;
+
+    // Shaders
+    GLuint m_cpuGraphShader;
+
+    // Uniform location (UL) variables
+    GLint m_graphAlphaLoc;
 };
 
 }
