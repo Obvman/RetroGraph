@@ -28,6 +28,10 @@ void showMessageBox(const std::string& s);
    exits the program with a failure code */
 void fatalMessageBox(const std::string& s);
 
+std::string wstrToStr(const std::wstring& wstr);
+
+std::wstring strToWstr(const std::string& str);
+
 /* Converts FILETIME to an unsigned LARGE_INTEGER struct */
 ULARGE_INTEGER ftToULI(const FILETIME& ft);
 
@@ -36,5 +40,7 @@ uint64_t subtractTimes(const FILETIME& ftA, const FILETIME& ftB);
 
 /* When called after a viewport has been set, draws a white outline of the viewport */
 void drawViewportBorder();
+
+float lerp(float x1, float x2, float t);
 
 }

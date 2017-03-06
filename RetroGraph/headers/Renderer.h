@@ -9,6 +9,7 @@ namespace rg {
 class CPUMeasure;
 class GPUMeasure;
 class RAMMeasure;
+class NetMeasure;
 class ProcessMeasure;
 class DriveMeasure;
 class DriveInfo;
@@ -19,8 +20,8 @@ class GLShaderHandler;
 class Renderer {
 public:
     Renderer(const CPUMeasure& _cpu, const GPUMeasure& _gpu, const RAMMeasure& _ram,
-             const ProcessMeasure& _proc, const DriveMeasure& _drive, const SystemInfo& _sys,
-             uint16_t windowWidth, uint16_t windowHeight);
+             const NetMeasure& _net, const ProcessMeasure& _proc, const DriveMeasure&
+             _drive, const SystemInfo& _sys, uint16_t windowWidth, uint16_t windowHeight);
     ~Renderer();
 
     void init(HWND hWnd);
@@ -39,6 +40,7 @@ private:
     void drawCpuGraph() const;
     void drawRamGraph() const;
     void drawGpuGraph() const;
+    void drawNetGraph() const;
 
     void drawProcessWidget() const;
     void drawProcCPUList() const;
@@ -62,6 +64,7 @@ private:
     const CPUMeasure& m_cpuMeasure;
     const GPUMeasure& m_gpuMeasure;
     const RAMMeasure& m_ramMeasure;
+    const NetMeasure& m_netMeasure;
     const ProcessMeasure& m_processMeasure;
     const DriveMeasure& m_driveMeasure;
     const SystemInfo& m_sysInfo;
@@ -78,6 +81,7 @@ private:
     const GLint m_cpuGraphViewport[4]; // viewport of graph relative to graphWidgetViewport
     const GLint m_ramGraphViewport[4];
     const GLint m_gpuGraphViewport[4];
+    const GLint m_netGraphViewport[4];
 
     // Font members
     GLint stdFontBase; // The default font

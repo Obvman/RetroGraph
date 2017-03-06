@@ -12,6 +12,8 @@ framerate of currently focussed window
 
 fragment shader: fade out line as it gets further left
 
+settings (ini) file
+
 BUG: right click menu pauses drawing.
 
 SHADERS! experiment with them!

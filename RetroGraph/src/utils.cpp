@@ -1,6 +1,8 @@
 #include "../headers/utils.h"
 
 #include <GL/glew.h>
+#include <locale>
+#include <codecvt>
 
 #include "../headers/colors.h"
 
@@ -13,7 +15,16 @@ void showMessageBox(const std::string& s) {
 void fatalMessageBox(const std::string& s) {
     showMessageBox(s);
     throw std::runtime_error(s);
-    //exit(1);
+}
+
+std::string wstrToStr(const std::wstring& wstr) {
+    std::wstring_convert<std::codecvt_utf16<wchar_t>, wchar_t> converter;
+    return converter.to_bytes(wstr);
+}
+
+std::wstring strToWstr(const std::string& str) {
+    std::wstring_convert<std::codecvt_utf16<wchar_t>, wchar_t> converter;
+    return converter.from_bytes(str);
 }
 
 ULARGE_INTEGER ftToULI(const FILETIME& ft) {
@@ -65,6 +76,11 @@ void drawViewportBorder() {
 
     glColor4f(color[0], color[1], color[2], color[3]);
     glLineWidth(lineWidth);
+}
+
+float lerp(float x1, float x2, float t) {
+    //return x1 + (x2 - x1) * t;
+    return (1 - t) * x1 + t * x2;
 }
 
 }

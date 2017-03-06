@@ -7,6 +7,7 @@
 #include "../headers/CPUMeasure.h"
 #include "../headers/GPUMeasure.h"
 #include "../headers/RAMMeasure.h"
+#include "../headers/NetMeasure.h"
 #include "../headers/ProcessMeasure.h"
 #include "../headers/DriveMeasure.h"
 #include "../headers/SystemInfo.h"
@@ -42,12 +43,14 @@ void vboDrawScope(GLuint vertID, GLuint indexID, F f) {
 }
 
 Renderer::Renderer(const CPUMeasure& _cpu, const GPUMeasure& _gpu,
-                   const RAMMeasure& _ram, const ProcessMeasure& _proc,
+                   const RAMMeasure& _ram, const NetMeasure& _net,
+                   const ProcessMeasure& _proc,
                    const DriveMeasure& _drive, const SystemInfo& _sys,
                    uint16_t windowWidth, uint16_t windowHeight) :
     m_cpuMeasure{ _cpu },
     m_gpuMeasure{ _gpu },
     m_ramMeasure{ _ram },
+    m_netMeasure{ _net },
     m_processMeasure{ _proc },
     m_driveMeasure{ _drive },
     m_sysInfo{ _sys },
@@ -68,6 +71,8 @@ Renderer::Renderer(const CPUMeasure& _cpu, const GPUMeasure& _gpu,
     m_ramGraphViewport{ m_graphWidgetViewport[0], m_graphWidgetViewport[1] + 2*m_graphWidgetViewport[3]/4,
                         m_graphWidgetViewport[2], m_graphWidgetViewport[3]/4},
     m_gpuGraphViewport{ m_graphWidgetViewport[0], m_graphWidgetViewport[1] + 1*m_graphWidgetViewport[3]/4,
+                        m_graphWidgetViewport[2], m_graphWidgetViewport[3]/4},
+    m_netGraphViewport{ m_graphWidgetViewport[0], m_graphWidgetViewport[1] + 0*m_graphWidgetViewport[3]/4,
                         m_graphWidgetViewport[2], m_graphWidgetViewport[3]/4}
 {
 
@@ -231,7 +236,7 @@ void Renderer::initShaders() {
     m_graphAlphaLoc = glGetUniformLocation(m_cpuGraphShader, "lineAlpha");
 
     if (m_graphAlphaLoc == -1) {
-        std::cout << "Failed to get uniform location for \'lineAlpha\'\n";
+        //std::cout << "Failed to get uniform location for \'lineAlpha\'\n";
     }
 }
 
@@ -286,6 +291,7 @@ void Renderer::drawGraphWidget() const {
     drawCpuGraph();
     drawRamGraph();
     drawGpuGraph();
+    drawNetGraph();
 }
 
 void Renderer::drawCpuGraph() const {
@@ -483,6 +489,83 @@ void Renderer::drawGpuGraph() const {
         });
     }
 
+}
+
+void Renderer::drawNetGraph() const {
+    glViewport(m_netGraphViewport[0], m_netGraphViewport[1],
+               m_netGraphViewport[2] , m_netGraphViewport[3]);
+    // Draw border
+    glLineWidth(0.5f);
+    glColor4f(BORDER_R, BORDER_G, BORDER_B, BORDER_A);
+    glBegin(GL_LINE_STRIP); {
+        glVertex2f(-1.0f, 1.0f);
+        glVertex2f(1.0f, 1.0f);
+        glVertex2f(1.0f, -1.0f);
+        glVertex2f(-1.0f, -1.0f);
+        glVertex2f(-1.0f, 1.0f);
+    } glEnd();
+
+    // Set the viewport for the graph to be left section
+    glViewport(m_netGraphViewport[0], m_netGraphViewport[1],
+               (m_netGraphViewport[2]*4)/5 , m_netGraphViewport[3]);
+
+    // Draw the background grid for the graph
+    vboDrawScope(m_graphGridVertsID, m_graphGridIndicesID, [this]() {
+        glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.2f);
+        glLineWidth(0.5f);
+        glDrawElements(GL_LINES, m_graphIndicesSize, GL_UNSIGNED_INT, 0);
+    });
+
+    {// Draw the line graph
+        glLineWidth(0.5f);
+        const auto& data{ m_netMeasure.getDownData() };
+        const auto maxValMB{ m_netMeasure.getMaxDownValue() /
+                             static_cast<float>(MB) };
+
+        glBegin(GL_LINE_STRIP); {
+            // Draw each node in the graph
+            for (auto i{ 0U }; i < data.size(); ++i) {
+                glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, static_cast<float>(i) / data.size());
+                auto x = float{ (static_cast<float>(i) / (data.size() - 1)) * 2.0f - 1.0f };
+
+                const auto percent = float{ (data[i] / static_cast<float>(MB)) / maxValMB };
+                const auto y = float{ percent * 2.0f - 1.0f };
+
+                glVertex2f(x, y);
+            }
+        } glEnd();
+    }
+
+    {// Text
+        glViewport(m_netGraphViewport[0] + (4 * m_netGraphViewport[2]) / 5, m_netGraphViewport[1],
+                   m_netGraphViewport[2] / 5, m_netGraphViewport[3]);
+        glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
+
+        const auto maxVal{ m_netMeasure.getMaxDownValue() };
+        std::string suffix{ "KBps" };
+        if (maxVal > MB) {
+            suffix = "MBps";
+        }
+
+        fontScope(smlFontBase, [maxVal, &suffix]() {
+            glRasterPos2f(-0.8f, -0.02f);
+            const char* str{ "Down" };
+            glCallLists(strlen(str), GL_UNSIGNED_BYTE, str);
+
+            glRasterPos2f(-0.8f, -0.77f);
+            const auto bottom{ "0" + suffix };
+            glCallLists(strlen(bottom.c_str()), GL_UNSIGNED_BYTE, bottom.c_str());
+
+            glRasterPos2f(-0.8f, 0.70f);
+            if (suffix == "MBps") {
+                const auto top{ std::to_string(maxVal / static_cast<float>(MB)) + suffix };
+                glCallLists(strlen(top.c_str()), GL_UNSIGNED_BYTE, top.c_str());
+            } else if (suffix == "KBps") {
+                const auto top{ std::to_string(maxVal / static_cast<float>(KB)) + suffix };
+                glCallLists(strlen(top.c_str()), GL_UNSIGNED_BYTE, top.c_str());
+            }
+        });
+    }
 }
 
 void Renderer::drawProcessWidget() const {
