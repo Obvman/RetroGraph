@@ -17,14 +17,14 @@ namespace rg {
 
 void drawBorder();
 
-Window::Window(HINSTANCE hInstance, const char* windowName,
-               uint16_t width, uint16_t height, uint16_t startX, uint16_t startY) :
+Window::Window(HINSTANCE hInstance, const char* windowName) :
+    m_userSettings{ },
     m_hInstance{ hInstance },
-    m_width{ width },
-    m_height{ height },
-    m_startPosX{ startX },
-    m_startPosY{ startY },
-    m_cpuMeasure{ m_width, m_height/3 },
+    m_width{ m_userSettings.getWindowWidth() },
+    m_height{ m_userSettings.getWindowHeight() },
+    m_startPosX{ m_userSettings.getWindowX() },
+    m_startPosY{ m_userSettings.getWindowY() },
+    m_cpuMeasure{ },
     m_gpuMeasure{ },
     m_ramMeasure{ },
     m_processMeasure{ },
@@ -239,6 +239,8 @@ bool Window::createHGLRC() {
        http://nehe.gamedev.net/tutorial/fullscreen_antialiasing/16008/ */
 
     if (m_arbMultisampleSupported) {
+        std::cout << '\n' << m_startPosX << '\n';
+        std::cout << m_startPosY << '\n';
         m_hWndMain = CreateWindowEx(WS_EX_APPWINDOW, "RetroGraph", "RetroGraph",
                                     WS_VISIBLE | WS_POPUP, m_startPosX, m_startPosY, m_width, m_height,
                                     NULL, NULL, m_hInstance, NULL);

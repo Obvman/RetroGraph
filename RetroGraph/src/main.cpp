@@ -30,8 +30,7 @@ int main() {
 #endif
 
     try {
-        auto mainWindow = rg::Window{ hInstance, "RetroGraph",
-                                      1920U, 1170U, 2560, 0 };
+        auto mainWindow = rg::Window{ hInstance, "RetroGraph" };
         mainWindow.init();
 
         mainLoop(mainWindow);

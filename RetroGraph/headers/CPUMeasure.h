@@ -15,7 +15,7 @@ class Window;
 /* Measures statistics about the system CPU: Model name, total CPU load*/
 class CPUMeasure {
 public:
-    CPUMeasure(int32_t graphWidth, int32_t graphHeight);
+    CPUMeasure();
     ~CPUMeasure();
 
     /* Updates the total system's CPU usage statistics */

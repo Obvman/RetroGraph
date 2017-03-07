@@ -25,8 +25,11 @@ public:
     ~Renderer();
 
     void init(HWND hWnd);
+
+    /* Releases all resources */
     void release();
 
+    /* Draws scene to the window */
     void draw(uint32_t ticks) const;
 private:
     /* Creates font data and loads draw data into OpenGL call lists */
@@ -48,6 +51,7 @@ private:
     void drawStatsWidget() const;
 
     void drawMainWidget() const;
+    void drawCoreGraphs() const;
 
     /* Draw labelled capacity bars of all fixed drives in the system */
     void drawHDDWidget() const;
@@ -70,18 +74,21 @@ private:
     const SystemInfo& m_sysInfo;
 
     // Viewports for each widget
-    const GLint m_timeWidgetViewport[4];
-    const GLint m_hddWidgetViewport[4];
-    const GLint m_procWidgetViewport[4];
-    const GLint m_statsWidgetViewport[4];
-    const GLint m_mainWidgetViewport[4];
+    const GLint m_timeWidgetVP[4];
+    const GLint m_hddWidgetVP[4];
+    const GLint m_procWidgetVP[4];
+    const GLint m_statsWidgetVP[4];
 
     // Graph widget viewport and sub-viewports
-    const GLint m_graphWidgetViewport[4]; // Viewport of all graphs
-    const GLint m_cpuGraphViewport[4]; // viewport of graph relative to graphWidgetViewport
-    const GLint m_ramGraphViewport[4];
-    const GLint m_gpuGraphViewport[4];
-    const GLint m_netGraphViewport[4];
+    const GLint m_graphWidgetVP[4]; // Viewport of all graphs together
+    const GLint m_cpuGraphVP[4]; // viewport of graph relative to graphWidgetViewport
+    const GLint m_ramGraphVP[4];
+    const GLint m_gpuGraphVP[4];
+    const GLint m_netGraphVP[4];
+
+    // Main widget viewport and sub-viewports
+    const GLint m_mainWidgetVP[4];
+    const GLint m_coreGraphsVP[4];
 
     // Font members
     GLint stdFontBase; // The default font

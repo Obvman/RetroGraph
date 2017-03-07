@@ -10,13 +10,13 @@
 #include "SystemInfo.h"
 #include "DriveMeasure.h"
 #include "Renderer.h"
+#include "UserSettings.h"
 
 namespace rg {
 
 class Window {
 public:
-    Window(HINSTANCE hInstance, const char* windowName,
-           uint16_t width, uint16_t height, uint16_t startX, uint16_t startY);
+    Window(HINSTANCE hInstance, const char* windowName);
     ~Window();
 
     /* Windows callback procedure for handling windows messages */
@@ -79,10 +79,12 @@ private:
     /* Creates the popup menu in response to a right click*/
     static void createRClickMenu(HWND hWnd, DWORD cursorX, DWORD cursorY);
 
-    const uint16_t m_width;
-    const uint16_t m_height;
-    uint16_t m_startPosX;
-    uint16_t m_startPosY;
+    UserSettings m_userSettings;
+
+    uint32_t m_width;
+    uint32_t m_height;
+    int32_t m_startPosX;
+    int32_t m_startPosY;
 
     CPUMeasure m_cpuMeasure;
     GPUMeasure m_gpuMeasure;

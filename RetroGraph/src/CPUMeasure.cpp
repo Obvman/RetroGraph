@@ -19,7 +19,7 @@ static unsigned long long FileTimeToInt64(const FILETIME & ft) {return (((unsign
 
 namespace rg {
 
-CPUMeasure::CPUMeasure(int32_t graphWidth, int32_t graphHeight) :
+CPUMeasure::CPUMeasure() :
     m_coreTempPlugin{},
     dataSize{ 40U },
     m_usageData{ },
