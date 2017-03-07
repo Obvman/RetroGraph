@@ -539,22 +539,46 @@ void Renderer::drawNetGraph() const {
 
     {// Draw the line graph
         glLineWidth(0.5f);
-        const auto& data{ m_netMeasure.getDownData() };
-        const auto maxValMB{ m_netMeasure.getMaxDownValue() /
-                             static_cast<float>(MB) };
+        const auto& downData{ m_netMeasure.getDownData() };
+        const auto& upData{ m_netMeasure.getUpData() };
+        const auto maxDownValMB{ m_netMeasure.getMaxDownValue() /
+                                 static_cast<float>(MB) };
+        const auto maxUpValMB{ m_netMeasure.getMaxUpValue() /
+                                 static_cast<float>(MB) };
+
+        const auto maxValMB = max(maxUpValMB, maxDownValMB);
 
         glBegin(GL_QUADS); {
-            // Draw each node in the graph
-            for (auto i{ 0U }; i < data.size() - 1; ++i) {
-                const auto percent1 = float{ (data[i] / static_cast<float>(MB)) / maxValMB };
-                const auto percent2 = float{ (data[i+1] / static_cast<float>(MB)) / maxValMB };
+            // Draw the download graph
+            glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.7f);
+            for (auto i{ 0U }; i < downData.size() - 1; ++i) {
+                const auto percent1 = float{ (downData[i] / static_cast<float>(MB)) / maxValMB };
+                const auto percent2 = float{ (downData[i+1] / static_cast<float>(MB)) / maxValMB };
 
-                const auto x1 = float{ (static_cast<float>(i) / (data.size() - 1)) * 2.0f - 1.0f };
+                const auto x1 = float{ (static_cast<float>(i) / (downData.size() - 1)) * 2.0f - 1.0f };
                 const auto y1 = float{ percent1 * 2.0f - 1.0f };
-                const auto x2 = float{ (static_cast<float>(i+1) / (data.size() - 1)) * 2.0f - 1.0f };
+                const auto x2 = float{ (static_cast<float>(i+1) / (downData.size() - 1)) * 2.0f - 1.0f };
                 const auto y2 = float{ percent2 * 2.0f - 1.0f };
 
-                glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.7f);
+                glVertex2f(x1, -1.0f); // Bottom-left
+                glVertex2f(x1, y1); // Top-left
+                glVertex2f(x2, y2); // Top-right
+                glVertex2f(x2, -1.0f); // Bottom-right
+            }
+        } glEnd();
+
+        // Draw the upload graph
+        glBegin(GL_QUADS); {
+            // Draw the download graph
+            glColor4f(PINK1_R, PINK1_G, PINK1_B, 0.7f);
+            for (auto i{ 0U }; i < upData.size() - 1; ++i) {
+                const auto percent1 = float{ (upData[i] / static_cast<float>(MB)) / maxValMB };
+                const auto percent2 = float{ (upData[i+1] / static_cast<float>(MB)) / maxValMB };
+
+                const auto x1 = float{ (static_cast<float>(i) / (upData.size() - 1)) * 2.0f - 1.0f };
+                const auto y1 = float{ percent1 * 2.0f - 1.0f };
+                const auto x2 = float{ (static_cast<float>(i+1) / (upData.size() - 1)) * 2.0f - 1.0f };
+                const auto y2 = float{ percent2 * 2.0f - 1.0f };
 
                 glVertex2f(x1, -1.0f); // Bottom-left
                 glVertex2f(x1, y1); // Top-left
@@ -683,9 +707,9 @@ void Renderer::drawStatsWidget() const {
     } glEnd();
 
     const auto numLinesToDraw{ m_statsStrings.size() };
-    const auto yRange{ 2.0f };
+    const auto yRange{ 1.8f };
     const auto rasterX = float{ -0.95f };
-    auto rasterY = float{ 0.85f };
+    auto rasterY = float{ 0.75f };
 
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
     for (const auto& str : m_statsStrings) {

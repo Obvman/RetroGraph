@@ -99,19 +99,23 @@ void NetMeasure::getNetStats() {
             fatalMessageBox("Failed to get adapters info");
         }
 
+        // Get the MAC address and LAN IP address of the main adapter
         if (GetAdaptersInfo(pAdapterInfo, &ulOutBufLen) == NO_ERROR) {
             auto pAdapter = pAdapterInfo;
             while (pAdapter) {
                 if (m_mainAdapter == pAdapter->Description) {
                     std::stringstream macStream;
                     macStream << std::hex << std::uppercase << std::setfill('0');
-                    for (auto i = 0; i < pAdapter->AddressLength; i++) {
+                    for (auto i{ 0U }; i < pAdapter->AddressLength; i++) {
                         if (i == (pAdapter->AddressLength - 1)) {
-                            macStream << std::setw(2) << (int)pAdapter->Address[i];
+                            macStream << std::setw(2)
+                                      << (int)pAdapter->Address[i];
                         } else {
-                            macStream << std::setw(2) << (int)pAdapter->Address[i] << '-';
+                            macStream << std::setw(2)
+                                      << (int)pAdapter->Address[i] << '-';
                         }
                     }
+
                     m_mainAdapterMAC = macStream.str();
                     m_mainAdapterIP = std::string{
                         pAdapter->IpAddressList.IpAddress.String
@@ -123,9 +127,7 @@ void NetMeasure::getNetStats() {
         } else {
             fatalMessageBox("GetAdaptersInfo failed");
         }
-
-        if (pAdapterInfo)
-            free(pAdapterInfo);
+        free(pAdapterInfo);
     }
 }
 
