@@ -4,6 +4,8 @@
 #define _WIN32_WINNT 0x601
 
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 #include <algorithm>
 #include <Windows.h>
 #include <ws2def.h>
@@ -16,12 +18,18 @@
 
 namespace rg {
 
-NetMeasure::NetMeasure() :
+NetMeasure::NetMeasure(const std::string& netAdapterName) :
     m_adapterEntry{ nullptr },
+    m_mainAdapter{ netAdapterName },
+    m_DNSIP{ "0.0.0.0" },
+    m_hostname{ "" },
+    m_mainAdapterMAC{ "00-00-00-00-00-00" },
+    m_mainAdapterIP{ "0.0.0.0" },
     m_downMaxVal{ 10U * GB },
     m_upMaxVal{ 10U * GB },
     dataSize{ 40U } {
 
+    // Fill data vectors with default values
     m_downBytes.assign(dataSize, 0U);
     m_upBytes.assign(dataSize, 0U);
 
@@ -32,7 +40,7 @@ NetMeasure::NetMeasure() :
 
     // Get the adapter struct that corresponds to the hard-coded adapter name
     for (auto i{ 0U }; i < table->NumEntries; ++i) {
-        if (wcscmp(table->Table[i].Description, myAdapter) == 0) {
+        if (wcscmp(table->Table[i].Description, strToWstr(m_mainAdapter).c_str()) == 0) {
             m_adapterEntry = &table->Table[i];
             break;
         }
@@ -41,9 +49,84 @@ NetMeasure::NetMeasure() :
     if (!m_adapterEntry) {
         fatalMessageBox("Failed to find adapter");
     }
+
+    getNetStats();
 }
 
 NetMeasure::~NetMeasure() {
+}
+
+void NetMeasure::getNetStats() {
+    { // Get DNS and Hostname
+        auto pFixedInfo = (FIXED_INFO*)malloc(sizeof(FIXED_INFO));
+        if (pFixedInfo == NULL) {
+            printf("Error allocating memory needed to call GetNetworkParams\n");
+        }
+        ULONG ulOutBufLen{ sizeof(FIXED_INFO) };
+
+        // Make an initial call to GetNetworkParams to get
+        // the necessary size into the ulOutBufLen variable
+        if (GetNetworkParams(pFixedInfo, &ulOutBufLen) == ERROR_BUFFER_OVERFLOW) {
+            free(pFixedInfo);
+            pFixedInfo = (FIXED_INFO*)malloc(ulOutBufLen);
+            if (pFixedInfo == NULL) {
+                printf("Error allocating memory needed to call GetNetworkParams\n");
+            }
+        } else {
+            std::cout << "Failed to get FIXED_INFO buffer size\n";
+        }
+
+        if (GetNetworkParams(pFixedInfo, &ulOutBufLen) != NO_ERROR) {
+            fatalMessageBox("Failed to get network parameters");
+        }
+
+        m_DNSIP = std::string{ pFixedInfo->DnsServerList.IpAddress.String };
+        m_hostname = std::string{ pFixedInfo->HostName };
+
+        free(pFixedInfo);
+    }
+
+    { // Get MAC and LAN IP for main adapter
+        auto pAdapterInfo = (IP_ADAPTER_INFO*)malloc(sizeof(IP_ADAPTER_INFO));
+        ULONG ulOutBufLen{ sizeof(IP_ADAPTER_INFO) };
+
+        if (GetAdaptersInfo(pAdapterInfo, &ulOutBufLen) == ERROR_BUFFER_OVERFLOW) {
+            free(pAdapterInfo);
+            pAdapterInfo = (IP_ADAPTER_INFO*)malloc(ulOutBufLen);
+        }
+
+        if (GetAdaptersInfo(pAdapterInfo, &ulOutBufLen) != NO_ERROR) {
+            fatalMessageBox("Failed to get adapters info");
+        }
+
+        if (GetAdaptersInfo(pAdapterInfo, &ulOutBufLen) == NO_ERROR) {
+            auto pAdapter = pAdapterInfo;
+            while (pAdapter) {
+                if (m_mainAdapter == pAdapter->Description) {
+                    std::stringstream macStream;
+                    macStream << std::hex << std::uppercase << std::setfill('0');
+                    for (auto i = 0; i < pAdapter->AddressLength; i++) {
+                        if (i == (pAdapter->AddressLength - 1)) {
+                            macStream << std::setw(2) << (int)pAdapter->Address[i];
+                        } else {
+                            macStream << std::setw(2) << (int)pAdapter->Address[i] << '-';
+                        }
+                    }
+                    m_mainAdapterMAC = macStream.str();
+                    m_mainAdapterIP = std::string{
+                        pAdapter->IpAddressList.IpAddress.String
+                    };
+                    break;
+                }
+                pAdapter = pAdapter->Next;
+            }
+        } else {
+            fatalMessageBox("GetAdaptersInfo failed");
+        }
+
+        if (pAdapterInfo)
+            free(pAdapterInfo);
+    }
 }
 
 void NetMeasure::update() {

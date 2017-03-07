@@ -18,12 +18,12 @@ void fatalMessageBox(const std::string& s) {
 }
 
 std::string wstrToStr(const std::wstring& wstr) {
-    std::wstring_convert<std::codecvt_utf16<wchar_t>, wchar_t> converter;
+    std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
     return converter.to_bytes(wstr);
 }
 
 std::wstring strToWstr(const std::string& str) {
-    std::wstring_convert<std::codecvt_utf16<wchar_t>, wchar_t> converter;
+    std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
     return converter.from_bytes(str);
 }
 

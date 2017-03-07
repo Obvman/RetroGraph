@@ -35,7 +35,8 @@ BOOL CALLBACK MonitorCallback(HMONITOR hMonitor, HDC hdc, LPRECT lpRect, LPARAM 
 UserSettings::UserSettings() :
     m_windowWidth{ 1920U },
     m_windowHeight{ 1170U },
-    m_startupMonitor{ 0U } {
+    m_startupMonitor{ 0U },
+    m_netAdapterName{ "Intel(R) Ethernet Connection (2) I219-V"} {
 
     pt::ptree propTree;
     try {
@@ -46,6 +47,7 @@ UserSettings::UserSettings() :
             m_windowWidth = propTree.get<uint16_t>("Window.WindowWidth");
             m_windowHeight = propTree.get<uint16_t>("Window.WindowHeight");
             m_startupMonitor = propTree.get<uint16_t>("Window.Monitor");
+            m_netAdapterName = propTree.get<std::string>("Network.NetworkAdapter");
         }
 
 
@@ -76,13 +78,8 @@ UserSettings::UserSettings() :
 
         m_windowHeight = monitorInfo.rcWork.bottom - monitorInfo.rcWork.top;
         m_windowWidth = monitorInfo.rcWork.right - monitorInfo.rcWork.left;
-        m_createWindowX = monitorInfo.rcWork.left; 
+        m_createWindowX = monitorInfo.rcWork.left;
         m_createWindowY = monitorInfo.rcWork.top;
-
-        std::cout << m_createWindowX << '\n';
-        std::cout << m_createWindowY << '\n';
-        std::cout << m_windowWidth << '\n';
-        std::cout << m_windowHeight << '\n';
     }
 
 }
@@ -101,6 +98,8 @@ void UserSettings::generateDefaultFile(pt::ptree& propTree) {
     propTree.put("Window.WindowWidth", m_windowWidth);
     propTree.put("Window.WindowHeight", m_windowHeight);
     propTree.put("Window.Monitor", m_startupMonitor);
+
+    propTree.put("Network.NetworkAdapter", m_netAdapterName);
 
     pt::ini_parser::write_ini(iniPath, propTree);
 }

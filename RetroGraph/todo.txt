@@ -3,24 +3,20 @@ rainmeter plugins github - https://github.com/rainmeter/rainmeter/tree/eeeef4a7f
 animate on startup
 colour code high usage processes
 hdd read/write usage
-network upload/download, DNS, VPN, hostname
+network upload/download, VPN, hostname
 network connectivity status
 media - foobar status
 volume, current sound output level bar - IAudioPeakMeter
 3D effects on graph
 framerate of currently focussed window
 
-fragment shader: fade out line as it gets further left
-
-settings (ini) file
-
 BUG: right click menu pauses drawing.
+
+Notification icon in system tray
 
 SHADERS! experiment with them!
 
 test suite
-
-dynamic window resizing
 
 use inheritedfromprocessid value in processmeasure to limit chrome duplicates
 
@@ -31,9 +27,5 @@ and stutter draw times for different draw frequencies
 
 use offset updates to avoid CPU spikes
 
-handle insertion and removal of usb drives
-
-make initial style WS_EX_TOOLWINDOW then set to WS_EX_APPWINDOW after creation
-is done to prevent fake window showing in toolbar
-
-use SetWindowPos to keep the window in the background all the time
+GetSystemMetrics:
+    SM_CLEANBOOT - display warning text when safe mode active

@@ -1,6 +1,8 @@
 #pragma once
 
 #include <stdint.h>
+#include <string>
+#include <vector>
 #include <Windows.h>
 #include <GL/glew.h>
 
@@ -72,6 +74,8 @@ private:
     const ProcessMeasure& m_processMeasure;
     const DriveMeasure& m_driveMeasure;
     const SystemInfo& m_sysInfo;
+
+    std::vector<std::string> m_statsStrings;
 
     // Viewports for each widget
     const GLint m_timeWidgetVP[4];

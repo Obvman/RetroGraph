@@ -15,11 +15,12 @@
 
 namespace rg {
 
-void drawBorder();
+LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 Window::Window(HINSTANCE hInstance, const char* windowName) :
     m_userSettings{ },
     m_hInstance{ hInstance },
+    m_dragging{ false },
     m_width{ m_userSettings.getWindowWidth() },
     m_height{ m_userSettings.getWindowHeight() },
     m_startPosX{ m_userSettings.getWindowX() },
@@ -29,7 +30,7 @@ Window::Window(HINSTANCE hInstance, const char* windowName) :
     m_ramMeasure{ },
     m_processMeasure{ },
     m_driveMeasure{ },
-    m_netMeasure{ },
+    m_netMeasure{ m_userSettings.getNetAdapterName() },
     m_systemInfo{ },
     m_renderer{ m_cpuMeasure, m_gpuMeasure, m_ramMeasure, m_netMeasure,
                 m_processMeasure, m_driveMeasure, m_systemInfo,
@@ -38,12 +39,11 @@ Window::Window(HINSTANCE hInstance, const char* windowName) :
     m_arbMultisampleFormat{ 0 },
     m_aaSamples{ 8 } {
 
-    WNDCLASSEX m_wc;
     memset(&m_wc, 0, sizeof(m_wc));
     m_wc.cbSize = sizeof(WNDCLASSEX);
     m_wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
     m_wc.style = CS_HREDRAW | CS_VREDRAW;
-    m_wc.lpfnWndProc = Window::WndProc;
+    m_wc.lpfnWndProc = WndProc;
     m_wc.cbClsExtra  = 0;
     m_wc.cbWndExtra  = 0;
     m_wc.hInstance = m_hInstance;
@@ -73,10 +73,25 @@ Window::Window(HINSTANCE hInstance, const char* windowName) :
 Window::~Window() {
 }
 
-constexpr int32_t ID_CLOSE{ 1 };
-constexpr int32_t ID_EXIT{ 2 };
+constexpr int32_t ID_EXIT{ 1 };
+constexpr int32_t ID_SEND_TO_BACK{ 2 };
+constexpr int32_t ID_RESET_POS{ 3 };
 
-LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+
+    // Get the Window pointer from the handle, and call the alternate WndProc
+    // if it was found
+    Window* window = (Window*)GetWindowLong(hWnd, GWLP_USERDATA);
+    if (window) {
+        return window->WndProc2(hWnd, msg, wParam, lParam);
+    }
+    return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
+LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
+                                  WPARAM wParam, LPARAM lParam) {
+    static int clickX;
+    static int clickY;
     static PAINTSTRUCT ps;
 
     switch (msg) {
@@ -96,13 +111,17 @@ LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
             break;
         case WM_COMMAND:
             switch (LOWORD(wParam)) {
-                case ID_CLOSE: {
-                    std::cout << "Close\n";
-                    break;
-                }
                 case ID_EXIT:
-                    std::cout << "Exit\n";
                     SendMessage(hWnd, WM_QUIT, wParam, lParam);
+                    break;
+                case ID_SEND_TO_BACK:
+                    SetWindowPos(hWnd, HWND_BOTTOM, m_startPosX, m_startPosY,
+                                 m_width, m_height, 0);
+                    SendMessage(HWND_BROADCAST, WM_SYSCOMMAND, SC_MINIMIZE, 0);
+                    break;
+                case ID_RESET_POS:
+                    SetWindowPos(hWnd, HWND_BOTTOM, m_startPosX, m_startPosY,
+                                 m_width, m_height, 0);
                     break;
             }
         case WM_CONTEXTMENU:
@@ -110,25 +129,44 @@ LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
             break;
         case WM_SETCURSOR:
             break;
-        /*case WM_NCHITTEST: {
-            // TODO: limit how often this message is handled to lower CPU usage while dragging
-            // Allows click-to-drag on any part of the window
-            auto hit{ DefWindowProc(hWnd, msg, wParam, lParam) };
-            if (hit == HTCLIENT) {
-                hit = HTCAPTION;
-            }
-            return hit;
-        }*/
-        case WM_MOUSEMOVE:
+        case WM_LBUTTONDOWN:
+            m_dragging = true;
+            SetCapture(hWnd);
+            clickX = LOWORD(lParam);
+            clickY = HIWORD(lParam);
             break;
+        case WM_LBUTTONUP:
+            m_dragging = false;
+            ReleaseCapture();
+            break;
+        case WM_MOUSEMOVE: {
+            if (m_dragging) {
+                int mouseX = LOWORD(lParam);
+                int mouseY = HIWORD(lParam);
+
+                RECT wndRect;
+                GetWindowRect(hWnd, &wndRect);
+
+                int windowX = wndRect.left + mouseX - clickX;
+                int windowY = wndRect.top + mouseY - clickY;
+
+                //std::cout << "Position: " << pos.x << ", " << pos.y << '\n';
+                //ClientToScreen(hWnd, &pos);
+                SetWindowPos(hWnd, nullptr, windowX, windowY, 0, 0, SWP_NOSIZE);
+
+            }
+            break;
+        }
         case WM_GETTEXT:
             break;
         case WM_QUIT:
             PostQuitMessage(0);
+            releaseOpenGL();
             exit(0);
             break;
         case WM_CLOSE:
             PostQuitMessage(0);
+            releaseOpenGL();
             exit(0);
             break;
         case WM_DESTROY:
@@ -143,17 +181,13 @@ LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
 
 void Window::createRClickMenu(HWND hWnd, DWORD cursorX, DWORD cursorY) {
     auto hPopupMenu{ CreatePopupMenu() };
-    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_CLOSE, "Close");
     InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_EXIT, "Exit");
+    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_SEND_TO_BACK, "Send to back");
+    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_RESET_POS, "Reset position");
     SetForegroundWindow(hWnd);
 
     TrackPopupMenuEx(hPopupMenu, TPM_TOPALIGN | TPM_LEFTALIGN | TPM_RIGHTBUTTON,
                    cursorX, cursorY, hWnd, NULL);
-
-}
-
-void Window::show() {
-    ShowWindow(m_hWndMain, SW_SHOW);
 }
 
 void Window::init() {
@@ -163,6 +197,8 @@ void Window::init() {
 
     m_processMeasure.init();
     m_driveMeasure.init();
+
+    m_renderer.init(m_hWndMain);
 
     draw(0); // TODO change this value to guarantee drawing in the very first frame
 }
@@ -219,8 +255,6 @@ void Window::initOpenGL() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
 
-    m_renderer.init(m_hWndMain);
-
     m_systemInfo.getGPUDescription();
 }
 
@@ -239,8 +273,6 @@ bool Window::createHGLRC() {
        http://nehe.gamedev.net/tutorial/fullscreen_antialiasing/16008/ */
 
     if (m_arbMultisampleSupported) {
-        std::cout << '\n' << m_startPosX << '\n';
-        std::cout << m_startPosY << '\n';
         m_hWndMain = CreateWindowEx(WS_EX_APPWINDOW, "RetroGraph", "RetroGraph",
                                     WS_VISIBLE | WS_POPUP, m_startPosX, m_startPosY, m_width, m_height,
                                     NULL, NULL, m_hInstance, NULL);
@@ -249,6 +281,9 @@ bool Window::createHGLRC() {
                                     WS_VISIBLE | WS_POPUP, m_startPosX, m_startPosY, m_width, m_height,
                                     NULL, NULL, m_hInstance, NULL);
     }
+
+    // Store a pointer to this Window object that we can later recover in WndProc
+    SetWindowLong(m_hWndMain, GWLP_USERDATA, (LONG)this);
 
     #if (!_DEBUG)
     // Display window at the desktop layer on startup

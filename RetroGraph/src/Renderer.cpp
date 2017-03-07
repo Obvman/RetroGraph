@@ -84,6 +84,17 @@ Renderer::~Renderer() {
 }
 
 void Renderer::init(HWND hWnd) {
+    m_statsStrings.emplace_back(m_sysInfo.getUserName() + "@" +
+                                m_sysInfo.getComputerName());
+    m_statsStrings.emplace_back(m_sysInfo.getOSInfoStr());
+    m_statsStrings.emplace_back(m_cpuMeasure.getCPUName());
+    m_statsStrings.emplace_back(m_sysInfo.getGPUDescription());
+    m_statsStrings.emplace_back(m_sysInfo.getRAMDescription());
+    m_statsStrings.emplace_back("DNS: " + m_netMeasure.getDNS());
+    m_statsStrings.emplace_back("Hostname: " + m_netMeasure.getHostname());
+    m_statsStrings.emplace_back("MAC: " + m_netMeasure.getAdapterMAC());
+    m_statsStrings.emplace_back("LAN IP: " + m_netMeasure.getAdapterIP());
+
     initFonts(hWnd);
     initVBOs();
     initShaders();
@@ -271,7 +282,7 @@ void Renderer::draw(uint32_t ticks) const {
 void Renderer::drawMainWidget() const {
     glViewport(m_mainWidgetVP[0], m_mainWidgetVP[1],
                m_mainWidgetVP[2], m_mainWidgetVP[3]);
-    drawViewportBorder();
+    //drawViewportBorder();
 
     drawCoreGraphs();
 }
@@ -279,7 +290,7 @@ void Renderer::drawMainWidget() const {
 void Renderer::drawCoreGraphs() const {
     glViewport(m_coreGraphsVP[0], m_coreGraphsVP[1],
                m_coreGraphsVP[2], m_coreGraphsVP[3]);
-    drawViewportBorder();
+    //drawViewportBorder();
 }
 
 void Renderer::drawGraphWidget() const {
@@ -671,43 +682,13 @@ void Renderer::drawStatsWidget() const {
         glVertex2f( 1.0f, -1.0f); // Bottom
     } glEnd();
 
-    constexpr auto numLinesToDraw{ 5U };
-    const auto rasterX = float{ -0.95f };
-    auto rasterY = float{ 0.80f };
+    const auto numLinesToDraw{ m_statsStrings.size() };
     const auto yRange{ 2.0f };
+    const auto rasterX = float{ -0.95f };
+    auto rasterY = float{ 0.85f };
 
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-    // Draw username@Computername, unix style
-    {
-        const auto& str{ m_sysInfo.getUserName() + "@" + m_sysInfo.getComputerName() };
-        glRasterPos2f(rasterX, rasterY);
-        glCallLists(str.length(), GL_UNSIGNED_BYTE, str.c_str());
-        rasterY -= yRange / numLinesToDraw;
-    }
-    // Draw Windows version
-    {
-        const auto& str{ m_sysInfo.getOSInfoStr() };
-        glRasterPos2f(rasterX, rasterY);
-        glCallLists(str.size(), GL_UNSIGNED_BYTE, str.c_str());
-        rasterY -= yRange / numLinesToDraw;
-    }
-    // Draw CPU name
-    {
-        const auto str = std::string{ m_cpuMeasure.getCPUName() };
-        glRasterPos2f(rasterX, rasterY);
-        glCallLists(str.length(), GL_UNSIGNED_BYTE, str.c_str());
-        rasterY -= yRange / numLinesToDraw;
-    }
-    // Draw GPU Name
-    {
-        const auto& str{ m_sysInfo.getGPUDescription() };
-        glRasterPos2f(rasterX, rasterY);
-        glCallLists(str.length(), GL_UNSIGNED_BYTE, str.c_str());
-        rasterY -= yRange / numLinesToDraw;
-    }
-    // Draw RAM capacity
-    {
-        const auto& str{ m_sysInfo.getRAMDescription() };
+    for (const auto& str : m_statsStrings) {
         glRasterPos2f(rasterX, rasterY);
         glCallLists(str.length(), GL_UNSIGNED_BYTE, str.c_str());
         rasterY -= yRange / numLinesToDraw;

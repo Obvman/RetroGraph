@@ -17,7 +17,7 @@ GPUMeasure::GPUMeasure() :
     dataSize{ 40U },
     m_usageData{} {
 
-    m_usageData.assign(dataSize, 0.5f);
+    m_usageData.assign(dataSize, 0.0f);
 
     auto result{ NvAPI_Initialize() };
     if (result != NVAPI_OK) {
