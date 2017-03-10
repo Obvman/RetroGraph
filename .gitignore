@@ -11,4 +11,5 @@ Release/
 *.vcxproj*
 deps/
 *packages*
+*.psess
 
