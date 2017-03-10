@@ -45,37 +45,14 @@ void vboDrawScope(GLuint vertID, GLuint indexID, F f) {
 Renderer::Renderer(const CPUMeasure& _cpu, const GPUMeasure& _gpu,
                    const RAMMeasure& _ram, const NetMeasure& _net,
                    const ProcessMeasure& _proc,
-                   const DriveMeasure& _drive, const SystemInfo& _sys,
-                   uint16_t windowWidth, uint16_t windowHeight) :
+                   const DriveMeasure& _drive, const SystemInfo& _sys) :
     m_cpuMeasure{ _cpu },
     m_gpuMeasure{ _gpu },
     m_ramMeasure{ _ram },
     m_netMeasure{ _net },
     m_processMeasure{ _proc },
     m_driveMeasure{ _drive },
-    m_sysInfo{ _sys },
-    m_timeWidgetVP{ marginX, 5 * windowHeight/6 - marginY,
-                    windowWidth/5, windowHeight/6 }, // Top left
-    m_hddWidgetVP{ windowWidth - windowWidth/5 - marginX, 5 * windowHeight/6 - marginY,
-                   windowWidth/5, windowHeight/6}, // Top right
-    m_procWidgetVP{ marginX + windowWidth/2 - windowWidth/5, marginY,
-                    2*windowWidth/5, windowHeight/6}, // Bottom middle
-    m_statsWidgetVP{ marginX, marginY,
-                     windowWidth/5, windowHeight/6 }, // Bottom left
-    m_graphWidgetVP{ marginX, windowHeight/4 + 2*marginY,
-                     windowWidth/5, windowHeight/2 }, // Left-Mid
-    m_cpuGraphVP{ m_graphWidgetVP[0], m_graphWidgetVP[1] + 3*m_graphWidgetVP[3]/4,
-                  m_graphWidgetVP[2], m_graphWidgetVP[3]/4},
-    m_ramGraphVP{ m_graphWidgetVP[0], m_graphWidgetVP[1] + 2*m_graphWidgetVP[3]/4,
-                  m_graphWidgetVP[2], m_graphWidgetVP[3]/4},
-    m_gpuGraphVP{ m_graphWidgetVP[0], m_graphWidgetVP[1] + 1*m_graphWidgetVP[3]/4,
-                  m_graphWidgetVP[2], m_graphWidgetVP[3]/4},
-    m_netGraphVP{ m_graphWidgetVP[0], m_graphWidgetVP[1] + 0*m_graphWidgetVP[3]/4,
-                  m_graphWidgetVP[2], m_graphWidgetVP[3]/4},
-    m_mainWidgetVP{ marginX + windowWidth/2 - windowWidth/5, 2*marginY + windowHeight/4,
-                    2 * windowWidth/5, windowHeight/2 }, // Middle
-    m_coreGraphsVP{ m_mainWidgetVP[0], m_mainWidgetVP[1],
-                    m_mainWidgetVP[2]/2, m_mainWidgetVP[3]/4}
+    m_sysInfo{ _sys }
 {
 
 }
@@ -83,7 +60,9 @@ Renderer::Renderer(const CPUMeasure& _cpu, const GPUMeasure& _gpu,
 Renderer::~Renderer() {
 }
 
-void Renderer::init(HWND hWnd) {
+void Renderer::init(HWND hWnd, uint16_t windowWidth, uint16_t windowHeight) {
+    initViewportBuffers(windowWidth, windowHeight);
+
     m_statsStrings.emplace_back(m_sysInfo.getUserName() + "@" +
                                 m_sysInfo.getComputerName());
     m_statsStrings.emplace_back(m_sysInfo.getOSInfoStr());
@@ -98,6 +77,63 @@ void Renderer::init(HWND hWnd) {
     initFonts(hWnd);
     initVBOs();
     initShaders();
+}
+
+void Renderer::initViewportBuffers(uint16_t windowWidth, uint16_t windowHeight) {
+    m_timeWidgetVP[0] = marginX;
+    m_timeWidgetVP[1] = 5 * windowHeight/6 - marginY;
+    m_timeWidgetVP[2] = windowWidth/5;
+    m_timeWidgetVP[3] = windowHeight/6; // Top left
+
+    m_hddWidgetVP[0] = windowWidth - windowWidth/5 - marginX,
+    m_hddWidgetVP[1] = 5 * windowHeight/6 - marginY,
+    m_hddWidgetVP[2] = windowWidth/5,
+    m_hddWidgetVP[3] = windowHeight/6; // Top right
+
+    m_procWidgetVP[0] = marginX + windowWidth/2 - windowWidth/5;
+    m_procWidgetVP[1] = marginY;
+    m_procWidgetVP[2] = 2*windowWidth/5;
+    m_procWidgetVP[3] = windowHeight/6; // Bottom middle
+
+    m_statsWidgetVP[0] = marginX;
+    m_statsWidgetVP[1] = marginY;
+    m_statsWidgetVP[2] = windowWidth/5;
+    m_statsWidgetVP[3] = windowHeight/6; // Bottom left
+
+    m_graphWidgetVP[0] = marginX;
+    m_graphWidgetVP[1] = windowHeight/4 + 2*marginY;
+    m_graphWidgetVP[2] = windowWidth/5;
+    m_graphWidgetVP[3] = windowHeight/2; // Left-Mid
+
+    m_cpuGraphVP[0] = m_graphWidgetVP[0];
+    m_cpuGraphVP[1] = m_graphWidgetVP[1] + 3*m_graphWidgetVP[3]/4;
+    m_cpuGraphVP[2] = m_graphWidgetVP[2];
+    m_cpuGraphVP[3] = m_graphWidgetVP[3]/4;
+
+    m_ramGraphVP[0] = m_graphWidgetVP[0];
+    m_ramGraphVP[1] = m_graphWidgetVP[1] + 2*m_graphWidgetVP[3]/4;
+    m_ramGraphVP[2] = m_graphWidgetVP[2];
+    m_ramGraphVP[3] = m_graphWidgetVP[3]/4;
+
+    m_gpuGraphVP[0] = m_graphWidgetVP[0];
+    m_gpuGraphVP[1] = m_graphWidgetVP[1] + 1*m_graphWidgetVP[3]/4;
+    m_gpuGraphVP[2] = m_graphWidgetVP[2];
+    m_gpuGraphVP[3] = m_graphWidgetVP[3]/4;
+
+    m_netGraphVP[0] = m_graphWidgetVP[0];
+    m_netGraphVP[1] = m_graphWidgetVP[1] + 0*m_graphWidgetVP[3]/4;
+    m_netGraphVP[2] = m_graphWidgetVP[2];
+    m_netGraphVP[3] = m_graphWidgetVP[3]/4;
+
+    m_mainWidgetVP[0] = marginX + windowWidth/2 - windowWidth/5;
+    m_mainWidgetVP[1] = 2*marginY + windowHeight/4;
+    m_mainWidgetVP[2] = 2 * windowWidth/5;
+    m_mainWidgetVP[3] = windowHeight/2; // Midd;
+
+    m_coreGraphsVP[0] = m_mainWidgetVP[0];
+    m_coreGraphsVP[1] = m_mainWidgetVP[1];
+    m_coreGraphsVP[2] = m_mainWidgetVP[2]/2;
+    m_coreGraphsVP[3] = m_mainWidgetVP[3]/4;
 }
 
 void Renderer::initFonts(HWND hWnd) {
@@ -548,8 +584,8 @@ void Renderer::drawNetGraph() const {
 
         const auto maxValMB = max(maxUpValMB, maxDownValMB);
 
+        // Draw the download graph
         glBegin(GL_QUADS); {
-            // Draw the download graph
             glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.7f);
             for (auto i{ 0U }; i < downData.size() - 1; ++i) {
                 const auto percent1 = float{ (downData[i] / static_cast<float>(MB)) / maxValMB };
@@ -561,15 +597,14 @@ void Renderer::drawNetGraph() const {
                 const auto y2 = float{ percent2 * 2.0f - 1.0f };
 
                 glVertex2f(x1, -1.0f); // Bottom-left
-                glVertex2f(x1, y1); // Top-left
-                glVertex2f(x2, y2); // Top-right
+                glVertex2f(x1, y1);    // Top-left
+                glVertex2f(x2, y2);    // Top-right
                 glVertex2f(x2, -1.0f); // Bottom-right
             }
         } glEnd();
 
         // Draw the upload graph
         glBegin(GL_QUADS); {
-            // Draw the download graph
             glColor4f(PINK1_R, PINK1_G, PINK1_B, 0.7f);
             for (auto i{ 0U }; i < upData.size() - 1; ++i) {
                 const auto percent1 = float{ (upData[i] / static_cast<float>(MB)) / maxValMB };
@@ -594,14 +629,18 @@ void Renderer::drawNetGraph() const {
         glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
         const auto maxVal{ m_netMeasure.getMaxDownValue() };
-        std::string suffix{ "KBps" };
-        if (maxVal > MB) {
-            suffix = "MBps";
+
+        std::string suffix{ "B" };
+        if (maxVal > 1000) {
+            suffix = "KB";
+        }
+        if (maxVal > 1000 * 1000) {
+            suffix = "MB";
         }
 
         fontScope(smlFontBase, [maxVal, &suffix]() {
             glRasterPos2f(-0.8f, -0.02f);
-            const char* str{ "Down" };
+            const char* str{ "Down/Up" };
             glCallLists(strlen(str), GL_UNSIGNED_BYTE, str);
 
             glRasterPos2f(-0.8f, -0.77f);
@@ -609,14 +648,25 @@ void Renderer::drawNetGraph() const {
             glCallLists(strlen(bottom.c_str()), GL_UNSIGNED_BYTE, bottom.c_str());
 
             glRasterPos2f(-0.8f, 0.70f);
-            if (suffix == "MBps") {
-                const auto top{ std::to_string(maxVal / static_cast<float>(MB)) + suffix };
-                glCallLists(strlen(top.c_str()), GL_UNSIGNED_BYTE, top.c_str());
-            } else if (suffix == "KBps") {
-                const auto top{ std::to_string(maxVal / static_cast<float>(KB)) + suffix };
+            if (suffix == "MB") {
+                char buff[8];
+                snprintf(buff, sizeof(buff), "%5.1fMB", maxVal/static_cast<float>(MB));
+                glCallLists(sizeof(buff), GL_UNSIGNED_BYTE, buff);
+            } else if (suffix == "KB") {
+                char buff[8];
+                snprintf(buff, sizeof(buff), "%5.1fKB", maxVal/static_cast<float>(KB));
+                glCallLists(sizeof(buff), GL_UNSIGNED_BYTE, buff);
+            } else {
+                const auto top{ std::to_string(maxVal) + suffix };
+                char buff[5];
+                snprintf(buff, sizeof(buff), "%3lluB", maxVal);
                 glCallLists(strlen(top.c_str()), GL_UNSIGNED_BYTE, top.c_str());
             }
         });
+
+        char buff[9];
+        snprintf(buff, sizeof(buff), "%5.1fMB", 1.51f);
+        std::cout << buff << '\n';
     }
 }
 

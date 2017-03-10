@@ -13,6 +13,8 @@ public:
     CPUPlugin();
     ~CPUPlugin();
 
+    void init();
+
     /* Gets latest information from CoreTemp */
     void update();
 

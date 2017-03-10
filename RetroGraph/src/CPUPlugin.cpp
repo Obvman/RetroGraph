@@ -8,9 +8,18 @@ typedef bool (WINAPI *myGetCoreTempInfo)(CORE_TEMP_SHARED_DATA* pData);
 myGetCoreTempInfo GetCoreTempInfo;
 
 CPUPlugin::CPUPlugin() :
-    m_libHandle{ LoadLibrary("GetCoreTempInfo.dll") },
+    m_libHandle{ nullptr },
     m_ctData{ 0 },
     m_getCoreTempInfoSuccess{ false } {
+}
+
+
+CPUPlugin::~CPUPlugin() {
+    FreeLibrary(m_libHandle);
+}
+
+void CPUPlugin::init() {
+    m_libHandle = LoadLibrary("GetCoreTempInfo.dll"); 
 
     if (!m_libHandle) {
         fatalMessageBox("Could not load GetCoreTempInfo.dll");
@@ -25,11 +34,6 @@ CPUPlugin::CPUPlugin() :
     // Fill the CORE_TEMP_SHARED_DATA struct with CPU stats from CoreTemp's
     // shared memory
     m_getCoreTempInfoSuccess = GetCoreTempInfo(&m_ctData);
-}
-
-
-CPUPlugin::~CPUPlugin() {
-    FreeLibrary(m_libHandle);
 }
 
 void CPUPlugin::update() {

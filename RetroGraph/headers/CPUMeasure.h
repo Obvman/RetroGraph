@@ -18,6 +18,8 @@ public:
     CPUMeasure();
     ~CPUMeasure();
 
+    void init();
+
     /* Updates the total system's CPU usage statistics */
     void update();
 

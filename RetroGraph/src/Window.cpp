@@ -17,14 +17,17 @@ namespace rg {
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-Window::Window(HINSTANCE hInstance, const char* windowName) :
+Window::Window(HINSTANCE hInstance) :
     m_userSettings{ },
     m_hInstance{ hInstance },
     m_dragging{ false },
-    m_width{ m_userSettings.getWindowWidth() },
-    m_height{ m_userSettings.getWindowHeight() },
-    m_startPosX{ m_userSettings.getWindowX() },
-    m_startPosY{ m_userSettings.getWindowY() },
+    m_width{ 0 },
+    m_height{ 0 },
+    m_startPosX{ 0 },
+    m_startPosY{ 0 },
+    m_arbMultisampleSupported{ false },
+    m_arbMultisampleFormat{ 0 },
+    m_aaSamples{ 8 },
     m_cpuMeasure{ },
     m_gpuMeasure{ },
     m_ramMeasure{ },
@@ -34,39 +37,9 @@ Window::Window(HINSTANCE hInstance, const char* windowName) :
     m_systemInfo{ },
     m_renderer{ m_cpuMeasure, m_gpuMeasure, m_ramMeasure, m_netMeasure,
                 m_processMeasure, m_driveMeasure, m_systemInfo,
-                m_width, m_height },
-    m_arbMultisampleSupported{ false },
-    m_arbMultisampleFormat{ 0 },
-    m_aaSamples{ 8 } {
+                } // done
+{
 
-    memset(&m_wc, 0, sizeof(m_wc));
-    m_wc.cbSize = sizeof(WNDCLASSEX);
-    m_wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
-    m_wc.style = CS_HREDRAW | CS_VREDRAW;
-    m_wc.lpfnWndProc = WndProc;
-    m_wc.cbClsExtra  = 0;
-    m_wc.cbWndExtra  = 0;
-    m_wc.hInstance = m_hInstance;
-    m_wc.hIcon = LoadIcon(m_hInstance, MAKEINTRESOURCE(IDI_ICON1));
-    m_wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-    m_wc.hbrBackground = static_cast<HBRUSH>(CreateSolidBrush(0x00000000));
-    m_wc.lpszClassName = windowName;
-
-    if(!RegisterClassEx(&m_wc)) {
-        fatalMessageBox("RegisterClassEx - failed");
-    }
-
-    if (!createHGLRC()) {
-        fatalMessageBox("Failed to create OpenGL Window");
-    }
-
-    initOpenGL();
-
-    m_systemInfo.updateGPUDescription();
-
-    updateSize(m_width, m_height);
-
-    ReleaseDC(m_hWndMain, m_hdc);
 }
 
 
@@ -191,14 +164,51 @@ void Window::createRClickMenu(HWND hWnd, DWORD cursorX, DWORD cursorY) {
 }
 
 void Window::init() {
-    m_cpuMeasure.update();
-    m_gpuMeasure.update();
-    m_ramMeasure.update();
+    m_userSettings.init();
+    m_width = m_userSettings.getWindowWidth();
+    m_height = m_userSettings.getWindowHeight();
+    m_startPosX = m_userSettings.getWindowX();
+    m_startPosY = m_userSettings.getWindowY();
 
+    { // Create and register the window class, then attach openGL context to window
+        memset(&m_wc, 0, sizeof(m_wc));
+        m_wc.cbSize = sizeof(WNDCLASSEX);
+        m_wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+        m_wc.style = CS_HREDRAW | CS_VREDRAW;
+        m_wc.lpfnWndProc = WndProc;
+        m_wc.cbClsExtra = 0;
+        m_wc.cbWndExtra = 0;
+        m_wc.hInstance = m_hInstance;
+        m_wc.hIcon = LoadIcon(m_hInstance, MAKEINTRESOURCE(IDI_ICON1));
+        m_wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+        m_wc.hbrBackground = static_cast<HBRUSH>(CreateSolidBrush(0x00000000));
+        m_wc.lpszClassName = "RetroGraph";
+
+        if (!RegisterClassEx(&m_wc)) {
+            fatalMessageBox("RegisterClassEx - failed");
+        }
+
+        if (!createHGLRC()) {
+            fatalMessageBox("Failed to create OpenGL Window");
+        }
+
+        initOpenGL();
+
+        m_systemInfo.updateGPUDescription();
+
+        updateSize(m_width, m_height);
+
+        ReleaseDC(m_hWndMain, m_hdc);
+    }
+
+    m_cpuMeasure.init();
+    m_gpuMeasure.init();
+    m_ramMeasure.init();
     m_processMeasure.init();
     m_driveMeasure.init();
-
-    m_renderer.init(m_hWndMain);
+    m_netMeasure.init(); // TODO see if this calls update()
+    m_systemInfo.init();
+    m_renderer.init(m_hWndMain, m_width, m_height);
 
     draw(0); // TODO change this value to guarantee drawing in the very first frame
 }

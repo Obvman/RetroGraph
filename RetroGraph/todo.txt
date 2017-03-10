@@ -10,6 +10,15 @@ volume, current sound output level bar - IAudioPeakMeter
 3D effects on graph
 framerate of currently focussed window
 
+have appearance states for when API calls fail/don't return a value
+
+multithread initialization of members.
+Current times: (DEBUG) first call: 1.5s, subsequent startups: .4 - .5s.
+                       .35s without a debugger attached
+(RELEASE) first call: 1.3s, subsequent startups: .5s
+
+right click menu minimize
+
 BUG: right click menu pauses drawing.
 
 Notification icon in system tray

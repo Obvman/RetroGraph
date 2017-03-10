@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <iostream>
 #include <Windows.h>
 
 namespace rg {
@@ -41,6 +42,24 @@ uint64_t subtractTimes(const FILETIME& ftA, const FILETIME& ftB);
 /* When called after a viewport has been set, draws a white outline of the viewport */
 void drawViewportBorder();
 
+/* Linear interpolation */
 float lerp(float x1, float x2, float t);
+
+/* Prints how long the given function f took to execute */
+
+template<typename F>
+void printTimeToExecute(const char* funcName, F f) {
+    const auto start{ clock() };
+    f();
+    const auto end{ clock() };
+    std::cout << funcName << " took "
+              << (static_cast<float>(end) - static_cast<float>(start))/CLOCKS_PER_SEC 
+              << " seconds.\n";
+}
+
+template<typename F>
+void printTimeToExecute(F f) {
+    printTimeToExecute("Function", f);
+}
 
 }

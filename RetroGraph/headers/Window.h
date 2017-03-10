@@ -16,7 +16,7 @@ namespace rg {
 
 class Window {
 public:
-    Window(HINSTANCE hInstance, const char* windowName);
+    Window(HINSTANCE hInstance);
     ~Window();
 
     /* Initialises the window's measurement components. Use before entering
@@ -60,11 +60,15 @@ private:
 
     UserSettings m_userSettings;
 
+    HINSTANCE m_hInstance;
     bool m_dragging;
     uint32_t m_width;
     uint32_t m_height;
     int32_t m_startPosX;
     int32_t m_startPosY;
+    bool m_arbMultisampleSupported;
+    int32_t m_arbMultisampleFormat;
+    int32_t m_aaSamples;
 
     CPUMeasure m_cpuMeasure;
     GPUMeasure m_gpuMeasure;
@@ -76,16 +80,11 @@ private:
 
     Renderer m_renderer;
 
-    HINSTANCE m_hInstance;
     WNDCLASSEX m_wc;
     HWND m_hWndMain;
     HDC m_hdc;
     HGLRC m_hrc;
     MSG m_msg;
-
-    bool m_arbMultisampleSupported;
-    int32_t m_arbMultisampleFormat;
-    int32_t m_aaSamples;
 };
 
 }

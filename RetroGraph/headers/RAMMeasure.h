@@ -15,12 +15,13 @@ public:
     RAMMeasure();
     ~RAMMeasure();
 
+    void init();
+
     /* Updates the system memory status values */
     void update();
 
     /* Draws the components of this object */
     void draw() const;
-
 
     /* Gets the total size of the system's physical memory in different
        byte units */
@@ -62,7 +63,6 @@ private:
     float getLoadPercentagef() const;
 
     MEMORYSTATUSEX m_memStatus;
-
     size_t dataSize; // max number of usage percentages to store
     std::vector<float> m_usageData;
 

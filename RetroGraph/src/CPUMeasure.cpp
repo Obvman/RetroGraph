@@ -14,7 +14,9 @@
 #include "../headers/colors.h"
 #include "../headers/utils.h"
 
-static unsigned long long FileTimeToInt64(const FILETIME & ft) {return (((unsigned long long)(ft.dwHighDateTime))<<32)|((unsigned long long)ft.dwLowDateTime);}
+unsigned long long FileTimeToInt64(const FILETIME & ft) {
+    return (((unsigned long long)(ft.dwHighDateTime))<<32)|((unsigned long long)ft.dwLowDateTime);
+}
 
 namespace rg {
 
@@ -25,11 +27,18 @@ CPUMeasure::CPUMeasure() :
     m_uptime{ std::chrono::milliseconds{GetTickCount64()} },
     m_cpuName{ } {
 
-    // fill vector with default values
-    m_usageData.assign(dataSize, 0.0f);
 }
 
 CPUMeasure::~CPUMeasure() {
+}
+
+void CPUMeasure::init() {
+    m_coreTempPlugin.init();
+
+    // fill vector with default values
+    m_usageData.assign(dataSize, 0.0f);
+
+    update();
 }
 
 void CPUMeasure::update() {

@@ -37,7 +37,12 @@ UserSettings::UserSettings() :
     m_windowHeight{ 1170U },
     m_startupMonitor{ 0U },
     m_netAdapterName{ "Intel(R) Ethernet Connection (2) I219-V"} {
+}
 
+UserSettings::~UserSettings() {
+}
+
+void UserSettings::init() {
     pt::ptree propTree;
     try {
         pt::ini_parser::read_ini(iniPath, propTree);
@@ -81,13 +86,6 @@ UserSettings::UserSettings() :
         m_createWindowX = monitorInfo.rcWork.left;
         m_createWindowY = monitorInfo.rcWork.top;
     }
-
-}
-
-UserSettings::~UserSettings() {
-}
-
-void UserSettings::init() {
 
 }
 

@@ -12,6 +12,8 @@ public:
     SystemInfo();
     ~SystemInfo();
 
+    void init();
+
     /* Returns string of current operating system version/build number */
     const std::string& getOSInfoStr() const { return m_osInfoStr; }
 

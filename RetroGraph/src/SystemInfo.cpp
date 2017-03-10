@@ -19,11 +19,16 @@ SystemInfo::SystemInfo() :
     m_ramDescription{},
     m_userName{ },
     m_computerName{ } {
+}
 
+
+SystemInfo::~SystemInfo() {
+}
+
+void SystemInfo::init() {
     getOSVersionInfo();
     getCPUInfo();
     getRAMInfo();
-
 
     // Get the current computer name
     char uNameBuf[MAX_COMPUTERNAME_LENGTH+1];
@@ -36,10 +41,6 @@ SystemInfo::SystemInfo() :
     DWORD cNameLen{ sizeof(cNameBuf) };
     GetComputerName(cNameBuf, &cNameLen);
     m_computerName.append(cNameBuf);
-}
-
-
-SystemInfo::~SystemInfo() {
 }
 
 void SystemInfo::getOSVersionInfo() {

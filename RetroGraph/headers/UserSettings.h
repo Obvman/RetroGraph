@@ -15,6 +15,8 @@ public:
     UserSettings();
     ~UserSettings();
 
+    void init();
+
     uint32_t getWindowWidth() const { return m_windowWidth; }
     uint32_t getWindowHeight() const { return m_windowHeight; }
     int32_t getWindowX() const { return m_createWindowX; }
@@ -23,7 +25,6 @@ public:
 
     const std::string& getNetAdapterName() const { return m_netAdapterName; }
 private:
-    void init();
     void generateDefaultFile(pt::ptree& propTree);
 
     // Window options

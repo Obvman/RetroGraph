@@ -12,6 +12,7 @@ public:
     NetMeasure(const std::string& netAdapterName);
     ~NetMeasure();
 
+    void init();
     void update();
 
     uint64_t getMaxDownValue() const { return m_downMaxVal; }

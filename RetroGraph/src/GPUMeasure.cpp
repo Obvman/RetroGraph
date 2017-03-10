@@ -16,7 +16,14 @@ NvAPI_GPU_GetUsages_t NvAPI_GPU_GetUsages{ nullptr };
 GPUMeasure::GPUMeasure() :
     dataSize{ 40U },
     m_usageData{} {
+}
 
+
+GPUMeasure::~GPUMeasure() {
+    NvAPI_Unload();
+}
+
+void GPUMeasure::init() {
     m_usageData.assign(dataSize, 0.0f);
 
     auto result{ NvAPI_Initialize() };
@@ -53,11 +60,8 @@ GPUMeasure::GPUMeasure() :
     m_memInfo.version = NV_DISPLAY_DRIVER_MEMORY_INFO_VER;
 
     m_pStateInfo.version = NV_GPU_DYNAMIC_PSTATES_INFO_EX_VER;
-}
 
-
-GPUMeasure::~GPUMeasure() {
-    NvAPI_Unload();
+    update();
 }
 
 void GPUMeasure::update() {

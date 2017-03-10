@@ -17,7 +17,12 @@ namespace rg {
 DriveMeasure::DriveMeasure() :
     m_drivePaths{},
     m_drives{} {
+}
 
+DriveMeasure::~DriveMeasure() {
+}
+
+void DriveMeasure::init() {
     // Enumerate all available logical drives and store the drive paths
     const auto driveMask{ GetLogicalDrives() };
     for (int8_t i{ 0U }; i < 26; ++i) {
@@ -48,12 +53,6 @@ DriveMeasure::DriveMeasure() :
         }
     }
 
-}
-
-DriveMeasure::~DriveMeasure() {
-}
-
-void DriveMeasure::init() {
     update(ticksPerSecond * 15);
 }
 

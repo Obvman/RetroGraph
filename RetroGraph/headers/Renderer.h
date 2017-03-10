@@ -23,10 +23,10 @@ class Renderer {
 public:
     Renderer(const CPUMeasure& _cpu, const GPUMeasure& _gpu, const RAMMeasure& _ram,
              const NetMeasure& _net, const ProcessMeasure& _proc, const DriveMeasure&
-             _drive, const SystemInfo& _sys, uint16_t windowWidth, uint16_t windowHeight);
+             _drive, const SystemInfo& _sys);
     ~Renderer();
 
-    void init(HWND hWnd);
+    void init(HWND hWnd, uint16_t windowWidth, uint16_t windowHeight);
 
     /* Releases all resources */
     void release();
@@ -34,6 +34,7 @@ public:
     /* Draws scene to the window */
     void draw(uint32_t ticks) const;
 private:
+    void initViewportBuffers(uint16_t windowWidth, uint16_t windowHeight);
     /* Creates font data and loads draw data into OpenGL call lists */
     void initFonts(HWND hWnd);
     /* Fill VBOs with intial vertex data */
@@ -78,21 +79,21 @@ private:
     std::vector<std::string> m_statsStrings;
 
     // Viewports for each widget
-    const GLint m_timeWidgetVP[4];
-    const GLint m_hddWidgetVP[4];
-    const GLint m_procWidgetVP[4];
-    const GLint m_statsWidgetVP[4];
+    GLint m_timeWidgetVP[4];
+    GLint m_hddWidgetVP[4];
+    GLint m_procWidgetVP[4];
+    GLint m_statsWidgetVP[4];
 
     // Graph widget viewport and sub-viewports
-    const GLint m_graphWidgetVP[4]; // Viewport of all graphs together
-    const GLint m_cpuGraphVP[4]; // viewport of graph relative to graphWidgetViewport
-    const GLint m_ramGraphVP[4];
-    const GLint m_gpuGraphVP[4];
-    const GLint m_netGraphVP[4];
+    GLint m_graphWidgetVP[4]; // Viewport of all graphs together
+    GLint m_cpuGraphVP[4]; // viewport of graph relative to graphWidgetViewport
+    GLint m_ramGraphVP[4];
+    GLint m_gpuGraphVP[4];
+    GLint m_netGraphVP[4];
 
     // Main widget viewport and sub-viewports
-    const GLint m_mainWidgetVP[4];
-    const GLint m_coreGraphsVP[4];
+    GLint m_mainWidgetVP[4];
+    GLint m_coreGraphsVP[4];
 
     // Font members
     GLint stdFontBase; // The default font

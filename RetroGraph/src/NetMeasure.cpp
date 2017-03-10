@@ -28,7 +28,12 @@ NetMeasure::NetMeasure(const std::string& netAdapterName) :
     m_downMaxVal{ 10U * GB },
     m_upMaxVal{ 10U * GB },
     dataSize{ 40U } {
+}
 
+NetMeasure::~NetMeasure() {
+}
+
+void NetMeasure::init() {
     // Fill data vectors with default values
     m_downBytes.assign(dataSize, 0U);
     m_upBytes.assign(dataSize, 0U);
@@ -51,9 +56,6 @@ NetMeasure::NetMeasure(const std::string& netAdapterName) :
     }
 
     getNetStats();
-}
-
-NetMeasure::~NetMeasure() {
 }
 
 void NetMeasure::getNetStats() {

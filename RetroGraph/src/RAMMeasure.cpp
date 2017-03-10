@@ -12,16 +12,20 @@ RAMMeasure::RAMMeasure() :
     m_memStatus{},
     dataSize{ 40U },
     m_usageData{} {
+}
 
+
+RAMMeasure::~RAMMeasure() {
+}
+
+void RAMMeasure::init() {
     // Fill the memory stat struct with system information
     m_memStatus.dwLength = sizeof(m_memStatus);
     GlobalMemoryStatusEx(&m_memStatus);
 
     m_usageData.assign(dataSize, 0.0f);
-}
 
-
-RAMMeasure::~RAMMeasure() {
+    update();
 }
 
 void RAMMeasure::update() {
