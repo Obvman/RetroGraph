@@ -82,7 +82,6 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
                 case ID_SEND_TO_BACK:
                     SetWindowPos(hWnd, HWND_BOTTOM, m_startPosX, m_startPosY,
                                  m_width, m_height, 0);
-                    SendMessage(HWND_BROADCAST, WM_SYSCOMMAND, SC_MINIMIZE, 0);
                     break;
                 case ID_RESET_POS:
                     SetWindowPos(hWnd, HWND_BOTTOM, m_startPosX, m_startPosY,
@@ -90,7 +89,8 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
                     break;
             }
         case WM_CONTEXTMENU:
-            createRClickMenu((HWND)wParam, LOWORD(lParam), HIWORD(lParam));
+            createRClickMenu(reinterpret_cast<HWND>(wParam),
+                             LOWORD(lParam), HIWORD(lParam));
             break;
         case WM_SETCURSOR:
             break;
@@ -137,7 +137,6 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
         case WM_DESTROY:
             return 0;
         default:
-            //std::cout << "Handling message code: " << msg << '\n';
             break;
     }
 
@@ -173,9 +172,8 @@ void Window::init() {
     m_measures.push_back(std::move(std::make_unique<ProcessMeasure>()));
     m_measures.push_back(std::move(std::make_unique<DriveMeasure>()));
 
-    for (const auto& pMeasure : m_measures) {
+    for (const auto& pMeasure : m_measures)
         pMeasure->init();
-    }
 
     m_systemInfo.init();
     m_renderer.init(m_hWndMain, m_width, m_height,
@@ -188,14 +186,12 @@ void Window::init() {
                     m_systemInfo);
 
     update(0);
-
     draw(0);
 }
 
 void Window::update(uint32_t ticks) {
-    for (const auto& pMeasure : m_measures) {
+    for (const auto& pMeasure : m_measures)
         pMeasure->update(ticks);
-    }
 }
 
 void Window::draw(uint32_t ticks) const {

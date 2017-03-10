@@ -69,7 +69,7 @@ private:
 
     HWND m_renderTargetHandle;
 
-    // References to data objects
+    // measure observers
     const CPUMeasure* m_cpuMeasure;
     const GPUMeasure* m_gpuMeasure;
     const RAMMeasure* m_ramMeasure;
