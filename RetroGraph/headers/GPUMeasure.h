@@ -17,7 +17,7 @@ public:
     GPUMeasure();
     ~GPUMeasure();
 
-    void init();
+    virtual void init();
 
     /* Get latest GPU stats from OpenGL or nvapi and updates dynamic members */
     virtual void update(uint32_t ticks);

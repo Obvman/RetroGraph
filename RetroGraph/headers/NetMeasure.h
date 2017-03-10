@@ -1,19 +1,23 @@
 #pragma once
 
+#include <stdint.h>
 #include <string>
 #include <vector>
+
+#include "Measure.h"
 
 struct _MIB_IF_ROW2;
 
 namespace rg {
 
-class NetMeasure {
+class NetMeasure : public Measure {
 public:
     NetMeasure();
     ~NetMeasure();
 
+    void init() {}
     void init(const std::string& netAdapterName);
-    void update();
+    virtual void update(uint32_t ticks);
 
     uint64_t getMaxDownValue() const { return m_downMaxVal; }
     uint64_t getMaxUpValue() const { return m_upMaxVal; }

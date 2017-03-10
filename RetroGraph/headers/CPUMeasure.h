@@ -20,7 +20,7 @@ public:
     CPUMeasure();
     ~CPUMeasure();
 
-    void init();
+    virtual void init();
 
     /* Updates the total system's CPU usage statistics */
     virtual void update(uint32_t ticks);

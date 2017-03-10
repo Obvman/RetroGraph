@@ -52,40 +52,40 @@ void DriveMeasure::init() {
             ));
         }
     }
-
-    update(ticksPerSecond * 15);
 }
 
 void DriveMeasure::update(uint32_t ticks) {
-    /* Refresh drive statistics. We won't consider drives being added/removed
-       since these are fixed drives and the program shouldn't be running in
-       those events */
-    for (const auto& pdi : m_drives) {
-        char path[4] = { pdi->getDriveLetter(), ':', '\\', '\0'};
+    if ((ticks % (ticksPerSecond * 2)) == 0) {
+        /* Refresh drive statistics. We won't consider drives being added/removed
+           since these are fixed drives and the program shouldn't be running in
+           those events */
+        for (const auto& pdi : m_drives) {
+            char path[4] = { pdi->getDriveLetter(), ':', '\\', '\0' };
 
-        // Only update drive capacity every 15 seconds
-        if ((ticks % (ticksPerSecond * 15)) == 0) {
+            // Only update drive capacity every 15 seconds
+            if ((ticks % (ticksPerSecond * 15)) == 0) {
 
-            ULARGE_INTEGER freeBytesAvailable;
-            ULARGE_INTEGER totalBytes;
-            ULARGE_INTEGER totalFreeBytes;
-            GetDiskFreeSpaceEx(path, &freeBytesAvailable,
-                               &totalBytes, &totalFreeBytes);
+                ULARGE_INTEGER freeBytesAvailable;
+                ULARGE_INTEGER totalBytes;
+                ULARGE_INTEGER totalFreeBytes;
+                GetDiskFreeSpaceEx(path, &freeBytesAvailable,
+                                   &totalBytes, &totalFreeBytes);
 
-            // We don't expect the max capacity of a fixed drive to change,
-            // so only update the DriveInfo with the freeBytes
-            pdi->setTotalFreeBytes(totalFreeBytes.QuadPart);
-        }
+                // We don't expect the max capacity of a fixed drive to change,
+                // so only update the DriveInfo with the freeBytes
+                pdi->setTotalFreeBytes(totalFreeBytes.QuadPart);
+            }
 
-        // Only check for drive name updates every 20 minutes
-        if ((ticks % (ticksPerSecond * 20)) == 0) {
-            char volumeNameBuff[maxVolumeNameSize];
-            GetVolumeInformation(path, volumeNameBuff, maxVolumeNameSize,
-                                 nullptr, nullptr, nullptr, nullptr, 0);
+            // Only check for drive name updates every 20 minutes
+            if ((ticks % (ticksPerSecond * 20)) == 0) {
+                char volumeNameBuff[maxVolumeNameSize];
+                GetVolumeInformation(path, volumeNameBuff, maxVolumeNameSize,
+                                     nullptr, nullptr, nullptr, nullptr, 0);
 
-            // If the volume name has been changed, update the drive info object
-            if (pdi->getVolumeName() != volumeNameBuff) {
-                pdi->setVolumeName(std::string{volumeNameBuff});
+                // If the volume name has been changed, update the drive info object
+                if (pdi->getVolumeName() != volumeNameBuff) {
+                    pdi->setVolumeName(std::string{ volumeNameBuff });
+                }
             }
         }
     }

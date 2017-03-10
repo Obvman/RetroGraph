@@ -176,34 +176,23 @@ void Window::init() {
     m_ramMeasure.init();
     m_processMeasure.init();
     m_driveMeasure.init();
-    m_systemInfo.init();
     m_netMeasure.init(m_userSettings.getNetAdapterName());
 
+    m_systemInfo.init();
     m_renderer.init(m_hWndMain, m_width, m_height);
 
-    m_cpuMeasure.update(0);
-    m_gpuMeasure.update(0);
+    update(0);
 
-    draw(0); // TODO change this value to guarantee drawing in the very first frame
+    draw(0);
 }
 
 void Window::update(uint32_t ticks) {
     m_cpuMeasure.update(ticks);
     m_gpuMeasure.update(ticks);
-
-    // half-second updates
-    if ((ticks % (ticksPerSecond/2)) == 0) {
-        m_ramMeasure.update();
-        m_netMeasure.update();
-    }
-
-    // Full second updates
-    if ((ticks % (ticksPerSecond * 2)) == 0) {
-        m_driveMeasure.update(ticks);
-    }
-
+    m_ramMeasure.update(ticks);
+    m_netMeasure.update(ticks);
+    m_driveMeasure.update(ticks);
     m_processMeasure.update(ticks);
-
 }
 
 void Window::draw(uint32_t ticks) const {

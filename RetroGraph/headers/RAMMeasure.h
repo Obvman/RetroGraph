@@ -1,24 +1,26 @@
 #pragma once
 
+#include <stdint.h>
+#include <vector>
 #include <Windows.h>
 #include <GL/glew.h>
 #include <GL/gl.h>
-#include <vector>
 
+#include "Measure.h"
 #include "utils.h"
 
 namespace rg {
 
 /* Stores capacity totals and availability for system RAM */
-class RAMMeasure {
+class RAMMeasure : public Measure {
 public:
     RAMMeasure();
     ~RAMMeasure();
 
-    void init();
+    virtual void init();
 
     /* Updates the system memory status values */
-    void update();
+    virtual void update(uint32_t ticks);
 
     /* Draws the components of this object */
     void draw() const;

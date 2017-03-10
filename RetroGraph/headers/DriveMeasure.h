@@ -6,21 +6,22 @@
 
 #include <GL/glew.h>
 
+#include "Measure.h"
 #include "DriveInfo.h"
 
 namespace rg {
 
 /* Stores paths and statistics about all the system's fixed drives */
-class DriveMeasure {
+class DriveMeasure : public Measure {
 public:
     DriveMeasure();
     ~DriveMeasure();
 
     /* Enumerates the available system drives and stores initial state of each drive */
-    void init();
+    virtual void init();
 
     /* Updates each drive with new values */
-    void update(uint32_t ticks);
+    virtual void update(uint32_t ticks);
 
     /* Returns the number of fixed drives active in the system */
     size_t getNumDrives() const { return m_drives.size(); }

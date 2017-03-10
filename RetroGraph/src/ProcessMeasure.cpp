@@ -46,7 +46,6 @@ void ProcessMeasure::init() {
     populateList();
     fillRAMData();
 }
-// TODO benchmark using vector vs list
 
 void ProcessMeasure::update(uint32_t ticks) {
     // Update the process list vector every 10 seconds
