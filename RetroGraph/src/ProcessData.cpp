@@ -67,7 +67,7 @@ void ProcessData::setTimes(const FILETIME& cTime, const FILETIME& eTime,
 
 void ProcessData::updateMemCounters() {
     if (!GetProcessMemoryInfo(m_pHandle, &m_memCounters, sizeof(decltype(m_memCounters)))) {
-        auto error = GetLastError();
+        auto error{ GetLastError() };
         fatalMessageBox("Failed to get process memory information. Error: " + std::to_string(error));
     }
 }

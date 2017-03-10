@@ -9,8 +9,12 @@ volume, current sound output level bar - IAudioPeakMeter
 3D effects on graph
 framerate of currently focussed window
 
+move away from some auto initialisations
+
 have appearance states for when API calls fail/don't return a value, also
 prevent update calls that fail from crashing the program
+
+convert auto i{ 0U } in for loops to size_t
 
 BUG: right click menu pauses drawing.
 

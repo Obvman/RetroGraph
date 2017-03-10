@@ -71,8 +71,8 @@ void CPUMeasure::update(uint32_t ticks) {
         m_usageData[0] = totalLoad;
         std::rotate(m_usageData.begin(), m_usageData.begin() + 1, m_usageData.end());
 
-        for (auto i{ 0U }; i < m_perCoreData.size(); ++i) {
-            const auto coreUsage{ static_cast<float>(m_coreTempPlugin.getLoad(i)) / 100.0f };
+        for (auto i = size_t{ 0U }; i < m_perCoreData.size(); ++i) {
+            const auto coreUsage = float{ m_coreTempPlugin.getLoad(i) / 100.0f };
             m_perCoreData[i][0] = coreUsage;
             std::rotate(m_perCoreData[i].begin(),
                         m_perCoreData[i].begin() + 1, m_perCoreData[i].end());
@@ -93,12 +93,11 @@ float CPUMeasure::getCPULoad() {
         FileTimeToInt64(kernelTime) + FileTimeToInt64(userTime));
 }
 std::string CPUMeasure::getUptimeStr() const {
-    const auto uptimeS = (m_uptime / 1000) % 60;
-    const auto uptimeM = (m_uptime / (60 * 1000)) % 60;
-    const auto uptimeH = (m_uptime / (1000 * 60 * 60)) % 24;
-    const auto uptimeD = (m_uptime / (1000 * 60 * 60 * 24));
+    const auto uptimeS{ (m_uptime / 1000) % 60 };
+    const auto uptimeM{ (m_uptime / (60 * 1000)) % 60 };
+    const auto uptimeH{ (m_uptime / (1000 * 60 * 60)) % 24 };
+    const auto uptimeD{ (m_uptime / (1000 * 60 * 60 * 24)) };
 
-    // TODO use snprintf
     char buff[12];
     snprintf(buff, sizeof(buff), "%02lld:%02lld:%02lld:%02lld",
              uptimeD.count(), uptimeH.count(), uptimeM.count(), uptimeS.count());

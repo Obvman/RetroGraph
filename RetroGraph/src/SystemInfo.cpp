@@ -101,7 +101,7 @@ void SystemInfo::getCPUInfo() {
     int32_t CPUInfo[4] = {-1};
     // Get the information associated with each extended ID.
     __cpuid(CPUInfo, 0x80000000);
-    const auto nExIds = CPUInfo[0];
+    const auto nExIds{ CPUInfo[0] };
     char CPUBrandString[0x40];
     for (int32_t i = 0x80000000; i <= nExIds; ++i) {
         __cpuid(CPUInfo, i);

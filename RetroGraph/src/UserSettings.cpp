@@ -21,7 +21,7 @@ struct MonitorInfo {
 BOOL CALLBACK MonitorCallback(HMONITOR hMonitor, HDC hdc, LPRECT lpRect, LPARAM dwData) {
     static uint16_t monCount{ 0 };
 
-    auto info = (MonitorInfo*)dwData;
+    auto info{ reinterpret_cast<MonitorInfo*>(dwData) };
 
     if (info->index == monCount) {
         info->handle = hMonitor;

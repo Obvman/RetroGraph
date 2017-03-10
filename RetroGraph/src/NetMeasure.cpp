@@ -45,7 +45,7 @@ void NetMeasure::init() {
     }
 
     // Get the adapter struct that corresponds to the hard-coded adapter name
-    for (auto i{ 0U }; i < table->NumEntries; ++i) {
+    for (auto i = size_t{ 0U }; i < table->NumEntries; ++i) {
         if (wcscmp(table->Table[i].Description, strToWstr(m_mainAdapter).c_str()) == 0) {
             m_adapterEntry = &table->Table[i];
             break;
@@ -61,11 +61,11 @@ void NetMeasure::init() {
 
 void NetMeasure::getNetStats() {
     { // Get DNS and Hostname
-        auto pFixedInfo = (FIXED_INFO*)malloc(sizeof(FIXED_INFO));
+        auto pFixedInfo{ (FIXED_INFO*)malloc(sizeof(FIXED_INFO)) };
         if (pFixedInfo == NULL) {
             printf("Error allocating memory needed to call GetNetworkParams\n");
         }
-        ULONG ulOutBufLen{ sizeof(FIXED_INFO) };
+        auto ulOutBufLen = ULONG{ sizeof(FIXED_INFO) };
 
         // Make an initial call to GetNetworkParams to get
         // the necessary size into the ulOutBufLen variable
@@ -90,8 +90,8 @@ void NetMeasure::getNetStats() {
     }
 
     { // Get MAC and LAN IP for main adapter
-        auto pAdapterInfo = (IP_ADAPTER_INFO*)malloc(sizeof(IP_ADAPTER_INFO));
-        ULONG ulOutBufLen{ sizeof(IP_ADAPTER_INFO) };
+        auto pAdapterInfo{ (IP_ADAPTER_INFO*)malloc(sizeof(IP_ADAPTER_INFO)) };
+        auto ulOutBufLen = ULONG{ sizeof(IP_ADAPTER_INFO) };
 
         if (GetAdaptersInfo(pAdapterInfo, &ulOutBufLen) == ERROR_BUFFER_OVERFLOW) {
             free(pAdapterInfo);
@@ -104,28 +104,29 @@ void NetMeasure::getNetStats() {
 
         // Get the MAC address and LAN IP address of the main adapter
         if (GetAdaptersInfo(pAdapterInfo, &ulOutBufLen) == NO_ERROR) {
-            auto pAdapter = pAdapterInfo;
-            while (pAdapter) {
-                if (m_mainAdapter == pAdapter->Description) {
+            auto currAdapter{ pAdapterInfo };
+            while (currAdapter) {
+                if (m_mainAdapter == currAdapter->Description) {
                     std::stringstream macStream;
                     macStream << std::hex << std::uppercase << std::setfill('0');
-                    for (auto i{ 0U }; i < pAdapter->AddressLength; i++) {
-                        if (i == (pAdapter->AddressLength - 1)) {
+                    for (auto i = size_t{ 0U }; i < currAdapter->AddressLength; i++) {
+                        if (i == (currAdapter->AddressLength - 1)) {
                             macStream << std::setw(2)
-                                      << (int)pAdapter->Address[i];
+                                      << static_cast<int>(currAdapter->Address[i]);
                         } else {
                             macStream << std::setw(2)
-                                      << (int)pAdapter->Address[i] << '-';
+                                      << static_cast<int>(currAdapter->Address[i])
+                                      << '-';
                         }
                     }
 
                     m_mainAdapterMAC = macStream.str();
                     m_mainAdapterIP = std::string{
-                        pAdapter->IpAddressList.IpAddress.String
+                        currAdapter->IpAddressList.IpAddress.String
                     };
                     break;
                 }
-                pAdapter = pAdapter->Next;
+                currAdapter = currAdapter->Next;
             }
         } else {
             fatalMessageBox("GetAdaptersInfo failed");

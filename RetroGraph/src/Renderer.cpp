@@ -220,16 +220,16 @@ void Renderer::initVBOs() {
 
     // Graph background grid VBO:
     {
-        constexpr size_t numVertLines{ 14U };
-        constexpr size_t numHorizLines{ 7U };
+        constexpr auto numVertLines = size_t{ 14U };
+        constexpr auto numHorizLines = size_t{ 7U };
 
-        std::vector<GLfloat> gVerts;
-        std::vector<GLuint> gIndices;
+        auto gVerts = std::vector<GLfloat>{};
+        auto gIndices = std::vector<GLuint>{};
         gVerts.reserve(4 * (numVertLines + numHorizLines) );
         gIndices.reserve(2 * (numVertLines + numHorizLines) );
 
         // Fill the vertex and index arrays with data for drawing grid as VBO
-        for (auto i{ 0U }; i < numVertLines; ++i) {
+        for (auto i = size_t{ 0U }; i < numVertLines; ++i) {
             const float x{ (i)/static_cast<float>(numVertLines-1) * 2.0f - 1.0f };
             gVerts.push_back(x);
             gVerts.push_back(1.0f); // Vertical line top vert
@@ -243,7 +243,7 @@ void Renderer::initVBOs() {
 
         // Offset value for the index array
         const auto vertLineIndexCount{ gIndices.size() };
-        for (auto i{ 0U }; i < numHorizLines; ++i) {
+        for (auto i = size_t{ 0U }; i < numHorizLines; ++i) {
             const float y{ static_cast<float>(i)/(numHorizLines-1) * 2.0f - 1.0f };
             gVerts.push_back(-1.0f);
             gVerts.push_back(y); // Horizontal line bottom vert
@@ -319,7 +319,7 @@ void Renderer::draw(uint32_t ticks) const {
 
 void Renderer::drawFilledGraph(const std::vector<float> data) const {
     glBegin(GL_QUADS); {
-        for (auto i{ 0U }; i < data.size() - 1; ++i) {
+        for (auto i = size_t{ 0U }; i < data.size() - 1; ++i) {
             glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.7f);
 
             const auto x1 = float{ (static_cast<float>(i) / (data.size() - 1)) * 2.0f - 1.0f };
@@ -338,7 +338,7 @@ void Renderer::drawFilledGraph(const std::vector<float> data) const {
 void Renderer::drawLineGraph(const std::vector<float> data) const {
     glBegin(GL_LINE_STRIP); {
         // Draw each node in the graph
-        for (auto i{ 0U }; i < data.size(); ++i) {
+        for (auto i = size_t{ 0U }; i < data.size(); ++i) {
             glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
 
             const auto x = float{ (static_cast<float>(i) / (data.size() - 1))
@@ -387,7 +387,7 @@ void Renderer::drawCoreGraphs() const {
     const auto numRows{ numCores / 2 }; // Fair to assume we have an even number of cores
 
     glLineWidth(0.5f);
-    for (auto i{ 0U }; i < numCores; ++i) {
+    for (auto i = size_t{ 0U }; i < numCores; ++i) {
         // Set the viewport for the current graph. If i is even, the graph
         // sits on the left, otherwise it's on the right. The y position
         // of each graph changes as we draw more
@@ -607,14 +607,14 @@ void Renderer::drawNetGraph() const {
         const auto maxDownValMB{ m_netMeasure->getMaxDownValue() /
                                  static_cast<float>(MB) };
         const auto maxUpValMB{ m_netMeasure->getMaxUpValue() /
-                                 static_cast<float>(MB) };
+                               static_cast<float>(MB) };
 
-        const auto maxValMB = max(maxUpValMB, maxDownValMB);
+        const auto maxValMB{ max(maxUpValMB, maxDownValMB) };
 
         // Draw the download graph
         glBegin(GL_QUADS); {
             glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.7f);
-            for (auto i{ 0U }; i < downData.size() - 1; ++i) {
+            for (auto i = size_t{ 0U }; i < downData.size() - 1; ++i) {
                 const auto percent1 = float{ (downData[i] / static_cast<float>(MB)) / maxValMB };
                 const auto percent2 = float{ (downData[i+1] / static_cast<float>(MB)) / maxValMB };
 
@@ -633,7 +633,7 @@ void Renderer::drawNetGraph() const {
         // Draw the upload graph
         glBegin(GL_QUADS); {
             glColor4f(PINK1_R, PINK1_G, PINK1_B, 0.7f);
-            for (auto i{ 0U }; i < upData.size() - 1; ++i) {
+            for (auto i = size_t{ 0U }; i < upData.size() - 1; ++i) {
                 const auto percent1 = float{ (upData[i] / static_cast<float>(MB)) / maxValMB };
                 const auto percent2 = float{ (upData[i+1] / static_cast<float>(MB)) / maxValMB };
 

@@ -301,8 +301,8 @@ bool Window::createHGLRC() {
     }
 
     // Make window transparent via dwm
+    const auto hRgn{ CreateRectRgn(0, 0, -1, -1) };
     DWM_BLURBEHIND bb = {0};
-    const auto hRgn = CreateRectRgn(0, 0, -1, -1);
     bb.dwFlags = DWM_BB_ENABLE | DWM_BB_BLURREGION;
     bb.hRgnBlur = hRgn;
     bb.fEnable = TRUE;

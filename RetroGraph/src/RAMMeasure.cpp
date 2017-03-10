@@ -59,8 +59,8 @@ void RAMMeasure::draw() const {
 }
 
 void RAMMeasure::drawBar() const {
-    const auto percent = getLoadPercentagef() * 2.0f;
-    constexpr float xLoc{ -0.95f };
+    constexpr auto xLoc = float{ -0.95f };
+    const auto percent{ getLoadPercentagef() * 2.0f };
 
     float lineWidth;
     glGetFloatv(GL_LINE_WIDTH, &lineWidth);
@@ -79,18 +79,17 @@ void RAMMeasure::drawBar() const {
     } glEnd();
 
     glLineWidth(lineWidth);
-
 }
 
 void RAMMeasure::drawText() const {
     const auto rasterX = float{ -0.957f };
     const auto rasterY = float{ 0.87f };
 
-    auto percent = "RAM: " + std::to_string(getLoadPercentage()) + "%";
+    const auto percentStr = "RAM: " + std::to_string(getLoadPercentage()) + "%";
 
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
     glRasterPos2f(rasterX, rasterY);
-    glCallLists(percent.length(), GL_UNSIGNED_BYTE, percent.c_str());
+    glCallLists(percentStr.length(), GL_UNSIGNED_BYTE, percentStr.c_str());
 }
 
 void RAMMeasure::drawGraph() const {
@@ -101,7 +100,7 @@ void RAMMeasure::drawGraph() const {
     //glUseProgram(shader);
     glBegin(GL_LINE_STRIP); {
         // Draw each node in the graph
-        for (auto i{ 0U }; i < m_usageData.size(); ++i) {
+        for (auto i = size_t{ 0U }; i < m_usageData.size(); ++i) {
             glColor4f(LINE_R, LINE_G, LINE_B, 1.0f);
 
             float x = (static_cast<float>(i) / (m_usageData.size() - 1)) * 2.0f - 1.0f;
@@ -122,7 +121,7 @@ void RAMMeasure::drawGraph() const {
 }
 
 float RAMMeasure::getLoadPercentagef() const {
-    return (static_cast<float>(getUsedPhysicalB()) / 
+    return (static_cast<float>(getUsedPhysicalB()) /
             static_cast<float>(getTotalPhysicalB()));
 }
 

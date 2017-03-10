@@ -48,7 +48,7 @@ int main() {
 void mainLoop(rg::Window& mainWindow) {
     using namespace std::chrono;
 
-    auto start{ duration_cast<milliseconds>(
+    auto frameStartTime{ duration_cast<milliseconds>(
         system_clock::now().time_since_epoch()).count()
     };
     auto ticks = uint32_t{ 1 };
@@ -61,7 +61,7 @@ void mainLoop(rg::Window& mainWindow) {
         const auto currTime{ duration_cast<milliseconds>(
                                   system_clock::now().time_since_epoch()
                              ).count() };
-        const auto dt{ currTime - start };
+        const auto dt{ currTime - frameStartTime };
 
         // Handle windows messages
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
@@ -83,7 +83,7 @@ void mainLoop(rg::Window& mainWindow) {
 
         // Reset the millisecond counter every tick
         if (dt > rg::tickDuration) {
-            start = currTime;
+            frameStartTime = currTime;
             ++ticks;
         }
 

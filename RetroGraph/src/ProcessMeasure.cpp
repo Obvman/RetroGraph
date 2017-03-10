@@ -55,15 +55,15 @@ void ProcessMeasure::update(uint32_t ticks) {
 
     if ((ticks % (ticksPerSecond * 2)) == 0) {
         // Track iterator outside while scope for std::erase
-        auto it = m_allProcessData.begin();
+        auto it{ m_allProcessData.begin() };
         while (it != m_allProcessData.end()) {
-            auto& pd = **it; // get reference to ProcessData for convenience
+            auto& pd{ **it }; // get reference to ProcessData for convenience
 
             // Get the process relating to the ProcessData object
-            const auto pHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
-                                         false, pd.getPID());
+            const auto pHandle{ OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
+                                            false, pd.getPID()) };
             if (!pHandle) {
-                auto error = GetLastError();
+                const auto error{ GetLastError() };
                 // If access is denied or the process is the system idle process, just silently skip the process
                 if (error != ERROR_ACCESS_DENIED && pd.getPID() != 0) {
                     fatalMessageBox("Failed to open process. Code: " + std::to_string(error));
@@ -149,13 +149,6 @@ double ProcessMeasure::calculateCPUUsage(HANDLE pHandle, ProcessData& oldData) {
         const auto sysUserDiff{ subtractTimes(sysUser, oldData.getLastSystemUserTime()) };
         const auto totalSys{ sysKernelDiff + sysUserDiff };
 
-        /*SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION sppi;
-        ULONG len;
-        NtQuerySystemInformation(SystemProcessorPerformanceInformation, &sppi, sizeof(sppi), &len);
-        auto sysTime = sppi.KernelTime.QuadPart + sppi.UserTime.QuadPart;
-        auto totalSys2 = sysTime - oldData.getLastSystemTime();
-        const double cpuUse2 = static_cast<double>(100 * totalProc) / static_cast<double>(totalSys2);*/
-
         // Get the CPU usage as a percentage
         const double cpuUse = static_cast<double>(100 * totalProc) / static_cast<double>(totalSys);
 
@@ -193,10 +186,10 @@ void ProcessMeasure::populateList() {
 
         const auto procID{ reinterpret_cast<DWORD>(spi->ProcessId) };
 
-        const auto pHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
-                                         false, procID);
+        const auto pHandle{ OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
+                                        false, procID) };
         if (!pHandle) {
-            const auto error = GetLastError();
+            const auto error{ GetLastError() };
             // If access is denied or the process is the system idle process, just silently skip the process
             if (error != ERROR_ACCESS_DENIED && procID != 0) {
                 fatalMessageBox("Failed to open process. Code: " + std::to_string(error));
@@ -241,7 +234,8 @@ void ProcessMeasure::detectNewProcesses() {
     // Loop over the process list for any new processes
     for ( ;
           spi->NextEntryOffset;
-          spi = reinterpret_cast<PSYSTEM_PROCESS_INFO>(reinterpret_cast<LPBYTE>(spi) + spi->NextEntryOffset)) {
+          spi = reinterpret_cast<PSYSTEM_PROCESS_INFO>(
+                    reinterpret_cast<LPBYTE>(spi) + spi->NextEntryOffset)) {
 
         const auto procID{ reinterpret_cast<DWORD>(spi->ProcessId) };
 
@@ -253,10 +247,10 @@ void ProcessMeasure::detectNewProcesses() {
 
         // If it doesn't exist, create a new ProcessData object in the list
         if (it == m_allProcessData.cend()) {
-            auto pHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
-                                       false, procID);
+            auto pHandle{ OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
+                                       false, procID) };
             if (!pHandle) {
-                const auto error = GetLastError();
+                const auto error{ GetLastError() };
                 // If access is denied or the process is the system idle process, just silently skip the process
                 if (error != ERROR_ACCESS_DENIED &&
                     procID != 0) {
@@ -265,8 +259,8 @@ void ProcessMeasure::detectNewProcesses() {
                 }
             } else {
                 // Convert the ImageName buffer from wchar* to char*
-                size_t charsConverted{ 0U };
-                char* nameBuff = new char[spi->ImageName.Length];
+                auto charsConverted = size_t{ 0U };
+                auto nameBuff{ new char[spi->ImageName.Length] };
                 wcstombs_s(&charsConverted, nameBuff, spi->ImageName.Length, spi->ImageName.Buffer, spi->ImageName.Length);
 
                 m_allProcessData.emplace_back(std::make_shared<ProcessData>(pHandle,
