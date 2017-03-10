@@ -21,12 +21,14 @@ class GLShaderHandler;
 /* In charge of rendering each component's data to the window */
 class Renderer {
 public:
-    Renderer(const CPUMeasure& _cpu, const GPUMeasure& _gpu, const RAMMeasure& _ram,
-             const NetMeasure& _net, const ProcessMeasure& _proc, const DriveMeasure&
-             _drive, const SystemInfo& _sys);
+    Renderer();
     ~Renderer();
 
-    void init(HWND hWnd, uint16_t windowWidth, uint16_t windowHeight);
+    void init(HWND hWnd, uint16_t windowWidth, uint16_t windowHeight,
+                    const CPUMeasure& _cpu, const GPUMeasure& _gpu,
+                   const RAMMeasure& _ram, const NetMeasure& _net,
+                   const ProcessMeasure& _proc, const DriveMeasure& _drive,
+                   const SystemInfo& _sys);
 
     /* Releases all resources */
     void release();
@@ -68,13 +70,13 @@ private:
     HWND m_renderTargetHandle;
 
     // References to data objects
-    const CPUMeasure& m_cpuMeasure;
-    const GPUMeasure& m_gpuMeasure;
-    const RAMMeasure& m_ramMeasure;
-    const NetMeasure& m_netMeasure;
-    const ProcessMeasure& m_processMeasure;
-    const DriveMeasure& m_driveMeasure;
-    const SystemInfo& m_sysInfo;
+    const CPUMeasure* m_cpuMeasure;
+    const GPUMeasure* m_gpuMeasure;
+    const RAMMeasure* m_ramMeasure;
+    const NetMeasure* m_netMeasure;
+    const ProcessMeasure* m_processMeasure;
+    const DriveMeasure* m_driveMeasure;
+    const SystemInfo* m_sysInfo;
 
     std::vector<std::string> m_statsStrings;
 

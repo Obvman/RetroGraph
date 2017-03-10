@@ -35,8 +35,7 @@ Window::Window(HINSTANCE hInstance) :
     m_driveMeasure{ },
     m_netMeasure{},
     m_systemInfo{ },
-    m_renderer{ m_cpuMeasure, m_gpuMeasure, m_ramMeasure, m_netMeasure,
-                m_processMeasure, m_driveMeasure, m_systemInfo }
+    m_renderer{}
 {
 }
 
@@ -179,7 +178,9 @@ void Window::init() {
     m_netMeasure.init(m_userSettings.getNetAdapterName());
 
     m_systemInfo.init();
-    m_renderer.init(m_hWndMain, m_width, m_height);
+    m_renderer.init(m_hWndMain, m_width, m_height, m_cpuMeasure, m_gpuMeasure,
+                    m_ramMeasure, m_netMeasure, m_processMeasure, m_driveMeasure,
+                    m_systemInfo);
 
     update(0);
 

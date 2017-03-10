@@ -42,17 +42,7 @@ void vboDrawScope(GLuint vertID, GLuint indexID, F f) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-Renderer::Renderer(const CPUMeasure& _cpu, const GPUMeasure& _gpu,
-                   const RAMMeasure& _ram, const NetMeasure& _net,
-                   const ProcessMeasure& _proc, const DriveMeasure& _drive,
-                   const SystemInfo& _sys) :
-    m_cpuMeasure{ _cpu },
-    m_gpuMeasure{ _gpu },
-    m_ramMeasure{ _ram },
-    m_netMeasure{ _net },
-    m_processMeasure{ _proc },
-    m_driveMeasure{ _drive },
-    m_sysInfo{ _sys }
+Renderer::Renderer()
 {
 
 }
@@ -60,19 +50,31 @@ Renderer::Renderer(const CPUMeasure& _cpu, const GPUMeasure& _gpu,
 Renderer::~Renderer() {
 }
 
-void Renderer::init(HWND hWnd, uint16_t windowWidth, uint16_t windowHeight) {
+void Renderer::init(HWND hWnd, uint16_t windowWidth, uint16_t windowHeight,
+                    const CPUMeasure& _cpu, const GPUMeasure& _gpu,
+                    const RAMMeasure& _ram, const NetMeasure& _net,
+                    const ProcessMeasure& _proc, const DriveMeasure& _drive,
+                    const SystemInfo& _sys) {
+    m_cpuMeasure = &_cpu;
+    m_gpuMeasure = &_gpu;
+    m_ramMeasure = &_ram;
+    m_netMeasure = &_net;
+    m_processMeasure = &_proc;
+    m_driveMeasure = &_drive;
+    m_sysInfo = &_sys;
+
     initViewportBuffers(windowWidth, windowHeight);
 
-    m_statsStrings.emplace_back(m_sysInfo.getUserName() + "@" +
-                                m_sysInfo.getComputerName());
-    m_statsStrings.emplace_back(m_sysInfo.getOSInfoStr());
-    m_statsStrings.emplace_back(m_cpuMeasure.getCPUName());
-    m_statsStrings.emplace_back(m_sysInfo.getGPUDescription());
-    m_statsStrings.emplace_back(m_sysInfo.getRAMDescription());
-    m_statsStrings.emplace_back("DNS: " + m_netMeasure.getDNS());
-    m_statsStrings.emplace_back("Hostname: " + m_netMeasure.getHostname());
-    m_statsStrings.emplace_back("MAC: " + m_netMeasure.getAdapterMAC());
-    m_statsStrings.emplace_back("LAN IP: " + m_netMeasure.getAdapterIP());
+    m_statsStrings.emplace_back(m_sysInfo->getUserName() + "@" +
+                                m_sysInfo->getComputerName());
+    m_statsStrings.emplace_back(m_sysInfo->getOSInfoStr());
+    m_statsStrings.emplace_back(m_cpuMeasure->getCPUName());
+    m_statsStrings.emplace_back(m_sysInfo->getGPUDescription());
+    m_statsStrings.emplace_back(m_sysInfo->getRAMDescription());
+    m_statsStrings.emplace_back("DNS: " + m_netMeasure->getDNS());
+    m_statsStrings.emplace_back("Hostname: " + m_netMeasure->getHostname());
+    m_statsStrings.emplace_back("MAC: " + m_netMeasure->getAdapterMAC());
+    m_statsStrings.emplace_back("LAN IP: " + m_netMeasure->getAdapterIP());
 
     initFonts(hWnd);
     initVBOs();
@@ -370,7 +372,7 @@ void Renderer::drawCpuGraph() const {
     { // Line graph
         glLineWidth(0.5f);
 
-        const auto& data{ m_cpuMeasure.getUsageData() };
+        const auto& data{ m_cpuMeasure->getUsageData() };
 
         //glUseProgram(m_cpuGraphShader);
 
@@ -445,7 +447,7 @@ void Renderer::drawRamGraph() const {
     {// Draw the line graph
         glLineWidth(0.5f);
 
-        const auto& data{ m_ramMeasure.getUsageData() };
+        const auto& data{ m_ramMeasure->getUsageData() };
         glBegin(GL_LINE_STRIP); {
             // Draw each node in the graph
             for (auto i{ 0U }; i < data.size(); ++i) {
@@ -507,7 +509,7 @@ void Renderer::drawGpuGraph() const {
 
     {// Draw the line graph
         glLineWidth(0.5f);
-        const auto& data{ m_gpuMeasure.getUsageData() };
+        const auto& data{ m_gpuMeasure->getUsageData() };
         glBegin(GL_QUADS); {
             // Draw each node in the graph
             for (auto i{ 0U }; i < data.size() - 1; ++i) {
@@ -575,11 +577,11 @@ void Renderer::drawNetGraph() const {
 
     {// Draw the line graph
         glLineWidth(0.5f);
-        const auto& downData{ m_netMeasure.getDownData() };
-        const auto& upData{ m_netMeasure.getUpData() };
-        const auto maxDownValMB{ m_netMeasure.getMaxDownValue() /
+        const auto& downData{ m_netMeasure->getDownData() };
+        const auto& upData{ m_netMeasure->getUpData() };
+        const auto maxDownValMB{ m_netMeasure->getMaxDownValue() /
                                  static_cast<float>(MB) };
-        const auto maxUpValMB{ m_netMeasure.getMaxUpValue() /
+        const auto maxUpValMB{ m_netMeasure->getMaxUpValue() /
                                  static_cast<float>(MB) };
 
         const auto maxValMB = max(maxUpValMB, maxDownValMB);
@@ -628,7 +630,7 @@ void Renderer::drawNetGraph() const {
                    m_netGraphVP[2] / 5, m_netGraphVP[3]);
         glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
-        const auto maxVal{ m_netMeasure.getMaxDownValue() };
+        const auto maxVal{ m_netMeasure->getMaxDownValue() };
 
         std::string suffix{ "B" };
         if (maxVal > 1000) {
@@ -698,7 +700,7 @@ void Renderer::drawProcCPUList() const {
     const auto rasterX = float{ -0.95f };
     auto rasterY = float{ 0.79f }; // Y changes for each process drawn
 
-    for (const auto& pair : m_processMeasure.getProcCPUData()) {
+    for (const auto& pair : m_processMeasure->getProcCPUData()) {
         // Draw the process name
         glRasterPos2f(rasterX, rasterY);
         glCallLists(pair.first.length(), GL_UNSIGNED_BYTE, pair.first.c_str());
@@ -709,7 +711,7 @@ void Renderer::drawProcCPUList() const {
         snprintf(buff, sizeof(buff), "%4.1f%%", pair.second);
         glCallLists(sizeof(buff), GL_UNSIGNED_BYTE, buff);
 
-        rasterY -= 1.8f / (m_processMeasure.getProcCPUData().size());
+        rasterY -= 1.8f / (m_processMeasure->getProcCPUData().size());
     }
 }
 
@@ -719,7 +721,7 @@ void Renderer::drawProcRAMList() const {
     const auto rasterX = float{ 0.05f };
     auto rasterY = float{ 0.79f }; // Y changes for each process drawn
 
-    for (const auto& pair : m_processMeasure.getProcRAMData()) {
+    for (const auto& pair : m_processMeasure->getProcRAMData()) {
         // Draw the process name
         glRasterPos2f(rasterX, rasterY);
         glCallLists(pair.first.length(), GL_UNSIGNED_BYTE, pair.first.c_str());
@@ -736,7 +738,7 @@ void Renderer::drawProcRAMList() const {
         glRasterPos2f(0.84f, rasterY);
         glCallLists(sizeof(buff), GL_UNSIGNED_BYTE, buff);
 
-        rasterY -= 1.8f / (m_processMeasure.getProcCPUData().size());
+        rasterY -= 1.8f / (m_processMeasure->getProcCPUData().size());
     }
 
 }
@@ -785,9 +787,9 @@ void Renderer::drawHDDWidget() const {
     } glEnd();
 
     glPushMatrix();
-    const auto numDrives{ m_driveMeasure.getNumDrives() };
+    const auto numDrives{ m_driveMeasure->getNumDrives() };
     // For each drive, draw a bar and label in the widget
-    for (const auto& pdi : m_driveMeasure.getDrives()) {
+    for (const auto& pdi : m_driveMeasure->getDrives()) {
         drawHDDBar(*pdi);
 
         // Draw the drive label below the bar
@@ -898,7 +900,7 @@ void Renderer::drawTimeWidget() const {
             glCallLists(6, GL_UNSIGNED_BYTE, "UPTIME");
         });
 
-        const auto& uptime{ m_cpuMeasure.getUptimeStr() };
+        const auto& uptime{ m_cpuMeasure->getUptimeStr() };
         glRasterPos2f(-0.90f, -0.8f);
         glCallLists(uptime.length(), GL_UNSIGNED_BYTE, uptime.c_str());
     }
