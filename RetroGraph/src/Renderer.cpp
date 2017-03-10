@@ -664,9 +664,9 @@ void Renderer::drawNetGraph() const {
             }
         });
 
-        char buff[9];
+        /*char buff[9];
         snprintf(buff, sizeof(buff), "%5.1fMB", 1.51f);
-        std::cout << buff << '\n';
+        std::cout << buff << '\n';*/
     }
 }
 
@@ -864,8 +864,7 @@ void Renderer::drawTimeWidget() const {
     // Draw all the text elements
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
-    // Draw the big system time
-    {
+    { // Draw the big system time
         time_t now = time(0);
         tm t;
         char buf[9];
@@ -914,7 +913,6 @@ void Renderer::drawTimeWidget() const {
 
         glRasterPos2f(0.4f, -0.8f);
         glCallLists(10, GL_UNSIGNED_BYTE, "Temporary");
-
     }
 }
 

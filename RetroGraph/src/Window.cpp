@@ -38,7 +38,6 @@ Window::Window(HINSTANCE hInstance) :
     m_renderer{ m_cpuMeasure, m_gpuMeasure, m_ramMeasure, m_netMeasure,
                 m_processMeasure, m_driveMeasure, m_systemInfo }
 {
-
 }
 
 
