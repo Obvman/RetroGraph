@@ -1,11 +1,13 @@
 #pragma once
 
-#include <GL/glew.h>
-#include <Windows.h>
 #include <vector>
 #include <string>
 #include <chrono>
+#include <stdint.h>
+#include <GL/glew.h>
+#include <Windows.h>
 
+#include "Measure.h"
 #include "CPUPlugin.h"
 
 namespace rg {
@@ -13,7 +15,7 @@ namespace rg {
 class Window;
 
 /* Measures statistics about the system CPU: Model name, total CPU load*/
-class CPUMeasure {
+class CPUMeasure : public Measure {
 public:
     CPUMeasure();
     ~CPUMeasure();
@@ -21,7 +23,7 @@ public:
     void init();
 
     /* Updates the total system's CPU usage statistics */
-    void update();
+    virtual void update(uint32_t ticks);
 
     /* Returns the current system CPU load as a percentage */
     float getCPULoad();

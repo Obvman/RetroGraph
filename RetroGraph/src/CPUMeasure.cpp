@@ -37,21 +37,21 @@ void CPUMeasure::init() {
 
     // fill vector with default values
     m_usageData.assign(dataSize, 0.0f);
-
-    update();
 }
 
-void CPUMeasure::update() {
-    m_coreTempPlugin.update();
-    m_uptime = std::chrono::milliseconds(GetTickCount64());
+void CPUMeasure::update(uint32_t ticks) {
+    if (ticks % (ticksPerSecond / 2) == 0) {
+        m_coreTempPlugin.update();
+        m_uptime = std::chrono::milliseconds(GetTickCount64());
 
-    // Fill CPU name if CoreTemp interfacing was successful
-    if (m_cpuName.size() == 0 && m_coreTempPlugin.getCoreTempInfoSuccess()) {
-        m_cpuName = "CPU: ";
-        m_cpuName.append(m_coreTempPlugin.getCPUName());
+        // Fill CPU name if CoreTemp interfacing was successful
+        if (m_cpuName.size() == 0 && m_coreTempPlugin.getCoreTempInfoSuccess()) {
+            m_cpuName = "CPU: ";
+            m_cpuName.append(m_coreTempPlugin.getCPUName());
+        }
+
+        getCPULoad();
     }
-
-    getCPULoad();
 }
 
 float CPUMeasure::getCPULoad() {

@@ -10,6 +10,8 @@ volume, current sound output level bar - IAudioPeakMeter
 3D effects on graph
 framerate of currently focussed window
 
+have a function that does ticks % seconds cleanly
+
 have appearance states for when API calls fail/don't return a value, also
 prevent update calls that fail from crashing the program
 

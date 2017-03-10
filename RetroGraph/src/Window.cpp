@@ -181,14 +181,18 @@ void Window::init() {
 
     m_renderer.init(m_hWndMain, m_width, m_height);
 
+    m_cpuMeasure.update(0);
+    m_gpuMeasure.update(0);
+
     draw(0); // TODO change this value to guarantee drawing in the very first frame
 }
 
 void Window::update(uint32_t ticks) {
+    m_cpuMeasure.update(ticks);
+    m_gpuMeasure.update(ticks);
+
     // half-second updates
     if ((ticks % (ticksPerSecond/2)) == 0) {
-        m_cpuMeasure.update();
-        m_gpuMeasure.update();
         m_ramMeasure.update();
         m_netMeasure.update();
     }

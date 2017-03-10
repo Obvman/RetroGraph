@@ -60,19 +60,18 @@ void GPUMeasure::init() {
     m_memInfo.version = NV_DISPLAY_DRIVER_MEMORY_INFO_VER;
 
     m_pStateInfo.version = NV_GPU_DYNAMIC_PSTATES_INFO_EX_VER;
-
-    update();
 }
 
-void GPUMeasure::update() {
+void GPUMeasure::update(uint32_t ticks) {
+    if (ticks % (ticksPerSecond / 2) == 0) {
+        //updateGpuTemp(); // High CPU usage function
+        //getClockFrequencies(); // High CPU usage function
+        getMemInformation();
+        getGpuUsage();
 
-    //updateGpuTemp(); // High CPU usage function
-    //getClockFrequencies(); // High CPU usage function
-    getMemInformation();
-    getGpuUsage();
-
-    m_usageData[0] = m_gpuUsage / 100.0f;
-    std::rotate(m_usageData.begin(), m_usageData.begin() + 1, m_usageData.end());
+        m_usageData[0] = m_gpuUsage / 100.0f;
+        std::rotate(m_usageData.begin(), m_usageData.begin() + 1, m_usageData.end());
+    }
 }
 
 float GPUMeasure::getMemUsagePercent() const {
