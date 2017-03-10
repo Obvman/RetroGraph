@@ -18,7 +18,7 @@ class Window;
 class CPUMeasure : public Measure {
 public:
     CPUMeasure();
-    ~CPUMeasure();
+    virtual ~CPUMeasure();
 
     virtual void init();
 

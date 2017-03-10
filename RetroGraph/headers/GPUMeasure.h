@@ -15,7 +15,7 @@ namespace rg {
 class GPUMeasure : public Measure {
 public:
     GPUMeasure();
-    ~GPUMeasure();
+    virtual ~GPUMeasure();
 
     virtual void init();
 

@@ -25,10 +25,10 @@ public:
     ~Renderer();
 
     void init(HWND hWnd, uint16_t windowWidth, uint16_t windowHeight,
-                    const CPUMeasure& _cpu, const GPUMeasure& _gpu,
-                   const RAMMeasure& _ram, const NetMeasure& _net,
-                   const ProcessMeasure& _proc, const DriveMeasure& _drive,
-                   const SystemInfo& _sys);
+              const CPUMeasure& _cpu, const GPUMeasure& _gpu,
+              const RAMMeasure& _ram, const NetMeasure& _net,
+              const ProcessMeasure& _proc, const DriveMeasure& _drive,
+              const SystemInfo& _sys);
 
     /* Releases all resources */
     void release();

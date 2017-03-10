@@ -15,7 +15,7 @@ namespace rg {
 class DriveMeasure : public Measure {
 public:
     DriveMeasure();
-    ~DriveMeasure();
+    virtual ~DriveMeasure();
 
     /* Enumerates the available system drives and stores initial state of each drive */
     virtual void init();

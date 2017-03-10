@@ -17,7 +17,7 @@ namespace rg {
 class ProcessMeasure : public Measure {
 public:
     ProcessMeasure();
-    ~ProcessMeasure();
+    virtual ~ProcessMeasure();
 
     /* Initialises the measure with system processes information */
     virtual void init();

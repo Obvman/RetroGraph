@@ -14,7 +14,7 @@ namespace rg {
 class NetMeasure : public Measure {
 public:
     NetMeasure(const UserSettings& settings);
-    ~NetMeasure();
+    virtual ~NetMeasure();
 
     virtual void init();
     virtual void update(uint32_t ticks);
