@@ -33,11 +33,10 @@ Window::Window(HINSTANCE hInstance) :
     m_ramMeasure{ },
     m_processMeasure{ },
     m_driveMeasure{ },
-    m_netMeasure{ m_userSettings.getNetAdapterName() },
+    m_netMeasure{},
     m_systemInfo{ },
     m_renderer{ m_cpuMeasure, m_gpuMeasure, m_ramMeasure, m_netMeasure,
-                m_processMeasure, m_driveMeasure, m_systemInfo,
-                } // done
+                m_processMeasure, m_driveMeasure, m_systemInfo }
 {
 
 }
@@ -164,50 +163,23 @@ void Window::createRClickMenu(HWND hWnd, DWORD cursorX, DWORD cursorY) {
 }
 
 void Window::init() {
+    // Initialise userSettings with config file data
     m_userSettings.init();
     m_width = m_userSettings.getWindowWidth();
     m_height = m_userSettings.getWindowHeight();
     m_startPosX = m_userSettings.getWindowX();
     m_startPosY = m_userSettings.getWindowY();
 
-    { // Create and register the window class, then attach openGL context to window
-        memset(&m_wc, 0, sizeof(m_wc));
-        m_wc.cbSize = sizeof(WNDCLASSEX);
-        m_wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
-        m_wc.style = CS_HREDRAW | CS_VREDRAW;
-        m_wc.lpfnWndProc = WndProc;
-        m_wc.cbClsExtra = 0;
-        m_wc.cbWndExtra = 0;
-        m_wc.hInstance = m_hInstance;
-        m_wc.hIcon = LoadIcon(m_hInstance, MAKEINTRESOURCE(IDI_ICON1));
-        m_wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-        m_wc.hbrBackground = static_cast<HBRUSH>(CreateSolidBrush(0x00000000));
-        m_wc.lpszClassName = "RetroGraph";
-
-        if (!RegisterClassEx(&m_wc)) {
-            fatalMessageBox("RegisterClassEx - failed");
-        }
-
-        if (!createHGLRC()) {
-            fatalMessageBox("Failed to create OpenGL Window");
-        }
-
-        initOpenGL();
-
-        m_systemInfo.updateGPUDescription();
-
-        updateSize(m_width, m_height);
-
-        ReleaseDC(m_hWndMain, m_hdc);
-    }
+    createWindow();
 
     m_cpuMeasure.init();
     m_gpuMeasure.init();
     m_ramMeasure.init();
     m_processMeasure.init();
     m_driveMeasure.init();
-    m_netMeasure.init(); // TODO see if this calls update()
     m_systemInfo.init();
+    m_netMeasure.init(m_userSettings.getNetAdapterName());
+
     m_renderer.init(m_hWndMain, m_width, m_height);
 
     draw(0); // TODO change this value to guarantee drawing in the very first frame
@@ -250,6 +222,37 @@ void Window::updateSize(int width, int height) {
     glLoadIdentity();
 }
 
+void Window::createWindow() {
+    // Set and register the window class
+    memset(&m_wc, 0, sizeof(m_wc));
+    m_wc.cbSize = sizeof(WNDCLASSEX);
+    m_wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+    m_wc.style = CS_HREDRAW | CS_VREDRAW;
+    m_wc.lpfnWndProc = WndProc;
+    m_wc.cbClsExtra = 0;
+    m_wc.cbWndExtra = 0;
+    m_wc.hInstance = m_hInstance;
+    m_wc.hIcon = LoadIcon(m_hInstance, MAKEINTRESOURCE(IDI_ICON1));
+    m_wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+    m_wc.hbrBackground = static_cast<HBRUSH>(CreateSolidBrush(0x00000000));
+    m_wc.lpszClassName = "RetroGraph";
+
+    if (!RegisterClassEx(&m_wc)) {
+        fatalMessageBox("RegisterClassEx - failed");
+    }
+
+    /* Build the window itself*/
+    if (!createHGLRC()) {
+        fatalMessageBox("Failed to create OpenGL Window");
+    }
+
+    initOpenGL();
+
+    updateSize(m_width, m_height);
+
+    ReleaseDC(m_hWndMain, m_hdc);
+}
+
 void Window::initOpenGL() {
     glewInit();
 
@@ -287,6 +290,8 @@ bool Window::createHGLRC() {
                                     WS_VISIBLE | WS_POPUP, m_startPosX, m_startPosY, m_width, m_height,
                                     NULL, NULL, m_hInstance, NULL);
     } else {
+        // Create test window that doesn't appear in taskbar to query
+        // anti-aliasing capabilities
         m_hWndMain = CreateWindowEx(WS_EX_TOOLWINDOW, "RetroGraph", "Dummy",
                                     WS_VISIBLE | WS_POPUP, m_startPosX, m_startPosY, m_width, m_height,
                                     NULL, NULL, m_hInstance, NULL);

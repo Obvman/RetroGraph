@@ -29,6 +29,7 @@ void SystemInfo::init() {
     getOSVersionInfo();
     getCPUInfo();
     getRAMInfo();
+    updateGPUDescription();
 
     // Get the current computer name
     char uNameBuf[MAX_COMPUTERNAME_LENGTH+1];

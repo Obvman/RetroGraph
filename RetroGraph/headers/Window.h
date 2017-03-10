@@ -36,6 +36,9 @@ public:
     /* Window Proc that has access to this window class's members */
     LRESULT CALLBACK WndProc2(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 private:
+    /* Creates the window and the OpenGL context */
+    void createWindow();
+
     /* Initialises OpenGL settings and renderer */
     void initOpenGL();
 

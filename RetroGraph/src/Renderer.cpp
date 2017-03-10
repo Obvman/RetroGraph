@@ -44,8 +44,8 @@ void vboDrawScope(GLuint vertID, GLuint indexID, F f) {
 
 Renderer::Renderer(const CPUMeasure& _cpu, const GPUMeasure& _gpu,
                    const RAMMeasure& _ram, const NetMeasure& _net,
-                   const ProcessMeasure& _proc,
-                   const DriveMeasure& _drive, const SystemInfo& _sys) :
+                   const ProcessMeasure& _proc, const DriveMeasure& _drive,
+                   const SystemInfo& _sys) :
     m_cpuMeasure{ _cpu },
     m_gpuMeasure{ _gpu },
     m_ramMeasure{ _ram },

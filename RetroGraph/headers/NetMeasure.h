@@ -9,10 +9,10 @@ namespace rg {
 
 class NetMeasure {
 public:
-    NetMeasure(const std::string& netAdapterName);
+    NetMeasure();
     ~NetMeasure();
 
-    void init();
+    void init(const std::string& netAdapterName);
     void update();
 
     uint64_t getMaxDownValue() const { return m_downMaxVal; }

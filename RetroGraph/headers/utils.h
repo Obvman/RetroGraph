@@ -53,7 +53,7 @@ void printTimeToExecute(const char* funcName, F f) {
     f();
     const auto end{ clock() };
     std::cout << funcName << " took "
-              << (static_cast<float>(end) - static_cast<float>(start))/CLOCKS_PER_SEC 
+              << (static_cast<float>(end) - static_cast<float>(start))/CLOCKS_PER_SEC
               << " seconds.\n";
 }
 

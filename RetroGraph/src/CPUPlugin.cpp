@@ -19,14 +19,16 @@ CPUPlugin::~CPUPlugin() {
 }
 
 void CPUPlugin::init() {
-    m_libHandle = LoadLibrary("GetCoreTempInfo.dll"); 
+    m_libHandle = LoadLibrary("GetCoreTempInfo.dll");
 
     if (!m_libHandle) {
         fatalMessageBox("Could not load GetCoreTempInfo.dll");
     }
 
     // Get the address of the GetCoreTempInfo function from the DLL
-    GetCoreTempInfo = (myGetCoreTempInfo)GetProcAddress(m_libHandle, "fnGetCoreTempInfoAlt");
+    GetCoreTempInfo = (myGetCoreTempInfo)GetProcAddress(
+        m_libHandle, "fnGetCoreTempInfoAlt"
+    );
     if (!GetCoreTempInfo) {
         fatalMessageBox("Could not get function address from GetCoreTempInfo.dll");
     }

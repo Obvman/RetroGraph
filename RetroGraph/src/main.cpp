@@ -21,7 +21,8 @@ void mainLoop(rg::Window& mainWindow);
 
 #if (!_DEBUG)
 // Release mode is a Win32 application, while Debug mode is a console application
-int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+                     LPSTR lpCmdLine, int nCmdShow) {
     hInstance = GetModuleHandle(nullptr);
 #endif
 
@@ -32,14 +33,11 @@ int main() {
 
     try {
         // TODO go back to stack allocation when performance testing done
-        std::unique_ptr<rg::Window> pWnd;
+        rg::Window mainWindow{ hInstance };
 
-        rg::printTimeToExecute("Window construction", [&pWnd, hInstance]() {
-            pWnd = std::make_unique<rg::Window>(hInstance);
-            pWnd->init();
-        });
+        mainWindow.init();
+        mainLoop(mainWindow);
 
-        mainLoop(*pWnd);
     } catch(const std::runtime_error& e) {
         std::cout << e.what() << '\n';
     }
@@ -50,7 +48,9 @@ int main() {
 void mainLoop(rg::Window& mainWindow) {
     using namespace std::chrono;
 
-    auto start{ duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count() };
+    auto start{ duration_cast<milliseconds>(
+        system_clock::now().time_since_epoch()).count()
+    };
     auto ticks = uint32_t{ 1 };
     auto lastTick{ ticks };
     constexpr auto framesPerSecond = uint32_t{ 2U };

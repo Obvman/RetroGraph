@@ -10,12 +10,15 @@ volume, current sound output level bar - IAudioPeakMeter
 3D effects on graph
 framerate of currently focussed window
 
-have appearance states for when API calls fail/don't return a value
+have appearance states for when API calls fail/don't return a value, also
+prevent update calls that fail from crashing the program
 
 multithread initialization of members.
 Current times: (DEBUG) first call: 1.5s, subsequent startups: .4 - .5s.
                        .35s without a debugger attached
 (RELEASE) first call: 1.3s, subsequent startups: .5s
+
+consider inheriting abstract class for common functions (update, init, drawing)
 
 right click menu minimize
 
