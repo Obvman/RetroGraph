@@ -18,9 +18,9 @@
 
 namespace rg {
 
-NetMeasure::NetMeasure() :
+NetMeasure::NetMeasure(const UserSettings& settings) :
     m_adapterEntry{ nullptr },
-    m_mainAdapter{ },
+    m_mainAdapter{ settings.getNetAdapterName() },
     m_DNSIP{ "0.0.0.0" },
     m_hostname{ "" },
     m_mainAdapterMAC{ "00-00-00-00-00-00" },
@@ -33,8 +33,7 @@ NetMeasure::NetMeasure() :
 NetMeasure::~NetMeasure() {
 }
 
-void NetMeasure::init(const std::string& netAdapterName) {
-    m_mainAdapter = netAdapterName;
+void NetMeasure::init() {
 
     // Fill data vectors with default values
     m_downBytes.assign(dataSize, 0U);

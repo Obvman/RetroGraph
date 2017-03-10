@@ -73,13 +73,7 @@ private:
     int32_t m_arbMultisampleFormat;
     int32_t m_aaSamples;
 
-    //std::vector<std::unique_ptr<Measure>> m_measures;
-    CPUMeasure m_cpuMeasure;
-    GPUMeasure m_gpuMeasure;
-    RAMMeasure m_ramMeasure;
-    ProcessMeasure m_processMeasure;
-    DriveMeasure m_driveMeasure;
-    NetMeasure m_netMeasure;
+    std::vector<std::unique_ptr<Measure>> m_measures;
     SystemInfo m_systemInfo;
 
     Renderer m_renderer;

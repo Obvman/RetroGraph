@@ -28,12 +28,7 @@ Window::Window(HINSTANCE hInstance) :
     m_arbMultisampleSupported{ false },
     m_arbMultisampleFormat{ 0 },
     m_aaSamples{ 8 },
-    m_cpuMeasure{ },
-    m_gpuMeasure{ },
-    m_ramMeasure{ },
-    m_processMeasure{ },
-    m_driveMeasure{ },
-    m_netMeasure{},
+    m_measures{ },
     m_systemInfo{ },
     m_renderer{}
 {
@@ -170,16 +165,26 @@ void Window::init() {
 
     createWindow();
 
-    m_cpuMeasure.init();
-    m_gpuMeasure.init();
-    m_ramMeasure.init();
-    m_processMeasure.init();
-    m_driveMeasure.init();
-    m_netMeasure.init(m_userSettings.getNetAdapterName());
+    // Create all measures
+    m_measures.push_back(std::move(std::make_unique<CPUMeasure>()));
+    m_measures.push_back(std::move(std::make_unique<GPUMeasure>()));
+    m_measures.push_back(std::move(std::make_unique<RAMMeasure>()));
+    m_measures.push_back(std::move(std::make_unique<NetMeasure>(m_userSettings)));
+    m_measures.push_back(std::move(std::make_unique<ProcessMeasure>()));
+    m_measures.push_back(std::move(std::make_unique<DriveMeasure>()));
+
+    for (const auto& pMeasure : m_measures) {
+        pMeasure->init();
+    }
 
     m_systemInfo.init();
-    m_renderer.init(m_hWndMain, m_width, m_height, m_cpuMeasure, m_gpuMeasure,
-                    m_ramMeasure, m_netMeasure, m_processMeasure, m_driveMeasure,
+    m_renderer.init(m_hWndMain, m_width, m_height,
+                    dynamic_cast<CPUMeasure&>(*m_measures[0]),
+                    dynamic_cast<GPUMeasure&>(*m_measures[1]),
+                    dynamic_cast<RAMMeasure&>(*m_measures[2]),
+                    dynamic_cast<NetMeasure&>(*m_measures[3]),
+                    dynamic_cast<ProcessMeasure&>(*m_measures[4]),
+                    dynamic_cast<DriveMeasure&>(*m_measures[5]),
                     m_systemInfo);
 
     update(0);
@@ -188,12 +193,9 @@ void Window::init() {
 }
 
 void Window::update(uint32_t ticks) {
-    m_cpuMeasure.update(ticks);
-    m_gpuMeasure.update(ticks);
-    m_ramMeasure.update(ticks);
-    m_netMeasure.update(ticks);
-    m_driveMeasure.update(ticks);
-    m_processMeasure.update(ticks);
+    for (const auto& pMeasure : m_measures) {
+        pMeasure->update(ticks);
+    }
 }
 
 void Window::draw(uint32_t ticks) const {

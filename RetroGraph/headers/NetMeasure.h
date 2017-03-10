@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "UserSettings.h"
 #include "Measure.h"
 
 struct _MIB_IF_ROW2;
@@ -12,11 +13,10 @@ namespace rg {
 
 class NetMeasure : public Measure {
 public:
-    NetMeasure();
+    NetMeasure(const UserSettings& settings);
     ~NetMeasure();
 
-    void init() {}
-    void init(const std::string& netAdapterName);
+    virtual void init();
     virtual void update(uint32_t ticks);
 
     uint64_t getMaxDownValue() const { return m_downMaxVal; }
