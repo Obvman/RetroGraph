@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdint.h>
 #include <string>
 #include <iostream>
 #include <Windows.h>
@@ -46,7 +47,6 @@ void drawViewportBorder();
 float lerp(float x1, float x2, float t);
 
 /* Prints how long the given function f took to execute */
-
 template<typename F>
 void printTimeToExecute(const char* funcName, F f) {
     const auto start{ clock() };
@@ -57,6 +57,7 @@ void printTimeToExecute(const char* funcName, F f) {
               << " seconds.\n";
 }
 
+/* Default function name overload */
 template<typename F>
 void printTimeToExecute(F f) {
     printTimeToExecute("Function", f);

@@ -44,6 +44,12 @@ private:
     /* Compiles and retrieves uniform locations */
     void initShaders();
 
+    // Drawing utilities
+    void drawFilledGraph(const std::vector<float> data) const;
+    void drawLineGraph(const std::vector<float> data) const;
+    void drawGraphGrid() const;
+
+    // Widgets
     void drawGraphWidget() const;
     void drawCpuGraph() const;
     void drawRamGraph() const;

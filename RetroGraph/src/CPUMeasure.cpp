@@ -25,6 +25,8 @@ CPUMeasure::CPUMeasure() :
     dataSize{ 40U },
     m_usageData{ },
     m_uptime{ std::chrono::milliseconds{GetTickCount64()} },
+    perCoreDataSize{ 20U },
+    m_perCoreData{ },
     m_cpuName{ } {
 
 }
@@ -43,6 +45,13 @@ void CPUMeasure::init() {
 
     // fill vector with default values
     m_usageData.assign(dataSize, 0.0f);
+
+    // Create one vector for each core in the machine, and fill each vector with
+    // default core usage values
+    m_perCoreData.resize(m_coreTempPlugin.getNumCores());
+    for (auto& vec : m_perCoreData) {
+        vec.assign(perCoreDataSize, 0.0f);
+    }
 }
 
 void CPUMeasure::update(uint32_t ticks) {
@@ -56,8 +65,20 @@ void CPUMeasure::update(uint32_t ticks) {
             m_cpuName.append(m_coreTempPlugin.getCPUName());
         }
 
-        getCPULoad();
+        const auto totalLoad{ getCPULoad() };
+        // Add to the usageData vector by overwriting the oldest value and
+        // shifting the elements in the vector
+        m_usageData[0] = totalLoad;
+        std::rotate(m_usageData.begin(), m_usageData.begin() + 1, m_usageData.end());
+
+        for (auto i{ 0U }; i < m_perCoreData.size(); ++i) {
+            const auto coreUsage{ static_cast<float>(m_coreTempPlugin.getLoad(i)) / 100.0f };
+            m_perCoreData[i][0] = coreUsage;
+            std::rotate(m_perCoreData[i].begin(),
+                        m_perCoreData[i].begin() + 1, m_perCoreData[i].end());
+        }
     }
+
 }
 
 float CPUMeasure::getCPULoad() {
@@ -67,15 +88,9 @@ float CPUMeasure::getCPULoad() {
     if (!GetSystemTimes(&idleTime, &kernelTime, &userTime)) {
         return -1.0f;
     }
-    const auto load{ calculateCPULoad(FileTimeToInt64(idleTime),
-                     FileTimeToInt64(kernelTime) + FileTimeToInt64(userTime))
-    };
 
-    // Add to the usageData vector by overwriting the oldest value and
-    // shifting the elements in the vector
-    m_usageData[0] = load;
-    std::rotate(m_usageData.begin(), m_usageData.begin() + 1, m_usageData.end());
-    return load;
+    return calculateCPULoad(FileTimeToInt64(idleTime),
+        FileTimeToInt64(kernelTime) + FileTimeToInt64(userTime));
 }
 std::string CPUMeasure::getUptimeStr() const {
     const auto uptimeS = (m_uptime / 1000) % 60;

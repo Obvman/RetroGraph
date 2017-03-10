@@ -134,8 +134,8 @@ void Renderer::initViewportBuffers(uint16_t windowWidth, uint16_t windowHeight) 
 
     m_coreGraphsVP[0] = m_mainWidgetVP[0];
     m_coreGraphsVP[1] = m_mainWidgetVP[1];
-    m_coreGraphsVP[2] = m_mainWidgetVP[2]/2;
-    m_coreGraphsVP[3] = m_mainWidgetVP[3]/4;
+    m_coreGraphsVP[2] = m_mainWidgetVP[2];
+    m_coreGraphsVP[3] = m_mainWidgetVP[3]/2;
 }
 
 void Renderer::initFonts(HWND hWnd) {
@@ -317,6 +317,48 @@ void Renderer::draw(uint32_t ticks) const {
     drawMainWidget();
 }
 
+void Renderer::drawFilledGraph(const std::vector<float> data) const {
+    glBegin(GL_QUADS); {
+        for (auto i{ 0U }; i < data.size() - 1; ++i) {
+            glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.7f);
+
+            const auto x1 = float{ (static_cast<float>(i) / (data.size() - 1)) * 2.0f - 1.0f };
+            const auto y1 = float{ data[i] * 2.0f - 1.0f };
+            const auto x2 = float{ (static_cast<float>(i+1) / (data.size() - 1)) * 2.0f - 1.0f };
+            const auto y2 = float{ data[i+1] * 2.0f - 1.0f };
+
+            glVertex2f(x1, -1.0f); // Bottom-left
+            glVertex2f(x1, y1); // Top-left
+            glVertex2f(x2, y2); // Top-right
+            glVertex2f(x2, -1.0f); // Bottom-right
+        }
+    } glEnd();
+}
+
+void Renderer::drawLineGraph(const std::vector<float> data) const {
+    glBegin(GL_LINE_STRIP); {
+        // Draw each node in the graph
+        for (auto i{ 0U }; i < data.size(); ++i) {
+            glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
+
+            const auto x = float{ (static_cast<float>(i) / (data.size() - 1))
+                                   * 2.0f - 1.0f };
+            const auto y = float{ data[i] * 2.0f - 1.0f };
+
+            glVertex2f(x, y);
+        }
+    } glEnd();
+}
+
+void Renderer::drawGraphGrid() const {
+    // Draw the background grid for the graph
+    vboDrawScope(m_graphGridVertsID, m_graphGridIndicesID, [this]() {
+        glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.2f);
+        glLineWidth(0.5f);
+        glDrawElements(GL_LINES, m_graphIndicesSize, GL_UNSIGNED_INT, 0);
+    });
+}
+
 void Renderer::drawMainWidget() const {
     glViewport(m_mainWidgetVP[0], m_mainWidgetVP[1],
                m_mainWidgetVP[2], m_mainWidgetVP[3]);
@@ -328,7 +370,62 @@ void Renderer::drawMainWidget() const {
 void Renderer::drawCoreGraphs() const {
     glViewport(m_coreGraphsVP[0], m_coreGraphsVP[1],
                m_coreGraphsVP[2], m_coreGraphsVP[3]);
-    //drawViewportBorder();
+
+    glLineWidth(0.5f);
+    glColor4f(BORDER_R, BORDER_G, BORDER_B, BORDER_A);
+    glBegin(GL_LINE_STRIP); {
+        glVertex2f(-1.0f, 1.0f);
+        glVertex2f(1.0f, 1.0f);
+        glVertex2f(1.0f, -1.0f);
+        glVertex2f(-1.0f, -1.0f);
+        glVertex2f(-1.0f, 1.0f);
+    } glEnd();
+
+    // Draw x rows of core graphs, with 2 graphs per row until all graphs
+    // are drawn
+    const auto numCores{ m_cpuMeasure->getPerCoreUsageData().size() };
+    const auto numRows{ numCores / 2 }; // Fair to assume we have an even number of cores
+
+    glLineWidth(0.5f);
+    for (auto i{ 0U }; i < numCores; ++i) {
+        // Set the viewport for the current graph. If i is even, the graph
+        // sits on the left, otherwise it's on the right. The y position
+        // of each graph changes as we draw more
+        glColor4f(GRAPHLINE_A, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
+        if (i % 2 == 0) {
+            glViewport(m_coreGraphsVP[0],
+                       m_coreGraphsVP[1] + i*m_coreGraphsVP[3]/(2*numRows),
+                       m_coreGraphsVP[2]/numRows,
+                       m_coreGraphsVP[3]/numRows);
+        } else {
+            glViewport(m_coreGraphsVP[0] + m_coreGraphsVP[2]/numRows,
+                       m_coreGraphsVP[1] + (i-1)*m_coreGraphsVP[3]/(2*numRows),
+                       m_coreGraphsVP[2]/numRows,
+                       m_coreGraphsVP[3]/numRows);
+        }
+
+        drawLineGraph(m_cpuMeasure->getPerCoreUsageData()[i]);
+
+        // Draw the border for this core graph
+        glColor4f(BORDER_R, BORDER_G, BORDER_B, BORDER_A);
+        glBegin(GL_LINE_STRIP); {
+            glVertex2f(-1.0f, 1.0f);
+            glVertex2f(1.0f, 1.0f);
+            glVertex2f(1.0f, -1.0f);
+            glVertex2f(-1.0f, -1.0f);
+            glVertex2f(-1.0f, 1.0f);
+        } glEnd();
+
+        drawGraphGrid();
+
+        // Draw a label for the core graph
+        glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
+        fontScope(smlFontBase, [i]() {
+            glRasterPos2f(-0.93f, 0.80f);
+            char str[7] = { 'C', 'o', 'r', 'e', ' ', static_cast<char>(i) + '0', '\0'};
+            glCallLists(strlen(str), GL_UNSIGNED_BYTE, str);
+        });
+    }
 }
 
 void Renderer::drawGraphWidget() const {
@@ -356,46 +453,15 @@ void Renderer::drawCpuGraph() const {
             glVertex2f(-1.0f, -1.0f);
             glVertex2f(-1.0f, 1.0f);
         } glEnd();
-
-        // Set the viewport for the graph to be left section
-        glViewport(m_cpuGraphVP[0], m_cpuGraphVP[1],
-            (m_cpuGraphVP[2] * 4) / 5, m_cpuGraphVP[3]);
-
-        // Draw the background grid for the graph
-        vboDrawScope(m_graphGridVertsID, m_graphGridIndicesID, [this]() {
-            glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.2f);
-            glLineWidth(0.5f);
-            glDrawElements(GL_LINES, m_graphIndicesSize, GL_UNSIGNED_INT, 0);
-        });
     }
 
-    { // Line graph
-        glLineWidth(0.5f);
+    // Set the viewport for the graph to be left section
+    glViewport(m_cpuGraphVP[0], m_cpuGraphVP[1],
+               (m_cpuGraphVP[2] * 4)/5, m_cpuGraphVP[3]);
 
-        const auto& data{ m_cpuMeasure->getUsageData() };
-
-        //glUseProgram(m_cpuGraphShader);
-
-        glBegin(GL_QUADS); {
-            for (auto i{ 0U }; i < data.size() - 1; ++i) {
-                //glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, static_cast<float>(i) / data.size());
-                glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.7f);
-
-                const auto x1 = float{ (static_cast<float>(i) / (data.size() - 1)) * 2.0f - 1.0f };
-                const auto y1 = float{ data[i] * 2.0f - 1.0f };
-                const auto x2 = float{ (static_cast<float>(i+1) / (data.size() - 1)) * 2.0f - 1.0f };
-                const auto y2 = float{ data[i+1] * 2.0f - 1.0f };
-
-                glVertex2f(x1, -1.0f); // Bottom-left
-                glVertex2f(x1, y1); // Top-left
-                glVertex2f(x2, y2); // Top-right
-                glVertex2f(x2, -1.0f); // Bottom-right
-            }
-        } glEnd();
-
-        //glUseProgram(0);
-
-    }
+    drawGraphGrid();
+    glLineWidth(0.5f);
+    drawFilledGraph(m_cpuMeasure->getUsageData());
 
     { // Text
         glViewport(m_cpuGraphVP[0] + (4 * m_cpuGraphVP[2]) / 5, m_cpuGraphVP[1],
@@ -438,27 +504,11 @@ void Renderer::drawRamGraph() const {
                (m_ramGraphVP[2]*4)/5 , m_ramGraphVP[3]);
 
     // Draw the background grid for the graph
-    vboDrawScope(m_graphGridVertsID, m_graphGridIndicesID, [this]() {
-        glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.2f);
-        glLineWidth(0.5f);
-        glDrawElements(GL_LINES, m_graphIndicesSize, GL_UNSIGNED_INT, 0);
-    });
+    drawGraphGrid();
 
     {// Draw the line graph
         glLineWidth(0.5f);
-
-        const auto& data{ m_ramMeasure->getUsageData() };
-        glBegin(GL_LINE_STRIP); {
-            // Draw each node in the graph
-            for (auto i{ 0U }; i < data.size(); ++i) {
-                glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, static_cast<float>(i) / data.size());
-
-                auto x = float{ (static_cast<float>(i) / (data.size() - 1)) * 2.0f - 1.0f };
-                const auto y = float{ data[i] * 2.0f - 1.0f };
-
-                glVertex3f(x, y, 0.0f);
-            }
-        } glEnd();
+        drawLineGraph(m_ramMeasure->getUsageData());
     }
 
     {// Set viewport for text drawing
@@ -501,32 +551,11 @@ void Renderer::drawGpuGraph() const {
                (m_gpuGraphVP[2]*4)/5 , m_gpuGraphVP[3]);
 
     // Draw the background grid for the graph
-    vboDrawScope(m_graphGridVertsID, m_graphGridIndicesID, [this]() {
-        glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.2f);
-        glLineWidth(0.5f);
-        glDrawElements(GL_LINES, m_graphIndicesSize, GL_UNSIGNED_INT, 0);
-    });
+    drawGraphGrid();
 
-    {// Draw the line graph
-        glLineWidth(0.5f);
-        const auto& data{ m_gpuMeasure->getUsageData() };
-        glBegin(GL_QUADS); {
-            // Draw each node in the graph
-            for (auto i{ 0U }; i < data.size() - 1; ++i) {
-                glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.7f);
-
-                const auto x1 = float{ (static_cast<float>(i) / (data.size() - 1)) * 2.0f - 1.0f };
-                const auto y1 = float{ data[i] * 2.0f - 1.0f };
-                const auto x2 = float{ (static_cast<float>(i+1) / (data.size() - 1)) * 2.0f - 1.0f };
-                const auto y2 = float{ data[i+1] * 2.0f - 1.0f };
-
-                glVertex2f(x1, -1.0f); // Bottom-left
-                glVertex2f(x1, y1); // Top-left
-                glVertex2f(x2, y2); // Top-right
-                glVertex2f(x2, -1.0f); // Bottom-right
-            }
-        } glEnd();
-    }
+    // Draw the line graph
+    glLineWidth(0.5f);
+    drawFilledGraph(m_gpuMeasure->getUsageData());
 
     {// Set viewport for text drawing
         glViewport(m_gpuGraphVP[0] + (4 * m_gpuGraphVP[2]) / 5, m_gpuGraphVP[1],
@@ -569,11 +598,7 @@ void Renderer::drawNetGraph() const {
                (m_netGraphVP[2]*4)/5 , m_netGraphVP[3]);
 
     // Draw the background grid for the graph
-    vboDrawScope(m_graphGridVertsID, m_graphGridIndicesID, [this]() {
-        glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.2f);
-        glLineWidth(0.5f);
-        glDrawElements(GL_LINES, m_graphIndicesSize, GL_UNSIGNED_INT, 0);
-    });
+    drawGraphGrid();
 
     {// Draw the line graph
         glLineWidth(0.5f);
@@ -665,10 +690,6 @@ void Renderer::drawNetGraph() const {
                 glCallLists(strlen(top.c_str()), GL_UNSIGNED_BYTE, top.c_str());
             }
         });
-
-        /*char buff[9];
-        snprintf(buff, sizeof(buff), "%5.1fMB", 1.51f);
-        std::cout << buff << '\n';*/
     }
 }
 
@@ -917,6 +938,5 @@ void Renderer::drawTimeWidget() const {
         glCallLists(10, GL_UNSIGNED_BYTE, "Temporary");
     }
 }
-
 
 }

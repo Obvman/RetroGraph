@@ -3,32 +3,18 @@ rainmeter plugins github - https://github.com/rainmeter/rainmeter/tree/eeeef4a7f
 animate on startup
 colour code high usage processes
 hdd read/write usage
-network upload/download, VPN, hostname
 network connectivity status
 media - foobar status
 volume, current sound output level bar - IAudioPeakMeter
 3D effects on graph
 framerate of currently focussed window
 
-have a function that does ticks % seconds cleanly
-
 have appearance states for when API calls fail/don't return a value, also
 prevent update calls that fail from crashing the program
-
-multithread initialization of members.
-Current times: (DEBUG) first call: 1.5s, subsequent startups: .4 - .5s.
-                       .35s without a debugger attached
-(RELEASE) first call: 1.3s, subsequent startups: .5s
-
-consider inheriting abstract class for common functions (update, init, drawing)
-
-right click menu minimize
 
 BUG: right click menu pauses drawing.
 
 Notification icon in system tray
-
-SHADERS! experiment with them!
 
 test suite
 

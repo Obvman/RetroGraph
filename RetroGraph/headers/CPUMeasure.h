@@ -36,6 +36,10 @@ public:
 
     const std::vector<float>& getUsageData() const { return m_usageData; }
 
+    const std::vector<std::vector<float>>& getPerCoreUsageData() const {
+        return m_perCoreData;
+    }
+
     /* Returns the maximum number of CPU usage samples stored */
     size_t getDataSize() const { return dataSize; }
 
@@ -44,10 +48,14 @@ private:
     float calculateCPULoad(uint64_t idleTicks, uint64_t totalTicks);
 
     CPUPlugin m_coreTempPlugin;
-    size_t dataSize; // max number of usage percentages to store
-    std::vector<float> m_usageData;
-    std::chrono::milliseconds m_uptime;
 
+    const size_t dataSize; // max number of usage percentages to store
+    std::vector<float> m_usageData;
+
+    const size_t perCoreDataSize;
+    std::vector<std::vector<float>> m_perCoreData;
+
+    std::chrono::milliseconds m_uptime;
     std::string m_cpuName;
 };
 
