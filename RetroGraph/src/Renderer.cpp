@@ -877,6 +877,8 @@ void Renderer::drawTimeWidget() const {
     glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
     glLineWidth(0.5f);
 
+    constexpr float leftDivX{ -0.33f };
+
     {// Draw dividers
         glBegin(GL_LINES); {
             glVertex2f(-1.0f, 1.0f);
@@ -888,8 +890,8 @@ void Renderer::drawTimeWidget() const {
             glVertex2f(-0.9f, -0.3f);
             glVertex2f(0.9f, -0.3f); // Mid-divider
 
-            glVertex2f(-0.33f, -1.0f);
-            glVertex2f(-0.33f, -0.3f); // Left vertical
+            glVertex2f(leftDivX, -1.0f);
+            glVertex2f(leftDivX, -0.3f); // Left vertical
 
             glVertex2f(0.33f, -1.0f);
             glVertex2f(0.33f, -0.3f); // Right vertical
@@ -928,13 +930,34 @@ void Renderer::drawTimeWidget() const {
 
     // Draw the uptime in bottom-left
     {
-        glRasterPos2f(-0.70f, -0.55f);
-        fontScope(stdFontBoldBase, [&]() {
-            glCallLists(6, GL_UNSIGNED_BYTE, "UPTIME");
+        // Spacing between text and the divider
+        const int32_t dividerOffset{ 10 };
+        const int32_t leftDivPixelPos{
+            static_cast<int32_t>(((leftDivX + 1.0f) / 2.0f) * m_timeWidgetVP[2]) };
+
+        // Get the width of the string in pixels, then start drawing the string
+        // from a position such that the last character is "dividerOffset" pixels
+        // away from the divider
+        const char* uptimeTitle{ "UPTIME" };
+        int32_t strLenPixels{ 10 *
+            static_cast<int32_t>(strlen(uptimeTitle)) };
+        int32_t strStartPixelX{ leftDivPixelPos - strLenPixels - dividerOffset};
+
+        // Convert pixel value to viewport coordinates
+        float strStartVPX{ ((static_cast<float>(strStartPixelX) / m_timeWidgetVP[2]) * 2.0f) - 1.0f};
+        glRasterPos2f(strStartVPX, -0.55f);
+        fontScope(stdFontBase, [&]() {
+            glCallLists(strlen(uptimeTitle), GL_UNSIGNED_BYTE, uptimeTitle);
         });
 
+
         const auto& uptime{ m_cpuMeasure->getUptimeStr() };
-        glRasterPos2f(-0.90f, -0.8f);
+
+        strLenPixels = static_cast<int32_t>(uptime.size()) * 10;
+        strStartPixelX = leftDivPixelPos - strLenPixels - dividerOffset;
+        strStartVPX =  ((static_cast<float>(strStartPixelX) / m_timeWidgetVP[2]) * 2.0f) - 1.0f;
+
+        glRasterPos2f(strStartVPX, -0.8f);
         glCallLists(uptime.length(), GL_UNSIGNED_BYTE, uptime.c_str());
     }
 
