@@ -9,12 +9,21 @@ volume, current sound output level bar - IAudioPeakMeter
 3D effects on graph
 framerate of currently focussed window
 
-move away from some auto initialisations
+for data arrays, use index tracker instead of std::rotate, and make class for
+common usage
+
+have an average ping time display
+
+thread pinging code
+
+convert so std::array
+
+lightweight mode
+
+net speed seems to max at 7.5MB when it really hits 13MB according to task mgr
 
 have appearance states for when API calls fail/don't return a value, also
 prevent update calls that fail from crashing the program
-
-convert auto i{ 0U } in for loops to size_t
 
 BUG: right click menu pauses drawing.
 

@@ -102,40 +102,45 @@ void Renderer::initViewportBuffers(uint16_t windowWidth, uint16_t windowHeight) 
     m_statsWidgetVP[2] = windowWidth/5;
     m_statsWidgetVP[3] = windowHeight/6; // Bottom left
 
-    m_graphWidgetVP[0] = marginX;
-    m_graphWidgetVP[1] = windowHeight/4 + 2*marginY;
-    m_graphWidgetVP[2] = windowWidth/5;
-    m_graphWidgetVP[3] = windowHeight/2; // Left-Mid
+    m_leftGraphWidgetVP[0] = marginX;
+    m_leftGraphWidgetVP[1] = windowHeight/4 + 2*marginY;
+    m_leftGraphWidgetVP[2] = windowWidth/5;
+    m_leftGraphWidgetVP[3] = windowHeight/2; // Left-Mid
 
-    m_cpuGraphVP[0] = m_graphWidgetVP[0];
-    m_cpuGraphVP[1] = m_graphWidgetVP[1] + 3*m_graphWidgetVP[3]/4;
-    m_cpuGraphVP[2] = m_graphWidgetVP[2];
-    m_cpuGraphVP[3] = m_graphWidgetVP[3]/4;
+    m_cpuGraphVP[0] = m_leftGraphWidgetVP[0];
+    m_cpuGraphVP[1] = m_leftGraphWidgetVP[1] + 3*m_leftGraphWidgetVP[3]/4;
+    m_cpuGraphVP[2] = m_leftGraphWidgetVP[2];
+    m_cpuGraphVP[3] = m_leftGraphWidgetVP[3]/4;
 
-    m_ramGraphVP[0] = m_graphWidgetVP[0];
-    m_ramGraphVP[1] = m_graphWidgetVP[1] + 2*m_graphWidgetVP[3]/4;
-    m_ramGraphVP[2] = m_graphWidgetVP[2];
-    m_ramGraphVP[3] = m_graphWidgetVP[3]/4;
+    m_ramGraphVP[0] = m_leftGraphWidgetVP[0];
+    m_ramGraphVP[1] = m_leftGraphWidgetVP[1] + 2*m_leftGraphWidgetVP[3]/4;
+    m_ramGraphVP[2] = m_leftGraphWidgetVP[2];
+    m_ramGraphVP[3] = m_leftGraphWidgetVP[3]/4;
 
-    m_gpuGraphVP[0] = m_graphWidgetVP[0];
-    m_gpuGraphVP[1] = m_graphWidgetVP[1] + 1*m_graphWidgetVP[3]/4;
-    m_gpuGraphVP[2] = m_graphWidgetVP[2];
-    m_gpuGraphVP[3] = m_graphWidgetVP[3]/4;
+    m_gpuGraphVP[0] = m_leftGraphWidgetVP[0];
+    m_gpuGraphVP[1] = m_leftGraphWidgetVP[1] + 1*m_leftGraphWidgetVP[3]/4;
+    m_gpuGraphVP[2] = m_leftGraphWidgetVP[2];
+    m_gpuGraphVP[3] = m_leftGraphWidgetVP[3]/4;
 
-    m_netGraphVP[0] = m_graphWidgetVP[0];
-    m_netGraphVP[1] = m_graphWidgetVP[1] + 0*m_graphWidgetVP[3]/4;
-    m_netGraphVP[2] = m_graphWidgetVP[2];
-    m_netGraphVP[3] = m_graphWidgetVP[3]/4;
+    m_netGraphVP[0] = m_leftGraphWidgetVP[0];
+    m_netGraphVP[1] = m_leftGraphWidgetVP[1] + 0*m_leftGraphWidgetVP[3]/4;
+    m_netGraphVP[2] = m_leftGraphWidgetVP[2];
+    m_netGraphVP[3] = m_leftGraphWidgetVP[3]/4;
 
     m_mainWidgetVP[0] = marginX + windowWidth/2 - windowWidth/5;
     m_mainWidgetVP[1] = 2*marginY + windowHeight/4;
     m_mainWidgetVP[2] = 2 * windowWidth/5;
     m_mainWidgetVP[3] = windowHeight/2; // Midd;
 
-    m_coreGraphsVP[0] = m_mainWidgetVP[0];
-    m_coreGraphsVP[1] = m_mainWidgetVP[1];
-    m_coreGraphsVP[2] = m_mainWidgetVP[2];
-    m_coreGraphsVP[3] = m_mainWidgetVP[3]/2;
+    m_rightGraphWidgetVP[0] = windowWidth - windowWidth/5 - marginX;
+    m_rightGraphWidgetVP[1] = windowHeight/4 + 2*marginY;
+    m_rightGraphWidgetVP[2] = windowWidth/5;
+    m_rightGraphWidgetVP[3] = windowHeight/2;
+
+    m_coreGraphsVP[0] = m_rightGraphWidgetVP[0];
+    m_coreGraphsVP[1] = m_rightGraphWidgetVP[1];
+    m_coreGraphsVP[2] = m_rightGraphWidgetVP[2];
+    m_coreGraphsVP[3] = m_rightGraphWidgetVP[3]/2;
 }
 
 void Renderer::initFonts(HWND hWnd) {
@@ -307,14 +312,14 @@ void Renderer::draw(uint32_t ticks) const {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
 
-    drawGraphWidget();
+    drawLeftGraphWidget();
 
     drawProcessWidget();
     drawTimeWidget();
     drawHDDWidget();
     drawStatsWidget();
 
-    drawMainWidget();
+    drawRightGraphWidget();
 }
 
 void Renderer::drawFilledGraph(const std::vector<float> data) const {
@@ -362,7 +367,11 @@ void Renderer::drawGraphGrid() const {
 void Renderer::drawMainWidget() const {
     glViewport(m_mainWidgetVP[0], m_mainWidgetVP[1],
                m_mainWidgetVP[2], m_mainWidgetVP[3]);
-    //drawViewportBorder();
+}
+
+void Renderer::drawRightGraphWidget() const {
+    glViewport(m_rightGraphWidgetVP[0], m_rightGraphWidgetVP[1],
+               m_rightGraphWidgetVP[2], m_rightGraphWidgetVP[3]);
 
     drawCoreGraphs();
 }
@@ -387,22 +396,15 @@ void Renderer::drawCoreGraphs() const {
     const auto numRows{ numCores / 2 }; // Fair to assume we have an even number of cores
 
     glLineWidth(0.5f);
+    glColor4f(GRAPHLINE_A, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
     for (auto i = size_t{ 0U }; i < numCores; ++i) {
-        // Set the viewport for the current graph. If i is even, the graph
-        // sits on the left, otherwise it's on the right. The y position
+        // Set the viewport for the current graph. The y position
         // of each graph changes as we draw more
-        glColor4f(GRAPHLINE_A, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
-        if (i % 2 == 0) {
-            glViewport(m_coreGraphsVP[0],
-                       m_coreGraphsVP[1] + i*m_coreGraphsVP[3]/(2*numRows),
-                       m_coreGraphsVP[2]/numRows,
-                       m_coreGraphsVP[3]/numRows);
-        } else {
-            glViewport(m_coreGraphsVP[0] + m_coreGraphsVP[2]/numRows,
-                       m_coreGraphsVP[1] + (i-1)*m_coreGraphsVP[3]/(2*numRows),
-                       m_coreGraphsVP[2]/numRows,
-                       m_coreGraphsVP[3]/numRows);
-        }
+        glViewport(m_coreGraphsVP[0],
+                   (m_coreGraphsVP[1] + (numCores-1)*m_coreGraphsVP[3]/numCores)
+                   - i*m_coreGraphsVP[3]/(numCores),
+                   m_coreGraphsVP[2],
+                   m_coreGraphsVP[3]/numCores);
 
         drawLineGraph(m_cpuMeasure->getPerCoreUsageData()[i]);
 
@@ -428,9 +430,9 @@ void Renderer::drawCoreGraphs() const {
     }
 }
 
-void Renderer::drawGraphWidget() const {
-    glViewport(m_graphWidgetVP[0], m_graphWidgetVP[1],
-               m_graphWidgetVP[2], m_graphWidgetVP[3]);
+void Renderer::drawLeftGraphWidget() const {
+    glViewport(m_leftGraphWidgetVP[0], m_leftGraphWidgetVP[1],
+               m_leftGraphWidgetVP[2], m_leftGraphWidgetVP[3]);
 
     drawCpuGraph();
     drawRamGraph();

@@ -11,10 +11,12 @@
 #include <ws2def.h>
 #include <ws2ipdef.h>
 #include <Iphlpapi.h>
+#include <wininet.h>
 
 #include "../headers/utils.h"
 
 #pragma comment(lib, "Iphlpapi.lib")
+#pragma comment(lib, "Wininet.lib")
 
 namespace rg {
 
@@ -34,7 +36,6 @@ NetMeasure::~NetMeasure() {
 }
 
 void NetMeasure::init() {
-
     // Fill data vectors with default values
     m_downBytes.assign(dataSize, 0U);
     m_upBytes.assign(dataSize, 0U);
@@ -151,6 +152,20 @@ void NetMeasure::update(uint32_t ticks) {
         m_upBytes[0] = m_adapterEntry->OutOctets - oldUp;
         std::rotate(m_upBytes.begin(), m_upBytes.begin() + 1, m_upBytes.end());
         m_upMaxVal = *std::max_element(m_upBytes.cbegin(), m_upBytes.cend());
+
+        if ((ticks % (ticksPerSecond * 10)) == 0) {
+            static auto ping{ []() {
+                InternetCheckConnectionA("http://www.google.com/",
+                                         FLAG_ICC_FORCE_CONNECTION, 0);
+            }};
+            // Ping google to check if network is working
+            /*printTimeToExecute("Ping", []() {
+                if (InternetCheckConnectionA("http://www.google.com/", FLAG_ICC_FORCE_CONNECTION, 0)) {
+                    std::cout << "Connected to internet\n";
+                }
+            });*/
+            printTimeToExecute("Ping", ping);
+        }
     }
 }
 

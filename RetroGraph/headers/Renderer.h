@@ -50,11 +50,14 @@ private:
     void drawGraphGrid() const;
 
     // Widgets
-    void drawGraphWidget() const;
+    void drawLeftGraphWidget() const;
     void drawCpuGraph() const;
     void drawRamGraph() const;
     void drawGpuGraph() const;
     void drawNetGraph() const;
+
+    void drawRightGraphWidget() const;
+    void drawCoreGraphs() const;
 
     void drawProcessWidget() const;
     void drawProcCPUList() const;
@@ -62,7 +65,6 @@ private:
     void drawStatsWidget() const;
 
     void drawMainWidget() const;
-    void drawCoreGraphs() const;
 
     /* Draw labelled capacity bars of all fixed drives in the system */
     void drawHDDWidget() const;
@@ -93,7 +95,7 @@ private:
     GLint m_statsWidgetVP[4];
 
     // Graph widget viewport and sub-viewports
-    GLint m_graphWidgetVP[4]; // Viewport of all graphs together
+    GLint m_leftGraphWidgetVP[4]; // Viewport of all graphs together
     GLint m_cpuGraphVP[4]; // viewport of graph relative to graphWidgetViewport
     GLint m_ramGraphVP[4];
     GLint m_gpuGraphVP[4];
@@ -101,6 +103,7 @@ private:
 
     // Main widget viewport and sub-viewports
     GLint m_mainWidgetVP[4];
+    GLint m_rightGraphWidgetVP[4]; // Viewport of all graphs together
     GLint m_coreGraphsVP[4];
 
     // Font members
