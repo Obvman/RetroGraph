@@ -151,7 +151,7 @@ void Window::createRClickMenu(HWND hWnd, DWORD cursorX, DWORD cursorY) {
     SetForegroundWindow(hWnd);
 
     TrackPopupMenuEx(hPopupMenu, TPM_TOPALIGN | TPM_LEFTALIGN | TPM_RIGHTBUTTON,
-                   cursorX, cursorY, hWnd, NULL);
+                   cursorX, cursorY, hWnd, nullptr);
 }
 
 void Window::init() {
@@ -217,14 +217,14 @@ void Window::createWindow() {
     // Set and register the window class
     memset(&m_wc, 0, sizeof(m_wc));
     m_wc.cbSize = sizeof(WNDCLASSEX);
-    m_wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+    m_wc.hIconSm = LoadIcon(nullptr, IDI_APPLICATION);
     m_wc.style = CS_HREDRAW | CS_VREDRAW;
     m_wc.lpfnWndProc = WndProc;
     m_wc.cbClsExtra = 0;
     m_wc.cbWndExtra = 0;
     m_wc.hInstance = m_hInstance;
     m_wc.hIcon = LoadIcon(m_hInstance, MAKEINTRESOURCE(IDI_ICON1));
-    m_wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+    m_wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
     m_wc.hbrBackground = static_cast<HBRUSH>(CreateSolidBrush(0x00000000));
     m_wc.lpszClassName = "RetroGraph";
 
@@ -279,13 +279,13 @@ bool Window::createHGLRC() {
     if (m_arbMultisampleSupported) {
         m_hWndMain = CreateWindowEx(WS_EX_APPWINDOW, "RetroGraph", "RetroGraph",
                                     WS_VISIBLE | WS_POPUP, m_startPosX, m_startPosY, m_width, m_height,
-                                    NULL, NULL, m_hInstance, NULL);
+                                    nullptr, nullptr, m_hInstance, nullptr);
     } else {
         // Create test window that doesn't appear in taskbar to query
         // anti-aliasing capabilities
         m_hWndMain = CreateWindowEx(WS_EX_TOOLWINDOW, "RetroGraph", "Dummy",
                                     WS_VISIBLE | WS_POPUP, m_startPosX, m_startPosY, m_width, m_height,
-                                    NULL, NULL, m_hInstance, NULL);
+                                    nullptr, nullptr, m_hInstance, nullptr);
     }
 
     // Store a pointer to this Window object that we can later recover in WndProc

@@ -63,7 +63,7 @@ void NetMeasure::init() {
 void NetMeasure::getNetStats() {
     { // Get DNS and Hostname
         auto pFixedInfo{ (FIXED_INFO*)malloc(sizeof(FIXED_INFO)) };
-        if (pFixedInfo == NULL) {
+        if (!pFixedInfo) {
             printf("Error allocating memory needed to call GetNetworkParams\n");
         }
         auto ulOutBufLen = ULONG{ sizeof(FIXED_INFO) };
@@ -73,7 +73,7 @@ void NetMeasure::getNetStats() {
         if (GetNetworkParams(pFixedInfo, &ulOutBufLen) == ERROR_BUFFER_OVERFLOW) {
             free(pFixedInfo);
             pFixedInfo = (FIXED_INFO*)malloc(ulOutBufLen);
-            if (pFixedInfo == NULL) {
+            if (!pFixedInfo) {
                 printf("Error allocating memory needed to call GetNetworkParams\n");
             }
         } else {

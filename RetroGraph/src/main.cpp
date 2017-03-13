@@ -64,7 +64,7 @@ void mainLoop(rg::Window& mainWindow) {
         const auto dt{ currTime - frameStartTime };
 
         // Handle windows messages
-        if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+        if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }

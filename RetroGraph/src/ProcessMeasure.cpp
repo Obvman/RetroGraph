@@ -162,7 +162,8 @@ void ProcessMeasure::populateList() {
     NTSTATUS status;
     PVOID buffer;
     PSYSTEM_PROCESS_INFO spi;
-    buffer = VirtualAlloc(NULL,1024*1024,MEM_COMMIT|MEM_RESERVE,PAGE_READWRITE); // We need to allocate a large buffer because the process list can be large.
+    buffer = VirtualAlloc(nullptr, 1024*1024,
+                          MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE); // We need to allocate a large buffer because the process list can be large.
 
     if(!buffer) {
         fatalMessageBox("Error: Unable to allocate memory for process list " +
@@ -172,8 +173,9 @@ void ProcessMeasure::populateList() {
     spi = static_cast<PSYSTEM_PROCESS_INFO>(buffer);
 
     // Fill the buffer with process information structs
-    if(!NT_SUCCESS(status=NtQuerySystemInformation(SystemProcessInformation,spi,1024*1024,NULL))) {
-        VirtualFree(buffer,0,MEM_RELEASE);
+    if(!NT_SUCCESS(status = NtQuerySystemInformation(SystemProcessInformation,
+                                                     spi, 1024*1024, nullptr))) {
+        VirtualFree(buffer, 0, MEM_RELEASE);
         fatalMessageBox("Error: Unable to query process list: " +
                         std::to_string(status) + '\n');
     }
@@ -215,17 +217,20 @@ void ProcessMeasure::detectNewProcesses() {
     NTSTATUS status;
     PVOID buffer;
     PSYSTEM_PROCESS_INFO spi;
-    buffer=VirtualAlloc(NULL,1024*1024,MEM_COMMIT|MEM_RESERVE,PAGE_READWRITE); // We need to allocate a large buffer because the process list can be large.
+    buffer=VirtualAlloc(nullptr, 1024*1024,
+                        MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE); // We need to allocate a large buffer because the process list can be large.
 
     if(!buffer) {
-        std::cout << "Error: Unable to allocate memory for process list " << GetLastError() << '\n';
+        std::cout << "Error: Unable to allocate memory for process list "
+                  << GetLastError() << '\n';
         return;
     }
 
     spi = static_cast<PSYSTEM_PROCESS_INFO>(buffer);
 
     // Fill the buffer with process information structs
-    if(!NT_SUCCESS(status=NtQuerySystemInformation(SystemProcessInformation,spi,1024*1024,NULL))) {
+    if(!NT_SUCCESS(status = NtQuerySystemInformation(SystemProcessInformation,
+                                                     spi, 1024*1024, nullptr))) {
         std::cout << "Error: Unable to query process list " << status << '\n';
         VirtualFree(buffer,0,MEM_RELEASE);
         return;

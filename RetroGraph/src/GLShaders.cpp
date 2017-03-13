@@ -37,7 +37,7 @@ GLuint loadShader(const std::string& vFile, const std::string& fFile) {
     if (!result) {
         glGetShaderiv(vShader, GL_INFO_LOG_LENGTH, &logLength);
         std::vector<char> vertShaderError((logLength > 1) ? logLength : 1);
-        glGetShaderInfoLog(vShader, logLength, NULL, &vertShaderError[0]);
+        glGetShaderInfoLog(vShader, logLength, nullptr, &vertShaderError[0]);
 
         errorMessage.append(&vertShaderError[0]);
         std::cout << &vertShaderError[0] << '\n';
@@ -51,7 +51,7 @@ GLuint loadShader(const std::string& vFile, const std::string& fFile) {
     if (!result) {
         glGetShaderiv(fShader, GL_INFO_LOG_LENGTH, &logLength);
         std::vector<char> fragShaderError((logLength > 1) ? logLength : 1);
-        glGetShaderInfoLog(fShader, logLength, NULL, &fragShaderError[0]);
+        glGetShaderInfoLog(fShader, logLength, nullptr, &fragShaderError[0]);
 
         errorMessage.append(&fragShaderError[0]);
         std::cout << &fragShaderError[0] << '\n';
