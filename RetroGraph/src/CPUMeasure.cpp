@@ -77,6 +77,7 @@ void CPUMeasure::update(uint32_t ticks) {
             std::rotate(m_perCoreData[i].begin(),
                         m_perCoreData[i].begin() + 1, m_perCoreData[i].end());
         }
+
     }
 
 }

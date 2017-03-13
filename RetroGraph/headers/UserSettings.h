@@ -24,6 +24,7 @@ public:
     int16_t getStartupMonitor() const { return m_startupMonitor; }
 
     const std::string& getNetAdapterName() const { return m_netAdapterName; }
+    const std::string& getPingServer() const { return m_pingServer; }
 private:
     void generateDefaultFile(pt::ptree& propTree);
 
@@ -36,6 +37,7 @@ private:
 
     // Network options
     std::string m_netAdapterName;
+    std::string m_pingServer;
 };
 
 }

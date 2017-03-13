@@ -48,7 +48,7 @@ float lerp(float x1, float x2, float t);
 
 /* Prints how long the given function f took to execute */
 template<typename F>
-void printTimeToExecute(const char* funcName, F f) {
+void printTimeToExecuteMs(const char* funcName, F f) {
     const auto start{ clock() };
     f();
     const auto end{ clock() };
@@ -59,8 +59,27 @@ void printTimeToExecute(const char* funcName, F f) {
 
 /* Default function name overload */
 template<typename F>
-void printTimeToExecute(F f) {
-    printTimeToExecute("Function", f);
+void printTimeToExecuteMs(F f) {
+    printTimeToExecuteMs("Function", f);
+}
+
+template<typename F>
+void printTimeToExecuteHighRes(const char* funcName, F f) {
+    LARGE_INTEGER li;
+    QueryPerformanceCounter(&li);
+    const int64_t start{ li.QuadPart };
+
+    f();
+
+    QueryPerformanceCounter(&li);
+    const int64_t end{ li.QuadPart };
+
+    std::cout << funcName << " took " << end - start << " counts.\n";
+}
+
+template<typename F>
+void printTimeToExecuteHighRes(F f) {
+    printTimeToExecuteHighRes("Function", f);
 }
 
 }

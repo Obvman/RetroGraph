@@ -36,7 +36,8 @@ UserSettings::UserSettings() :
     m_windowWidth{ 1920U },
     m_windowHeight{ 1170U },
     m_startupMonitor{ 0U },
-    m_netAdapterName{ "Intel(R) Ethernet Connection (2) I219-V"} {
+    m_netAdapterName{ "Intel(R) Ethernet Connection (2) I219-V"},
+    m_pingServer{ "http://www.google.com/" } {
 }
 
 UserSettings::~UserSettings() {
@@ -53,6 +54,7 @@ void UserSettings::init() {
             m_windowHeight = propTree.get<uint16_t>("Window.WindowHeight");
             m_startupMonitor = propTree.get<uint16_t>("Window.Monitor");
             m_netAdapterName = propTree.get<std::string>("Network.NetworkAdapter");
+            m_pingServer = propTree.get<std::string>("Network.PingServer");
         }
 
 
@@ -98,6 +100,7 @@ void UserSettings::generateDefaultFile(pt::ptree& propTree) {
     propTree.put("Window.Monitor", m_startupMonitor);
 
     propTree.put("Network.NetworkAdapter", m_netAdapterName);
+    propTree.put("Network.PingServer", m_pingServer);
 
     pt::ini_parser::write_ini(iniPath, propTree);
 }

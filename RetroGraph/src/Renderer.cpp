@@ -170,29 +170,33 @@ void Renderer::initFonts(HWND hWnd) {
     const auto width{ rect.right - rect.left };
     const auto height{ rect.bottom - rect.top };
 
-    const auto stdFontHeight{ std::lround(height / 100.0) - 2 };
-    const auto stdFontWidth{ std::lround(width / 100.0) - 2};
+    stdFontHeight = std::lround(height / 70.0);
 
     // Create the different fonts
     HFONT standardFont = CreateFont(
-        stdFontWidth, stdFontHeight, 0, 0, FW_NORMAL,
+        stdFontHeight, 0, 0, 0, FW_NORMAL,
         FALSE, FALSE, FALSE, ANSI_CHARSET,
         OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
         DEFAULT_PITCH | FF_DONTCARE, fonts[0]);
+
+
     HFONT standardFontBold = CreateFont(
-        stdFontWidth, stdFontHeight, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
+        stdFontHeight, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
         ANSI_CHARSET, OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
         DEFAULT_PITCH | FF_DONTCARE, fonts[0]);
+
     HFONT largeFont = CreateFont(
-        70, 45, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
+        45, 70, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
         OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
         VARIABLE_PITCH | FF_MODERN, fonts[0]);
+
     HFONT smallFont = CreateFont(
-        stdFontWidth/2 + 2, stdFontHeight/2 + 2, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
+        7*stdFontHeight/8, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
         ANSI_CHARSET, OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
         VARIABLE_PITCH | FF_MODERN, fonts[1]);
-    HFONT timeFont = CreateFont(
-        stdFontWidth * 4, stdFontHeight * 4, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
+
+    HFONT timeFont = CreateFontA(
+        stdFontHeight * 6, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
         ANSI_CHARSET, OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
         VARIABLE_PITCH | FF_MODERN, fonts[1]);
 
@@ -202,6 +206,16 @@ void Renderer::initFonts(HWND hWnd) {
     SelectObject(hdc, standardFont);
     wglUseFontBitmaps(hdc, 0, 256, stdFontBase);
     SelectObject(hdc, standardFontBold);
+
+    // Retrieve font width/height values
+    // For these fonts, assume every char has the same width, so just get the
+    // width of the first value
+    TEXTMETRICA tm;
+    GetTextMetricsA(hdc, &tm);
+
+    GetCharWidth32A(hdc, 0, 0, &stdFontWidth);
+    stdFontHeight = tm.tmHeight;
+
     wglUseFontBitmaps(hdc, 0, 256, stdFontBoldBase);
     SelectObject(hdc, largeFont);
     wglUseFontBitmaps(hdc, 0, 256, lrgFontBase);
@@ -463,7 +477,7 @@ void Renderer::drawCpuGraph() const {
 
     drawGraphGrid();
     glLineWidth(0.5f);
-    drawFilledGraph(m_cpuMeasure->getUsageData());
+    drawLineGraph(m_cpuMeasure->getUsageData());
 
     { // Text
         glViewport(m_cpuGraphVP[0] + (4 * m_cpuGraphVP[2]) / 5, m_cpuGraphVP[1],
@@ -557,7 +571,7 @@ void Renderer::drawGpuGraph() const {
 
     // Draw the line graph
     glLineWidth(0.5f);
-    drawFilledGraph(m_gpuMeasure->getUsageData());
+    drawLineGraph(m_gpuMeasure->getUsageData());
 
     {// Set viewport for text drawing
         glViewport(m_gpuGraphVP[0] + (4 * m_gpuGraphVP[2]) / 5, m_gpuGraphVP[1],
@@ -614,7 +628,7 @@ void Renderer::drawNetGraph() const {
         const auto maxValMB{ max(maxUpValMB, maxDownValMB) };
 
         // Draw the download graph
-        glBegin(GL_QUADS); {
+        glBegin(GL_LINE_STRIP); {
             glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.7f);
             for (auto i = size_t{ 0U }; i < downData.size() - 1; ++i) {
                 const auto percent1 = float{ (downData[i] / static_cast<float>(MB)) / maxValMB };
@@ -625,15 +639,13 @@ void Renderer::drawNetGraph() const {
                 const auto x2 = float{ (static_cast<float>(i+1) / (downData.size() - 1)) * 2.0f - 1.0f };
                 const auto y2 = float{ percent2 * 2.0f - 1.0f };
 
-                glVertex2f(x1, -1.0f); // Bottom-left
                 glVertex2f(x1, y1);    // Top-left
                 glVertex2f(x2, y2);    // Top-right
-                glVertex2f(x2, -1.0f); // Bottom-right
             }
         } glEnd();
 
         // Draw the upload graph
-        glBegin(GL_QUADS); {
+        glBegin(GL_LINE_STRIP); {
             glColor4f(PINK1_R, PINK1_G, PINK1_B, 0.7f);
             for (auto i = size_t{ 0U }; i < upData.size() - 1; ++i) {
                 const auto percent1 = float{ (upData[i] / static_cast<float>(MB)) / maxValMB };
@@ -644,10 +656,8 @@ void Renderer::drawNetGraph() const {
                 const auto x2 = float{ (static_cast<float>(i+1) / (upData.size() - 1)) * 2.0f - 1.0f };
                 const auto y2 = float{ percent2 * 2.0f - 1.0f };
 
-                glVertex2f(x1, -1.0f); // Bottom-left
                 glVertex2f(x1, y1); // Top-left
                 glVertex2f(x2, y2); // Top-right
-                glVertex2f(x2, -1.0f); // Bottom-right
             }
         } glEnd();
     }
@@ -896,7 +906,7 @@ void Renderer::drawTimeWidget() const {
         localtime_s(&t, &now);
         strftime(buf, sizeof(buf), "%T", &t);
 
-        glRasterPos2f(-0.95f, 0.15f);
+        glRasterPos2f(-0.95f, 0.04f);
         fontScope(timeFontBase, [&]() {
             glCallLists(sizeof(buf), GL_UNSIGNED_BYTE, buf);
         });
@@ -933,11 +943,17 @@ void Renderer::drawTimeWidget() const {
         glRasterPos2f(0.4f, -0.55f);
 
         fontScope(stdFontBoldBase, [&]() {
-            glCallLists(5, GL_UNSIGNED_BYTE, "TEMP");
+            glCallLists(7, GL_UNSIGNED_BYTE, "NETWORK");
         });
 
-        glRasterPos2f(0.4f, -0.8f);
-        glCallLists(10, GL_UNSIGNED_BYTE, "Temporary");
+        if (m_netMeasure->isConnected()) {
+            glRasterPos2f(0.4f, -0.8f);
+            glCallLists(2, GL_UNSIGNED_BYTE, "UP");
+            // TODO print ping in ms
+        } else {
+            glRasterPos2f(0.4f, -0.8f);
+            glCallLists(4, GL_UNSIGNED_BYTE, "DOWN");
+        }
     }
 }
 

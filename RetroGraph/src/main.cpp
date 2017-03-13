@@ -19,16 +19,13 @@
 
 void mainLoop(rg::Window& mainWindow);
 
-#if (!_DEBUG)
-// Release mode is a Win32 application, while Debug mode is a console application
-int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-                     LPSTR lpCmdLine, int nCmdShow) {
-    hInstance = GetModuleHandle(nullptr);
-#endif
-
 #if _DEBUG
 int main() {
     HINSTANCE hInstance = GetModuleHandle(nullptr);
+#else
+int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+                     LPSTR lpCmdLine, int nCmdShow) {
+    hInstance = GetModuleHandle(nullptr);
 #endif
 
     try {

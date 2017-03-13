@@ -9,6 +9,7 @@
 
 #include "Measure.h"
 #include "CPUPlugin.h"
+#include "GraphData.h"
 
 namespace rg {
 

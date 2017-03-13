@@ -12,11 +12,14 @@
 #include <ws2ipdef.h>
 #include <Iphlpapi.h>
 #include <wininet.h>
+#include <icmpapi.h>
+#include <Ws2tcpip.h>
 
 #include "../headers/utils.h"
 
 #pragma comment(lib, "Iphlpapi.lib")
 #pragma comment(lib, "Wininet.lib")
+#pragma comment(lib, "Ws2_32.lib")
 
 namespace rg {
 
@@ -27,6 +30,8 @@ NetMeasure::NetMeasure(const UserSettings& settings) :
     m_hostname{ "" },
     m_mainAdapterMAC{ "00-00-00-00-00-00" },
     m_mainAdapterIP{ "0.0.0.0" },
+    m_pingServer{ settings.getPingServer() },
+    m_isConnected{ false },
     m_downMaxVal{ 10U * GB },
     m_upMaxVal{ 10U * GB },
     dataSize{ 40U } {
@@ -153,21 +158,12 @@ void NetMeasure::update(uint32_t ticks) {
         std::rotate(m_upBytes.begin(), m_upBytes.begin() + 1, m_upBytes.end());
         m_upMaxVal = *std::max_element(m_upBytes.cbegin(), m_upBytes.cend());
 
+        // TODO multithread this since it blocks the app whenever a ping takes too long
         if ((ticks % (ticksPerSecond * 10)) == 0) {
-            static auto ping{ []() {
-                InternetCheckConnectionA("http://www.google.com/",
-                                         FLAG_ICC_FORCE_CONNECTION, 0);
-            }};
-            // Ping google to check if network is working
-            /*printTimeToExecute("Ping", []() {
-                if (InternetCheckConnectionA("http://www.google.com/", FLAG_ICC_FORCE_CONNECTION, 0)) {
-                    std::cout << "Connected to internet\n";
-                }
-            });*/
-            printTimeToExecute("Ping", ping);
+            m_isConnected = static_cast<bool>(InternetCheckConnectionA(
+                m_pingServer.c_str(), FLAG_ICC_FORCE_CONNECTION, 0));
         }
     }
 }
-
 
 }

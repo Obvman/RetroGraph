@@ -27,6 +27,7 @@ public:
     const std::string& getHostname() const { return m_hostname; }
     const std::string& getAdapterMAC() const { return m_mainAdapterMAC; }
     const std::string& getAdapterIP() const { return m_mainAdapterIP; }
+    bool isConnected() const { return m_isConnected; }
 private:
     void getNetStats();
 
@@ -37,6 +38,9 @@ private:
     std::string m_hostname;
     std::string m_mainAdapterMAC;
     std::string m_mainAdapterIP;
+
+    std::string m_pingServer;
+    bool m_isConnected;
 
     uint64_t m_downMaxVal;
     uint64_t m_upMaxVal;

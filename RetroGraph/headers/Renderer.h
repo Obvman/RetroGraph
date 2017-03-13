@@ -108,6 +108,9 @@ private:
 
     // Font members
     GLint stdFontBase; // The default font
+    int32_t stdFontWidth;
+    int32_t stdFontHeight;
+
     GLint stdFontBoldBase;
     GLint smlFontBase;
     GLint lrgFontBase;
