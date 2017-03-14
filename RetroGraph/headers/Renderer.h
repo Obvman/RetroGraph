@@ -6,6 +6,8 @@
 #include <Windows.h>
 #include <GL/glew.h>
 
+#include "FontManager.h"
+
 namespace rg {
 
 class CPUMeasure;
@@ -37,8 +39,6 @@ public:
     void draw(uint32_t ticks) const;
 private:
     void initViewportBuffers(uint16_t windowWidth, uint16_t windowHeight);
-    /* Creates font data and loads draw data into OpenGL call lists */
-    void initFonts(HWND hWnd);
     /* Fill VBOs with intial vertex data */
     void initVBOs();
     /* Compiles and retrieves uniform locations */
@@ -106,15 +106,7 @@ private:
     GLint m_rightGraphWidgetVP[4]; // Viewport of all graphs together
     GLint m_coreGraphsVP[4];
 
-    // Font members
-    GLint stdFontBase; // The default font
-    int32_t stdFontWidth;
-    int32_t stdFontHeight;
-
-    GLint stdFontBoldBase;
-    GLint smlFontBase;
-    GLint lrgFontBase;
-    GLint timeFontBase;
+    FontManager m_fontManager;
 
     // VBO members
     GLuint m_graphGridVertsID;

@@ -42,7 +42,8 @@ void vboDrawScope(GLuint vertID, GLuint indexID, F f) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-Renderer::Renderer()
+Renderer::Renderer() :
+    m_fontManager{}
 {
 
 }
@@ -55,6 +56,7 @@ void Renderer::init(HWND hWnd, uint16_t windowWidth, uint16_t windowHeight,
                     const RAMMeasure& _ram, const NetMeasure& _net,
                     const ProcessMeasure& _proc, const DriveMeasure& _drive,
                     const SystemInfo& _sys) {
+    m_renderTargetHandle = hWnd;
     m_cpuMeasure = &_cpu;
     m_gpuMeasure = &_gpu;
     m_ramMeasure = &_ram;
@@ -76,7 +78,7 @@ void Renderer::init(HWND hWnd, uint16_t windowWidth, uint16_t windowHeight,
     m_statsStrings.emplace_back("MAC: " + m_netMeasure->getAdapterMAC());
     m_statsStrings.emplace_back("LAN IP: " + m_netMeasure->getAdapterIP());
 
-    initFonts(hWnd);
+    m_fontManager.init(hWnd);
     initVBOs();
     initShaders();
 }
@@ -141,98 +143,6 @@ void Renderer::initViewportBuffers(uint16_t windowWidth, uint16_t windowHeight) 
     m_coreGraphsVP[1] = m_rightGraphWidgetVP[1];
     m_coreGraphsVP[2] = m_rightGraphWidgetVP[2];
     m_coreGraphsVP[3] = m_rightGraphWidgetVP[3]/2;
-}
-
-void Renderer::initFonts(HWND hWnd) {
-    m_renderTargetHandle = hWnd;
-
-    // Array for conveniently testing different fonts
-    const char* const fonts[] = {
-        "Courier New",
-        "Lato Lights",
-        "Orator Std"
-        "Verdana"
-        //"OCR A Extended"
-        "Letter Gothic Std",
-        "Kozuka Gothic Pr6N L",
-        "Algerian",
-    };
-
-    // Generate the display lists for OpenGL to quickly draw the fonts
-    stdFontBase = glGenLists(256);
-    stdFontBoldBase = glGenLists(256);
-    lrgFontBase = glGenLists(256);
-    smlFontBase = glGenLists(256);
-    timeFontBase = glGenLists(256);
-
-    RECT rect;
-    GetWindowRect(m_renderTargetHandle, &rect);
-    const auto width{ rect.right - rect.left };
-    const auto height{ rect.bottom - rect.top };
-
-    stdFontHeight = std::lround(height / 70.0);
-
-    // Create the different fonts
-    HFONT standardFont = CreateFont(
-        stdFontHeight, 0, 0, 0, FW_NORMAL,
-        FALSE, FALSE, FALSE, ANSI_CHARSET,
-        OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-        DEFAULT_PITCH | FF_DONTCARE, fonts[0]);
-
-
-    HFONT standardFontBold = CreateFont(
-        stdFontHeight, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
-        ANSI_CHARSET, OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-        DEFAULT_PITCH | FF_DONTCARE, fonts[0]);
-
-    HFONT largeFont = CreateFont(
-        45, 70, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
-        OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-        VARIABLE_PITCH | FF_MODERN, fonts[0]);
-
-    HFONT smallFont = CreateFont(
-        7*stdFontHeight/8, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
-        ANSI_CHARSET, OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-        VARIABLE_PITCH | FF_MODERN, fonts[1]);
-
-    HFONT timeFont = CreateFontA(
-        stdFontHeight * 6, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
-        ANSI_CHARSET, OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-        VARIABLE_PITCH | FF_MODERN, fonts[1]);
-
-
-    // Bind the fonts to the OpenGL display lists
-    HDC hdc = GetDC(m_renderTargetHandle);
-    SelectObject(hdc, standardFont);
-    wglUseFontBitmaps(hdc, 0, 256, stdFontBase);
-    SelectObject(hdc, standardFontBold);
-
-    // Retrieve font width/height values
-    // For these fonts, assume every char has the same width, so just get the
-    // width of the first value
-    TEXTMETRICA tm;
-    GetTextMetricsA(hdc, &tm);
-
-    GetCharWidth32A(hdc, 0, 0, &stdFontWidth);
-    stdFontHeight = tm.tmHeight;
-
-    wglUseFontBitmaps(hdc, 0, 256, stdFontBoldBase);
-    SelectObject(hdc, largeFont);
-    wglUseFontBitmaps(hdc, 0, 256, lrgFontBase);
-    SelectObject(hdc, smallFont);
-    wglUseFontBitmaps(hdc, 0, 256, smlFontBase);
-    SelectObject(hdc, timeFont);
-    wglUseFontBitmaps(hdc, 0, 256, timeFontBase);
-
-    // Cleanup the fonts
-    DeleteObject(timeFont);
-    DeleteObject(smallFont);
-    DeleteObject(largeFont);
-    DeleteObject(standardFont);
-    DeleteObject(standardFontBold);
-
-    // Set the default font
-    glListBase(stdFontBase);
 }
 
 void Renderer::initVBOs() {
@@ -314,12 +224,6 @@ void Renderer::release() {
     // Free VBO memory
     glDeleteBuffers(1, &m_graphGridVertsID);
     glDeleteBuffers(1, &m_graphGridIndicesID);
-
-    // Delete font display lists from OpenGL memory
-    glDeleteLists(stdFontBase, 256);
-    glDeleteLists(stdFontBoldBase, 256);
-    glDeleteLists(lrgFontBase, 256);
-    glDeleteLists(smlFontBase, 256);
 }
 
 void Renderer::draw(uint32_t ticks) const {
@@ -436,11 +340,8 @@ void Renderer::drawCoreGraphs() const {
 
         // Draw a label for the core graph
         glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-        fontScope(smlFontBase, [i]() {
-            glRasterPos2f(-0.93f, 0.80f);
-            char str[7] = { 'C', 'o', 'r', 'e', ' ', static_cast<char>(i) + '0', '\0'};
-            glCallLists(strlen(str), GL_UNSIGNED_BYTE, str);
-        });
+        char str[7] = { 'C', 'o', 'r', 'e', ' ', static_cast<char>(i) + '0', '\0'};
+        m_fontManager.renderText(-0.93f, 0.80f, RG_FONT_SMALL, str, sizeof(str));
     }
 }
 
@@ -484,21 +385,13 @@ void Renderer::drawCpuGraph() const {
                    m_cpuGraphVP[2] / 5, m_cpuGraphVP[3]);
         glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
-        fontScope(smlFontBase, []() {
-            glRasterPos2f(-0.8f, -0.02f);
-            const char* str{ "Sys Load" };
-            glCallLists(strlen(str), GL_UNSIGNED_BYTE, str);
-
-            glRasterPos2f(-0.8f, -0.77f);
-            const char* min{ "0%" };
-            glCallLists(strlen(min), GL_UNSIGNED_BYTE, min);
-
-            glRasterPos2f(-0.8f, 0.70f);
-            const char* max{ "100%" };
-            glCallLists(strlen(max), GL_UNSIGNED_BYTE, max);
-        });
+        const char* str{ "Sys Load" };
+        const char* min{ "0%" };
+        const char* max{ "100%" };
+        m_fontManager.renderText(-0.8f, -0.02f, RG_FONT_SMALL, str);
+        m_fontManager.renderText(-0.8f, -0.77f, RG_FONT_SMALL, min);
+        m_fontManager.renderText(-0.8f, 0.70f, RG_FONT_SMALL, max);
     }
-
 }
 
 void Renderer::drawRamGraph() const {
@@ -532,7 +425,13 @@ void Renderer::drawRamGraph() const {
                    m_ramGraphVP[2] / 5, m_ramGraphVP[3]);
         glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
-        fontScope(smlFontBase, []() {
+        const char* str{ "RAM Load" };
+        const char* min{ "0%" };
+        const char* max{ "100%" };
+        m_fontManager.renderText(-0.8f, -0.02f, RG_FONT_SMALL, str);
+        m_fontManager.renderText(-0.8f, -0.77f, RG_FONT_SMALL, min);
+        m_fontManager.renderText(-0.8f, 0.70f, RG_FONT_SMALL, max);
+        /*fontScope(smlFontBase, []() {
             glRasterPos2f(-0.8f, -0.02f);
             const char* str{ "RAM Load" };
             glCallLists(strlen(str), GL_UNSIGNED_BYTE, str);
@@ -544,7 +443,7 @@ void Renderer::drawRamGraph() const {
             glRasterPos2f(-0.8f, 0.70f);
             const char* max{ "100%" };
             glCallLists(strlen(max), GL_UNSIGNED_BYTE, max);
-        });
+        });*/
     }
 }
 
@@ -578,7 +477,13 @@ void Renderer::drawGpuGraph() const {
                    m_gpuGraphVP[2] / 5, m_gpuGraphVP[3]);
         glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
-        fontScope(smlFontBase, []() {
+        const char* str{ "GPU Load" };
+        const char* min{ "0%" };
+        const char* max{ "100%" };
+        m_fontManager.renderText(-0.8f, -0.02f, RG_FONT_SMALL, str);
+        m_fontManager.renderText(-0.8f, -0.77f, RG_FONT_SMALL, min);
+        m_fontManager.renderText(-0.8f, 0.70f, RG_FONT_SMALL, max);
+        /*fontScope(smlFontBase, []() {
             glRasterPos2f(-0.8f, -0.02f);
             const char* str{ "GPU Load" };
             glCallLists(strlen(str), GL_UNSIGNED_BYTE, str);
@@ -590,7 +495,7 @@ void Renderer::drawGpuGraph() const {
             glRasterPos2f(-0.8f, 0.70f);
             const char* max{ "100%" };
             glCallLists(strlen(max), GL_UNSIGNED_BYTE, max);
-        });
+        });*/
     }
 
 }
@@ -677,31 +582,27 @@ void Renderer::drawNetGraph() const {
             suffix = "MB";
         }
 
-        fontScope(smlFontBase, [maxVal, &suffix]() {
-            glRasterPos2f(-0.8f, -0.02f);
-            const char* str{ "Down/Up" };
-            glCallLists(strlen(str), GL_UNSIGNED_BYTE, str);
+        const char* str{ "Down/Up" };
+        const auto bottom{ "0" + suffix };
+        const char* max{ "100%" };
+        m_fontManager.renderText(-0.8f, -0.02f, RG_FONT_SMALL, str);
+        m_fontManager.renderText(-0.8f, -0.77f, RG_FONT_SMALL, bottom.c_str(), bottom.size());
 
-            glRasterPos2f(-0.8f, -0.77f);
-            const auto bottom{ "0" + suffix };
-            glCallLists(strlen(bottom.c_str()), GL_UNSIGNED_BYTE, bottom.c_str());
-
-            glRasterPos2f(-0.8f, 0.70f);
-            if (suffix == "MB") {
-                char buff[8];
-                snprintf(buff, sizeof(buff), "%5.1fMB", maxVal/static_cast<float>(MB));
-                glCallLists(sizeof(buff), GL_UNSIGNED_BYTE, buff);
-            } else if (suffix == "KB") {
-                char buff[8];
-                snprintf(buff, sizeof(buff), "%5.1fKB", maxVal/static_cast<float>(KB));
-                glCallLists(sizeof(buff), GL_UNSIGNED_BYTE, buff);
-            } else {
-                const auto top{ std::to_string(maxVal) + suffix };
-                char buff[5];
-                snprintf(buff, sizeof(buff), "%3lluB", maxVal);
-                glCallLists(strlen(top.c_str()), GL_UNSIGNED_BYTE, top.c_str());
-            }
-        });
+        /* Print the maximum throughput as the scale at the top of the graph */
+        if (suffix == "MB") {
+            char buff[8];
+            snprintf(buff, sizeof(buff), "%5.1fMB", maxVal/static_cast<float>(MB));
+            m_fontManager.renderText(-0.8f, 0.70f, RG_FONT_SMALL, buff, sizeof(buff));
+        } else if (suffix == "KB") {
+            char buff[8];
+            snprintf(buff, sizeof(buff), "%5.1fKB", maxVal/static_cast<float>(KB));
+            m_fontManager.renderText(-0.8f, 0.70f, RG_FONT_SMALL, buff, sizeof(buff));
+        } else {
+            const auto top{ std::to_string(maxVal) + suffix };
+            char buff[5];
+            snprintf(buff, sizeof(buff), "%3lluB", maxVal);
+            m_fontManager.renderText(-0.8f, 0.70f, RG_FONT_SMALL, buff, sizeof(buff));
+        }
     }
 }
 
@@ -898,34 +799,26 @@ void Renderer::drawTimeWidget() const {
         } glEnd();
     }
 
-    // Draw all the text elements
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-
     { // Draw the big system time
         time_t now = time(0);
         tm t;
         char buf[9];
         localtime_s(&t, &now);
         strftime(buf, sizeof(buf), "%T", &t);
+        m_fontManager.renderText(-0.95f, 0.04f, RG_FONT_TIME, buf, sizeof(buf));
 
-        glRasterPos2f(-0.95f, 0.04f);
-        fontScope(timeFontBase, [&]() {
-            glCallLists(sizeof(buf), GL_UNSIGNED_BYTE, buf);
-        });
-
-        // Draw the date in the bottom-middle
+        // Draw the year and month in bottom-middle
+        // TODO use full month names
         char dateBuf[7];
         strftime(dateBuf, sizeof(dateBuf), "%d %b", &t);
-        glRasterPos2f(-0.15f, -0.8f);
-        glCallLists(sizeof(dateBuf), GL_UNSIGNED_BYTE, dateBuf);
+        m_fontManager.renderText(-0.15f, -0.8f, RG_FONT_STANDARD, dateBuf,
+                                 sizeof(dateBuf));
 
         char yearBuf[5];
         strftime(yearBuf, sizeof(yearBuf), "%Y", &t);
-
-        glRasterPos2f(-0.1f, -0.55f);
-        fontScope(stdFontBoldBase, [&]() {
-            glCallLists(sizeof(yearBuf), GL_UNSIGNED_BYTE, yearBuf);
-        });
+        m_fontManager.renderText(-0.1f, -0.55f, RG_FONT_STANDARD_BOLD, yearBuf,
+                                 sizeof(yearBuf));
     }
 
     // Draw the uptime in bottom-left
@@ -939,21 +832,17 @@ void Renderer::drawTimeWidget() const {
         // from a position such that the last character is "dividerOffset" pixels
         // away from the divider
         const char* uptimeTitle{ "UPTIME" };
-        int32_t strLenPixels{ 10 *
+        int32_t strLenPixels{ m_fontManager.getFontCharWidth(RG_FONT_STANDARD) *
             static_cast<int32_t>(strlen(uptimeTitle)) };
         int32_t strStartPixelX{ leftDivPixelPos - strLenPixels - dividerOffset};
 
         // Convert pixel value to viewport coordinates
         float strStartVPX{ ((static_cast<float>(strStartPixelX) / m_timeWidgetVP[2]) * 2.0f) - 1.0f};
-        glRasterPos2f(strStartVPX, -0.55f);
-        fontScope(stdFontBase, [&]() {
-            glCallLists(strlen(uptimeTitle), GL_UNSIGNED_BYTE, uptimeTitle);
-        });
-
+        m_fontManager.renderText(strStartVPX, -0.55f, RG_FONT_STANDARD, uptimeTitle);
 
         const auto& uptime{ m_cpuMeasure->getUptimeStr() };
 
-        strLenPixels = static_cast<int32_t>(uptime.size()) * 10;
+        strLenPixels = static_cast<int32_t>(uptime.size()) * m_fontManager.getFontCharWidth(RG_FONT_STANDARD);
         strStartPixelX = leftDivPixelPos - strLenPixels - dividerOffset;
         strStartVPX =  ((static_cast<float>(strStartPixelX) / m_timeWidgetVP[2]) * 2.0f) - 1.0f;
 
@@ -961,21 +850,15 @@ void Renderer::drawTimeWidget() const {
         glCallLists(uptime.length(), GL_UNSIGNED_BYTE, uptime.c_str());
     }
 
-    // TODO draw something else useful in the bottom-right
+    // Draw network connection status in bottom-right
     {
-        glRasterPos2f(0.4f, -0.55f);
-
-        fontScope(stdFontBoldBase, [&]() {
-            glCallLists(7, GL_UNSIGNED_BYTE, "NETWORK");
-        });
+        m_fontManager.renderText(0.4f, -0.55f, RG_FONT_STANDARD_BOLD, "NETWORK");
 
         if (m_netMeasure->isConnected()) {
-            glRasterPos2f(0.4f, -0.8f);
-            glCallLists(2, GL_UNSIGNED_BYTE, "UP");
+            m_fontManager.renderText(0.4f, -0.8f, RG_FONT_STANDARD, "UP");
             // TODO print ping in ms
         } else {
-            glRasterPos2f(0.4f, -0.8f);
-            glCallLists(4, GL_UNSIGNED_BYTE, "DOWN");
+            m_fontManager.renderText(0.4f, -0.8f, RG_FONT_STANDARD, "DOWN");
         }
     }
 }
