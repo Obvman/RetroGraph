@@ -26,7 +26,7 @@ public:
     Renderer();
     ~Renderer();
 
-    void init(HWND hWnd, uint16_t windowWidth, uint16_t windowHeight,
+    void init(HWND hWnd, uint32_t windowWidth, uint32_t windowHeight,
               const CPUMeasure& _cpu, const GPUMeasure& _gpu,
               const RAMMeasure& _ram, const NetMeasure& _net,
               const ProcessMeasure& _proc, const DriveMeasure& _drive,
@@ -38,7 +38,8 @@ public:
     /* Draws scene to the window */
     void draw(uint32_t ticks) const;
 private:
-    void initViewportBuffers(uint16_t windowWidth, uint16_t windowHeight);
+    /* Fills all the viewport arrays with hard-coded values */
+    void initViewportBuffers(uint32_t windowWidth, uint32_t windowHeight);
     /* Fill VBOs with intial vertex data */
     void initVBOs();
     /* Compiles and retrieves uniform locations */
@@ -50,21 +51,21 @@ private:
     void drawGraphGrid() const;
 
     // Widgets
+    void drawMainWidget() const;
+
+    void drawRightGraphWidget() const;
+    void drawCoreGraphs() const;
+
     void drawLeftGraphWidget() const;
     void drawCpuGraph() const;
     void drawRamGraph() const;
     void drawGpuGraph() const;
     void drawNetGraph() const;
 
-    void drawRightGraphWidget() const;
-    void drawCoreGraphs() const;
-
     void drawProcessWidget() const;
     void drawProcCPUList() const;
     void drawProcRAMList() const;
     void drawStatsWidget() const;
-
-    void drawMainWidget() const;
 
     /* Draw labelled capacity bars of all fixed drives in the system */
     void drawHDDWidget() const;
@@ -74,6 +75,7 @@ private:
 
     /* Draws widget with time, date, uptime */
     void drawTimeWidget() const;
+
 
     HWND m_renderTargetHandle;
 
@@ -85,6 +87,8 @@ private:
     const ProcessMeasure* m_processMeasure;
     const DriveMeasure* m_driveMeasure;
     const SystemInfo* m_sysInfo;
+
+    FontManager m_fontManager;
 
     std::vector<std::string> m_statsStrings;
 
@@ -106,16 +110,14 @@ private:
     GLint m_rightGraphWidgetVP[4]; // Viewport of all graphs together
     GLint m_coreGraphsVP[4];
 
-    FontManager m_fontManager;
-
     // VBO members
     GLuint m_graphGridVertsID;
     GLuint m_graphGridIndicesID;
     GLsizei m_graphIndicesSize;
 
-    GLuint m_graphLineVertsID;
-    GLuint m_graphLineIndicesID;
-    GLsizei m_graphLineIndicesSize;
+    //GLuint m_graphLineVertsID;
+    //GLuint m_graphLineIndicesID;
+    //GLsizei m_graphLineIndicesSize;
 
     // Shaders
     GLuint m_cpuGraphShader;

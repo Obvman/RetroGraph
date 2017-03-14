@@ -30,8 +30,10 @@ void showMessageBox(const std::string& s);
    exits the program with a failure code */
 void fatalMessageBox(const std::string& s);
 
+/* Converts a wchar_t string to regular char string */
 std::string wstrToStr(const std::wstring& wstr);
 
+/* Converts a char string to wchar_t string */
 std::wstring strToWstr(const std::string& str);
 
 /* Converts FILETIME to an unsigned LARGE_INTEGER struct */
@@ -40,7 +42,7 @@ ULARGE_INTEGER ftToULI(const FILETIME& ft);
 /* Subtracts the FILETIMES and returns result as 64 bit unsigned integer */
 uint64_t subtractTimes(const FILETIME& ftA, const FILETIME& ftB);
 
-/* When called after a viewport has been set, draws a white outline of the viewport */
+/* Draws the outline of the current glViewport bounds for debugging */
 void drawViewportBorder();
 
 /* Linear interpolation */

@@ -1,6 +1,5 @@
 #include "../headers/Renderer.h"
 
-#include <GL/gl.h>
 #include <sstream>
 #include <iostream>
 
@@ -16,17 +15,6 @@
 #include "../headers/GLShaders.h"
 
 namespace rg {
-
-// Activates the given font for the lifetime of the given function f only, then
-// Returns to the previously selected font
-template<typename F>
-void fontScope(GLint fontBase, F f) {
-    glPushAttrib(GL_LIST_BIT);
-    glListBase(fontBase);
-    f();
-    glPopAttrib();
-}
-
 // Automatically binds/unbinds given VBOs and executes the function given
 template<typename F>
 void vboDrawScope(GLuint vertID, GLuint indexID, F f) {
@@ -43,15 +31,22 @@ void vboDrawScope(GLuint vertID, GLuint indexID, F f) {
 }
 
 Renderer::Renderer() :
+    m_renderTargetHandle{ nullptr },
+    m_cpuMeasure{ nullptr },
+    m_gpuMeasure{ nullptr },
+    m_ramMeasure{ nullptr },
+    m_netMeasure{ nullptr },
+    m_processMeasure{ nullptr },
+    m_driveMeasure{ nullptr },
+    m_sysInfo{ nullptr },
+    m_statsStrings{},
     m_fontManager{}
-{
-
-}
+{ /* Empty */ }
 
 Renderer::~Renderer() {
 }
 
-void Renderer::init(HWND hWnd, uint16_t windowWidth, uint16_t windowHeight,
+void Renderer::init(HWND hWnd, uint32_t windowWidth, uint32_t windowHeight,
                     const CPUMeasure& _cpu, const GPUMeasure& _gpu,
                     const RAMMeasure& _ram, const NetMeasure& _net,
                     const ProcessMeasure& _proc, const DriveMeasure& _drive,
@@ -65,8 +60,7 @@ void Renderer::init(HWND hWnd, uint16_t windowWidth, uint16_t windowHeight,
     m_driveMeasure = &_drive;
     m_sysInfo = &_sys;
 
-    initViewportBuffers(windowWidth, windowHeight);
-
+    // Initialise static statistics strings for drawing stats widget
     m_statsStrings.emplace_back(m_sysInfo->getUserName() + "@" +
                                 m_sysInfo->getComputerName());
     m_statsStrings.emplace_back(m_sysInfo->getOSInfoStr());
@@ -78,12 +72,36 @@ void Renderer::init(HWND hWnd, uint16_t windowWidth, uint16_t windowHeight,
     m_statsStrings.emplace_back("MAC: " + m_netMeasure->getAdapterMAC());
     m_statsStrings.emplace_back("LAN IP: " + m_netMeasure->getAdapterIP());
 
-    m_fontManager.init(hWnd);
+    m_fontManager.init(hWnd, windowWidth, windowHeight);
+    initViewportBuffers(windowWidth, windowHeight);
     initVBOs();
     initShaders();
 }
 
-void Renderer::initViewportBuffers(uint16_t windowWidth, uint16_t windowHeight) {
+void Renderer::draw(uint32_t ticks) const {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
+
+    drawLeftGraphWidget();
+
+    drawProcessWidget();
+    drawTimeWidget();
+    drawHDDWidget();
+    drawStatsWidget();
+
+    drawRightGraphWidget();
+}
+
+void Renderer::release() {
+    // Free VBO memory
+    glDeleteBuffers(1, &m_graphGridVertsID);
+    glDeleteBuffers(1, &m_graphGridIndicesID);
+
+    m_fontManager.release();
+}
+
+/********************* Private Functions ********************/
+void Renderer::initViewportBuffers(uint32_t windowWidth, uint32_t windowHeight) {
     m_timeWidgetVP[0] = marginX;
     m_timeWidgetVP[1] = 5 * windowHeight/6 - marginY;
     m_timeWidgetVP[2] = windowWidth/5;
@@ -218,26 +236,6 @@ void Renderer::initShaders() {
     if (m_graphAlphaLoc == -1) {
         //std::cout << "Failed to get uniform location for \'lineAlpha\'\n";
     }
-}
-
-void Renderer::release() {
-    // Free VBO memory
-    glDeleteBuffers(1, &m_graphGridVertsID);
-    glDeleteBuffers(1, &m_graphGridIndicesID);
-}
-
-void Renderer::draw(uint32_t ticks) const {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-    glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
-
-    drawLeftGraphWidget();
-
-    drawProcessWidget();
-    drawTimeWidget();
-    drawHDDWidget();
-    drawStatsWidget();
-
-    drawRightGraphWidget();
 }
 
 void Renderer::drawFilledGraph(const std::vector<float> data) const {

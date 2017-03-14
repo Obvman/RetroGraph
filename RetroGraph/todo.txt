@@ -16,8 +16,6 @@ have an average ping time display
 
 click through to windows behind
 
-create class for font (FontManager)
-
 thread pinging code
 
 convert so std::array

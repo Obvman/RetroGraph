@@ -21,7 +21,7 @@ public:
     uint32_t getWindowHeight() const { return m_windowHeight; }
     int32_t getWindowX() const { return m_createWindowX; }
     int32_t getWindowY() const { return m_createWindowY; }
-    int16_t getStartupMonitor() const { return m_startupMonitor; }
+    int32_t getStartupMonitor() const { return m_startupMonitor; }
 
     const std::string& getNetAdapterName() const { return m_netAdapterName; }
     const std::string& getPingServer() const { return m_pingServer; }
@@ -33,7 +33,7 @@ private:
     uint32_t m_windowWidth;
     int32_t m_createWindowX;
     int32_t m_createWindowY;
-    int16_t m_startupMonitor;
+    int32_t m_startupMonitor;
 
     // Network options
     std::string m_netAdapterName;

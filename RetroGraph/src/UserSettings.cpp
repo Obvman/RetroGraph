@@ -12,14 +12,14 @@ namespace rg {
 const std::string iniPath{ ((IsDebuggerPresent()) ? "resources\\config.ini" : "..\\RetroGraph\\resources\\config.ini") };
 
 struct MonitorInfo {
-    MonitorInfo(int16_t _index) : index{ _index }, handle{ nullptr } {}
+    MonitorInfo(int32_t _index) : index{ _index }, handle{ nullptr } {}
 
-    int16_t index{ -1 };
+    int32_t index{ -1 };
     HMONITOR handle{ nullptr };
 };
 
 BOOL CALLBACK MonitorCallback(HMONITOR hMonitor, HDC hdc, LPRECT lpRect, LPARAM dwData) {
-    static uint16_t monCount{ 0 };
+    static uint32_t monCount{ 0 };
 
     auto info{ reinterpret_cast<MonitorInfo*>(dwData) };
 
@@ -50,9 +50,9 @@ void UserSettings::init() {
         if (propTree.empty()) {
             generateDefaultFile(propTree);
         } else {
-            m_windowWidth = propTree.get<uint16_t>("Window.WindowWidth");
-            m_windowHeight = propTree.get<uint16_t>("Window.WindowHeight");
-            m_startupMonitor = propTree.get<uint16_t>("Window.Monitor");
+            m_windowWidth = propTree.get<uint32_t>("Window.WindowWidth");
+            m_windowHeight = propTree.get<uint32_t>("Window.WindowHeight");
+            m_startupMonitor = propTree.get<uint32_t>("Window.Monitor");
             m_netAdapterName = propTree.get<std::string>("Network.NetworkAdapter");
             m_pingServer = propTree.get<std::string>("Network.PingServer");
         }

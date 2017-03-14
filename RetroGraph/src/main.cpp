@@ -29,12 +29,10 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #endif
 
     try {
-        // TODO go back to stack allocation when performance testing done
         rg::Window mainWindow{ hInstance };
-
         mainWindow.init();
-        mainLoop(mainWindow);
 
+        mainLoop(mainWindow);
     } catch(const std::runtime_error& e) {
         std::cout << e.what() << '\n';
     }
@@ -71,7 +69,9 @@ void mainLoop(rg::Window& mainWindow) {
             mainWindow.update(ticks);
 
             // Draw according to the framerate
-            if ((lastTick % std::lround(static_cast<float>(rg::ticksPerSecond)/framesPerSecond)) == 0) {
+            if ((lastTick % std::lround(
+                static_cast<float>(rg::ticksPerSecond)/framesPerSecond)) == 0) {
+
                 mainWindow.draw(ticks);
             }
 

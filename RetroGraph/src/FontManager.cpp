@@ -6,9 +6,8 @@
 namespace rg {
 
 FontManager::FontManager() :
-    m_fontBases( RG_NUM_FONTS ),
-    m_fontCharWidths( RG_NUM_FONTS ),
-    m_fontCharHeights( RG_NUM_FONTS ) {
+    m_hWnd{ nullptr }
+{
 
 }
 
@@ -17,9 +16,10 @@ FontManager::~FontManager() {
 }
 
 
-void FontManager::init(HWND hWnd) {
+void FontManager::init(HWND hWnd, uint32_t windowWidth, uint32_t windowHeight) {
     m_hWnd = hWnd;
 
+    /* List of fonts for quick experimentation */
     const char* const typefaces[] = {
         "Courier New",
         "Lato Lights",
@@ -31,13 +31,12 @@ void FontManager::init(HWND hWnd) {
     };
 
 
-    RECT r;
-    GetWindowRect(m_hWnd, &r);
-    const auto windowWidth{ r.right - r.left};
-    const auto windowHeight{ r.bottom - r.top};
-    const auto hdc{ GetDC(m_hWnd) };
-
+    //RECT r;
+    //GetWindowRect(m_hWnd, &r);
+    //const auto windowWidth{ r.right - r.left};
+    //const auto windowHeight{ r.bottom - r.top};
     const auto standardFontHeight{ std::lround(windowHeight / 70.0f) };
+    const auto hdc{ GetDC(m_hWnd) };
 
     createFont(standardFontHeight, false, typefaces[0], RG_FONT_STANDARD);
     createFont(standardFontHeight, true, typefaces[0], RG_FONT_STANDARD_BOLD);
@@ -72,8 +71,8 @@ void FontManager::renderText(GLfloat rasterX, GLfloat rasterY,
     glPopAttrib();
 }
 
-void FontManager::createFont(uint32_t fontHeight, bool bold, const char* typeface,
-                             RGFONTCODE code) {
+void FontManager::createFont(uint32_t fontHeight, bool bold,
+                             const char* typeface, RGFONTCODE code) {
     const auto hdc{ GetDC(m_hWnd) };
 
     m_fontBases[code] = glGenLists(256);
