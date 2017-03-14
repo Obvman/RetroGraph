@@ -80,7 +80,9 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
                     SendMessage(hWnd, WM_QUIT, wParam, lParam);
                     break;
                 case ID_SEND_TO_BACK:
-                    SetWindowPos(hWnd, HWND_BOTTOM, m_startPosX, m_startPosY,
+                    RECT wndRect;
+                    GetWindowRect(hWnd, &wndRect);
+                    SetWindowPos(hWnd, HWND_BOTTOM, wndRect.left, wndRect.top,
                                  m_width, m_height, 0);
                     break;
                 case ID_RESET_POS:
@@ -91,7 +93,7 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
         case WM_CONTEXTMENU:
             createRClickMenu(reinterpret_cast<HWND>(wParam),
                              LOWORD(lParam), HIWORD(lParam));
-            break;
+            return 0;
         case WM_SETCURSOR:
             break;
         case WM_LBUTTONDOWN:
@@ -99,11 +101,11 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
             SetCapture(hWnd);
             clickX = LOWORD(lParam);
             clickY = HIWORD(lParam);
-            break;
+            return 0;
         case WM_LBUTTONUP:
             m_dragging = false;
             ReleaseCapture();
-            break;
+            return 0;
         case WM_MOUSEMOVE: {
             if (m_dragging) {
                 int mouseX = LOWORD(lParam);
@@ -118,24 +120,19 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
                 //std::cout << "Position: " << pos.x << ", " << pos.y << '\n';
                 //ClientToScreen(hWnd, &pos);
                 SetWindowPos(hWnd, nullptr, windowX, windowY, 0, 0, SWP_NOSIZE);
-
             }
-            break;
+            return 0;
         }
         case WM_GETTEXT:
             break;
         case WM_QUIT:
-            PostQuitMessage(0);
-            releaseOpenGL();
-            exit(0);
-            break;
         case WM_CLOSE:
             PostQuitMessage(0);
             releaseOpenGL();
             exit(0);
             break;
         case WM_DESTROY:
-            return 0;
+            break;
         default:
             break;
     }
@@ -151,7 +148,7 @@ void Window::createRClickMenu(HWND hWnd, DWORD cursorX, DWORD cursorY) {
     SetForegroundWindow(hWnd);
 
     TrackPopupMenuEx(hPopupMenu, TPM_TOPALIGN | TPM_LEFTALIGN | TPM_RIGHTBUTTON,
-                   cursorX, cursorY, hWnd, nullptr);
+                     cursorX, cursorY, hWnd, nullptr);
 }
 
 void Window::init() {

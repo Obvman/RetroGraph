@@ -30,11 +30,6 @@ void FontManager::init(HWND hWnd, uint32_t windowWidth, uint32_t windowHeight) {
         "Algerian",
     };
 
-
-    //RECT r;
-    //GetWindowRect(m_hWnd, &r);
-    //const auto windowWidth{ r.right - r.left};
-    //const auto windowHeight{ r.bottom - r.top};
     const auto standardFontHeight{ std::lround(windowHeight / 70.0f) };
     const auto hdc{ GetDC(m_hWnd) };
 

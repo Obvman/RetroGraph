@@ -12,6 +12,8 @@ framerate of currently focussed window
 for data arrays, use index tracker instead of std::rotate, and make class for
 common usage
 
+separate net traffic graphs
+
 have an average ping time display
 
 click through to windows behind
