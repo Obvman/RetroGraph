@@ -101,6 +101,9 @@ void Renderer::release() {
 }
 
 /********************* Private Functions ********************/
+constexpr float pixelsToVPCoords(uint32_t p, uint32_t vpWidth);
+constexpr uint32_t vpCoordsToPixels(float vpCoord, uint32_t vpWidth);
+
 void Renderer::initViewportBuffers(uint32_t windowWidth, uint32_t windowHeight) {
     m_timeWidgetVP[0] = marginX;
     m_timeWidgetVP[1] = 5 * windowHeight/6 - marginY;
@@ -339,7 +342,7 @@ void Renderer::drawCoreGraphs() const {
         // Draw a label for the core graph
         glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
         char str[7] = { 'C', 'o', 'r', 'e', ' ', static_cast<char>(i) + '0', '\0'};
-        m_fontManager.renderText(-0.93f, 0.80f, RG_FONT_SMALL, str, sizeof(str));
+        m_fontManager.renderLine(-0.93f, 0.80f, RG_FONT_SMALL, str, sizeof(str));
     }
 }
 
@@ -386,9 +389,9 @@ void Renderer::drawCpuGraph() const {
         const char* str{ "Sys Load" };
         const char* min{ "0%" };
         const char* max{ "100%" };
-        m_fontManager.renderText(-0.8f, -0.02f, RG_FONT_SMALL, str);
-        m_fontManager.renderText(-0.8f, -0.77f, RG_FONT_SMALL, min);
-        m_fontManager.renderText(-0.8f, 0.70f, RG_FONT_SMALL, max);
+        m_fontManager.renderLine(-0.8f, -0.02f, RG_FONT_SMALL, str);
+        m_fontManager.renderLine(-0.8f, -0.77f, RG_FONT_SMALL, min);
+        m_fontManager.renderLine(-0.8f, 0.70f, RG_FONT_SMALL, max);
     }
 }
 
@@ -426,9 +429,9 @@ void Renderer::drawRamGraph() const {
         const char* str{ "RAM Load" };
         const char* min{ "0%" };
         const char* max{ "100%" };
-        m_fontManager.renderText(-0.8f, -0.02f, RG_FONT_SMALL, str);
-        m_fontManager.renderText(-0.8f, -0.77f, RG_FONT_SMALL, min);
-        m_fontManager.renderText(-0.8f, 0.70f, RG_FONT_SMALL, max);
+        m_fontManager.renderLine(-0.8f, -0.02f, RG_FONT_SMALL, str);
+        m_fontManager.renderLine(-0.8f, -0.77f, RG_FONT_SMALL, min);
+        m_fontManager.renderLine(-0.8f, 0.70f, RG_FONT_SMALL, max);
         /*fontScope(smlFontBase, []() {
             glRasterPos2f(-0.8f, -0.02f);
             const char* str{ "RAM Load" };
@@ -478,9 +481,9 @@ void Renderer::drawGpuGraph() const {
         const char* str{ "GPU Load" };
         const char* min{ "0%" };
         const char* max{ "100%" };
-        m_fontManager.renderText(-0.8f, -0.02f, RG_FONT_SMALL, str);
-        m_fontManager.renderText(-0.8f, -0.77f, RG_FONT_SMALL, min);
-        m_fontManager.renderText(-0.8f, 0.70f, RG_FONT_SMALL, max);
+        m_fontManager.renderLine(-0.8f, -0.02f, RG_FONT_SMALL, str);
+        m_fontManager.renderLine(-0.8f, -0.77f, RG_FONT_SMALL, min);
+        m_fontManager.renderLine(-0.8f, 0.70f, RG_FONT_SMALL, max);
         /*fontScope(smlFontBase, []() {
             glRasterPos2f(-0.8f, -0.02f);
             const char* str{ "GPU Load" };
@@ -583,23 +586,23 @@ void Renderer::drawNetGraph() const {
         const char* str{ "Down/Up" };
         const auto bottom{ "0" + suffix };
         const char* max{ "100%" };
-        m_fontManager.renderText(-0.8f, -0.02f, RG_FONT_SMALL, str);
-        m_fontManager.renderText(-0.8f, -0.77f, RG_FONT_SMALL, bottom.c_str(), bottom.size());
+        m_fontManager.renderLine(-0.8f, -0.02f, RG_FONT_SMALL, str);
+        m_fontManager.renderLine(-0.8f, -0.77f, RG_FONT_SMALL, bottom.c_str(), bottom.size());
 
         /* Print the maximum throughput as the scale at the top of the graph */
         if (suffix == "MB") {
             char buff[8];
             snprintf(buff, sizeof(buff), "%5.1fMB", maxVal/static_cast<float>(MB));
-            m_fontManager.renderText(-0.8f, 0.70f, RG_FONT_SMALL, buff, sizeof(buff));
+            m_fontManager.renderLine(-0.8f, 0.70f, RG_FONT_SMALL, buff, sizeof(buff));
         } else if (suffix == "KB") {
             char buff[8];
             snprintf(buff, sizeof(buff), "%5.1fKB", maxVal/static_cast<float>(KB));
-            m_fontManager.renderText(-0.8f, 0.70f, RG_FONT_SMALL, buff, sizeof(buff));
+            m_fontManager.renderLine(-0.8f, 0.70f, RG_FONT_SMALL, buff, sizeof(buff));
         } else {
             const auto top{ std::to_string(maxVal) + suffix };
             char buff[5];
             snprintf(buff, sizeof(buff), "%3lluB", maxVal);
-            m_fontManager.renderText(-0.8f, 0.70f, RG_FONT_SMALL, buff, sizeof(buff));
+            m_fontManager.renderLine(-0.8f, 0.70f, RG_FONT_SMALL, buff, sizeof(buff));
         }
     }
 }
@@ -777,8 +780,11 @@ void Renderer::drawTimeWidget() const {
     glLineWidth(0.5f);
 
     constexpr float leftDivX{ -0.33f };
+    constexpr float rightDivX{ 0.33f };
+    constexpr float midDivY{ -0.3f };
 
-    {// Draw dividers
+    // Draw dividers
+    {
         glBegin(GL_LINES); {
             glVertex2f(-1.0f, 1.0f);
             glVertex2f(1.0f, 1.0f); // Top line
@@ -786,37 +792,42 @@ void Renderer::drawTimeWidget() const {
             glVertex2f(-1.0f, -1.0f);
             glVertex2f(1.0f, -1.0f); // Bottom line
 
-            glVertex2f(-0.9f, -0.3f);
-            glVertex2f(0.9f, -0.3f); // Mid-divider
+            glVertex2f(-0.9f, midDivY);
+            glVertex2f(0.9f, midDivY); // Mid-divider
 
             glVertex2f(leftDivX, -1.0f);
             glVertex2f(leftDivX, -0.3f); // Left vertical
 
-            glVertex2f(0.33f, -1.0f);
-            glVertex2f(0.33f, -0.3f); // Right vertical
+            glVertex2f(rightDivX, -1.0f);
+            glVertex2f(rightDivX, -0.3f); // Right vertical
         } glEnd();
     }
 
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-    { // Draw the big system time
+    // Draw the big system time
+    {
         time_t now = time(0);
         tm t;
         char buf[9];
         localtime_s(&t, &now);
         strftime(buf, sizeof(buf), "%T", &t);
-        m_fontManager.renderText(-0.95f, 0.04f, RG_FONT_TIME, buf, sizeof(buf));
+
+        // Get font width in pixels for horizontal centering
+        const auto midDivYPx{ vpCoordsToPixels(midDivY, m_timeWidgetVP[3]) };
+
+        m_fontManager.renderLine(RG_FONT_TIME, buf, 0, midDivYPx,
+                                 m_timeWidgetVP[2], m_timeWidgetVP[3] - midDivYPx,
+                                 RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_CENTERED_HORIZONTAL);
 
         // Draw the year and month in bottom-middle
         // TODO use full month names
         char dateBuf[7];
         strftime(dateBuf, sizeof(dateBuf), "%d %b", &t);
-        m_fontManager.renderText(-0.15f, -0.8f, RG_FONT_STANDARD, dateBuf,
-                                 sizeof(dateBuf));
+        m_fontManager.renderLine(-0.15f, -0.8f, RG_FONT_STANDARD, dateBuf);
 
         char yearBuf[5];
         strftime(yearBuf, sizeof(yearBuf), "%Y", &t);
-        m_fontManager.renderText(-0.1f, -0.55f, RG_FONT_STANDARD_BOLD, yearBuf,
-                                 sizeof(yearBuf));
+        m_fontManager.renderLine(-0.1f, -0.55f, RG_FONT_STANDARD_BOLD, yearBuf);
     }
 
     // Draw the uptime in bottom-left
@@ -836,7 +847,7 @@ void Renderer::drawTimeWidget() const {
 
         // Convert pixel value to viewport coordinates
         float strStartVPX{ ((static_cast<float>(strStartPixelX) / m_timeWidgetVP[2]) * 2.0f) - 1.0f};
-        m_fontManager.renderText(strStartVPX, -0.55f, RG_FONT_STANDARD, uptimeTitle);
+        m_fontManager.renderLine(strStartVPX, -0.55f, RG_FONT_STANDARD, uptimeTitle);
 
         const auto& uptime{ m_cpuMeasure->getUptimeStr() };
 
@@ -850,15 +861,29 @@ void Renderer::drawTimeWidget() const {
 
     // Draw network connection status in bottom-right
     {
-        m_fontManager.renderText(0.4f, -0.55f, RG_FONT_STANDARD_BOLD, "NETWORK");
+        // Get region to render text in
+        const auto renderX{ 0 };
+
+        m_fontManager.renderLine(0.4f, -0.55f, RG_FONT_STANDARD_BOLD, "NETWORK");
+        //m_fontManager.renderLine(RG_FONT_STANDARD_BOLD, "NETWORK", rightDivX,
+                                 //0, 0, 0, RG_ALIGN_LEFT, 10);
 
         if (m_netMeasure->isConnected()) {
-            m_fontManager.renderText(0.4f, -0.8f, RG_FONT_STANDARD, "UP");
+            m_fontManager.renderLine(0.4f, -0.8f, RG_FONT_STANDARD, "UP");
             // TODO print ping in ms
         } else {
-            m_fontManager.renderText(0.4f, -0.8f, RG_FONT_STANDARD, "DOWN");
+            m_fontManager.renderLine(0.4f, -0.8f, RG_FONT_STANDARD, "DOWN");
         }
     }
+}
+
+// p is the value in pixels from the viewport's left/bottom bound
+constexpr float pixelsToVPCoords(uint32_t p, uint32_t vpWidth) {
+    return (static_cast<float>(p) / vpWidth) * 2.0f - 1.0f;
+}
+
+constexpr uint32_t vpCoordsToPixels(float vpCoord, uint32_t vpWidth) {
+    return static_cast<uint32_t>(((vpCoord + 1.0f) / 2.0f) * vpWidth);
 }
 
 }

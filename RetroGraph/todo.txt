@@ -12,6 +12,8 @@ framerate of currently focussed window
 for data arrays, use index tracker instead of std::rotate, and make class for
 common usage
 
+handle fonts with variable width characters
+
 separate net traffic graphs
 
 have an average ping time display
@@ -43,6 +45,3 @@ use glScissor so we don't unnecessarily redraw static parts of the window,
 and stutter draw times for different draw frequencies
 
 use offset updates to avoid CPU spikes
-
-GetSystemMetrics:
-    SM_CLEANBOOT - display warning text when safe mode active

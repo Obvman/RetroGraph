@@ -9,6 +9,15 @@ namespace rg {
 
 using RGFONTCODE = size_t;
 
+enum RG_ALIGN {
+    RG_ALIGN_LEFT = 1,
+    RG_ALIGN_CENTERED_HORIZONTAL = 2,
+    RG_ALIGN_RIGHT = 4,
+    RG_ALIGN_TOP = 8,
+    RG_ALIGN_CENTERED_VERTICAL = 16,
+    RG_ALIGN_BOTTOM = 32,
+};
+
 constexpr size_t RG_FONT_STANDARD{ 0U };
 constexpr size_t RG_FONT_STANDARD_BOLD{ 1U };
 constexpr size_t RG_FONT_TIME{ 2U };
@@ -31,10 +40,21 @@ public:
 
     /* Draws the given text in the font specified by fontCode at the raster
        coordinates relative to the current viewport */
-    void renderText(GLfloat rasterX, GLfloat rasterY, RGFONTCODE fontCode,
+    void renderLine(GLfloat rasterX, GLfloat rasterY, RGFONTCODE fontCode,
                     const char* text) const ;
-    void renderText(GLfloat rasterX, GLfloat rasterY, RGFONTCODE fontCode,
+    void renderLine(GLfloat rasterX, GLfloat rasterY, RGFONTCODE fontCode,
                     const char* text, size_t textLen) const ;
+    /* TODO: document fully If given an area (in pixels, relative to current viewport), aligns the
+       text horizontally and vertically inside the box */
+    void renderLine(RGFONTCODE fontCode,
+                    const char* text,
+                    uint32_t areaX,
+                    uint32_t areaY,
+                    uint32_t areaWidth,
+                    uint32_t areaHeight,
+                    int32_t alignFlags = RG_ALIGN_CENTERED_HORIZONTAL |
+                                         RG_ALIGN_CENTERED_VERTICAL,
+                    uint32_t alignMargin = 10) const;
 private:
     /* Creates a new font entry into the fontBases list and retrieves
        character width/pixel information */

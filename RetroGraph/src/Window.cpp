@@ -90,10 +90,26 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
                                  m_width, m_height, 0);
                     break;
             }
-        case WM_CONTEXTMENU:
+        case WM_CONTEXTMENU: {
+            int32_t clickX{ LOWORD(lParam) };
+            int32_t clickY{ HIWORD(lParam) };
+            // The lParam we receive is an unsigned integer, but we can open
+            // the context menu on a monitor with a negative x or y value,
+            // so check if the value is greater than a signed short, if so
+            // it should be a negative number
+            // PS: parentheses around max are to get around macro conflict
+            // from Windows.h -.-
+            if (LOWORD(lParam) > (std::numeric_limits<int16_t>::max)()) {
+                clickX = LOWORD(lParam) - (std::numeric_limits<uint16_t>::max)();
+            }
+            if (HIWORD(lParam) > (std::numeric_limits<int16_t>::max)()) {
+                clickY = HIWORD(lParam) - (std::numeric_limits<uint16_t>::max)();
+            }
+
             createRClickMenu(reinterpret_cast<HWND>(wParam),
-                             LOWORD(lParam), HIWORD(lParam));
+                             clickX, clickY);
             return 0;
+        }
         case WM_SETCURSOR:
             break;
         case WM_LBUTTONDOWN:
@@ -117,8 +133,6 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
                 int windowX = wndRect.left + mouseX - clickX;
                 int windowY = wndRect.top + mouseY - clickY;
 
-                //std::cout << "Position: " << pos.x << ", " << pos.y << '\n';
-                //ClientToScreen(hWnd, &pos);
                 SetWindowPos(hWnd, nullptr, windowX, windowY, 0, 0, SWP_NOSIZE);
             }
             return 0;

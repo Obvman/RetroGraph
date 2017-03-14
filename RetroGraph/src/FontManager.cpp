@@ -3,7 +3,17 @@
 #include <iostream>
 #include <cmath>
 
+#include "../headers/utils.h"
+
 namespace rg {
+
+constexpr float pixelsToVPCoords(uint32_t p, uint32_t vpWidth) {
+    return (static_cast<float>(p) / vpWidth) * 2.0f - 1.0f;
+}
+
+constexpr uint32_t vpCoordsToPixels(float vpCoord, uint32_t vpWidth) {
+    return static_cast<uint32_t>(((vpCoord + 1.0f) / 2.0f) * vpWidth);
+}
 
 FontManager::FontManager() :
     m_hWnd{ nullptr }
@@ -35,7 +45,7 @@ void FontManager::init(HWND hWnd, uint32_t windowWidth, uint32_t windowHeight) {
 
     createFont(standardFontHeight, false, typefaces[0], RG_FONT_STANDARD);
     createFont(standardFontHeight, true, typefaces[0], RG_FONT_STANDARD_BOLD);
-    createFont(standardFontHeight*6, false, typefaces[1], RG_FONT_TIME);
+    createFont(standardFontHeight*5, false, typefaces[0], RG_FONT_TIME);
     createFont(7*standardFontHeight/8, false, typefaces[1], RG_FONT_SMALL);
 
     // Set default font
@@ -48,12 +58,12 @@ void FontManager::release() {
     }
 }
 
-void FontManager::renderText(GLfloat rasterX, GLfloat rasterY,
+void FontManager::renderLine(GLfloat rasterX, GLfloat rasterY,
                              RGFONTCODE fontCode, const char* text) const {
-    renderText(rasterX, rasterY, fontCode, text, strlen(text));
+    renderLine(rasterX, rasterY, fontCode, text, strlen(text));
 }
 
-void FontManager::renderText(GLfloat rasterX, GLfloat rasterY,
+void FontManager::renderLine(GLfloat rasterX, GLfloat rasterY,
                              RGFONTCODE fontCode, const char* text,
                              size_t textLen) const {
     glRasterPos2f(rasterX, rasterY);
@@ -64,6 +74,48 @@ void FontManager::renderText(GLfloat rasterX, GLfloat rasterY,
     glCallLists(textLen, GL_UNSIGNED_BYTE, text);
 
     glPopAttrib();
+}
+
+void FontManager::renderLine(RGFONTCODE fontCode,
+                             const char* text,
+                             uint32_t areaX,
+                             uint32_t areaY,
+                             uint32_t areaWidth,
+                             uint32_t areaHeight,
+                             int32_t alignFlags,
+                             uint32_t alignMargin) const {
+    GLint vp[4];
+    glGetIntegerv(GL_VIEWPORT, vp);
+    glViewport(vp[0] + areaX, vp[1] + areaY, areaWidth, areaHeight);
+    //drawViewportBorder();
+
+    auto rasterY = float{ 0.0f };
+    if (alignFlags & RG_ALIGN_CENTERED_VERTICAL) {
+        const auto fontHeightPx{ m_fontCharHeights[fontCode] };
+        const auto drawYPx{ (areaHeight - fontHeightPx) / 1 };
+        rasterY = pixelsToVPCoords(drawYPx, areaHeight);
+    }
+
+    auto rasterX = float{ 0.0f };
+    const auto strWidthPx{ strlen(text) * m_fontCharWidths[fontCode] };
+    if (alignFlags & RG_ALIGN_CENTERED_HORIZONTAL) {
+        const auto drawXPx{ (areaWidth - strWidthPx) / 2};
+        rasterX = pixelsToVPCoords(areaX + drawXPx, areaWidth);
+    } else if (alignFlags & RG_ALIGN_LEFT) {
+        rasterX = pixelsToVPCoords(alignMargin, areaWidth);
+    } else if (alignFlags & RG_ALIGN_RIGHT) {
+
+    }
+
+    glRasterPos2f(rasterX, rasterY);
+
+    // Render in the specified font, preserving the previously selected font
+    glPushAttrib(GL_LIST_BIT); {
+        glListBase(m_fontBases[fontCode]);
+        glCallLists(strlen(text), GL_UNSIGNED_BYTE, text);
+    } glPopAttrib();
+
+    glViewport(vp[0], vp[1], vp[2], vp[3]);
 }
 
 void FontManager::createFont(uint32_t fontHeight, bool bold,
@@ -79,9 +131,9 @@ void FontManager::createFont(uint32_t fontHeight, bool bold,
     SelectObject(hdc, hFont);
     wglUseFontBitmaps(hdc, 0, 256, m_fontBases[code]);
 
-    TEXTMETRICA tm;
-    GetTextMetricsA(hdc, &tm);
-    GetCharWidth32A(hdc, 0, 0, &m_fontCharWidths[code]);
+    TEXTMETRIC tm;
+    GetTextMetrics(hdc, &tm);
+    GetCharWidth32(hdc, 0, 0, &m_fontCharWidths[code]);
     m_fontCharHeights[code] = tm.tmHeight;
 
     DeleteObject(hFont);
