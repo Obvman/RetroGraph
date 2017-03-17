@@ -28,7 +28,7 @@ FontManager::~FontManager() {
 }
 
 
-void FontManager::init(HWND hWnd, uint32_t windowWidth, uint32_t windowHeight) {
+void FontManager::init(HWND hWnd, uint32_t windowHeight) {
     m_hWnd = hWnd;
 
     /* List of fonts for quick experimentation */
@@ -43,7 +43,6 @@ void FontManager::init(HWND hWnd, uint32_t windowWidth, uint32_t windowHeight) {
     };
 
     const auto standardFontHeight{ std::lround(windowHeight / 70.0f) };
-    const auto hdc{ GetDC(m_hWnd) };
 
     createFont(standardFontHeight, false, typefaces[0], RG_FONT_STANDARD);
     createFont(standardFontHeight, true, typefaces[0], RG_FONT_STANDARD_BOLD);

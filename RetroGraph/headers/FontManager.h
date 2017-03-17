@@ -41,7 +41,7 @@ public:
     FontManager(const FontManager&) = delete;
     FontManager& operator=(const FontManager&) = delete;
 
-    void init(HWND hWnd, uint32_t windowWidth, uint32_t windowHeight);
+    void init(HWND hWnd, uint32_t windowHeight);
     void release();
 
     /* Gets the width of the given font's characters in pixels */

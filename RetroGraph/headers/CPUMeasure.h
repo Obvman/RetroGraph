@@ -22,10 +22,10 @@ public:
     CPUMeasure(const CPUMeasure&) = delete;
     CPUMeasure& operator=(const CPUMeasure&) = delete;
 
-    virtual void init();
+    virtual void init() override;
 
     /* Updates the total system's CPU usage statistics */
-    virtual void update(uint32_t ticks);
+    virtual void update(uint32_t ticks) override;
 
     /* Returns the current system CPU load as a percentage */
     float getCPULoad();

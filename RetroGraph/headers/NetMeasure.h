@@ -18,8 +18,8 @@ public:
     NetMeasure(const NetMeasure&) = delete;
     NetMeasure& operator=(const NetMeasure&) = delete;
 
-    virtual void init();
-    virtual void update(uint32_t ticks);
+    virtual void init() override;
+    virtual void update(uint32_t ticks) override;
 
     uint64_t getMaxDownValue() const { return m_downMaxVal; }
     uint64_t getMaxUpValue() const { return m_upMaxVal; }

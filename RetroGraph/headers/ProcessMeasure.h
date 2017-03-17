@@ -22,11 +22,11 @@ public:
     ProcessMeasure& operator=(const ProcessMeasure&) = delete;
 
     /* Initialises the measure with system processes information */
-    virtual void init();
+    virtual void init() override;
 
     /* Updates the currently tracked processes and their CPU usage.
        Stops tracking any processes that have exited */
-    virtual void update(uint32_t ticks);
+    virtual void update(uint32_t ticks) override;
 
     uint32_t getNumProcessesRunning() const { return m_allProcessData.size(); }
 

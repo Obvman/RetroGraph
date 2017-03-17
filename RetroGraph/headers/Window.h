@@ -51,7 +51,7 @@ private:
        the dummy is destroyed and a new anti-aliased window is created */
     bool createHGLRC();
 
-    bool initMultisample(PIXELFORMATDESCRIPTOR& pfd);
+    bool initMultisample();
 
     /* Queries wgl to see if the given extension is supported on this device.
        Must be called with an OpenGL context active */

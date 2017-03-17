@@ -160,8 +160,10 @@ void NetMeasure::update(uint32_t ticks) {
 
         // TODO multithread this since it blocks the app whenever a ping takes too long
         if ((ticks % (ticksPerSecond * 10)) == 0) {
-            m_isConnected = static_cast<bool>(InternetCheckConnectionA(
-                m_pingServer.c_str(), FLAG_ICC_FORCE_CONNECTION, 0));
+            // !! to convert Windows' BOOL to bool without compiler warning
+            // gross, I know...
+            m_isConnected = !!InternetCheckConnectionA(
+                m_pingServer.c_str(), FLAG_ICC_FORCE_CONNECTION, 0);
         }
     }
 }

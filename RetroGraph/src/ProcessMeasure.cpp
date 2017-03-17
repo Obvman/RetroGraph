@@ -9,6 +9,7 @@
 #include <winternl.h>
 #pragma comment(lib, "Ntdll.lib")
 
+#define GLUT_DISABLE_ATEXIT_HACK
 #include <GL/freeglut.h>
 #include <GL/gl.h>
 

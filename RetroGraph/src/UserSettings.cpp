@@ -18,8 +18,11 @@ struct MonitorInfo {
     HMONITOR handle{ nullptr };
 };
 
-BOOL CALLBACK MonitorCallback(HMONITOR hMonitor, HDC hdc, LPRECT lpRect, LPARAM dwData) {
-    static uint32_t monCount{ 0 };
+BOOL CALLBACK MonitorCallback(HMONITOR hMonitor,
+                              HDC,
+                              LPRECT,
+                              LPARAM dwData) {
+    static int32_t monCount{ 0 };
 
     auto info{ reinterpret_cast<MonitorInfo*>(dwData) };
 

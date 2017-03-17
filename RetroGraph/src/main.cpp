@@ -23,8 +23,7 @@ void mainLoop(rg::Window& mainWindow);
 int main() {
     HINSTANCE hInstance = GetModuleHandle(nullptr);
 #else
-int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-                     LPSTR lpCmdLine, int nCmdShow) {
+int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
     hInstance = GetModuleHandle(nullptr);
 #endif
 

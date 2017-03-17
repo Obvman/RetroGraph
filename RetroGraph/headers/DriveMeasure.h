@@ -20,10 +20,10 @@ public:
     DriveMeasure& operator=(const DriveMeasure&) = delete;
 
     /* Enumerates the available system drives and stores initial state of each drive */
-    virtual void init();
+    virtual void init() override;
 
     /* Updates each drive with new values */
-    virtual void update(uint32_t ticks);
+    virtual void update(uint32_t ticks) override;
 
     /* Returns the number of fixed drives active in the system */
     size_t getNumDrives() const { return m_drives.size(); }

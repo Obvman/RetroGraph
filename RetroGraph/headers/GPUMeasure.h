@@ -19,10 +19,10 @@ public:
     GPUMeasure(const GPUMeasure&) = delete;
     GPUMeasure& operator=(const GPUMeasure&) = delete;
 
-    virtual void init();
+    virtual void init() override;
 
     /* Get latest GPU stats from OpenGL or nvapi and updates dynamic members */
-    virtual void update(uint32_t ticks);
+    virtual void update(uint32_t ticks) override;
 
     uint32_t getFrameBufferSizeKB() const { return m_frameBufferSize; }
     uint32_t getCoreCount() const { return m_gpuCoreCount; }

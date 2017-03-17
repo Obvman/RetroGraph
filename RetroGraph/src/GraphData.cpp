@@ -16,7 +16,7 @@ GraphData::~GraphData() {
 
 void GraphData::addValue(float v) {
     //std::cout << "Adding value to graph data: \n" << m_data.size() << '\n';
-
+    ++v;
 }
 
 }

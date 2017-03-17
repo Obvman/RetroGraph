@@ -1,5 +1,7 @@
 #include "../headers/Window.h"
 
+#define GLUT_DISABLE_ATEXIT_HACK
+
 #include <GL/freeglut.h>
 #include <GL/glew.h>
 #include <GL/wglew.h>
@@ -11,7 +13,6 @@
 #include "../headers/resource.h"
 #include "../headers/utils.h"
 #include "../headers/colors.h"
-
 
 namespace rg {
 
@@ -358,7 +359,6 @@ bool Window::createHGLRC() {
             ReleaseDC(m_hWndMain, m_hdc);
             DestroyWindow(m_hWndMain);
             fatalMessageBox("ChoosePixelFormat - failed");
-            return false;
         }
     } else {
         PixelFormat = m_arbMultisampleFormat;
@@ -371,7 +371,6 @@ bool Window::createHGLRC() {
         DestroyWindow(m_hWndMain);
         m_hWndMain = 0;
         fatalMessageBox("SetPixelFormat - failed");
-        return false;
     }
 
     // Create an opengl context for the window
@@ -382,7 +381,6 @@ bool Window::createHGLRC() {
         DestroyWindow(m_hWndMain);
         m_hWndMain = 0;
         fatalMessageBox("wglCreateContext - failed");
-        return false;
     }
 
     // Make the context the current one for the window
@@ -395,14 +393,13 @@ bool Window::createHGLRC() {
         m_hWndMain = 0;
 
         fatalMessageBox("Failed to make current context with wglMakeCurrent");
-        return false;
     }
 
     // Once we've created the first window and found multisampling to be
     // supported, we can destroy it and create a second window with a different
     // pixel format that has multisampling
     if (!m_arbMultisampleSupported) {
-        if (initMultisample(pfd)) {
+        if (initMultisample()) {
             destroy();
             return createHGLRC();
         }
@@ -446,7 +443,7 @@ bool Window::wglIisExtensionSupported(const char *extension) {
         }
     }
 }
-bool Window::initMultisample(PIXELFORMATDESCRIPTOR& pfd) {
+bool Window::initMultisample() {
     // See If The String Exists In WGL
     if (!wglIisExtensionSupported("WGL_ARB_multisample")) {
         m_arbMultisampleSupported = false;

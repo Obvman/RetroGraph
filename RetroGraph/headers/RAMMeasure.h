@@ -19,10 +19,10 @@ public:
     RAMMeasure(const RAMMeasure&) = delete;
     RAMMeasure& operator=(const RAMMeasure&) = delete;
 
-    virtual void init();
+    virtual void init() override;
 
     /* Updates the system memory status values */
-    virtual void update(uint32_t ticks);
+    virtual void update(uint32_t ticks) override;
 
     /* Draws the components of this object */
     void draw() const;

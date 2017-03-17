@@ -73,13 +73,13 @@ void Renderer::init(HWND hWnd, uint32_t windowWidth, uint32_t windowHeight,
     m_statsStrings.emplace_back("MAC: " + m_netMeasure->getAdapterMAC());
     m_statsStrings.emplace_back("LAN IP: " + m_netMeasure->getAdapterIP());
 
-    m_fontManager.init(hWnd, windowWidth, windowHeight);
+    m_fontManager.init(hWnd, windowHeight);
     initViewportBuffers(windowWidth, windowHeight);
     initVBOs();
     initShaders();
 }
 
-void Renderer::draw(uint32_t ticks) const {
+void Renderer::draw(uint32_t) const {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
 
@@ -586,7 +586,6 @@ void Renderer::drawNetGraph() const {
 
         const char* str{ "Down/Up" };
         const auto bottom{ "0" + suffix };
-        const char* max{ "100%" };
         m_fontManager.renderLine(-0.8f, -0.02f, RG_FONT_SMALL, str);
         m_fontManager.renderLine(-0.8f, -0.77f, RG_FONT_SMALL, bottom.c_str(), bottom.size());
 
