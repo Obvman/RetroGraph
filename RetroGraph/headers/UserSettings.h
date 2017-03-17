@@ -14,6 +14,8 @@ class UserSettings {
 public:
     UserSettings();
     ~UserSettings();
+    UserSettings(const UserSettings&) = delete;
+    UserSettings& operator=(const UserSettings&) = delete;
 
     void init();
 

@@ -13,6 +13,8 @@ public:
     DriveInfo(char _driveLetter, uint64_t initFreeBytes, uint64_t totalBytes,
               const char* volumeName);
     ~DriveInfo();
+    DriveInfo(const DriveInfo&) = delete;
+    DriveInfo& operator=(const DriveInfo&) = delete;
 
     /* Sets the drive's number of available bytes */
     void setTotalFreeBytes(uint64_t b) { m_totalFreeBytes = b; }

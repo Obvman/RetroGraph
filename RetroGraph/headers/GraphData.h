@@ -9,6 +9,8 @@ class GraphData {
 public:
     GraphData(size_t dataSize);
     ~GraphData();
+    GraphData(const GraphData&) = delete;
+    GraphData& operator=(const GraphData&) = delete;
 
     void addValue(float v);
 private:

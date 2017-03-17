@@ -1,7 +1,9 @@
 #include "../headers/FontManager.h"
 
 #include <iostream>
+#include <algorithm>
 #include <cmath>
+#include <GL/glew.h>
 
 #include "../headers/utils.h"
 
@@ -87,13 +89,17 @@ void FontManager::renderLine(RGFONTCODE fontCode,
     GLint vp[4];
     glGetIntegerv(GL_VIEWPORT, vp);
     glViewport(vp[0] + areaX, vp[1] + areaY, areaWidth, areaHeight);
-    //drawViewportBorder();
 
     auto rasterY = float{ 0.0f };
+    const auto fontHeightPx{ m_fontCharHeights[fontCode] };
     if (alignFlags & RG_ALIGN_CENTERED_VERTICAL) {
-        const auto fontHeightPx{ m_fontCharHeights[fontCode] };
         const auto drawYPx{ (areaHeight - fontHeightPx) / 1 };
         rasterY = pixelsToVPCoords(drawYPx, areaHeight);
+    } else if (alignFlags & RG_ALIGN_BOTTOM) {
+        rasterY = pixelsToVPCoords(alignMargin + m_fontCharDescents[fontCode], areaHeight);
+    } else if (alignFlags & RG_ALIGN_TOP) {
+        rasterY = pixelsToVPCoords(areaHeight - m_fontCharAscents[fontCode] - alignMargin,
+                                   areaHeight);
     }
 
     auto rasterX = float{ 0.0f };
@@ -104,7 +110,12 @@ void FontManager::renderLine(RGFONTCODE fontCode,
     } else if (alignFlags & RG_ALIGN_LEFT) {
         rasterX = pixelsToVPCoords(alignMargin, areaWidth);
     } else if (alignFlags & RG_ALIGN_RIGHT) {
+        rasterX = pixelsToVPCoords(areaWidth - strWidthPx, areaWidth);
+    }
 
+    if (fontCode == RG_FONT_STANDARD_BOLD) {
+        std::cout << "Our calculated width: " << strWidthPx << " for " << text << '\n';
+        std::cout << "Our calculated height: " << fontHeightPx << " for " << text << '\n';
     }
 
     glRasterPos2f(rasterX, rasterY);
@@ -126,7 +137,7 @@ void FontManager::createFont(uint32_t fontHeight, bool bold,
     HFONT hFont = CreateFontA(
         fontHeight, 0, 0, 0, (bold ? FW_BOLD : FW_NORMAL),
         FALSE, FALSE, FALSE, ANSI_CHARSET,
-        OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
+        OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
         DEFAULT_PITCH | FF_DONTCARE, typeface);
     SelectObject(hdc, hFont);
     wglUseFontBitmaps(hdc, 0, 256, m_fontBases[code]);
@@ -135,6 +146,16 @@ void FontManager::createFont(uint32_t fontHeight, bool bold,
     GetTextMetrics(hdc, &tm);
     GetCharWidth32(hdc, 0, 0, &m_fontCharWidths[code]);
     m_fontCharHeights[code] = tm.tmHeight;
+    m_fontCharAscents[code] = tm.tmAscent;
+    m_fontCharDescents[code] = tm.tmDescent;
+    m_fontCharInternalLeadings[code] = tm.tmInternalLeading;
+
+    if (code == RG_FONT_STANDARD) {
+        SIZE s;
+        GetTextExtentPointA(GetDC(m_hWnd), "Network", strlen("Network"), &s);
+        std::cout << "GetTextExtentPoint width: " << s.cx << '\n';
+        std::cout << "GetTextExtentPoint height: " << s.cy << '\n';
+    }
 
     DeleteObject(hFont);
 }

@@ -18,6 +18,8 @@ class Window {
 public:
     Window(HINSTANCE hInstance);
     ~Window();
+    Window(const Window&) = delete;
+    Window& operator=(const Window&) = delete;
 
     /* Initialises the window's measurement components. Use before entering
        the update/draw loop */

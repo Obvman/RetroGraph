@@ -9,8 +9,9 @@ volume, current sound output level bar - IAudioPeakMeter
 3D effects on graph
 framerate of currently focussed window
 
-for data arrays, use index tracker instead of std::rotate, and make class for
-common usage
+consider using GetTextExtentPoint for calculating string width/height
+
+handle multi-line text rendering vertical alignments
 
 handle fonts with variable width characters
 
@@ -21,8 +22,6 @@ have an average ping time display
 click through to windows behind
 
 thread pinging code
-
-convert so std::array
 
 lightweight mode
 
@@ -37,11 +36,8 @@ Notification icon in system tray
 
 test suite
 
-use inheritedfromprocessid value in processmeasure to limit chrome duplicates
-
-Create alternate CPU measure display for when CoreTemp isn't running
-
 use glScissor so we don't unnecessarily redraw static parts of the window,
 and stutter draw times for different draw frequencies
 
+// LOW
 use offset updates to avoid CPU spikes

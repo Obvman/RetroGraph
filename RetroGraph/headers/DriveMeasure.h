@@ -16,6 +16,8 @@ class DriveMeasure : public Measure {
 public:
     DriveMeasure();
     virtual ~DriveMeasure();
+    DriveMeasure(const DriveMeasure&) = delete;
+    DriveMeasure& operator=(const DriveMeasure&) = delete;
 
     /* Enumerates the available system drives and stores initial state of each drive */
     virtual void init();

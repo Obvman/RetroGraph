@@ -5,7 +5,6 @@
 #include <chrono>
 #include <stdint.h>
 #include <GL/glew.h>
-#include <Windows.h>
 
 #include "Measure.h"
 #include "CPUPlugin.h"
@@ -20,6 +19,8 @@ class CPUMeasure : public Measure {
 public:
     CPUMeasure();
     virtual ~CPUMeasure();
+    CPUMeasure(const CPUMeasure&) = delete;
+    CPUMeasure& operator=(const CPUMeasure&) = delete;
 
     virtual void init();
 

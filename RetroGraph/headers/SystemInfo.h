@@ -11,6 +11,8 @@ class SystemInfo {
 public:
     SystemInfo();
     ~SystemInfo();
+    SystemInfo(const SystemInfo&) = delete;
+    SystemInfo& operator=(const SystemInfo&) = delete;
 
     void init();
 

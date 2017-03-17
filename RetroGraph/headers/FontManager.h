@@ -2,8 +2,17 @@
 
 #include <stdint.h>
 #include <array>
-#include <Windows.h>
-#include <GL/gl.h>
+
+// Forward declarations to avoid including Windows.h
+#ifndef _WINDEF_
+struct HWND__;
+typedef HWND__* HWND;
+#endif
+
+#ifndef __GL_H__
+typedef unsigned int GLuint;
+typedef float GLfloat;
+#endif
 
 namespace rg {
 
@@ -29,6 +38,8 @@ class FontManager {
 public:
     FontManager();
     ~FontManager();
+    FontManager(const FontManager&) = delete;
+    FontManager& operator=(const FontManager&) = delete;
 
     void init(HWND hWnd, uint32_t windowWidth, uint32_t windowHeight);
     void release();
@@ -65,6 +76,9 @@ private:
     std::array<GLuint, RG_NUM_FONTS> m_fontBases;
     std::array<int32_t, RG_NUM_FONTS> m_fontCharWidths;
     std::array<int32_t, RG_NUM_FONTS> m_fontCharHeights;
+    std::array<int32_t, RG_NUM_FONTS> m_fontCharAscents;
+    std::array<int32_t, RG_NUM_FONTS> m_fontCharDescents;
+    std::array<int32_t, RG_NUM_FONTS> m_fontCharInternalLeadings;
 };
 
 }

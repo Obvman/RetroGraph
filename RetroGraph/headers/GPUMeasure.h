@@ -16,6 +16,8 @@ class GPUMeasure : public Measure {
 public:
     GPUMeasure();
     virtual ~GPUMeasure();
+    GPUMeasure(const GPUMeasure&) = delete;
+    GPUMeasure& operator=(const GPUMeasure&) = delete;
 
     virtual void init();
 

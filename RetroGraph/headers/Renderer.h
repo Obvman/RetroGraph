@@ -25,6 +25,8 @@ class Renderer {
 public:
     Renderer();
     ~Renderer();
+    Renderer(const Renderer&) = delete;
+    Renderer& operator=(const Renderer&) = delete;
 
     void init(HWND hWnd, uint32_t windowWidth, uint32_t windowHeight,
               const CPUMeasure& _cpu, const GPUMeasure& _gpu,

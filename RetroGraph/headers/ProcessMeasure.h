@@ -18,6 +18,8 @@ class ProcessMeasure : public Measure {
 public:
     ProcessMeasure();
     virtual ~ProcessMeasure();
+    ProcessMeasure(const ProcessMeasure&) = delete;
+    ProcessMeasure& operator=(const ProcessMeasure&) = delete;
 
     /* Initialises the measure with system processes information */
     virtual void init();

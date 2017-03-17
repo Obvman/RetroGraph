@@ -15,6 +15,7 @@
 #include "../headers/GLShaders.h"
 
 namespace rg {
+
 // Automatically binds/unbinds given VBOs and executes the function given
 template<typename F>
 void vboDrawScope(GLuint vertID, GLuint indexID, F f) {
@@ -862,11 +863,14 @@ void Renderer::drawTimeWidget() const {
     // Draw network connection status in bottom-right
     {
         // Get region to render text in
-        const auto renderX{ 0 };
+        const auto renderX{ vpCoordsToPixels(rightDivX, m_timeWidgetVP[2]) };
+        const auto renderY{ 0 };
+        const auto renderWidth{ m_timeWidgetVP[2] - renderX };
+        const auto renderHeight{ vpCoordsToPixels(midDivY, m_timeWidgetVP[3]) };
 
-        m_fontManager.renderLine(0.4f, -0.55f, RG_FONT_STANDARD_BOLD, "NETWORK");
-        //m_fontManager.renderLine(RG_FONT_STANDARD_BOLD, "NETWORK", rightDivX,
-                                 //0, 0, 0, RG_ALIGN_LEFT, 10);
+        m_fontManager.renderLine(RG_FONT_STANDARD_BOLD, "NETWORK", renderX,
+                                 renderY, renderWidth, renderHeight,
+                                 RG_ALIGN_LEFT | RG_ALIGN_TOP, 10);
 
         if (m_netMeasure->isConnected()) {
             m_fontManager.renderLine(0.4f, -0.8f, RG_FONT_STANDARD, "UP");

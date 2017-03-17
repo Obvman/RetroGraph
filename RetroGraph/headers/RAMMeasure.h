@@ -16,6 +16,8 @@ class RAMMeasure : public Measure {
 public:
     RAMMeasure();
     ~RAMMeasure();
+    RAMMeasure(const RAMMeasure&) = delete;
+    RAMMeasure& operator=(const RAMMeasure&) = delete;
 
     virtual void init();
 

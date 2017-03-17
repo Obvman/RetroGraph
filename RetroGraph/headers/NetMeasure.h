@@ -15,6 +15,8 @@ class NetMeasure : public Measure {
 public:
     NetMeasure(const UserSettings& settings);
     virtual ~NetMeasure();
+    NetMeasure(const NetMeasure&) = delete;
+    NetMeasure& operator=(const NetMeasure&) = delete;
 
     virtual void init();
     virtual void update(uint32_t ticks);

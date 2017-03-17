@@ -12,6 +12,8 @@ class CPUPlugin {
 public:
     CPUPlugin();
     ~CPUPlugin();
+    CPUPlugin(const CPUPlugin&) = delete;
+    CPUPlugin& operator=(const CPUPlugin&) = delete;
 
     void init();
 

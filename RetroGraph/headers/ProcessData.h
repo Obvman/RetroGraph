@@ -13,6 +13,8 @@ class ProcessData {
 public:
     ProcessData(HANDLE pHandle, DWORD pID, const char* name);
     ~ProcessData();
+    ProcessData(const ProcessData&) = delete;
+    ProcessData& operator=(const ProcessData&) = delete;
 
     /* Gets the process ID */
     DWORD getPID() const { return m_processID; }
