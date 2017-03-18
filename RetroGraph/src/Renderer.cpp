@@ -767,18 +767,21 @@ void Renderer::drawTimeWidget() const {
 
         // Draw the year and month in bottom-middle
         // TODO use full month names
-        char dateBuf[7];
-        strftime(dateBuf, sizeof(dateBuf), "%d %b", &t);
-        m_fontManager.renderLine(-0.15f, -0.8f, RG_FONT_STANDARD, dateBuf);
+        char dateBuf[12];
+        strftime(dateBuf, sizeof(dateBuf), "%d %B", &t);
+        m_fontManager.renderLine(RG_FONT_STANDARD, dateBuf,
+                                 vpCoordsToPixels(leftDivX, m_timeWidgetVP[VP_WIDTH]), 0,
+                                 m_timeWidgetVP[VP_WIDTH]/3,
+                                 vpCoordsToPixels(midDivY, m_timeWidgetVP[VP_HEIGHT]),
+                                 RG_ALIGN_BOTTOM | RG_ALIGN_CENTERED_HORIZONTAL, 10, 15);
 
         char yearBuf[5];
         strftime(yearBuf, sizeof(yearBuf), "%Y", &t);
-        //m_fontManager.renderLine(-0.1f, -0.55f, RG_FONT_STANDARD_BOLD, yearBuf);
         m_fontManager.renderLine(RG_FONT_STANDARD_BOLD, yearBuf,
                                  vpCoordsToPixels(leftDivX, m_timeWidgetVP[VP_WIDTH]), 0,
                                  m_timeWidgetVP[VP_WIDTH]/3,
                                  vpCoordsToPixels(midDivY, m_timeWidgetVP[VP_HEIGHT]),
-                                 RG_ALIGN_TOP | RG_ALIGN_CENTERED_HORIZONTAL, 10, 10);
+                                 RG_ALIGN_TOP | RG_ALIGN_CENTERED_HORIZONTAL, 10, 15);
     }
 
     // Draw the uptime in bottom-left
@@ -798,7 +801,11 @@ void Renderer::drawTimeWidget() const {
 
         // Convert pixel value to viewport coordinates
         float strStartVPX{ ((static_cast<float>(strStartPixelX) / m_timeWidgetVP[VP_WIDTH]) * 2.0f) - 1.0f};
-        m_fontManager.renderLine(strStartVPX, -0.55f, RG_FONT_STANDARD, uptimeTitle);
+        //m_fontManager.renderLine(strStartVPX, -0.55f, RG_FONT_STANDARD, uptimeTitle);
+        m_fontManager.renderLine(RG_FONT_STANDARD_BOLD, uptimeTitle, 0, 0,
+                                 m_timeWidgetVP[VP_WIDTH]/3,
+                                 vpCoordsToPixels(midDivY, m_timeWidgetVP[VP_HEIGHT]),
+                                 RG_ALIGN_RIGHT | RG_ALIGN_TOP, 10, 15);
 
         const auto& uptime{ m_cpuMeasure->getUptimeStr() };
 
@@ -820,13 +827,17 @@ void Renderer::drawTimeWidget() const {
 
         m_fontManager.renderLine(RG_FONT_STANDARD_BOLD, "NETWORK", renderX,
                                  renderY, renderWidth, renderHeight,
-                                 RG_ALIGN_LEFT | RG_ALIGN_TOP, 10);
+                                 RG_ALIGN_LEFT | RG_ALIGN_TOP, 10, 15);
 
         if (m_netMeasure->isConnected()) {
-            m_fontManager.renderLine(0.4f, -0.8f, RG_FONT_STANDARD, "UP");
+            m_fontManager.renderLine(RG_FONT_STANDARD, "UP", renderX,
+                                     renderY, renderWidth, renderHeight,
+                                     RG_ALIGN_LEFT | RG_ALIGN_BOTTOM, 10, 15);
             // TODO print ping in ms
         } else {
-            m_fontManager.renderLine(0.4f, -0.8f, RG_FONT_STANDARD, "DOWN");
+            m_fontManager.renderLine(RG_FONT_STANDARD, "DOWN", renderX,
+                                     renderY, renderWidth, renderHeight,
+                                     RG_ALIGN_LEFT | RG_ALIGN_BOTTOM, 10, 15);
         }
     }
 }

@@ -88,8 +88,8 @@ void FontManager::renderLine(RGFONTCODE fontCode,
     } else {
         glViewport(vp[0] + areaX, vp[1] + areaY, areaWidth, areaHeight);
     }
-    drawViewportBorder();
 
+    // Handle vertical alignment
     auto rasterY = float{ 0.0f };
     const auto fontHeightPx{ m_fontCharHeights[fontCode] };
     if (alignFlags & RG_ALIGN_CENTERED_VERTICAL) {
@@ -103,23 +103,17 @@ void FontManager::renderLine(RGFONTCODE fontCode,
                                    areaHeight);
     }
 
+    // Handle horizontal alignment
     auto rasterX = float{ 0.0f };
     const auto strWidthPx{ strlen(text) * m_fontCharWidths[fontCode] };
     if (alignFlags & RG_ALIGN_CENTERED_HORIZONTAL) {
-        //const auto drawXPx{ (areaWidth - strWidthPx) / 2};
-        //rasterX = pixelsToVPCoords(areaX + drawXPx, areaWidth);
-
         const auto drawXPx{ (areaWidth - strWidthPx) / 2};
         rasterX = pixelsToVPCoords(drawXPx, areaWidth);
     } else if (alignFlags & RG_ALIGN_LEFT) {
         rasterX = pixelsToVPCoords(alignMarginX, areaWidth);
 
     } else if (alignFlags & RG_ALIGN_RIGHT) {
-        rasterX = pixelsToVPCoords(areaWidth - strWidthPx, areaWidth);
-    }
-
-    if (std::string{ text } == "2017") {
-        std::cout << rasterX << ", " << rasterY << '\n';
+        rasterX = pixelsToVPCoords(areaWidth - strWidthPx - alignMarginX, areaWidth);
     }
 
     glRasterPos2f(rasterX, rasterY);
