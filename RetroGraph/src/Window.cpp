@@ -536,23 +536,5 @@ void Window::destroy() {
     }
 }
 
-void drawBorder() {
-
-    glColor3f(PINK1_R, PINK1_G, PINK1_B);
-    glBegin(GL_LINES);
-    glVertex2f(-1.0f + bDelta, -1.0f + bDelta);
-    glVertex2f(-1.0f + bDelta,  1.0f - bDelta);
-
-    glVertex2f(-1.0f + bDelta, 1.0f - bDelta);
-    glVertex2f(1.0f - bDelta, 1.0f - bDelta);
-
-    glVertex2f(1.0f - bDelta, 1.0f - bDelta);
-    glVertex2f(1.0f - bDelta, -1.0f + bDelta);
-
-    glVertex2f(1.0f - bDelta, -1.0f + bDelta);
-    glVertex2f(-1.0f + bDelta, -1.0f + bDelta);
-    glEnd();
-}
-
 
 }

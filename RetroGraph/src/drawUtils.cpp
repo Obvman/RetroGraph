@@ -23,9 +23,8 @@ void vboDrawScope(GLuint vertID, GLuint indexID, F f) {
 
 void drawFilledGraph(const std::vector<float>& data) {
     glBegin(GL_QUADS); {
+        glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.7f);
         for (auto i = size_t{ 0U }; i < data.size() - 1; ++i) {
-            glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.7f);
-
             const auto x1 = float{ (static_cast<float>(i) / (data.size() - 1)) * 2.0f - 1.0f };
             const auto y1 = float{ data[i] * 2.0f - 1.0f };
             const auto x2 = float{ (static_cast<float>(i+1) / (data.size() - 1)) * 2.0f - 1.0f };
@@ -41,9 +40,9 @@ void drawFilledGraph(const std::vector<float>& data) {
 
 void drawLineGraph(const std::vector<float>& data) {
     glBegin(GL_LINE_STRIP); {
+        glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
         // Draw each node in the graph
         for (auto i = size_t{ 0U }; i < data.size(); ++i) {
-            glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
 
             const auto x = float{ (static_cast<float>(i) / (data.size() - 1))
                                    * 2.0f - 1.0f };
@@ -62,6 +61,18 @@ void drawGraphGrid(GLuint graphGridVertsID, GLuint graphGridIndicesID,
         glLineWidth(0.5f);
         glDrawElements(GL_LINES, graphIndicesSize, GL_UNSIGNED_INT, 0);
     });
+}
+
+void drawBorder() {
+    glColor4f(BORDER_R, BORDER_G, BORDER_B, BORDER_A);
+    glLineWidth(0.5f);
+    glBegin(GL_LINE_STRIP); {
+        glVertex2f(-1.0f, 1.0f);
+        glVertex2f(1.0f, 1.0f);
+        glVertex2f(1.0f, -1.0f);
+        glVertex2f(-1.0f, -1.0f);
+        glVertex2f(-1.0f, 1.0f);
+    } glEnd();
 }
 
 

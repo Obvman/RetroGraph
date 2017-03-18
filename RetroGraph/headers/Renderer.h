@@ -7,6 +7,7 @@
 #include <GL/glew.h>
 
 #include "FontManager.h"
+#include "drawUtils.h"
 
 namespace rg {
 
@@ -91,7 +92,8 @@ private:
     std::vector<std::string> m_statsStrings;
 
     // Viewports for each widget
-    GLint m_timeWidgetVP[4];
+    //GLint m_timeWidgetVP[4];
+    Viewport m_timeVP;
     GLint m_hddWidgetVP[4];
     GLint m_procWidgetVP[4];
     GLint m_statsWidgetVP[4];
