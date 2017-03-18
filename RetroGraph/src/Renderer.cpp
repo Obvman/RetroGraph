@@ -594,10 +594,10 @@ void Renderer::drawProcCPUList() const {
 
     m_fontManager.renderLines(RG_FONT_STANDARD, procNames, 0, 0,
                               m_procWidgetVP[VP_WIDTH]/2, m_procWidgetVP[VP_HEIGHT],
-                              RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL, 15);
+                              RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL, 15, 5);
     m_fontManager.renderLines(RG_FONT_STANDARD, procPercentages, 0, 0,
                               m_procWidgetVP[VP_WIDTH]/2, m_procWidgetVP[VP_HEIGHT],
-                              RG_ALIGN_RIGHT | RG_ALIGN_CENTERED_VERTICAL, 15);
+                              RG_ALIGN_RIGHT | RG_ALIGN_CENTERED_VERTICAL, 15, 5);
 }
 
 void Renderer::drawProcRAMList() const {
@@ -606,7 +606,6 @@ void Renderer::drawProcRAMList() const {
     auto procNames = std::vector<std::string>{  };
     auto procRamUsages = std::vector<std::string>{  };
 
-    printTimeToExecuteHighRes("Vector copying", [&]() {
     procNames.reserve(m_processMeasure->getProcRAMData().size());
     procRamUsages.reserve(m_processMeasure->getProcRAMData().size());
     for (const auto& pair : m_processMeasure->getProcRAMData()) {
@@ -622,14 +621,13 @@ void Renderer::drawProcRAMList() const {
         }
         procRamUsages.emplace_back(buff);
     }
-    });
 
     m_fontManager.renderLines(RG_FONT_STANDARD, procNames, m_procWidgetVP[VP_WIDTH]/2, 0,
                               m_procWidgetVP[VP_WIDTH]/2, m_procWidgetVP[VP_HEIGHT],
-                              RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL, 15);
+                              RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL, 15, 5);
     m_fontManager.renderLines(RG_FONT_STANDARD, procRamUsages, m_procWidgetVP[VP_WIDTH]/2, 0,
                               m_procWidgetVP[VP_WIDTH]/2, m_procWidgetVP[VP_HEIGHT],
-                              RG_ALIGN_RIGHT | RG_ALIGN_CENTERED_VERTICAL, 15);
+                              RG_ALIGN_RIGHT | RG_ALIGN_CENTERED_VERTICAL, 15, 5);
 
 }
 
@@ -648,17 +646,10 @@ void Renderer::drawStatsWidget() const {
         glVertex2f( 1.0f, -1.0f); // Bottom
     } glEnd();
 
-    const auto numLinesToDraw{ m_statsStrings.size() };
-    const auto yRange{ 1.8f };
-    const auto rasterX = float{ -0.95f };
-    auto rasterY = float{ 0.75f };
-
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-    for (const auto& str : m_statsStrings) {
-        glRasterPos2f(rasterX, rasterY);
-        glCallLists(str.length(), GL_UNSIGNED_BYTE, str.c_str());
-        rasterY -= yRange / numLinesToDraw;
-    }
+    m_fontManager.renderLines(RG_FONT_STANDARD, m_statsStrings, 0, 0,
+                              m_statsWidgetVP[VP_WIDTH], m_statsWidgetVP[VP_HEIGHT],
+                              RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL, 15, 10);
 }
 
 void Renderer::drawHDDWidget() const {
@@ -782,7 +773,12 @@ void Renderer::drawTimeWidget() const {
 
         char yearBuf[5];
         strftime(yearBuf, sizeof(yearBuf), "%Y", &t);
-        m_fontManager.renderLine(-0.1f, -0.55f, RG_FONT_STANDARD_BOLD, yearBuf);
+        //m_fontManager.renderLine(-0.1f, -0.55f, RG_FONT_STANDARD_BOLD, yearBuf);
+        m_fontManager.renderLine(RG_FONT_STANDARD_BOLD, yearBuf,
+                                 vpCoordsToPixels(leftDivX, m_timeWidgetVP[VP_WIDTH]), 0,
+                                 m_timeWidgetVP[VP_WIDTH]/3,
+                                 vpCoordsToPixels(midDivY, m_timeWidgetVP[VP_HEIGHT]),
+                                 RG_ALIGN_TOP | RG_ALIGN_CENTERED_HORIZONTAL, 10, 10);
     }
 
     // Draw the uptime in bottom-left

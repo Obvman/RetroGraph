@@ -67,7 +67,8 @@ public:
                     uint32_t areaHeight,
                     int32_t alignFlags = RG_ALIGN_CENTERED_HORIZONTAL |
                                          RG_ALIGN_CENTERED_VERTICAL,
-                    uint32_t alignMargin = 10) const;
+                    uint32_t alignMarginX = 10U,
+                    uint32_t alignMarginY = 10U) const;
     void renderLines(RGFONTCODE fontCode,
                      const std::vector<std::string>& lines,
                      uint32_t areaX,
@@ -76,7 +77,8 @@ public:
                      uint32_t areaHeight,
                      int32_t alignFlags = RG_ALIGN_CENTERED_HORIZONTAL |
                                           RG_ALIGN_CENTERED_VERTICAL,
-                     uint32_t alignMargin = 10) const;
+                    uint32_t alignMarginX = 10U,
+                    uint32_t alignMarginY = 10U) const;
 private:
     /* Creates a new font entry into the fontBases list and retrieves
        character width/pixel information */

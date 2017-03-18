@@ -77,7 +77,8 @@ void FontManager::renderLine(RGFONTCODE fontCode,
                              uint32_t areaWidth,
                              uint32_t areaHeight,
                              int32_t alignFlags,
-                             uint32_t alignMargin) const {
+                             uint32_t alignMarginX,
+                             uint32_t alignMarginY) const {
     GLint vp[4];
     glGetIntegerv(GL_VIEWPORT, vp);
 
@@ -87,6 +88,7 @@ void FontManager::renderLine(RGFONTCODE fontCode,
     } else {
         glViewport(vp[0] + areaX, vp[1] + areaY, areaWidth, areaHeight);
     }
+    drawViewportBorder();
 
     auto rasterY = float{ 0.0f };
     const auto fontHeightPx{ m_fontCharHeights[fontCode] };
@@ -95,23 +97,29 @@ void FontManager::renderLine(RGFONTCODE fontCode,
         const auto drawYPx{ (areaHeight - fontHeightPx) / 2 };
         rasterY = pixelsToVPCoords(drawYPx + descent, areaHeight);
     } else if (alignFlags & RG_ALIGN_BOTTOM) {
-        rasterY = pixelsToVPCoords(alignMargin + m_fontCharDescents[fontCode], areaHeight);
+        rasterY = pixelsToVPCoords(alignMarginY + m_fontCharDescents[fontCode], areaHeight);
     } else if (alignFlags & RG_ALIGN_TOP) {
-        rasterY = pixelsToVPCoords(areaHeight - m_fontCharAscents[fontCode] - alignMargin,
+        rasterY = pixelsToVPCoords(areaHeight - m_fontCharAscents[fontCode] - alignMarginY,
                                    areaHeight);
     }
 
     auto rasterX = float{ 0.0f };
     const auto strWidthPx{ strlen(text) * m_fontCharWidths[fontCode] };
     if (alignFlags & RG_ALIGN_CENTERED_HORIZONTAL) {
-        const auto drawXPx{ (areaWidth - strWidthPx) / 2};
-        rasterX = pixelsToVPCoords(areaX + drawXPx, areaWidth);
+        //const auto drawXPx{ (areaWidth - strWidthPx) / 2};
+        //rasterX = pixelsToVPCoords(areaX + drawXPx, areaWidth);
 
+        const auto drawXPx{ (areaWidth - strWidthPx) / 2};
+        rasterX = pixelsToVPCoords(drawXPx, areaWidth);
     } else if (alignFlags & RG_ALIGN_LEFT) {
-        rasterX = pixelsToVPCoords(alignMargin, areaWidth);
+        rasterX = pixelsToVPCoords(alignMarginX, areaWidth);
 
     } else if (alignFlags & RG_ALIGN_RIGHT) {
         rasterX = pixelsToVPCoords(areaWidth - strWidthPx, areaWidth);
+    }
+
+    if (std::string{ text } == "2017") {
+        std::cout << rasterX << ", " << rasterY << '\n';
     }
 
     glRasterPos2f(rasterX, rasterY);
@@ -131,7 +139,8 @@ void FontManager::renderLines(RGFONTCODE fontCode,
                               uint32_t areaWidth,
                               uint32_t areaHeight,
                               int32_t alignFlags,
-                              uint32_t alignMargin) const {
+                              uint32_t alignMarginX,
+                              uint32_t alignMarginY) const {
     GLint vp[4];
     glGetIntegerv(GL_VIEWPORT, vp); // Potential bottleneck...
     /* If width and height are given default values, use the current viewport as area*/
@@ -152,13 +161,12 @@ void FontManager::renderLines(RGFONTCODE fontCode,
 
     // Set the Y position of the first line according to alignment rules
     //const auto descent{ m_fontCharDescents[fontCode] };
-    const auto margin{ alignMargin };
-    const auto renderHeight{ areaHeight - alignMargin * 2 };
+    const auto renderHeight{ areaHeight - alignMarginY * 2 };
     const auto fontHeight{ m_fontCharHeights[fontCode] };
     const auto rasterLineDeltaY{ (renderHeight-fontHeight)/(lines.size()-1) };
 
     // Start at top, render downwards
-    auto rasterYPx = uint32_t{ areaHeight - margin - fontHeight };
+    auto rasterYPx = uint32_t{ areaHeight - alignMarginY - fontHeight };
     if (alignFlags & RG_ALIGN_CENTERED_VERTICAL) {
 
         //rasterY = float{ 1.0f -
@@ -178,10 +186,10 @@ void FontManager::renderLines(RGFONTCODE fontCode,
             const auto drawXPx{ (areaWidth - strWidthPx) / 2};
             rasterX = pixelsToVPCoords(areaX + drawXPx, areaWidth);
         } else if (alignFlags & RG_ALIGN_LEFT) {
-            rasterX = pixelsToVPCoords(alignMargin, areaWidth);
+            rasterX = pixelsToVPCoords(alignMarginX, areaWidth);
         } else if (alignFlags & RG_ALIGN_RIGHT) {
             const auto strWidthPx{ str.size() * m_fontCharWidths[fontCode] };
-            rasterX = pixelsToVPCoords(areaWidth - strWidthPx - margin, areaWidth);
+            rasterX = pixelsToVPCoords(areaWidth - strWidthPx - alignMarginX, areaWidth);
         }
 
         const auto rasterY = pixelsToVPCoords(rasterYPx, areaHeight);
