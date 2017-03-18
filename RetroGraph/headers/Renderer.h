@@ -92,23 +92,22 @@ private:
     std::vector<std::string> m_statsStrings;
 
     // Viewports for each widget
-    //GLint m_timeWidgetVP[4];
     Viewport m_timeVP;
-    GLint m_hddWidgetVP[4];
-    GLint m_procWidgetVP[4];
-    GLint m_statsWidgetVP[4];
+    Viewport m_hddVP;
+    Viewport m_procVP;
+    Viewport m_statsVP;
 
     // Graph widget viewport and sub-viewports
-    GLint m_leftGraphWidgetVP[4]; // Viewport of all graphs together
-    GLint m_cpuGraphVP[4]; // viewport of graph relative to graphWidgetViewport
-    GLint m_ramGraphVP[4];
-    GLint m_gpuGraphVP[4];
-    GLint m_netGraphVP[4];
+    Viewport m_leftGraphVP; // Viewport of all graphs together
+    Viewport m_cpuGraphVP; // viewport of graph relative to graphWidgetViewport
+    Viewport m_ramGraphVP;
+    Viewport m_gpuGraphVP;
+    Viewport m_netGraphVP;
 
     // Main widget viewport and sub-viewports
-    GLint m_mainWidgetVP[4];
-    GLint m_rightGraphWidgetVP[4]; // Viewport of all graphs together
-    GLint m_coreGraphsVP[4];
+    Viewport m_mainWidgetVP;
+    Viewport m_rightGraphWidgetVP; // Viewport of all graphs together
+    Viewport m_coreGraphsVP;
 
     // VBO members
     GLuint m_graphGridVertsID;
