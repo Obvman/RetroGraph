@@ -605,6 +605,8 @@ void Renderer::drawProcRAMList() const {
 
     auto procNames = std::vector<std::string>{  };
     auto procRamUsages = std::vector<std::string>{  };
+
+    printTimeToExecuteHighRes("Vector copying", [&]() {
     procNames.reserve(m_processMeasure->getProcRAMData().size());
     procRamUsages.reserve(m_processMeasure->getProcRAMData().size());
     for (const auto& pair : m_processMeasure->getProcRAMData()) {
@@ -620,6 +622,7 @@ void Renderer::drawProcRAMList() const {
         }
         procRamUsages.emplace_back(buff);
     }
+    });
 
     m_fontManager.renderLines(RG_FONT_STANDARD, procNames, m_procWidgetVP[VP_WIDTH]/2, 0,
                               m_procWidgetVP[VP_WIDTH]/2, m_procWidgetVP[VP_HEIGHT],

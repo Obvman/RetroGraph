@@ -54,9 +54,9 @@ void printTimeToExecuteMs(const char* funcName, F f) {
     const auto start{ clock() };
     f();
     const auto end{ clock() };
-    std::cout << funcName << " took "
-              << (static_cast<float>(end) - static_cast<float>(start))/CLOCKS_PER_SEC
-              << " seconds.\n";
+
+    printf("%s took %f seconds\n", funcName, 
+        (static_cast<float>(end) - static_cast<float>(start)) / CLOCKS_PER_SEC);
 }
 
 /* Default function name overload */
@@ -76,7 +76,7 @@ void printTimeToExecuteHighRes(const char* funcName, F f) {
     QueryPerformanceCounter(&li);
     const int64_t end{ li.QuadPart };
 
-    std::cout << funcName << " took " << end - start << " counts.\n";
+    printf("%s took %I64d counts\n", funcName, end - start);
 }
 
 template<typename F>
