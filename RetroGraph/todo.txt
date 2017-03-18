@@ -38,6 +38,8 @@ Notification icon in system tray
 
 test suite
 
+specify widget viewports with config file
+
 use glScissor so we don't unnecessarily redraw static parts of the window,
 and stutter draw times for different draw frequencies
 

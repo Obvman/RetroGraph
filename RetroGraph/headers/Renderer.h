@@ -43,7 +43,7 @@ public:
     void draw(uint32_t ticks) const;
 private:
     /* Fills all the viewport arrays with hard-coded values */
-    void initViewportBuffers(uint32_t windowWidth, uint32_t windowHeight);
+    void initViewports(uint32_t windowWidth, uint32_t windowHeight);
     /* Fill VBOs with intial vertex data */
     void initVBOs();
     /* Compiles and retrieves uniform locations */
@@ -98,7 +98,7 @@ private:
     Viewport m_statsVP;
 
     // Graph widget viewport and sub-viewports
-    Viewport m_leftGraphVP; // Viewport of all graphs together
+    Viewport m_leftGraphWidgetVP; // Viewport of all graphs together
     Viewport m_cpuGraphVP; // viewport of graph relative to graphWidgetViewport
     Viewport m_ramGraphVP;
     Viewport m_gpuGraphVP;

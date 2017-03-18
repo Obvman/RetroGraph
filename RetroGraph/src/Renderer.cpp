@@ -59,14 +59,14 @@ void Renderer::init(HWND hWnd, uint32_t windowWidth, uint32_t windowHeight,
     m_statsStrings.emplace_back("LAN IP: " + m_netMeasure->getAdapterIP());
 
     m_fontManager.init(hWnd, windowHeight);
-    initViewportBuffers(windowWidth, windowHeight);
+    initViewports(windowWidth, windowHeight);
     initVBOs();
     initShaders();
 }
 
 void Renderer::draw(uint32_t) const {
-    //glScissor(m_leftGraphVP.x, m_leftGraphVP.y,
-               //m_leftGraphVP.width, m_leftGraphVP.height);
+    //glScissor(m_leftGraphWidgetVP.x, m_leftGraphWidgetVP.y,
+               //m_leftGraphWidgetVP.width, m_leftGraphWidgetVP.height);
     //glEnable(GL_SCISSOR_TEST);
     glClear(GL_COLOR_BUFFER_BIT);
     glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
@@ -91,7 +91,7 @@ void Renderer::release() {
 }
 
 /********************* Private Functions ********************/
-void Renderer::initViewportBuffers(uint32_t windowWidth, uint32_t windowHeight) {
+void Renderer::initViewports(uint32_t windowWidth, uint32_t windowHeight) {
     m_timeVP.set(marginX, 5 * windowHeight/6 - marginY,
                  windowWidth/5, windowHeight/6);
 
@@ -103,20 +103,20 @@ void Renderer::initViewportBuffers(uint32_t windowWidth, uint32_t windowHeight) 
 
     m_statsVP.set(marginX, marginY, windowWidth/5, windowHeight/6);
 
-    m_leftGraphVP.set(marginX, windowHeight/4 + 2*marginY,
+    m_leftGraphWidgetVP.set(marginX, windowHeight/4 + 2*marginY,
                       windowWidth/5, windowHeight/2);
 
-    m_cpuGraphVP.set(m_leftGraphVP.x, m_leftGraphVP.y + 3*m_leftGraphVP.height/4,
-                     m_leftGraphVP.width, m_leftGraphVP.height/4);
+    m_cpuGraphVP.set(m_leftGraphWidgetVP.x, m_leftGraphWidgetVP.y + 3*m_leftGraphWidgetVP.height/4,
+                     m_leftGraphWidgetVP.width, m_leftGraphWidgetVP.height/4);
 
-    m_ramGraphVP.set(m_leftGraphVP.x, m_leftGraphVP.y + 2*m_leftGraphVP.height/4,
-                     m_leftGraphVP.width, m_leftGraphVP.height/4);
+    m_ramGraphVP.set(m_leftGraphWidgetVP.x, m_leftGraphWidgetVP.y + 2*m_leftGraphWidgetVP.height/4,
+                     m_leftGraphWidgetVP.width, m_leftGraphWidgetVP.height/4);
 
-    m_gpuGraphVP.set(m_leftGraphVP.x, m_leftGraphVP.y + 1*m_leftGraphVP.height/4,
-                     m_leftGraphVP.width, m_leftGraphVP.height/4);
+    m_gpuGraphVP.set(m_leftGraphWidgetVP.x, m_leftGraphWidgetVP.y + 1*m_leftGraphWidgetVP.height/4,
+                     m_leftGraphWidgetVP.width, m_leftGraphWidgetVP.height/4);
 
-    m_netGraphVP.set(m_leftGraphVP.x, m_leftGraphVP.y + 0*m_leftGraphVP.height/4,
-                     m_leftGraphVP.width, m_leftGraphVP.height/4);
+    m_netGraphVP.set(m_leftGraphWidgetVP.x, m_leftGraphWidgetVP.y + 0*m_leftGraphWidgetVP.height/4,
+                     m_leftGraphWidgetVP.width, m_leftGraphWidgetVP.height/4);
 
     m_mainWidgetVP.set(marginX + windowWidth/2 - windowWidth/5, 2*marginY + windowHeight/4,
                        2 * windowWidth/5, windowHeight/2);
@@ -244,8 +244,8 @@ void Renderer::drawCoreGraphs() const {
 }
 
 void Renderer::drawLeftGraphWidget() const {
-    glViewport(m_leftGraphVP.x, m_leftGraphVP.y,
-               m_leftGraphVP.width, m_leftGraphVP.height);
+    glViewport(m_leftGraphWidgetVP.x, m_leftGraphWidgetVP.y,
+               m_leftGraphWidgetVP.width, m_leftGraphWidgetVP.height);
 
     drawCpuGraph();
     drawRamGraph();
@@ -557,62 +557,52 @@ void Renderer::drawHDDWidget() const {
     // Draw dividers
     glBegin(GL_LINES); {
         glVertex2f(-1.0f, 1.0f); // Drawing at the very edge of the viewport like this leaves an even thinner line
-        glVertex2f( 1.0f, 1.0f); // Top line
+        glVertex2f(1.0f, 1.0f); // Top line
 
         glVertex2f(-1.0f, -1.0f);
-        glVertex2f( 1.0f, -1.0f); // Bottom line
+        glVertex2f(1.0f, -1.0f); // Bottom line
     } glEnd();
 
-    glPushMatrix();
-    const auto numDrives{ m_driveMeasure->getNumDrives() };
-    // For each drive, draw a bar and label in the widget
-    for (const auto& pdi : m_driveMeasure->getDrives()) {
-        drawHDDBar(*pdi);
+    const auto& drives{ m_driveMeasure->getDrives() };
+    for (auto i = size_t{ 0 }; i < drives.size(); ++i) {
+        glViewport(m_hddVP.x + i * (m_hddVP.width/drives.size()), m_hddVP.y,
+                   m_hddVP.width/drives.size(), m_hddVP.height);
 
-        // Draw the drive label below the bar
-        const char label[3]{ pdi->getDriveLetter(), ':', '\0' };
+        // Draw the drive label on the bottom
         glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-        glRasterPos2f(-0.89f, -0.88f);
-        glCallLists(sizeof(label), GL_UNSIGNED_BYTE, label);
+        const char label[3]{ drives[i]->getDriveLetter(), ':', '\0' };
+        m_fontManager.renderLine(RG_FONT_STANDARD, label, 0, 0, 0, 0,
+                                 RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_BOTTOM,
+                                 0, 10);
 
-        const auto capacityStr{ pdi->getCapacityStr() };
+        // Draw the capacity up top
+        m_fontManager.renderLine(RG_FONT_STANDARD,
+                                 drives[i]->getCapacityStr().c_str(),
+                                 0, 0, 0, 0,
+                                 RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_TOP,
+                                 0, 10);
 
-        // Translate by the length of the string to keep it centerred
-        glPushMatrix();
+        const auto percentage{ static_cast<float>(drives[i]->getUsedBytes()) /
+                               drives[i]->getTotalBytes() };
+        constexpr auto barWidth = float{ 0.3f };
+        constexpr auto bottomY = float{ -0.5f };
+        constexpr auto topY = float{ 0.5f };
+        constexpr auto rangeY{ topY - bottomY };
+        const float barStartX{ ((2.0f - barWidth) / 2.0f) - 1.0f};
+        glBegin(GL_QUADS); {
+            glColor3f(BARFILLED_R, BARFILLED_G, BARFILLED_B);
+            glVertex2f(barStartX, bottomY);
+            glVertex2f(barStartX,  bottomY + percentage * rangeY);
+            glVertex2f(barStartX + barWidth, bottomY + percentage * rangeY);
+            glVertex2f(barStartX + barWidth, bottomY);
 
-        glRasterPos2f(-0.95f, 0.80f);
-        glCallLists(capacityStr.size(), GL_UNSIGNED_BYTE, capacityStr.c_str());
-        glPopMatrix();
-
-        // Shift the bar to evenly fill the widget
-        glTranslatef((2.0f/numDrives), 0.0f, 0.0f);
+            glColor3f(BARFREE_R, BARFREE_G, BARFREE_B);
+            glVertex2f(barStartX, bottomY + percentage * rangeY);
+            glVertex2f(barStartX,  topY);
+            glVertex2f(barStartX + barWidth,  topY);
+            glVertex2f(barStartX + barWidth, bottomY + percentage * rangeY);
+        } glEnd();
     }
-
-    glPopMatrix();
-}
-
-void Renderer::drawHDDBar(const DriveInfo& di) const {
-    const auto percentage{ static_cast<float>(di.getUsedBytes()) / di.getTotalBytes() };
-
-    constexpr auto x = float{ -0.85f };
-    constexpr auto yMax = float{ 0.7f };
-    constexpr auto yMin = float{ -0.7f };
-    constexpr auto yRange{ yMax - yMin };
-
-    glLineWidth(10.0f);
-
-    // Draw the bar
-    glBegin(GL_LINES); {
-        // Draw the filled section of the bar
-        glColor3f(BARFILLED_R, BARFILLED_G, BARFILLED_B);
-        glVertex2f(x, yMin);
-        glVertex2f(x, yMin + percentage * yRange);
-
-        // Draw the free section of the bar
-        glColor3f(BARFREE_R, BARFREE_G, BARFREE_B);
-        glVertex2f(x, yMin + percentage * yRange);
-        glVertex2f(x, yMax);
-    } glEnd();
 }
 
 void Renderer::drawTimeWidget() const {

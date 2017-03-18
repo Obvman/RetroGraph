@@ -72,8 +72,6 @@ void drawViewportBorder() {
         glVertex2f(-1.0f, -1.0f);
     } glEnd();
 
-    glLineWidth(lineWidth);
-
     glColor4f(color[0], color[1], color[2], color[3]);
     glLineWidth(lineWidth);
 }
