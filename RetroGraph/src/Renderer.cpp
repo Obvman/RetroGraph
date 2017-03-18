@@ -786,35 +786,18 @@ void Renderer::drawTimeWidget() const {
 
     // Draw the uptime in bottom-left
     {
-        // Spacing between text and the divider
-        const int32_t dividerOffset{ 10 };
-        const int32_t leftDivPixelPos{
-            static_cast<int32_t>(((leftDivX + 1.0f) / 2.0f) * m_timeWidgetVP[VP_WIDTH]) };
-
-        // Get the width of the string in pixels, then start drawing the string
-        // from a position such that the last character is "dividerOffset" pixels
-        // away from the divider
-        const char* uptimeTitle{ "UPTIME" };
-        int32_t strLenPixels{ m_fontManager.getFontCharWidth(RG_FONT_STANDARD) *
-            static_cast<int32_t>(strlen(uptimeTitle)) };
-        int32_t strStartPixelX{ leftDivPixelPos - strLenPixels - dividerOffset};
-
         // Convert pixel value to viewport coordinates
-        float strStartVPX{ ((static_cast<float>(strStartPixelX) / m_timeWidgetVP[VP_WIDTH]) * 2.0f) - 1.0f};
-        //m_fontManager.renderLine(strStartVPX, -0.55f, RG_FONT_STANDARD, uptimeTitle);
-        m_fontManager.renderLine(RG_FONT_STANDARD_BOLD, uptimeTitle, 0, 0,
+        m_fontManager.renderLine(RG_FONT_STANDARD_BOLD, "UPTIME",
+                                 0, 0,
                                  m_timeWidgetVP[VP_WIDTH]/3,
                                  vpCoordsToPixels(midDivY, m_timeWidgetVP[VP_HEIGHT]),
                                  RG_ALIGN_RIGHT | RG_ALIGN_TOP, 10, 15);
 
-        const auto& uptime{ m_cpuMeasure->getUptimeStr() };
-
-        strLenPixels = static_cast<int32_t>(uptime.size()) * m_fontManager.getFontCharWidth(RG_FONT_STANDARD);
-        strStartPixelX = leftDivPixelPos - strLenPixels - dividerOffset;
-        strStartVPX =  ((static_cast<float>(strStartPixelX) / m_timeWidgetVP[VP_WIDTH]) * 2.0f) - 1.0f;
-
-        glRasterPos2f(strStartVPX, -0.8f);
-        glCallLists(uptime.length(), GL_UNSIGNED_BYTE, uptime.c_str());
+        m_fontManager.renderLine(RG_FONT_STANDARD, m_cpuMeasure->getUptimeStr().c_str(),
+                                 0, 0,
+                                 m_timeWidgetVP[VP_WIDTH]/3,
+                                 vpCoordsToPixels(midDivY, m_timeWidgetVP[VP_HEIGHT]),
+                                 RG_ALIGN_RIGHT | RG_ALIGN_BOTTOM, 10, 15);
     }
 
     // Draw network connection status in bottom-right
