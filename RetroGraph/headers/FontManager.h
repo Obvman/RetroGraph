@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 #include <array>
+#include <vector>
+#include <string>
 
 // Forward declarations to avoid including Windows.h
 #ifndef _WINDEF_
@@ -66,6 +68,15 @@ public:
                     int32_t alignFlags = RG_ALIGN_CENTERED_HORIZONTAL |
                                          RG_ALIGN_CENTERED_VERTICAL,
                     uint32_t alignMargin = 10) const;
+    void renderLines(RGFONTCODE fontCode,
+                     const std::vector<std::string>& lines,
+                     uint32_t areaX,
+                     uint32_t areaY,
+                     uint32_t areaWidth,
+                     uint32_t areaHeight,
+                     int32_t alignFlags = RG_ALIGN_CENTERED_HORIZONTAL |
+                                          RG_ALIGN_CENTERED_VERTICAL,
+                     uint32_t alignMargin = 10) const;
 private:
     /* Creates a new font entry into the fontBases list and retrieves
        character width/pixel information */

@@ -10,11 +10,6 @@
 
 namespace rg {
 
-constexpr size_t VP_X{ 0U };
-constexpr size_t VP_Y{ 1U };
-constexpr size_t VP_WIDTH{ 2U };
-constexpr size_t VP_HEIGHT{ 3U };
-
 
 class CPUMeasure;
 class GPUMeasure;

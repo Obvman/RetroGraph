@@ -54,7 +54,7 @@ private:
 
     std::vector<std::shared_ptr<ProcessData>> m_allProcessData;
 
-    uint32_t m_numProcessesToDisplay{ 7 };
+    uint32_t m_numProcessesToDisplay;
     std::vector<std::pair<std::string, double>> m_procCPUListData;
     std::vector<std::pair<std::string, size_t>> m_procRAMListData;
 

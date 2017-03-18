@@ -579,49 +579,54 @@ void Renderer::drawProcessWidget() const {
 void Renderer::drawProcCPUList() const {
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
-    const auto rasterX = float{ -0.95f };
-    auto rasterY = float{ 0.79f }; // Y changes for each process drawn
-
+    auto procNames = std::vector<std::string>{  };
+    auto procPercentages = std::vector<std::string>{  };
+    procNames.reserve(m_processMeasure->getProcCPUData().size());
+    procPercentages.reserve(m_processMeasure->getProcCPUData().size());
     for (const auto& pair : m_processMeasure->getProcCPUData()) {
-        // Draw the process name
-        glRasterPos2f(rasterX, rasterY);
-        glCallLists(pair.first.length(), GL_UNSIGNED_BYTE, pair.first.c_str());
+        procNames.emplace_back(pair.first);
 
-        // Draw the process's CPU percentage
-        glRasterPos2f(-0.13f, rasterY);
+        // Convert percentage to string format
         char buff[6];
         snprintf(buff, sizeof(buff), "%4.1f%%", pair.second);
-        glCallLists(sizeof(buff), GL_UNSIGNED_BYTE, buff);
-
-        rasterY -= 1.8f / (m_processMeasure->getProcCPUData().size());
+        procPercentages.emplace_back(buff);
     }
+
+    m_fontManager.renderLines(RG_FONT_STANDARD, procNames, 0, 0,
+                              m_procWidgetVP[VP_WIDTH]/2, m_procWidgetVP[VP_HEIGHT],
+                              RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL, 15);
+    m_fontManager.renderLines(RG_FONT_STANDARD, procPercentages, 0, 0,
+                              m_procWidgetVP[VP_WIDTH]/2, m_procWidgetVP[VP_HEIGHT],
+                              RG_ALIGN_RIGHT | RG_ALIGN_CENTERED_VERTICAL, 15);
 }
 
 void Renderer::drawProcRAMList() const {
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
-    const auto rasterX = float{ 0.05f };
-    auto rasterY = float{ 0.79f }; // Y changes for each process drawn
-
+    auto procNames = std::vector<std::string>{  };
+    auto procRamUsages = std::vector<std::string>{  };
+    procNames.reserve(m_processMeasure->getProcRAMData().size());
+    procRamUsages.reserve(m_processMeasure->getProcRAMData().size());
     for (const auto& pair : m_processMeasure->getProcRAMData()) {
-        // Draw the process name
-        glRasterPos2f(rasterX, rasterY);
-        glCallLists(pair.first.length(), GL_UNSIGNED_BYTE, pair.first.c_str());
+        procNames.emplace_back(pair.first);
 
-        // Draw the process's RAM usage
-        std::string usage;
-        // Format differently if RAM usage is over 1GB
+        // Convert RAM value to string format, assuming top RAM usages are only
+        // ever in megabytes or gigabytes
         char buff[6];
         if (pair.second >= 1000) {
             snprintf(buff, sizeof(buff), "%.1fGB", pair.second / 1024.0f);
         } else {
             snprintf(buff, sizeof(buff), "%dMB", pair.second);
         }
-        glRasterPos2f(0.84f, rasterY);
-        glCallLists(sizeof(buff), GL_UNSIGNED_BYTE, buff);
-
-        rasterY -= 1.8f / (m_processMeasure->getProcCPUData().size());
+        procRamUsages.emplace_back(buff);
     }
+
+    m_fontManager.renderLines(RG_FONT_STANDARD, procNames, m_procWidgetVP[VP_WIDTH]/2, 0,
+                              m_procWidgetVP[VP_WIDTH]/2, m_procWidgetVP[VP_HEIGHT],
+                              RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL, 15);
+    m_fontManager.renderLines(RG_FONT_STANDARD, procRamUsages, m_procWidgetVP[VP_WIDTH]/2, 0,
+                              m_procWidgetVP[VP_WIDTH]/2, m_procWidgetVP[VP_HEIGHT],
+                              RG_ALIGN_RIGHT | RG_ALIGN_CENTERED_VERTICAL, 15);
 
 }
 
