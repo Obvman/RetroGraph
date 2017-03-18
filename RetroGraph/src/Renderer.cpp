@@ -454,17 +454,12 @@ void Renderer::drawNetGraph() const {
 void Renderer::drawProcessWidget() const {
     glViewport(m_procVP.x, m_procVP.y,
                m_procVP.width, m_procVP.height);
+
     glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
     glLineWidth(0.5f);
-
-    // Draw dividers
+    drawTopSerifLine(-1.0f, 1.0f);
+    drawBottomSerifLine(-1.0f, 1.0f);
     glBegin(GL_LINES); {
-        glVertex2f(-1.0f, 1.0f);
-        glVertex2f( 1.0f, 1.0f); // Top line
-
-        glVertex2f(-1.0f, -1.0f);
-        glVertex2f( 1.0f, -1.0f); // Bottom line
-
         glVertex2f(0.0f, -1.0f);
         glVertex2f(0.0f,  1.0f); // Middle line
     } glEnd();
@@ -531,16 +526,10 @@ void Renderer::drawProcRAMList() const {
 void Renderer::drawStatsWidget() const {
     glViewport(m_statsVP.x, m_statsVP.y, m_statsVP.width, m_statsVP.height);
 
-    // Draw dividers
     glColor4f(DIVIDER_R, DIVIDER_G, DIVIDER_B, DIVIDER_A);
     glLineWidth(0.5f);
-    glBegin(GL_LINES); {
-        glVertex2f(-1.0f, 1.0f);
-        glVertex2f(1.0f, 1.0f); // Top
-
-        glVertex2f(-1.0f, -1.0f);
-        glVertex2f( 1.0f, -1.0f); // Bottom
-    } glEnd();
+    drawTopSerifLine(-1.0f, 1.0f);
+    drawBottomSerifLine(-1.0f, 1.0f);
 
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
     m_fontManager.renderLines(RG_FONT_STANDARD, m_statsStrings, 0, 0,
@@ -611,24 +600,17 @@ void Renderer::drawTimeWidget() const {
     constexpr float midDivY{ -0.3f };
 
     // Draw dividers
-    {
-        glBegin(GL_LINES); {
-            glVertex2f(-1.0f, 1.0f);
-            glVertex2f(1.0f, 1.0f); // Top line
+    drawTopSerifLine(-1.0f, 1.0f);
+    drawBottomSerifLine(-1.0f, 1.0f);
+    drawSerifLine(-0.9f, 0.9f, midDivY);
 
-            glVertex2f(-1.0f, -1.0f);
-            glVertex2f(1.0f, -1.0f); // Bottom line
+    glBegin(GL_LINES); {
+        glVertex2f(leftDivX, -1.0f);
+        glVertex2f(leftDivX, -0.3f); // Left vertical
 
-            glVertex2f(-0.9f, midDivY);
-            glVertex2f(0.9f, midDivY); // Mid-divider
-
-            glVertex2f(leftDivX, -1.0f);
-            glVertex2f(leftDivX, -0.3f); // Left vertical
-
-            glVertex2f(rightDivX, -1.0f);
-            glVertex2f(rightDivX, -0.3f); // Right vertical
-        } glEnd();
-    }
+        glVertex2f(rightDivX, -1.0f);
+        glVertex2f(rightDivX, -0.3f); // Right vertical
+    } glEnd();
 
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
     // Draw the big system time
