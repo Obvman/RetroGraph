@@ -4,11 +4,13 @@
 #include <vector>
 
 #ifndef __GL_H__
+typedef float GLfloat;
 typedef unsigned int GLuint;
 typedef int GLint;
 #endif
 
 namespace rg {
+constexpr float serifLen{ 0.05f };
 
 constexpr size_t VP_X{ 0U };
 constexpr size_t VP_Y{ 1U };
@@ -36,10 +38,19 @@ void drawGraphGrid(GLuint graphGridVertsID, GLuint graphGridIndicesID,
                    size_t graphIndicesSize);
 void drawBorder();
 
+// Primitive drawing
+void drawSerifLine(GLfloat x1, GLfloat x2, GLfloat y);
+void drawTopSerifLine(GLfloat x1, GLfloat x2);
+void drawBottomSerifLine(GLfloat x1, GLfloat x2);
+
+// Given a pixel value (x or y) and the current viewport width/height in pixels,
+// converts the pixel value to the corresponding viewport ordinate
 constexpr inline float pixelsToVPCoords(uint32_t p, uint32_t vpWidth) {
     return (static_cast<float>(p) / vpWidth) * 2.0f - 1.0f;
 }
 
+// Given a viewport ordinate (x or y) and the viewport width/height in pixels,
+// converts the ordinate into a pixel value relative to the viewport origin
 constexpr inline uint32_t vpCoordsToPixels(float vpCoord, uint32_t vpWidth) {
     return static_cast<uint32_t>(((vpCoord + 1.0f) / 2.0f) * vpWidth);
 }

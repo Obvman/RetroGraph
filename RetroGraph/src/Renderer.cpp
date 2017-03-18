@@ -551,18 +551,13 @@ void Renderer::drawStatsWidget() const {
 void Renderer::drawHDDWidget() const {
     glViewport(m_hddVP.x, m_hddVP.y,
                m_hddVP.width, m_hddVP.height);
+
     glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
     glLineWidth(0.5f);
+    drawTopSerifLine(-1.0f, 1.0f);
+    drawBottomSerifLine(-1.0f, 1.0f);
 
-    // Draw dividers
-    glBegin(GL_LINES); {
-        glVertex2f(-1.0f, 1.0f); // Drawing at the very edge of the viewport like this leaves an even thinner line
-        glVertex2f(1.0f, 1.0f); // Top line
-
-        glVertex2f(-1.0f, -1.0f);
-        glVertex2f(1.0f, -1.0f); // Bottom line
-    } glEnd();
-
+    // Draw each drive status section
     const auto& drives{ m_driveMeasure->getDrives() };
     for (auto i = size_t{ 0 }; i < drives.size(); ++i) {
         glViewport(m_hddVP.x + i * (m_hddVP.width/drives.size()), m_hddVP.y,

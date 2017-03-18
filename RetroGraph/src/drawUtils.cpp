@@ -75,5 +75,43 @@ void drawBorder() {
     } glEnd();
 }
 
+void drawSerifLine(GLfloat x1, GLfloat x2, GLfloat y) {
+    glBegin(GL_LINES); {
+        glVertex2f(x1, y);
+        glVertex2f(x2, y);
+
+        glVertex2f(x1, y-serifLen);
+        glVertex2f(x1, y+serifLen);
+
+        glVertex2f(x2, y-serifLen);
+        glVertex2f(x2, y+serifLen);
+    } glEnd();
+}
+
+void drawTopSerifLine(GLfloat x1, GLfloat x2) {
+    glBegin(GL_LINES); {
+        glVertex2f(x1, 1.0f);
+        glVertex2f(x2, 1.0f);
+
+        glVertex2f(x1, 1.0f-serifLen);
+        glVertex2f(x1, 1.0f);
+
+        glVertex2f(x2, 1.0f-serifLen);
+        glVertex2f(x2, 1.0f);
+    } glEnd();
+}
+
+void drawBottomSerifLine(GLfloat x1, GLfloat x2) {
+    glBegin(GL_LINES); {
+        glVertex2f(x1, -1.0f);
+        glVertex2f(x2, -1.0f);
+
+        glVertex2f(x1, -1.0f);
+        glVertex2f(x1, -1.0f + serifLen);
+
+        glVertex2f(x2, -1.0f);
+        glVertex2f(x2, -1.0f + serifLen);
+    } glEnd();
+}
 
 }
