@@ -85,9 +85,9 @@ void FontManager::renderLine(RGFONTCODE fontCode,
     auto rasterY = float{ 0.0f };
     const auto fontHeightPx{ m_fontCharHeights[fontCode] };
     if (alignFlags & RG_ALIGN_CENTERED_VERTICAL) {
-        // TODO this doesn't account for font height properly
+        const auto descent{ m_fontCharDescents[fontCode] };
         const auto drawYPx{ (areaHeight - fontHeightPx) / 2 };
-        rasterY = pixelsToVPCoords(drawYPx, areaHeight);
+        rasterY = pixelsToVPCoords(drawYPx + descent, areaHeight);
     } else if (alignFlags & RG_ALIGN_BOTTOM) {
         rasterY = pixelsToVPCoords(alignMargin + m_fontCharDescents[fontCode], areaHeight);
     } else if (alignFlags & RG_ALIGN_TOP) {

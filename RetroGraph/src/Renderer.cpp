@@ -543,7 +543,7 @@ void Renderer::drawNetGraph() const {
                                      RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
         }
 
-        const char* str{ "Net Down/Up" };
+        const char* str{ "Down/Up" };
         const auto bottom = std::string{ "0" + suffix };
         m_fontManager.renderLine(RG_FONT_SMALL, bottom.c_str(), 0, 0,
                                  m_gpuGraphVP[VP_WIDTH]/5, m_gpuGraphVP[VP_HEIGHT],
