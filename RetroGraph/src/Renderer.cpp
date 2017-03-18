@@ -12,24 +12,10 @@
 #include "../headers/SystemInfo.h"
 #include "../headers/colors.h"
 #include "../headers/utils.h"
+#include "../headers/drawUtils.h"
 #include "../headers/GLShaders.h"
 
 namespace rg {
-
-// Automatically binds/unbinds given VBOs and executes the function given
-template<typename F>
-void vboDrawScope(GLuint vertID, GLuint indexID, F f) {
-    glBindBuffer(GL_ARRAY_BUFFER, vertID);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexID);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(2, GL_FLOAT, 0, 0);
-
-    f();
-
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-}
 
 Renderer::Renderer() :
     m_renderTargetHandle{ nullptr },
@@ -80,8 +66,12 @@ void Renderer::init(HWND hWnd, uint32_t windowWidth, uint32_t windowHeight,
 }
 
 void Renderer::draw(uint32_t) const {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    //glScissor(m_leftGraphWidgetVP[VP_X], m_leftGraphWidgetVP[VP_Y],
+               //m_leftGraphWidgetVP[VP_WIDTH], m_leftGraphWidgetVP[VP_HEIGHT]);
+    //glEnable(GL_SCISSOR_TEST);
+    glClear(GL_COLOR_BUFFER_BIT);
     glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
+    //glDisable(GL_SCISSOR_TEST);
 
     drawLeftGraphWidget();
 
@@ -102,69 +92,66 @@ void Renderer::release() {
 }
 
 /********************* Private Functions ********************/
-constexpr float pixelsToVPCoords(uint32_t p, uint32_t vpWidth);
-constexpr uint32_t vpCoordsToPixels(float vpCoord, uint32_t vpWidth);
-
 void Renderer::initViewportBuffers(uint32_t windowWidth, uint32_t windowHeight) {
-    m_timeWidgetVP[0] = marginX;
-    m_timeWidgetVP[1] = 5 * windowHeight/6 - marginY;
-    m_timeWidgetVP[2] = windowWidth/5;
-    m_timeWidgetVP[3] = windowHeight/6; // Top left
+    m_timeWidgetVP[VP_X] = marginX;
+    m_timeWidgetVP[VP_Y] = 5 * windowHeight/6 - marginY;
+    m_timeWidgetVP[VP_WIDTH] = windowWidth/5;
+    m_timeWidgetVP[VP_HEIGHT] = windowHeight/6; // Top left
 
-    m_hddWidgetVP[0] = windowWidth - windowWidth/5 - marginX,
-    m_hddWidgetVP[1] = 5 * windowHeight/6 - marginY,
-    m_hddWidgetVP[2] = windowWidth/5,
-    m_hddWidgetVP[3] = windowHeight/6; // Top right
+    m_hddWidgetVP[VP_X] = windowWidth - windowWidth/5 - marginX,
+    m_hddWidgetVP[VP_Y] = 5 * windowHeight/6 - marginY,
+    m_hddWidgetVP[VP_WIDTH] = windowWidth/5,
+    m_hddWidgetVP[VP_HEIGHT] = windowHeight/6; // Top right
 
-    m_procWidgetVP[0] = marginX + windowWidth/2 - windowWidth/5;
-    m_procWidgetVP[1] = marginY;
-    m_procWidgetVP[2] = 2*windowWidth/5;
-    m_procWidgetVP[3] = windowHeight/6; // Bottom middle
+    m_procWidgetVP[VP_X] = marginX + windowWidth/2 - windowWidth/5;
+    m_procWidgetVP[VP_Y] = marginY;
+    m_procWidgetVP[VP_WIDTH] = 2*windowWidth/5;
+    m_procWidgetVP[VP_HEIGHT] = windowHeight/6; // Bottom middle
 
-    m_statsWidgetVP[0] = marginX;
-    m_statsWidgetVP[1] = marginY;
-    m_statsWidgetVP[2] = windowWidth/5;
-    m_statsWidgetVP[3] = windowHeight/6; // Bottom left
+    m_statsWidgetVP[VP_X] = marginX;
+    m_statsWidgetVP[VP_Y] = marginY;
+    m_statsWidgetVP[VP_WIDTH] = windowWidth/5;
+    m_statsWidgetVP[VP_HEIGHT] = windowHeight/6; // Bottom left
 
-    m_leftGraphWidgetVP[0] = marginX;
-    m_leftGraphWidgetVP[1] = windowHeight/4 + 2*marginY;
-    m_leftGraphWidgetVP[2] = windowWidth/5;
-    m_leftGraphWidgetVP[3] = windowHeight/2; // Left-Mid
+    m_leftGraphWidgetVP[VP_X] = marginX;
+    m_leftGraphWidgetVP[VP_Y] = windowHeight/4 + 2*marginY;
+    m_leftGraphWidgetVP[VP_WIDTH] = windowWidth/5;
+    m_leftGraphWidgetVP[VP_HEIGHT] = windowHeight/2; // Left-Mid
 
-    m_cpuGraphVP[0] = m_leftGraphWidgetVP[0];
-    m_cpuGraphVP[1] = m_leftGraphWidgetVP[1] + 3*m_leftGraphWidgetVP[3]/4;
-    m_cpuGraphVP[2] = m_leftGraphWidgetVP[2];
-    m_cpuGraphVP[3] = m_leftGraphWidgetVP[3]/4;
+    m_cpuGraphVP[VP_X] = m_leftGraphWidgetVP[VP_X];
+    m_cpuGraphVP[VP_Y] = m_leftGraphWidgetVP[VP_Y] + 3*m_leftGraphWidgetVP[VP_HEIGHT]/4;
+    m_cpuGraphVP[VP_WIDTH] = m_leftGraphWidgetVP[VP_WIDTH];
+    m_cpuGraphVP[VP_HEIGHT] = m_leftGraphWidgetVP[VP_HEIGHT]/4;
 
-    m_ramGraphVP[0] = m_leftGraphWidgetVP[0];
-    m_ramGraphVP[1] = m_leftGraphWidgetVP[1] + 2*m_leftGraphWidgetVP[3]/4;
-    m_ramGraphVP[2] = m_leftGraphWidgetVP[2];
-    m_ramGraphVP[3] = m_leftGraphWidgetVP[3]/4;
+    m_ramGraphVP[VP_X] = m_leftGraphWidgetVP[VP_X];
+    m_ramGraphVP[VP_Y] = m_leftGraphWidgetVP[VP_Y] + 2*m_leftGraphWidgetVP[VP_HEIGHT]/4;
+    m_ramGraphVP[VP_WIDTH] = m_leftGraphWidgetVP[VP_WIDTH];
+    m_ramGraphVP[VP_HEIGHT] = m_leftGraphWidgetVP[VP_HEIGHT]/4;
 
-    m_gpuGraphVP[0] = m_leftGraphWidgetVP[0];
-    m_gpuGraphVP[1] = m_leftGraphWidgetVP[1] + 1*m_leftGraphWidgetVP[3]/4;
-    m_gpuGraphVP[2] = m_leftGraphWidgetVP[2];
-    m_gpuGraphVP[3] = m_leftGraphWidgetVP[3]/4;
+    m_gpuGraphVP[VP_X] = m_leftGraphWidgetVP[VP_X];
+    m_gpuGraphVP[VP_Y] = m_leftGraphWidgetVP[VP_Y] + 1*m_leftGraphWidgetVP[VP_HEIGHT]/4;
+    m_gpuGraphVP[VP_WIDTH] = m_leftGraphWidgetVP[VP_WIDTH];
+    m_gpuGraphVP[VP_HEIGHT] = m_leftGraphWidgetVP[VP_HEIGHT]/4;
 
-    m_netGraphVP[0] = m_leftGraphWidgetVP[0];
-    m_netGraphVP[1] = m_leftGraphWidgetVP[1] + 0*m_leftGraphWidgetVP[3]/4;
-    m_netGraphVP[2] = m_leftGraphWidgetVP[2];
-    m_netGraphVP[3] = m_leftGraphWidgetVP[3]/4;
+    m_netGraphVP[VP_X] = m_leftGraphWidgetVP[VP_X];
+    m_netGraphVP[VP_Y] = m_leftGraphWidgetVP[VP_Y] + 0*m_leftGraphWidgetVP[VP_HEIGHT]/4;
+    m_netGraphVP[VP_WIDTH] = m_leftGraphWidgetVP[VP_WIDTH];
+    m_netGraphVP[VP_HEIGHT] = m_leftGraphWidgetVP[VP_HEIGHT]/4;
 
-    m_mainWidgetVP[0] = marginX + windowWidth/2 - windowWidth/5;
-    m_mainWidgetVP[1] = 2*marginY + windowHeight/4;
-    m_mainWidgetVP[2] = 2 * windowWidth/5;
-    m_mainWidgetVP[3] = windowHeight/2; // Midd;
+    m_mainWidgetVP[VP_X] = marginX + windowWidth/2 - windowWidth/5;
+    m_mainWidgetVP[VP_Y] = 2*marginY + windowHeight/4;
+    m_mainWidgetVP[VP_WIDTH] = 2 * windowWidth/5;
+    m_mainWidgetVP[VP_HEIGHT] = windowHeight/2; // Midd;
 
-    m_rightGraphWidgetVP[0] = windowWidth - windowWidth/5 - marginX;
-    m_rightGraphWidgetVP[1] = windowHeight/4 + 2*marginY;
-    m_rightGraphWidgetVP[2] = windowWidth/5;
-    m_rightGraphWidgetVP[3] = windowHeight/2;
+    m_rightGraphWidgetVP[VP_X] = windowWidth - windowWidth/5 - marginX;
+    m_rightGraphWidgetVP[VP_Y] = windowHeight/4 + 2*marginY;
+    m_rightGraphWidgetVP[VP_WIDTH] = windowWidth/5;
+    m_rightGraphWidgetVP[VP_HEIGHT] = windowHeight/2;
 
-    m_coreGraphsVP[0] = m_rightGraphWidgetVP[0];
-    m_coreGraphsVP[1] = m_rightGraphWidgetVP[1];
-    m_coreGraphsVP[2] = m_rightGraphWidgetVP[2];
-    m_coreGraphsVP[3] = m_rightGraphWidgetVP[3]/2;
+    m_coreGraphsVP[VP_X] = m_rightGraphWidgetVP[VP_X];
+    m_coreGraphsVP[VP_Y] = m_rightGraphWidgetVP[VP_Y];
+    m_coreGraphsVP[VP_WIDTH] = m_rightGraphWidgetVP[VP_WIDTH];
+    m_coreGraphsVP[VP_HEIGHT] = m_rightGraphWidgetVP[VP_HEIGHT]/2;
 }
 
 void Renderer::initVBOs() {
@@ -200,7 +187,7 @@ void Renderer::initVBOs() {
             gVerts.push_back(y); // Horizontal line bottom vert
 
             gVerts.push_back(1.0f);
-            gVerts.push_back(y); // Horizontal line bottom vert
+            gVerts.push_back(y); // Horizontal line top vert
 
             gIndices.push_back(vertLineIndexCount + 2*i);
             gIndices.push_back(vertLineIndexCount + 2*i+1);
@@ -220,13 +207,6 @@ void Renderer::initVBOs() {
                      gIndices.data(), GL_STATIC_DRAW);
     }
 
-    { // VBO for CPU line graph
-        /*glGenBuffers(1, &m_graphLineVertsID);
-        glBindBuffer(GL_ARRAY_BUFFER, m_graphLineVertsID);
-        glBufferData(GL_ARRAY_BUFFER, m_cpuMeasure.getUsageData().size() * sizeof(GLfloat),
-                     m_cpuMeasure.getUsageData().data(), GL_DYNAMIC_DRAW);*/
-    }
-
     // Unbind buffers
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -242,63 +222,21 @@ void Renderer::initShaders() {
     }
 }
 
-void Renderer::drawFilledGraph(const std::vector<float> data) const {
-    glBegin(GL_QUADS); {
-        for (auto i = size_t{ 0U }; i < data.size() - 1; ++i) {
-            glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.7f);
-
-            const auto x1 = float{ (static_cast<float>(i) / (data.size() - 1)) * 2.0f - 1.0f };
-            const auto y1 = float{ data[i] * 2.0f - 1.0f };
-            const auto x2 = float{ (static_cast<float>(i+1) / (data.size() - 1)) * 2.0f - 1.0f };
-            const auto y2 = float{ data[i+1] * 2.0f - 1.0f };
-
-            glVertex2f(x1, -1.0f); // Bottom-left
-            glVertex2f(x1, y1); // Top-left
-            glVertex2f(x2, y2); // Top-right
-            glVertex2f(x2, -1.0f); // Bottom-right
-        }
-    } glEnd();
-}
-
-void Renderer::drawLineGraph(const std::vector<float> data) const {
-    glBegin(GL_LINE_STRIP); {
-        // Draw each node in the graph
-        for (auto i = size_t{ 0U }; i < data.size(); ++i) {
-            glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
-
-            const auto x = float{ (static_cast<float>(i) / (data.size() - 1))
-                                   * 2.0f - 1.0f };
-            const auto y = float{ data[i] * 2.0f - 1.0f };
-
-            glVertex2f(x, y);
-        }
-    } glEnd();
-}
-
-void Renderer::drawGraphGrid() const {
-    // Draw the background grid for the graph
-    vboDrawScope(m_graphGridVertsID, m_graphGridIndicesID, [this]() {
-        glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.2f);
-        glLineWidth(0.5f);
-        glDrawElements(GL_LINES, m_graphIndicesSize, GL_UNSIGNED_INT, 0);
-    });
-}
-
 void Renderer::drawMainWidget() const {
-    glViewport(m_mainWidgetVP[0], m_mainWidgetVP[1],
-               m_mainWidgetVP[2], m_mainWidgetVP[3]);
+    glViewport(m_mainWidgetVP[VP_X], m_mainWidgetVP[VP_Y],
+               m_mainWidgetVP[VP_WIDTH], m_mainWidgetVP[VP_HEIGHT]);
 }
 
 void Renderer::drawRightGraphWidget() const {
-    glViewport(m_rightGraphWidgetVP[0], m_rightGraphWidgetVP[1],
-               m_rightGraphWidgetVP[2], m_rightGraphWidgetVP[3]);
+    glViewport(m_rightGraphWidgetVP[VP_X], m_rightGraphWidgetVP[VP_Y],
+               m_rightGraphWidgetVP[VP_WIDTH], m_rightGraphWidgetVP[VP_HEIGHT]);
 
     drawCoreGraphs();
 }
 
 void Renderer::drawCoreGraphs() const {
-    glViewport(m_coreGraphsVP[0], m_coreGraphsVP[1],
-               m_coreGraphsVP[2], m_coreGraphsVP[3]);
+    glViewport(m_coreGraphsVP[VP_X], m_coreGraphsVP[VP_Y],
+               m_coreGraphsVP[VP_WIDTH], m_coreGraphsVP[VP_HEIGHT]);
 
     glLineWidth(0.5f);
     glColor4f(BORDER_R, BORDER_G, BORDER_B, BORDER_A);
@@ -320,11 +258,11 @@ void Renderer::drawCoreGraphs() const {
     for (auto i = size_t{ 0U }; i < numCores; ++i) {
         // Set the viewport for the current graph. The y position
         // of each graph changes as we draw more
-        glViewport(m_coreGraphsVP[0],
-                   (m_coreGraphsVP[1] + (numCores-1)*m_coreGraphsVP[3]/numCores)
-                   - i*m_coreGraphsVP[3]/(numCores),
-                   m_coreGraphsVP[2],
-                   m_coreGraphsVP[3]/numCores);
+        glViewport(m_coreGraphsVP[VP_X],
+                   (m_coreGraphsVP[VP_Y] + (numCores-1)*m_coreGraphsVP[VP_HEIGHT]/numCores)
+                   - i*m_coreGraphsVP[VP_HEIGHT]/(numCores),
+                   m_coreGraphsVP[VP_WIDTH],
+                   m_coreGraphsVP[VP_HEIGHT]/numCores);
 
         drawLineGraph(m_cpuMeasure->getPerCoreUsageData()[i]);
 
@@ -338,7 +276,7 @@ void Renderer::drawCoreGraphs() const {
             glVertex2f(-1.0f, 1.0f);
         } glEnd();
 
-        drawGraphGrid();
+        drawGraphGrid(m_graphGridVertsID, m_graphGridIndicesID, m_graphIndicesSize);
 
         // Draw a label for the core graph
         glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
@@ -348,8 +286,8 @@ void Renderer::drawCoreGraphs() const {
 }
 
 void Renderer::drawLeftGraphWidget() const {
-    glViewport(m_leftGraphWidgetVP[0], m_leftGraphWidgetVP[1],
-               m_leftGraphWidgetVP[2], m_leftGraphWidgetVP[3]);
+    glViewport(m_leftGraphWidgetVP[VP_X], m_leftGraphWidgetVP[VP_Y],
+               m_leftGraphWidgetVP[VP_WIDTH], m_leftGraphWidgetVP[VP_HEIGHT]);
 
     drawCpuGraph();
     drawRamGraph();
@@ -359,8 +297,8 @@ void Renderer::drawLeftGraphWidget() const {
 
 void Renderer::drawCpuGraph() const {
     { // Graph grid/border
-        glViewport(m_cpuGraphVP[0], m_cpuGraphVP[1],
-                   m_cpuGraphVP[2], m_cpuGraphVP[3]);
+        glViewport(m_cpuGraphVP[VP_X], m_cpuGraphVP[VP_Y],
+                   m_cpuGraphVP[VP_WIDTH], m_cpuGraphVP[VP_HEIGHT]);
 
         // Draw border
         glLineWidth(0.5f);
@@ -375,30 +313,39 @@ void Renderer::drawCpuGraph() const {
     }
 
     // Set the viewport for the graph to be left section
-    glViewport(m_cpuGraphVP[0], m_cpuGraphVP[1],
-               (m_cpuGraphVP[2] * 4)/5, m_cpuGraphVP[3]);
+    glViewport(m_cpuGraphVP[VP_X], m_cpuGraphVP[VP_Y],
+               (m_cpuGraphVP[VP_WIDTH] * 4)/5, m_cpuGraphVP[VP_HEIGHT]);
 
-    drawGraphGrid();
+    drawGraphGrid(m_graphGridVertsID, m_graphGridIndicesID, m_graphIndicesSize);
     glLineWidth(0.5f);
     drawLineGraph(m_cpuMeasure->getUsageData());
 
     { // Text
-        glViewport(m_cpuGraphVP[0] + (4 * m_cpuGraphVP[2]) / 5, m_cpuGraphVP[1],
-                   m_cpuGraphVP[2] / 5, m_cpuGraphVP[3]);
+        glViewport(m_cpuGraphVP[VP_X] + (4 * m_cpuGraphVP[VP_WIDTH]) / 5, m_cpuGraphVP[VP_Y],
+                   m_cpuGraphVP[VP_WIDTH] / 5, m_cpuGraphVP[VP_HEIGHT]);
         glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
         const char* str{ "Sys Load" };
         const char* min{ "0%" };
         const char* max{ "100%" };
-        m_fontManager.renderLine(-0.8f, -0.02f, RG_FONT_SMALL, str);
-        m_fontManager.renderLine(-0.8f, -0.77f, RG_FONT_SMALL, min);
-        m_fontManager.renderLine(-0.8f, 0.70f, RG_FONT_SMALL, max);
+        m_fontManager.renderLine(RG_FONT_SMALL, min,
+                                 0, 0,
+                                 m_cpuGraphVP[VP_WIDTH]/5, m_cpuGraphVP[VP_HEIGHT],
+                                 RG_ALIGN_BOTTOM | RG_ALIGN_LEFT, 10);
+        m_fontManager.renderLine(RG_FONT_SMALL, str,
+                                 0, 0,
+                                 m_cpuGraphVP[VP_WIDTH]/5, m_cpuGraphVP[VP_HEIGHT],
+                                 RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT, 10);
+        m_fontManager.renderLine(RG_FONT_SMALL, max,
+                                 0, 0,
+                                 m_cpuGraphVP[VP_WIDTH]/5, m_cpuGraphVP[VP_HEIGHT],
+                                 RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
     }
 }
 
 void Renderer::drawRamGraph() const {
-    glViewport(m_ramGraphVP[0], m_ramGraphVP[1],
-               m_ramGraphVP[2] , m_ramGraphVP[3]);
+    glViewport(m_ramGraphVP[VP_X], m_ramGraphVP[VP_Y],
+               m_ramGraphVP[VP_WIDTH] , m_ramGraphVP[VP_HEIGHT]);
     // Draw border
     glLineWidth(0.5f);
     glColor4f(BORDER_R, BORDER_G, BORDER_B, BORDER_A);
@@ -411,47 +358,40 @@ void Renderer::drawRamGraph() const {
     } glEnd();
 
     // Set the viewport for the graph to be left section
-    glViewport(m_ramGraphVP[0], m_ramGraphVP[1],
-               (m_ramGraphVP[2]*4)/5 , m_ramGraphVP[3]);
+    glViewport(m_ramGraphVP[VP_X], m_ramGraphVP[VP_Y],
+               (m_ramGraphVP[VP_WIDTH]*4)/5 , m_ramGraphVP[VP_HEIGHT]);
 
     // Draw the background grid for the graph
-    drawGraphGrid();
+    drawGraphGrid(m_graphGridVertsID, m_graphGridIndicesID, m_graphIndicesSize);
 
-    {// Draw the line graph
-        glLineWidth(0.5f);
-        drawLineGraph(m_ramMeasure->getUsageData());
-    }
+    drawLineGraph(m_ramMeasure->getUsageData());
 
     {// Set viewport for text drawing
-        glViewport(m_ramGraphVP[0] + (4 * m_ramGraphVP[2]) / 5, m_ramGraphVP[1],
-                   m_ramGraphVP[2] / 5, m_ramGraphVP[3]);
+        glViewport(m_ramGraphVP[VP_X] + (4 * m_ramGraphVP[VP_WIDTH]) / 5, m_ramGraphVP[VP_Y],
+                   m_ramGraphVP[VP_WIDTH] / 5, m_ramGraphVP[VP_HEIGHT]);
         glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
         const char* str{ "RAM Load" };
         const char* min{ "0%" };
         const char* max{ "100%" };
-        m_fontManager.renderLine(-0.8f, -0.02f, RG_FONT_SMALL, str);
-        m_fontManager.renderLine(-0.8f, -0.77f, RG_FONT_SMALL, min);
-        m_fontManager.renderLine(-0.8f, 0.70f, RG_FONT_SMALL, max);
-        /*fontScope(smlFontBase, []() {
-            glRasterPos2f(-0.8f, -0.02f);
-            const char* str{ "RAM Load" };
-            glCallLists(strlen(str), GL_UNSIGNED_BYTE, str);
-
-            glRasterPos2f(-0.8f, -0.77f);
-            const char* min{ "0%" };
-            glCallLists(strlen(min), GL_UNSIGNED_BYTE, min);
-
-            glRasterPos2f(-0.8f, 0.70f);
-            const char* max{ "100%" };
-            glCallLists(strlen(max), GL_UNSIGNED_BYTE, max);
-        });*/
+        m_fontManager.renderLine(RG_FONT_SMALL, min,
+                                 0, 0,
+                                 m_ramGraphVP[VP_WIDTH]/5, m_ramGraphVP[VP_HEIGHT],
+                                 RG_ALIGN_BOTTOM | RG_ALIGN_LEFT, 10);
+        m_fontManager.renderLine(RG_FONT_SMALL, str,
+                                 0, 0,
+                                 m_ramGraphVP[VP_WIDTH]/5, m_ramGraphVP[VP_HEIGHT],
+                                 RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT, 10);
+        m_fontManager.renderLine(RG_FONT_SMALL, max,
+                                 0, 0,
+                                 m_ramGraphVP[VP_WIDTH]/5, m_ramGraphVP[VP_HEIGHT],
+                                 RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
     }
 }
 
 void Renderer::drawGpuGraph() const {
-    glViewport(m_gpuGraphVP[0], m_gpuGraphVP[1],
-               m_gpuGraphVP[2] , m_gpuGraphVP[3]);
+    glViewport(m_gpuGraphVP[VP_X], m_gpuGraphVP[VP_Y],
+               m_gpuGraphVP[VP_WIDTH] , m_gpuGraphVP[VP_HEIGHT]);
     // Draw border
     glLineWidth(0.5f);
     glColor4f(BORDER_R, BORDER_G, BORDER_B, BORDER_A);
@@ -464,47 +404,43 @@ void Renderer::drawGpuGraph() const {
     } glEnd();
 
     // Set the viewport for the graph to be left section
-    glViewport(m_gpuGraphVP[0], m_gpuGraphVP[1],
-               (m_gpuGraphVP[2]*4)/5 , m_gpuGraphVP[3]);
+    glViewport(m_gpuGraphVP[VP_X], m_gpuGraphVP[VP_Y],
+               (m_gpuGraphVP[VP_WIDTH]*4)/5 , m_gpuGraphVP[VP_HEIGHT]);
 
     // Draw the background grid for the graph
-    drawGraphGrid();
+    drawGraphGrid(m_graphGridVertsID, m_graphGridIndicesID, m_graphIndicesSize);
 
     // Draw the line graph
     glLineWidth(0.5f);
     drawLineGraph(m_gpuMeasure->getUsageData());
 
     {// Set viewport for text drawing
-        glViewport(m_gpuGraphVP[0] + (4 * m_gpuGraphVP[2]) / 5, m_gpuGraphVP[1],
-                   m_gpuGraphVP[2] / 5, m_gpuGraphVP[3]);
+        glViewport(m_gpuGraphVP[VP_X] + (4 * m_gpuGraphVP[VP_WIDTH]) / 5, m_gpuGraphVP[VP_Y],
+                   m_gpuGraphVP[VP_WIDTH] / 5, m_gpuGraphVP[VP_HEIGHT]);
         glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
         const char* str{ "GPU Load" };
         const char* min{ "0%" };
         const char* max{ "100%" };
-        m_fontManager.renderLine(-0.8f, -0.02f, RG_FONT_SMALL, str);
-        m_fontManager.renderLine(-0.8f, -0.77f, RG_FONT_SMALL, min);
-        m_fontManager.renderLine(-0.8f, 0.70f, RG_FONT_SMALL, max);
-        /*fontScope(smlFontBase, []() {
-            glRasterPos2f(-0.8f, -0.02f);
-            const char* str{ "GPU Load" };
-            glCallLists(strlen(str), GL_UNSIGNED_BYTE, str);
-
-            glRasterPos2f(-0.8f, -0.77f);
-            const char* min{ "0%" };
-            glCallLists(strlen(min), GL_UNSIGNED_BYTE, min);
-
-            glRasterPos2f(-0.8f, 0.70f);
-            const char* max{ "100%" };
-            glCallLists(strlen(max), GL_UNSIGNED_BYTE, max);
-        });*/
+        m_fontManager.renderLine(RG_FONT_SMALL, min,
+                                 0, 0,
+                                 m_gpuGraphVP[VP_WIDTH]/5, m_gpuGraphVP[VP_HEIGHT],
+                                 RG_ALIGN_BOTTOM | RG_ALIGN_LEFT, 10);
+        m_fontManager.renderLine(RG_FONT_SMALL, str,
+                                 0, 0,
+                                 m_gpuGraphVP[VP_WIDTH]/5, m_gpuGraphVP[VP_HEIGHT],
+                                 RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT, 10);
+        m_fontManager.renderLine(RG_FONT_SMALL, max,
+                                 0, 0,
+                                 m_gpuGraphVP[VP_WIDTH]/5, m_gpuGraphVP[VP_HEIGHT],
+                                 RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
     }
 
 }
 
 void Renderer::drawNetGraph() const {
-    glViewport(m_netGraphVP[0], m_netGraphVP[1],
-               m_netGraphVP[2] , m_netGraphVP[3]);
+    glViewport(m_netGraphVP[VP_X], m_netGraphVP[VP_Y],
+               m_netGraphVP[VP_WIDTH] , m_netGraphVP[VP_HEIGHT]);
     // Draw border
     glLineWidth(0.5f);
     glColor4f(BORDER_R, BORDER_G, BORDER_B, BORDER_A);
@@ -517,11 +453,11 @@ void Renderer::drawNetGraph() const {
     } glEnd();
 
     // Set the viewport for the graph to be left section
-    glViewport(m_netGraphVP[0], m_netGraphVP[1],
-               (m_netGraphVP[2]*4)/5 , m_netGraphVP[3]);
+    glViewport(m_netGraphVP[VP_X], m_netGraphVP[VP_Y],
+               (m_netGraphVP[VP_WIDTH]*4)/5 , m_netGraphVP[VP_HEIGHT]);
 
     // Draw the background grid for the graph
-    drawGraphGrid();
+    drawGraphGrid(m_graphGridVertsID, m_graphGridIndicesID, m_graphIndicesSize);
 
     {// Draw the line graph
         glLineWidth(0.5f);
@@ -570,8 +506,8 @@ void Renderer::drawNetGraph() const {
     }
 
     {// Text
-        glViewport(m_netGraphVP[0] + (4 * m_netGraphVP[2]) / 5, m_netGraphVP[1],
-                   m_netGraphVP[2] / 5, m_netGraphVP[3]);
+        glViewport(m_netGraphVP[VP_X] + (4 * m_netGraphVP[VP_WIDTH]) / 5, m_netGraphVP[VP_Y],
+                   m_netGraphVP[VP_WIDTH] / 5, m_netGraphVP[VP_HEIGHT]);
         glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
         const auto maxVal{ m_netMeasure->getMaxDownValue() };
@@ -584,32 +520,43 @@ void Renderer::drawNetGraph() const {
             suffix = "MB";
         }
 
-        const char* str{ "Down/Up" };
-        const auto bottom{ "0" + suffix };
-        m_fontManager.renderLine(-0.8f, -0.02f, RG_FONT_SMALL, str);
-        m_fontManager.renderLine(-0.8f, -0.77f, RG_FONT_SMALL, bottom.c_str(), bottom.size());
 
         /* Print the maximum throughput as the scale at the top of the graph */
         if (suffix == "MB") {
             char buff[8];
             snprintf(buff, sizeof(buff), "%5.1fMB", maxVal/static_cast<float>(MB));
-            m_fontManager.renderLine(-0.8f, 0.70f, RG_FONT_SMALL, buff, sizeof(buff));
+            m_fontManager.renderLine(RG_FONT_SMALL, buff, 0, 0,
+                                     m_gpuGraphVP[VP_WIDTH]/5, m_gpuGraphVP[VP_HEIGHT],
+                                     RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
         } else if (suffix == "KB") {
             char buff[8];
             snprintf(buff, sizeof(buff), "%5.1fKB", maxVal/static_cast<float>(KB));
-            m_fontManager.renderLine(-0.8f, 0.70f, RG_FONT_SMALL, buff, sizeof(buff));
+            m_fontManager.renderLine(RG_FONT_SMALL, buff, 0, 0,
+                                     m_gpuGraphVP[VP_WIDTH]/5, m_gpuGraphVP[VP_HEIGHT],
+                                     RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
         } else {
             const auto top{ std::to_string(maxVal) + suffix };
             char buff[5];
             snprintf(buff, sizeof(buff), "%3lluB", maxVal);
-            m_fontManager.renderLine(-0.8f, 0.70f, RG_FONT_SMALL, buff, sizeof(buff));
+            m_fontManager.renderLine(RG_FONT_SMALL, buff, 0, 0,
+                                     m_gpuGraphVP[VP_WIDTH]/5, m_gpuGraphVP[VP_HEIGHT],
+                                     RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
         }
+
+        const char* str{ "Net Down/Up" };
+        const auto bottom = std::string{ "0" + suffix };
+        m_fontManager.renderLine(RG_FONT_SMALL, bottom.c_str(), 0, 0,
+                                 m_gpuGraphVP[VP_WIDTH]/5, m_gpuGraphVP[VP_HEIGHT],
+                                 RG_ALIGN_BOTTOM | RG_ALIGN_LEFT, 10);
+        m_fontManager.renderLine(RG_FONT_SMALL, str, 0, 0,
+                                 m_gpuGraphVP[VP_WIDTH]/5, m_gpuGraphVP[VP_HEIGHT],
+                                 RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT, 10);
     }
 }
 
 void Renderer::drawProcessWidget() const {
-    glViewport(m_procWidgetVP[0], m_procWidgetVP[1],
-               m_procWidgetVP[2], m_procWidgetVP[3]);
+    glViewport(m_procWidgetVP[VP_X], m_procWidgetVP[VP_Y],
+               m_procWidgetVP[VP_WIDTH], m_procWidgetVP[VP_HEIGHT]);
     glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
     glLineWidth(0.5f);
 
@@ -679,8 +626,8 @@ void Renderer::drawProcRAMList() const {
 }
 
 void Renderer::drawStatsWidget() const {
-    glViewport(m_statsWidgetVP[0], m_statsWidgetVP[1],
-               m_statsWidgetVP[2], m_statsWidgetVP[3]  );
+    glViewport(m_statsWidgetVP[VP_X], m_statsWidgetVP[VP_Y],
+               m_statsWidgetVP[VP_WIDTH], m_statsWidgetVP[VP_HEIGHT]  );
 
     // Draw dividers
     glColor4f(DIVIDER_R, DIVIDER_G, DIVIDER_B, DIVIDER_A);
@@ -707,8 +654,8 @@ void Renderer::drawStatsWidget() const {
 }
 
 void Renderer::drawHDDWidget() const {
-    glViewport(m_hddWidgetVP[0], m_hddWidgetVP[1],
-               m_hddWidgetVP[2], m_hddWidgetVP[3]);
+    glViewport(m_hddWidgetVP[VP_X], m_hddWidgetVP[VP_Y],
+               m_hddWidgetVP[VP_WIDTH], m_hddWidgetVP[VP_HEIGHT]);
     glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
     glLineWidth(0.5f);
 
@@ -774,8 +721,8 @@ void Renderer::drawHDDBar(const DriveInfo& di) const {
 }
 
 void Renderer::drawTimeWidget() const {
-    glViewport(m_timeWidgetVP[0], m_timeWidgetVP[1],
-               m_timeWidgetVP[2], m_timeWidgetVP[3]);
+    glViewport(m_timeWidgetVP[VP_X], m_timeWidgetVP[VP_Y],
+               m_timeWidgetVP[VP_WIDTH], m_timeWidgetVP[VP_HEIGHT]);
     glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
     glLineWidth(0.5f);
 
@@ -813,10 +760,10 @@ void Renderer::drawTimeWidget() const {
         strftime(buf, sizeof(buf), "%T", &t);
 
         // Get font width in pixels for horizontal centering
-        const auto midDivYPx{ vpCoordsToPixels(midDivY, m_timeWidgetVP[3]) };
+        const auto midDivYPx{ vpCoordsToPixels(midDivY, m_timeWidgetVP[VP_HEIGHT]) };
 
         m_fontManager.renderLine(RG_FONT_TIME, buf, 0, midDivYPx,
-                                 m_timeWidgetVP[2], m_timeWidgetVP[3] - midDivYPx,
+                                 m_timeWidgetVP[VP_WIDTH], m_timeWidgetVP[VP_HEIGHT] - midDivYPx,
                                  RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_CENTERED_HORIZONTAL);
 
         // Draw the year and month in bottom-middle
@@ -835,7 +782,7 @@ void Renderer::drawTimeWidget() const {
         // Spacing between text and the divider
         const int32_t dividerOffset{ 10 };
         const int32_t leftDivPixelPos{
-            static_cast<int32_t>(((leftDivX + 1.0f) / 2.0f) * m_timeWidgetVP[2]) };
+            static_cast<int32_t>(((leftDivX + 1.0f) / 2.0f) * m_timeWidgetVP[VP_WIDTH]) };
 
         // Get the width of the string in pixels, then start drawing the string
         // from a position such that the last character is "dividerOffset" pixels
@@ -846,14 +793,14 @@ void Renderer::drawTimeWidget() const {
         int32_t strStartPixelX{ leftDivPixelPos - strLenPixels - dividerOffset};
 
         // Convert pixel value to viewport coordinates
-        float strStartVPX{ ((static_cast<float>(strStartPixelX) / m_timeWidgetVP[2]) * 2.0f) - 1.0f};
+        float strStartVPX{ ((static_cast<float>(strStartPixelX) / m_timeWidgetVP[VP_WIDTH]) * 2.0f) - 1.0f};
         m_fontManager.renderLine(strStartVPX, -0.55f, RG_FONT_STANDARD, uptimeTitle);
 
         const auto& uptime{ m_cpuMeasure->getUptimeStr() };
 
         strLenPixels = static_cast<int32_t>(uptime.size()) * m_fontManager.getFontCharWidth(RG_FONT_STANDARD);
         strStartPixelX = leftDivPixelPos - strLenPixels - dividerOffset;
-        strStartVPX =  ((static_cast<float>(strStartPixelX) / m_timeWidgetVP[2]) * 2.0f) - 1.0f;
+        strStartVPX =  ((static_cast<float>(strStartPixelX) / m_timeWidgetVP[VP_WIDTH]) * 2.0f) - 1.0f;
 
         glRasterPos2f(strStartVPX, -0.8f);
         glCallLists(uptime.length(), GL_UNSIGNED_BYTE, uptime.c_str());
@@ -862,10 +809,10 @@ void Renderer::drawTimeWidget() const {
     // Draw network connection status in bottom-right
     {
         // Get region to render text in
-        const auto renderX{ vpCoordsToPixels(rightDivX, m_timeWidgetVP[2]) };
+        const auto renderX{ vpCoordsToPixels(rightDivX, m_timeWidgetVP[VP_WIDTH]) };
         const auto renderY{ 0 };
-        const auto renderWidth{ m_timeWidgetVP[2] - renderX };
-        const auto renderHeight{ vpCoordsToPixels(midDivY, m_timeWidgetVP[3]) };
+        const auto renderWidth{ m_timeWidgetVP[VP_WIDTH] - renderX };
+        const auto renderHeight{ vpCoordsToPixels(midDivY, m_timeWidgetVP[VP_HEIGHT]) };
 
         m_fontManager.renderLine(RG_FONT_STANDARD_BOLD, "NETWORK", renderX,
                                  renderY, renderWidth, renderHeight,
@@ -878,15 +825,6 @@ void Renderer::drawTimeWidget() const {
             m_fontManager.renderLine(0.4f, -0.8f, RG_FONT_STANDARD, "DOWN");
         }
     }
-}
-
-// p is the value in pixels from the viewport's left/bottom bound
-constexpr float pixelsToVPCoords(uint32_t p, uint32_t vpWidth) {
-    return (static_cast<float>(p) / vpWidth) * 2.0f - 1.0f;
-}
-
-constexpr uint32_t vpCoordsToPixels(float vpCoord, uint32_t vpWidth) {
-    return static_cast<uint32_t>(((vpCoord + 1.0f) / 2.0f) * vpWidth);
 }
 
 }

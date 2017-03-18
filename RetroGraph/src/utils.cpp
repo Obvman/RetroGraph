@@ -78,7 +78,7 @@ void drawViewportBorder() {
     glLineWidth(lineWidth);
 }
 
-float lerp(float x1, float x2, float t) {
+constexpr float lerp(float x1, float x2, float t) {
     //return x1 + (x2 - x1) * t;
     return (1 - t) * x1 + t * x2;
 }

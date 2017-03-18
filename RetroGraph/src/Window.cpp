@@ -16,6 +16,10 @@
 
 namespace rg {
 
+constexpr int32_t ID_EXIT{ 1 };
+constexpr int32_t ID_SEND_TO_BACK{ 2 };
+constexpr int32_t ID_RESET_POS{ 3 };
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 Window::Window(HINSTANCE hInstance) :
@@ -38,10 +42,6 @@ Window::Window(HINSTANCE hInstance) :
 
 Window::~Window() {
 }
-
-constexpr int32_t ID_EXIT{ 1 };
-constexpr int32_t ID_SEND_TO_BACK{ 2 };
-constexpr int32_t ID_RESET_POS{ 3 };
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
@@ -98,13 +98,11 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
             // the context menu on a monitor with a negative x or y value,
             // so check if the value is greater than a signed short, if so
             // it should be a negative number
-            // PS: parentheses around max are to get around macro conflict
-            // from Windows.h -.-
-            if (LOWORD(lParam) > (std::numeric_limits<int16_t>::max)()) {
-                contextSpawnX = LOWORD(lParam) - (std::numeric_limits<uint16_t>::max)();
+            if (LOWORD(lParam) > std::numeric_limits<int16_t>::max()) {
+                contextSpawnX = LOWORD(lParam) - std::numeric_limits<uint16_t>::max();
             }
-            if (HIWORD(lParam) > (std::numeric_limits<int16_t>::max)()) {
-                contextSpawnY = HIWORD(lParam) - (std::numeric_limits<uint16_t>::max)();
+            if (HIWORD(lParam) > std::numeric_limits<int16_t>::max()) {
+                contextSpawnY = HIWORD(lParam) - std::numeric_limits<uint16_t>::max();
             }
 
             createRClickMenu(reinterpret_cast<HWND>(wParam),
@@ -125,6 +123,7 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
             return 0;
         case WM_MOUSEMOVE: {
             if (m_dragging) {
+                // Use mouse and window location to drag the window under the cursor
                 int mouseX = LOWORD(lParam);
                 int mouseY = HIWORD(lParam);
 

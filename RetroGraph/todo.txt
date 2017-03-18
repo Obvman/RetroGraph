@@ -9,6 +9,8 @@ volume, current sound output level bar - IAudioPeakMeter
 3D effects on graph
 framerate of currently focussed window
 
+have config options for polling intervals of individual measures
+
 consider using GetTextExtentPoint for calculating string width/height
 
 handle multi-line text rendering vertical alignments

@@ -10,6 +10,12 @@
 
 namespace rg {
 
+constexpr size_t VP_X{ 0U };
+constexpr size_t VP_Y{ 1U };
+constexpr size_t VP_WIDTH{ 2U };
+constexpr size_t VP_HEIGHT{ 3U };
+
+
 class CPUMeasure;
 class GPUMeasure;
 class RAMMeasure;
@@ -46,11 +52,6 @@ private:
     void initVBOs();
     /* Compiles and retrieves uniform locations */
     void initShaders();
-
-    // Drawing utilities
-    void drawFilledGraph(const std::vector<float> data) const;
-    void drawLineGraph(const std::vector<float> data) const;
-    void drawGraphGrid() const;
 
     // Widgets
     void drawMainWidget() const;
@@ -116,10 +117,6 @@ private:
     GLuint m_graphGridVertsID;
     GLuint m_graphGridIndicesID;
     GLsizei m_graphIndicesSize;
-
-    //GLuint m_graphLineVertsID;
-    //GLuint m_graphLineIndicesID;
-    //GLsizei m_graphLineIndicesSize;
 
     // Shaders
     GLuint m_cpuGraphShader;

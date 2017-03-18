@@ -6,16 +6,9 @@
 #include <GL/glew.h>
 
 #include "../headers/utils.h"
+#include "../headers/drawUtils.h"
 
 namespace rg {
-
-constexpr float pixelsToVPCoords(uint32_t p, uint32_t vpWidth) {
-    return (static_cast<float>(p) / vpWidth) * 2.0f - 1.0f;
-}
-
-constexpr uint32_t vpCoordsToPixels(float vpCoord, uint32_t vpWidth) {
-    return static_cast<uint32_t>(((vpCoord + 1.0f) / 2.0f) * vpWidth);
-}
 
 FontManager::FontManager() :
     m_hWnd{ nullptr }
@@ -92,7 +85,8 @@ void FontManager::renderLine(RGFONTCODE fontCode,
     auto rasterY = float{ 0.0f };
     const auto fontHeightPx{ m_fontCharHeights[fontCode] };
     if (alignFlags & RG_ALIGN_CENTERED_VERTICAL) {
-        const auto drawYPx{ (areaHeight - fontHeightPx) / 1 };
+        // TODO this doesn't account for font height properly
+        const auto drawYPx{ (areaHeight - fontHeightPx) / 2 };
         rasterY = pixelsToVPCoords(drawYPx, areaHeight);
     } else if (alignFlags & RG_ALIGN_BOTTOM) {
         rasterY = pixelsToVPCoords(alignMargin + m_fontCharDescents[fontCode], areaHeight);

@@ -55,7 +55,7 @@ public:
                     const char* text) const ;
     void renderLine(GLfloat rasterX, GLfloat rasterY, RGFONTCODE fontCode,
                     const char* text, size_t textLen) const ;
-    /* TODO: document fully If given an area (in pixels, relative to current viewport), aligns the
+    /* TODO: document fully. If given an area (in pixels, relative to current viewport), aligns the
        text horizontally and vertically inside the box */
     void renderLine(RGFONTCODE fontCode,
                     const char* text,

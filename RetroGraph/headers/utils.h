@@ -46,7 +46,7 @@ uint64_t subtractTimes(const FILETIME& ftA, const FILETIME& ftB);
 void drawViewportBorder();
 
 /* Linear interpolation */
-float lerp(float x1, float x2, float t);
+constexpr float lerp(float x1, float x2, float t);
 
 /* Prints how long the given function f took to execute */
 template<typename F>
