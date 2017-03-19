@@ -1,10 +1,12 @@
 DEVENV=/cygdrive/d/ProgramFiles/Visual\ Studio\ 2015/Common7/IDE/devenv.com
 SOLNDIR=../
 SOLN=$(SOLNDIR)RetroGraph.sln
-DEBUGEXE=$(SOLNDIR)Debug/RetroGraph.exe
-RELEASEEXE=$(SOLNDIR)Release/RetroGraph.exe
 
-all: debug release
+# This just delegates building to the Visual Studio build system
+
+all: debug
+
+both: debug release
 
 debug: FORCE
 	$(DEVENV) $(SOLN) -build Debug
@@ -13,8 +15,9 @@ release: FORCE
 	$(DEVENV) $(SOLN) -build Release
 
 runD: FORCE
-	$(DEBUGEXE)$
+	exec ../Debug/RetroGraph.exe
 
-runR:
+runR: FORCE
+	cygstart --action=runas ../Release/RetroGraph.exe
 
 FORCE:

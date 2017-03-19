@@ -65,6 +65,8 @@ private:
     /* Creates the popup menu in response to a right click*/
     static void createRClickMenu(HWND hWnd, DWORD cursorX, DWORD cursorY);
 
+    void handleClick(DWORD clickX, DWORD clickY);
+
     UserSettings m_userSettings;
 
     HINSTANCE m_hInstance;

@@ -112,10 +112,9 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
         case WM_SETCURSOR:
             break;
         case WM_LBUTTONDOWN:
-            m_dragging = true;
-            SetCapture(hWnd);
             clickX = LOWORD(lParam);
             clickY = HIWORD(lParam);
+            handleClick(clickX, clickY);
             return 0;
         case WM_LBUTTONUP:
             m_dragging = false;
@@ -152,6 +151,26 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
     }
 
     return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
+void Window::handleClick(DWORD clickX, DWORD clickY) {
+    m_dragging = true;
+    SetCapture(m_hWndMain);
+
+    // Origin is at top left for click coords, so convert to bottom left
+    clickY = m_height - clickY;
+
+    // Get the RGB value at the point clicked
+    std::vector<unsigned char> pixels( 1 * 1 * 4 );
+    glReadPixels(clickX, clickY, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
+
+    // If the pixel is the background color, we don't want to drag
+    if (pixels[0] == BGCOLOR_R &&
+        pixels[1] == BGCOLOR_B &&
+        pixels[2] == BGCOLOR_G &&
+        pixels[3] == BGCOLOR_A) {
+        m_dragging = false;
+    }
 }
 
 void Window::createRClickMenu(HWND hWnd, DWORD cursorX, DWORD cursorY) {

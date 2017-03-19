@@ -535,7 +535,7 @@ void Renderer::drawStatsWidget() const {
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
     m_fontManager.renderLines(RG_FONT_STANDARD, m_statsStrings, 0, 0,
                               m_statsVP.width, m_statsVP.height,
-                              RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL, 15, 10);
+                              RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_CENTERED_VERTICAL, 15, 10);
 }
 
 void Renderer::drawHDDWidget() const {

@@ -176,7 +176,7 @@ void FontManager::renderLines(RGFONTCODE fontCode,
         // Handle X alignment for the string
         auto rasterX = float{ 0.0f };
         if (alignFlags & RG_ALIGN_CENTERED_HORIZONTAL) {
-            const auto strWidthPx{ str.size() * m_fontCharWidths[fontCode] };
+            auto strWidthPx{ str.size() * m_fontCharWidths[fontCode] };
             const auto drawXPx{ (areaWidth - strWidthPx) / 2};
             rasterX = pixelsToVPCoords(areaX + drawXPx, areaWidth);
         } else if (alignFlags & RG_ALIGN_LEFT) {
