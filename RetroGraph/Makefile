@@ -6,7 +6,7 @@ SOLN=$(SOLNDIR)RetroGraph.sln
 
 all: debug
 
-both: debug release
+both: release debug 
 
 debug: FORCE
 	$(DEVENV) $(SOLN) -build Debug

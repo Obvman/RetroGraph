@@ -82,6 +82,7 @@ void FontManager::renderLine(RGFONTCODE fontCode,
     GLint vp[4];
     glGetIntegerv(GL_VIEWPORT, vp);
 
+    // Set the area to viewport if default values are given
     if (areaWidth == 0 && areaHeight == 0 && areaX == 0 && areaY == 0) {
         areaWidth = vp[VP_WIDTH];
         areaHeight = vp[VP_HEIGHT];
@@ -89,9 +90,10 @@ void FontManager::renderLine(RGFONTCODE fontCode,
         glViewport(vp[0] + areaX, vp[1] + areaY, areaWidth, areaHeight);
     }
 
-    // Handle vertical alignment
     auto rasterY = float{ 0.0f };
     const auto fontHeightPx{ m_fontCharHeights[fontCode] };
+
+    // Handle vertical alignment
     if (alignFlags & RG_ALIGN_CENTERED_VERTICAL) {
         const auto descent{ m_fontCharDescents[fontCode] };
         const auto drawYPx{ (areaHeight - fontHeightPx) / 2 };
@@ -103,17 +105,14 @@ void FontManager::renderLine(RGFONTCODE fontCode,
                                    areaHeight);
     }
 
-    // Handle horizontal alignment
     auto rasterX = float{ 0.0f };
-    //auto strWidthPx{ strlen(text) * m_fontCharWidths[fontCode] };
-    auto strWidthPx = 0;
-    for (auto i = size_t{ 0U }; i < strlen(text); ++i) {
-        strWidthPx += m_fontCharWidths[fontCode][text[i]];
+    const auto strWidthPx{ calculateStringWidth(text, strlen(text), fontCode) };
+    if (fontCode == RG_FONT_TIME) {
+        printf("%d = %d\n", strWidthPx, areaWidth);
+        fflush(stdout);
     }
 
-    //if (fontCode == RG_FONT_TIME) {
-    //}
-
+    // Handle horizontal alignment
     if (alignFlags & RG_ALIGN_CENTERED_HORIZONTAL) {
         const auto drawXPx{ (areaWidth - strWidthPx) / 2};
         rasterX = pixelsToVPCoords(drawXPx, areaWidth);
@@ -144,6 +143,7 @@ void FontManager::renderLines(RGFONTCODE fontCode,
                               uint32_t alignMarginY) const {
     GLint vp[4];
     glGetIntegerv(GL_VIEWPORT, vp); // Potential bottleneck...
+
     /* If width and height are given default values, use the current viewport as area*/
     if (areaWidth == 0 && areaHeight == 0 && areaX == 0 && areaY == 0) {
         areaWidth = vp[VP_WIDTH];
@@ -152,16 +152,7 @@ void FontManager::renderLines(RGFONTCODE fontCode,
         glViewport(vp[0] + areaX, vp[1] + areaY, areaWidth, areaHeight);
     }
 
-    // Calculate total height of all lines
-    auto linesHeightPx = uint32_t{ m_fontCharHeights[fontCode] * lines.size() };
-
-    if (linesHeightPx > areaHeight) {
-        std::cout << "Too many lines for given space\n";
-        return;
-    }
-
     // Set the Y position of the first line according to alignment rules
-    //const auto descent{ m_fontCharDescents[fontCode] };
     const auto renderHeight{ areaHeight - alignMarginY * 2 };
     const auto fontHeight{ m_fontCharHeights[fontCode] };
     const auto rasterLineDeltaY{ (renderHeight-fontHeight)/(lines.size()-1) };
@@ -169,9 +160,9 @@ void FontManager::renderLines(RGFONTCODE fontCode,
     // Start at top, render downwards
     auto rasterYPx = uint32_t{ areaHeight - alignMarginY - fontHeight };
     if (alignFlags & RG_ALIGN_CENTERED_VERTICAL) {
-
         //rasterY = float{ 1.0f -
-            //1.0f*static_cast<float>(deltaFromTop + descent + m_fontCharHeights[fontCode])/areaHeight };
+            //1.0f*static_cast<float>(deltaFromTop + descent + 
+            //m_fontCharHeights[fontCode])/areaHeight };
     } else if (alignFlags & RG_ALIGN_TOP) {
         /*rasterY = float{ 1.0f -
             static_cast<float>(alignMargin - descent)/areaHeight };*/
@@ -182,18 +173,16 @@ void FontManager::renderLines(RGFONTCODE fontCode,
     for (const auto& str : lines) {
         // Handle X alignment for the string
         auto rasterX = float{ 0.0f };
-        auto strWidthPx = 0;
-        for (auto i = size_t{ 0U }; i < str.size() - 1; ++i) {
-            strWidthPx += m_fontCharWidths[fontCode][str[i]];
-        }
         if (alignFlags & RG_ALIGN_CENTERED_HORIZONTAL) {
-            //auto strWidthPx{ str.size() * m_fontCharWidths[fontCode] };
+            const auto strWidthPx{ calculateStringWidth(str.c_str(), str.size(),
+                                                        fontCode) };
             const auto drawXPx{ (areaWidth - strWidthPx) / 2};
             rasterX = pixelsToVPCoords(areaX + drawXPx, areaWidth);
         } else if (alignFlags & RG_ALIGN_LEFT) {
             rasterX = pixelsToVPCoords(alignMarginX, areaWidth);
         } else if (alignFlags & RG_ALIGN_RIGHT) {
-            //const auto strWidthPx{ str.size() * m_fontCharWidths[fontCode] };
+            const auto strWidthPx{ calculateStringWidth(str.c_str(), str.size(),
+                                                        fontCode) };
             rasterX = pixelsToVPCoords(areaWidth - strWidthPx - alignMarginX, areaWidth);
         }
 
@@ -231,23 +220,23 @@ void FontManager::createFont(uint32_t fontHeight, int32_t weight,
 }
 
 void FontManager::setFontCharacteristics(RGFONTCODE c, HDC hdc) {
+    // Fill character width array
+    GetCharWidth32(hdc, 0, RG_NUM_CHARS_IN_FONT-1, &(m_fontCharWidths[c][0]));
+
     TEXTMETRIC tm;
     GetTextMetrics(hdc, &tm);
-
-    if (c == RG_FONT_TIME) {
-    }
-    GetCharWidth32(hdc, 0, RG_NUM_CHARS_IN_FONT-1, &(m_fontCharWidths[c][0]));
-    for (const auto n : m_fontCharWidths[c]) {
-        printf("%d ", n);
-    }
-    printf("\n\n");
-    fflush(stdout);
-    //GetCharWidth32(hdc, 0, 0, &m_fontCharWidths[c]);
-
     m_fontCharHeights[c] = tm.tmHeight;
     m_fontCharAscents[c] = tm.tmAscent;
     m_fontCharDescents[c] = tm.tmDescent;
     m_fontCharInternalLeadings[c] = tm.tmInternalLeading;
+}
+
+int32_t FontManager::calculateStringWidth(const char* text, size_t textLen, 
+                                          RGFONTCODE c) const {
+    auto strWidthPx = int32_t{ 0 };
+    for (auto i = size_t{ 0U }; i < textLen; ++i)
+        strWidthPx += m_fontCharWidths[c][text[i]];
+    return strWidthPx;
 }
 
 }

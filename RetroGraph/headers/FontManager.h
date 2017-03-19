@@ -103,6 +103,8 @@ private:
     void createFont(uint32_t fontHeight, int32_t weight, const char* typeface,
                     RGFONTCODE code);
     void setFontCharacteristics(RGFONTCODE c, HDC hdc);
+    int32_t calculateStringWidth(const char* text, size_t textLen,
+                                 RGFONTCODE c) const;
 
     HWND m_hWnd;
     std::array<GLuint, RG_NUM_FONTS> m_fontBases;
