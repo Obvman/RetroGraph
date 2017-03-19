@@ -44,6 +44,8 @@ public:
     FontManager& operator=(const FontManager&) = delete;
 
     void init(HWND hWnd, uint32_t windowHeight);
+
+    /* Releases font resources */
     void release();
 
     /* Gets the width of the given font's characters in pixels */
@@ -55,10 +57,23 @@ public:
        coordinates relative to the current viewport */
     void renderLine(GLfloat rasterX, GLfloat rasterY, RGFONTCODE fontCode,
                     const char* text) const ;
+
     void renderLine(GLfloat rasterX, GLfloat rasterY, RGFONTCODE fontCode,
                     const char* text, size_t textLen) const ;
-    /* TODO: document fully. If given an area (in pixels, relative to current viewport), aligns the
-       text horizontally and vertically inside the box */
+
+    /* Renders a line within the given area. 
+     *     fontCode specifies the font to draw the line in
+     *     text is the raw text to draw
+     *     areaX, areaY, areaWidth, areaHeight specifies a viewport for the 
+     *         alignment rules for the text. areaX and areaY are relative to the
+     *         current glViewport. If all area values are 0, the current 
+     *         glViewport is used.
+     *     alignFlags specify the alignment rules. If two conflicting flags are
+     *         provided (e.g. two different vertical alignment options), only one
+     *         alignment rule will be followed
+     *     marginX and marginY are optional values that specify how far from
+     *         the edges of the area to draw.
+     */
     void renderLine(RGFONTCODE fontCode,
                     const char* text,
                     uint32_t areaX,
@@ -83,7 +98,7 @@ public:
 private:
     /* Creates a new font entry into the fontBases list and retrieves
        character width/pixel information */
-    void createFont(uint32_t fontHeight, bool bold, const char* typeface,
+    void createFont(uint32_t fontHeight, int32_t weight, const char* typeface,
                     RGFONTCODE code);
 
     HWND m_hWnd;

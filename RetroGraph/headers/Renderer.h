@@ -56,7 +56,7 @@ private:
 
     void drawRightGraphWidget() const;
     void drawCoreGraphs() const;
-    void drawRightStatsWidget() const;
+    void drawCPUStatsWidget() const;
 
     void drawLeftGraphWidget() const;
     void drawCpuGraph() const;
@@ -67,7 +67,9 @@ private:
     void drawProcessWidget() const;
     void drawProcCPUList() const;
     void drawProcRAMList() const;
-    void drawStatsWidget() const;
+
+    void drawLeftStatsWidget() const;
+    void drawRightStatsWidget() const;
 
     /* Draw labelled capacity bars of all fixed drives in the system */
     void drawHDDWidget() const;
@@ -98,7 +100,8 @@ private:
     Viewport m_timeVP;
     Viewport m_hddVP;
     Viewport m_procVP;
-    Viewport m_statsVP;
+    Viewport m_leftStatsVP;
+    Viewport m_rightStatsVP;
 
     // Graph widget viewport and sub-viewports
     Viewport m_leftGraphWidgetVP; // Viewport of all graphs together
@@ -110,7 +113,7 @@ private:
     // Main widget viewport and sub-viewports
     Viewport m_mainWidgetVP;
     Viewport m_rightGraphWidgetVP; // Viewport of all graphs together
-    Viewport m_rightStatsVP;
+    Viewport m_rightCPUStatsVP;
     Viewport m_coreGraphsVP;
 
     // VBO members

@@ -28,19 +28,21 @@ void FontManager::init(HWND hWnd, uint32_t windowHeight) {
     const char* const typefaces[] = {
         "Courier New",
         "Lato Lights",
-        "Orator Std"
+        "Orator Std",
         "Verdana",
         "Letter Gothic Std",
         "Kozuka Gothic Pr6N L",
         "Algerian",
+        "United Sans Rg Md",
     };
 
     const auto standardFontHeight{ std::lround(windowHeight / 70.0f) };
 
-    createFont(standardFontHeight, false, typefaces[0], RG_FONT_STANDARD);
-    createFont(standardFontHeight, true, typefaces[0], RG_FONT_STANDARD_BOLD);
-    createFont(standardFontHeight*5, false, typefaces[0], RG_FONT_TIME);
-    createFont(7*standardFontHeight/8, false, typefaces[1], RG_FONT_SMALL);
+    createFont(standardFontHeight, FW_DONTCARE, typefaces[0], RG_FONT_STANDARD);
+    createFont(standardFontHeight, FW_BOLD, typefaces[0], RG_FONT_STANDARD_BOLD);
+    //createFont(standardFontHeight*5, FW_NORMAL, typefaces[0], RG_FONT_TIME);
+    createFont(60, FW_NORMAL, typefaces[7], RG_FONT_TIME);
+    createFont(7*standardFontHeight/8, FW_NORMAL, typefaces[1], RG_FONT_SMALL);
 
     // Set default font
     glListBase(m_fontBases[RG_FONT_STANDARD]);
@@ -200,13 +202,13 @@ void FontManager::renderLines(RGFONTCODE fontCode,
     glViewport(vp[0], vp[1], vp[2], vp[3]);
 }
 
-void FontManager::createFont(uint32_t fontHeight, bool bold,
+void FontManager::createFont(uint32_t fontHeight, int32_t weight,
                              const char* typeface, RGFONTCODE code) {
     const auto hdc{ GetDC(m_hWnd) };
 
     m_fontBases[code] = glGenLists(256);
     HFONT hFont = CreateFontA(
-        fontHeight, 0, 0, 0, (bold ? FW_BOLD : FW_NORMAL),
+        fontHeight, 0, 0, 0, weight,
         FALSE, FALSE, FALSE, ANSI_CHARSET,
         OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
         DEFAULT_PITCH | FF_DONTCARE, typeface);

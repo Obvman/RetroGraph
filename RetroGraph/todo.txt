@@ -16,7 +16,7 @@ rounded HDD/RAM bars
 
 have config options for polling intervals of individual measures
 
-handle fonts with variable width characters
+1. ************* handle fonts with variable width characters
 
 separate net traffic graphs
 

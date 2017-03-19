@@ -39,7 +39,6 @@ Window::Window(HINSTANCE hInstance) :
 {
 }
 
-
 Window::~Window() {
 }
 
@@ -322,7 +321,6 @@ void Window::initOpenGL() {
 void Window::releaseOpenGL() {
     std::cout << "Releasing OpenGL\n";
     m_renderer.release();
-    //glDeleteLists(1000, 256);
 
     wglMakeCurrent(nullptr, nullptr);
     wglDeleteContext(m_hrc);
@@ -452,6 +450,7 @@ bool Window::createHGLRC() {
 
     return true;
 }
+
 bool Window::wglIisExtensionSupported(const char *extension) {
     const auto extlen{ strlen(extension) };
     const char *supported{ nullptr };
@@ -488,6 +487,7 @@ bool Window::wglIisExtensionSupported(const char *extension) {
         }
     }
 }
+
 bool Window::initMultisample() {
     // See If The String Exists In WGL
     if (!wglIisExtensionSupported("WGL_ARB_multisample")) {
@@ -581,6 +581,5 @@ void Window::destroy() {
         m_hWndMain = 0;
     }
 }
-
 
 }

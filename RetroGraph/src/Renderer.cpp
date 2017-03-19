@@ -77,7 +77,9 @@ void Renderer::draw(uint32_t) const {
     drawProcessWidget();
     drawTimeWidget();
     drawHDDWidget();
-    drawStatsWidget();
+
+    drawLeftStatsWidget();
+    drawRightStatsWidget();
 
     drawRightGraphWidget();
 }
@@ -92,20 +94,32 @@ void Renderer::release() {
 
 /********************* Private Functions ********************/
 void Renderer::initViewports(uint32_t windowWidth, uint32_t windowHeight) {
-    m_timeVP.set(marginX, 5 * windowHeight/6 - marginY,
-                 windowWidth/5, windowHeight/6);
+    const auto widgetW{ windowWidth/5 };
+    const auto widgetH{ windowHeight/6 };
+    const auto sideWidgetH{ windowHeight/2 };
 
-    m_hddVP.set(windowWidth - windowWidth/5 - marginX, 5 * windowHeight/6 - marginY,
-                windowWidth/5,windowHeight/6);
+    // Top left
+    m_timeVP.set(marginX, windowHeight - marginY - widgetH,
+                 widgetW, widgetH);
 
-    m_procVP.set(marginX + windowWidth/2 - windowWidth/5, marginY,
-                 2*windowWidth/5, windowHeight/6);
+    // Top right
+    m_hddVP.set(windowWidth - widgetW - marginX, windowHeight - marginY - widgetH,
+                widgetW, widgetH);
 
-    m_statsVP.set(marginX, marginY, windowWidth/5, windowHeight/6);
+    // Bottom middle
+    m_procVP.set(marginX + windowWidth/2 - widgetW, marginY,
+                 2*widgetW, widgetH);
 
-    m_leftGraphWidgetVP.set(marginX, windowHeight/4 + 2*marginY,
-                      windowWidth/5, windowHeight/2);
+    // Bottom left
+    m_leftStatsVP.set(marginX, marginY, widgetW, widgetH);
 
+    // Bottom right
+    m_rightStatsVP.set(windowWidth - marginX - widgetW, marginY, 
+                       widgetW, widgetH);
+
+    // Mid left
+    m_leftGraphWidgetVP.set(marginX, windowHeight/2 - windowHeight/4,
+                            widgetW, windowHeight/2);
     m_cpuGraphVP.set(m_leftGraphWidgetVP.x, m_leftGraphWidgetVP.y + 3*m_leftGraphWidgetVP.height/4,
                      m_leftGraphWidgetVP.width, m_leftGraphWidgetVP.height/4);
 
@@ -118,19 +132,23 @@ void Renderer::initViewports(uint32_t windowWidth, uint32_t windowHeight) {
     m_netGraphVP.set(m_leftGraphWidgetVP.x, m_leftGraphWidgetVP.y + 0*m_leftGraphWidgetVP.height/4,
                      m_leftGraphWidgetVP.width, m_leftGraphWidgetVP.height/4);
 
-    m_mainWidgetVP.set(marginX + windowWidth/2 - windowWidth/5, 2*marginY + windowHeight/4,
-                       2 * windowWidth/5, windowHeight/2);
+    // Middle
+    m_mainWidgetVP.set(marginX + sideWidgetH - widgetW, 2*marginY + windowHeight/4,
+                       2 * widgetW, sideWidgetH);
 
-    m_rightGraphWidgetVP.set(windowWidth - windowWidth/5 - marginX, windowHeight/4 + 2*marginY,
-                             windowWidth/5, windowHeight/2);
+    // Mid right
+    m_rightGraphWidgetVP.set(windowWidth - widgetW - marginX, 
+                             windowHeight/2 - windowHeight/4,
+                             widgetW, 
+                             sideWidgetH);
 
     m_coreGraphsVP.set(m_rightGraphWidgetVP.x, m_rightGraphWidgetVP.y,
                        m_rightGraphWidgetVP.width, m_rightGraphWidgetVP.height/2 - 5);
 
-    m_rightStatsVP.set(m_rightGraphWidgetVP.x,
-                       m_rightGraphWidgetVP.y + m_rightGraphWidgetVP.height/2 + 5,
-                       m_rightGraphWidgetVP.width,
-                       m_rightGraphWidgetVP.height/2);
+    m_rightCPUStatsVP.set(m_rightGraphWidgetVP.x,
+                          m_rightGraphWidgetVP.y + m_rightGraphWidgetVP.height/2 + 5,
+                          m_rightGraphWidgetVP.width,
+                          m_rightGraphWidgetVP.height/2);
 }
 
 void Renderer::initVBOs() {
@@ -211,7 +229,7 @@ void Renderer::drawRightGraphWidget() const {
                m_rightGraphWidgetVP.width, m_rightGraphWidgetVP.height);
 
     drawCoreGraphs();
-    drawRightStatsWidget();
+    drawCPUStatsWidget();
 }
 
 void Renderer::drawCoreGraphs() const {
@@ -249,9 +267,9 @@ void Renderer::drawCoreGraphs() const {
     }
 }
 
-void Renderer::drawRightStatsWidget() const {
-    glViewport(m_rightStatsVP.x, m_rightStatsVP.y,
-               m_rightStatsVP.width, m_rightStatsVP.height);
+void Renderer::drawCPUStatsWidget() const {
+    glViewport(m_rightCPUStatsVP.x, m_rightCPUStatsVP.y,
+               m_rightCPUStatsVP.width, m_rightCPUStatsVP.height);
 
     glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
     drawTopSerifLine(-1.0f, 1.0f);
@@ -275,11 +293,11 @@ void Renderer::drawRightStatsWidget() const {
     const auto numCores{ m_cpuMeasure->getNumCores() };
     for (auto i = size_t{ 0U }; i < numCores; ++i) {
 
-        glViewport(m_rightStatsVP.x + i * m_rightStatsVP.width/numCores,
+        glViewport(m_rightCPUStatsVP.x + i * m_rightCPUStatsVP.width/numCores,
                    // Leave space for text below the bars
-                   m_rightStatsVP.y + fontHeight + bottomTextMargin,
-                   m_rightStatsVP.width / numCores,
-                   m_rightStatsVP.height - fontHeight - bottomTextMargin);
+                   m_rightCPUStatsVP.y + fontHeight + bottomTextMargin,
+                   m_rightCPUStatsVP.width / numCores,
+                   m_rightCPUStatsVP.height - fontHeight - bottomTextMargin);
 
         constexpr auto maxTemp = float{ 100.0f };
         constexpr auto barWidth = float{ 0.3f };
@@ -289,6 +307,7 @@ void Renderer::drawRightStatsWidget() const {
         constexpr auto barStartX{ ((2.0f - barWidth) / 2.0f) - 1.0f };
         const auto percentage{ m_cpuMeasure->getTemp(i) / maxTemp };
 
+        // Draw the Core temperature bar
         glBegin(GL_QUADS); {
             glColor3f(BARFILLED_R, BARFILLED_G, BARFILLED_B);
             glVertex2f(barStartX, bottomY);
@@ -596,8 +615,8 @@ void Renderer::drawProcRAMList() const {
 
 }
 
-void Renderer::drawStatsWidget() const {
-    glViewport(m_statsVP.x, m_statsVP.y, m_statsVP.width, m_statsVP.height);
+void Renderer::drawLeftStatsWidget() const {
+    glViewport(m_leftStatsVP.x, m_leftStatsVP.y, m_leftStatsVP.width, m_leftStatsVP.height);
 
     glColor4f(DIVIDER_R, DIVIDER_G, DIVIDER_B, DIVIDER_A);
     glLineWidth(0.5f);
@@ -606,8 +625,14 @@ void Renderer::drawStatsWidget() const {
 
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
     m_fontManager.renderLines(RG_FONT_STANDARD, m_statsStrings, 0, 0,
-                              m_statsVP.width, m_statsVP.height,
+                              m_leftStatsVP.width, m_leftStatsVP.height,
                               RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL, 15, 10);
+}
+
+void Renderer::drawRightStatsWidget() const {
+    glViewport(m_rightStatsVP.x, m_rightStatsVP.y,
+               m_rightStatsVP.width, m_rightStatsVP.height);
+    drawViewportBorder();
 }
 
 void Renderer::drawHDDWidget() const {
