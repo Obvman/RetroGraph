@@ -106,7 +106,7 @@ void Renderer::initViewports(uint32_t windowWidth, uint32_t windowHeight) {
     m_hddVP.set(windowWidth - widgetW - marginX, windowHeight - marginY - widgetH,
                 widgetW, widgetH);
 
-    // Bottom middle
+    // Bottom middle, twice as wide as regular widgets
     m_procVP.set(marginX + windowWidth/2 - widgetW, marginY,
                  2*widgetW, widgetH);
 
@@ -120,21 +120,32 @@ void Renderer::initViewports(uint32_t windowWidth, uint32_t windowHeight) {
     // Mid left
     m_leftGraphWidgetVP.set(marginX, windowHeight/2 - windowHeight/4,
                             widgetW, windowHeight/2);
-    m_cpuGraphVP.set(m_leftGraphWidgetVP.x, m_leftGraphWidgetVP.y + 3*m_leftGraphWidgetVP.height/4,
-                     m_leftGraphWidgetVP.width, m_leftGraphWidgetVP.height/4);
+    // Each of these graphs are one after the other vertically
+    m_cpuGraphVP.set(m_leftGraphWidgetVP.x,
+                     m_leftGraphWidgetVP.y + 3*m_leftGraphWidgetVP.height/4,
+                     m_leftGraphWidgetVP.width,
+                     m_leftGraphWidgetVP.height/4);
 
-    m_ramGraphVP.set(m_leftGraphWidgetVP.x, m_leftGraphWidgetVP.y + 2*m_leftGraphWidgetVP.height/4,
-                     m_leftGraphWidgetVP.width, m_leftGraphWidgetVP.height/4);
+    m_ramGraphVP.set(m_leftGraphWidgetVP.x,
+                     m_leftGraphWidgetVP.y + 2*m_leftGraphWidgetVP.height/4,
+                     m_leftGraphWidgetVP.width,
+                     m_leftGraphWidgetVP.height/4);
 
-    m_gpuGraphVP.set(m_leftGraphWidgetVP.x, m_leftGraphWidgetVP.y + 1*m_leftGraphWidgetVP.height/4,
-                     m_leftGraphWidgetVP.width, m_leftGraphWidgetVP.height/4);
+    m_gpuGraphVP.set(m_leftGraphWidgetVP.x,
+                     m_leftGraphWidgetVP.y + 1*m_leftGraphWidgetVP.height/4,
+                     m_leftGraphWidgetVP.width,
+                     m_leftGraphWidgetVP.height/4);
 
-    m_netGraphVP.set(m_leftGraphWidgetVP.x, m_leftGraphWidgetVP.y + 0*m_leftGraphWidgetVP.height/4,
-                     m_leftGraphWidgetVP.width, m_leftGraphWidgetVP.height/4);
+    m_netGraphVP.set(m_leftGraphWidgetVP.x,
+                     m_leftGraphWidgetVP.y + 0*m_leftGraphWidgetVP.height/4,
+                     m_leftGraphWidgetVP.width,
+                     m_leftGraphWidgetVP.height/4);
 
     // Middle
-    m_mainWidgetVP.set(marginX + sideWidgetH - widgetW, 2*marginY + windowHeight/4,
-                       2 * widgetW, sideWidgetH);
+    m_mainWidgetVP.set(marginX + sideWidgetH - widgetW,
+                       2*marginY + windowHeight/4,
+                       2 * widgetW,
+                       sideWidgetH);
 
     // Mid right
     m_rightGraphWidgetVP.set(windowWidth - widgetW - marginX, 
@@ -142,8 +153,10 @@ void Renderer::initViewports(uint32_t windowWidth, uint32_t windowHeight) {
                              widgetW, 
                              sideWidgetH);
 
-    m_coreGraphsVP.set(m_rightGraphWidgetVP.x, m_rightGraphWidgetVP.y,
-                       m_rightGraphWidgetVP.width, m_rightGraphWidgetVP.height/2 - 5);
+    m_coreGraphsVP.set(m_rightGraphWidgetVP.x,
+                       m_rightGraphWidgetVP.y,
+                       m_rightGraphWidgetVP.width,
+                       m_rightGraphWidgetVP.height/2 - 5);
 
     m_rightCPUStatsVP.set(m_rightGraphWidgetVP.x,
                           m_rightGraphWidgetVP.y + m_rightGraphWidgetVP.height/2 + 5,

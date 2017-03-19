@@ -16,10 +16,8 @@ FontManager::FontManager() :
 
 }
 
-
 FontManager::~FontManager() {
 }
-
 
 void FontManager::init(HWND hWnd, uint32_t windowHeight) {
     m_hWnd = hWnd;
@@ -41,7 +39,7 @@ void FontManager::init(HWND hWnd, uint32_t windowHeight) {
     createFont(standardFontHeight, FW_DONTCARE, typefaces[0], RG_FONT_STANDARD);
     createFont(standardFontHeight, FW_BOLD, typefaces[0], RG_FONT_STANDARD_BOLD);
     //createFont(standardFontHeight*5, FW_NORMAL, typefaces[0], RG_FONT_TIME);
-    createFont(60, FW_NORMAL, typefaces[7], RG_FONT_TIME);
+    createFont(72, FW_NORMAL, typefaces[7], RG_FONT_TIME);
     createFont(7*standardFontHeight/8, FW_NORMAL, typefaces[1], RG_FONT_SMALL);
 
     // Set default font
@@ -50,7 +48,7 @@ void FontManager::init(HWND hWnd, uint32_t windowHeight) {
 
 void FontManager::release() {
     for (const auto base : m_fontBases) {
-        glDeleteLists(base, 256);
+        glDeleteLists(base, RG_NUM_CHARS_IN_FONT);
     }
 }
 
@@ -107,7 +105,15 @@ void FontManager::renderLine(RGFONTCODE fontCode,
 
     // Handle horizontal alignment
     auto rasterX = float{ 0.0f };
-    const auto strWidthPx{ strlen(text) * m_fontCharWidths[fontCode] };
+    //auto strWidthPx{ strlen(text) * m_fontCharWidths[fontCode] };
+    auto strWidthPx = 0;
+    for (auto i = size_t{ 0U }; i < strlen(text); ++i) {
+        strWidthPx += m_fontCharWidths[fontCode][text[i]];
+    }
+
+    //if (fontCode == RG_FONT_TIME) {
+    //}
+
     if (alignFlags & RG_ALIGN_CENTERED_HORIZONTAL) {
         const auto drawXPx{ (areaWidth - strWidthPx) / 2};
         rasterX = pixelsToVPCoords(drawXPx, areaWidth);
@@ -176,14 +182,18 @@ void FontManager::renderLines(RGFONTCODE fontCode,
     for (const auto& str : lines) {
         // Handle X alignment for the string
         auto rasterX = float{ 0.0f };
+        auto strWidthPx = 0;
+        for (auto i = size_t{ 0U }; i < str.size() - 1; ++i) {
+            strWidthPx += m_fontCharWidths[fontCode][str[i]];
+        }
         if (alignFlags & RG_ALIGN_CENTERED_HORIZONTAL) {
-            auto strWidthPx{ str.size() * m_fontCharWidths[fontCode] };
+            //auto strWidthPx{ str.size() * m_fontCharWidths[fontCode] };
             const auto drawXPx{ (areaWidth - strWidthPx) / 2};
             rasterX = pixelsToVPCoords(areaX + drawXPx, areaWidth);
         } else if (alignFlags & RG_ALIGN_LEFT) {
             rasterX = pixelsToVPCoords(alignMarginX, areaWidth);
         } else if (alignFlags & RG_ALIGN_RIGHT) {
-            const auto strWidthPx{ str.size() * m_fontCharWidths[fontCode] };
+            //const auto strWidthPx{ str.size() * m_fontCharWidths[fontCode] };
             rasterX = pixelsToVPCoords(areaWidth - strWidthPx - alignMarginX, areaWidth);
         }
 
@@ -206,24 +216,38 @@ void FontManager::createFont(uint32_t fontHeight, int32_t weight,
                              const char* typeface, RGFONTCODE code) {
     const auto hdc{ GetDC(m_hWnd) };
 
-    m_fontBases[code] = glGenLists(256);
+    m_fontBases[code] = glGenLists(RG_NUM_CHARS_IN_FONT);
     HFONT hFont = CreateFontA(
         fontHeight, 0, 0, 0, weight,
         FALSE, FALSE, FALSE, ANSI_CHARSET,
         OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
         DEFAULT_PITCH | FF_DONTCARE, typeface);
     SelectObject(hdc, hFont);
-    wglUseFontBitmaps(hdc, 0, 256, m_fontBases[code]);
+    wglUseFontBitmaps(hdc, 0, RG_NUM_CHARS_IN_FONT, m_fontBases[code]);
 
-    TEXTMETRIC tm;
-    GetTextMetrics(hdc, &tm);
-    GetCharWidth32(hdc, 0, 0, &m_fontCharWidths[code]);
-    m_fontCharHeights[code] = tm.tmHeight;
-    m_fontCharAscents[code] = tm.tmAscent;
-    m_fontCharDescents[code] = tm.tmDescent;
-    m_fontCharInternalLeadings[code] = tm.tmInternalLeading;
+    setFontCharacteristics(code, hdc);
 
     DeleteObject(hFont);
+}
+
+void FontManager::setFontCharacteristics(RGFONTCODE c, HDC hdc) {
+    TEXTMETRIC tm;
+    GetTextMetrics(hdc, &tm);
+
+    if (c == RG_FONT_TIME) {
+    }
+    GetCharWidth32(hdc, 0, RG_NUM_CHARS_IN_FONT-1, &(m_fontCharWidths[c][0]));
+    for (const auto n : m_fontCharWidths[c]) {
+        printf("%d ", n);
+    }
+    printf("\n\n");
+    fflush(stdout);
+    //GetCharWidth32(hdc, 0, 0, &m_fontCharWidths[c]);
+
+    m_fontCharHeights[c] = tm.tmHeight;
+    m_fontCharAscents[c] = tm.tmAscent;
+    m_fontCharDescents[c] = tm.tmDescent;
+    m_fontCharInternalLeadings[c] = tm.tmInternalLeading;
 }
 
 }
