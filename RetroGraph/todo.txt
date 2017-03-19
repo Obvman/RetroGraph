@@ -12,6 +12,8 @@ volume, current sound output level bar - IAudioPeakMeter
 
 3D effects on graph
 
+rounded HDD/RAM bars
+
 have config options for polling intervals of individual measures
 
 handle fonts with variable width characters

@@ -42,6 +42,8 @@ public:
     /* Draws scene to the window */
     void draw(uint32_t ticks) const;
 private:
+    /* Private Functions */
+
     /* Fills all the viewport arrays with hard-coded values */
     void initViewports(uint32_t windowWidth, uint32_t windowHeight);
     /* Fill VBOs with intial vertex data */
@@ -54,6 +56,7 @@ private:
 
     void drawRightGraphWidget() const;
     void drawCoreGraphs() const;
+    void drawRightStatsWidget() const;
 
     void drawLeftGraphWidget() const;
     void drawCpuGraph() const;
@@ -107,6 +110,7 @@ private:
     // Main widget viewport and sub-viewports
     Viewport m_mainWidgetVP;
     Viewport m_rightGraphWidgetVP; // Viewport of all graphs together
+    Viewport m_rightStatsVP;
     Viewport m_coreGraphsVP;
 
     // VBO members

@@ -34,13 +34,26 @@ public:
        dd:hh:mm:ss format */
     std::string getUptimeStr() const;
 
+    /* Returns the number of physical cores in the CPU */
+    uint32_t getNumCores() const { return m_coreTempPlugin.getNumCores(); }
+
+    /* Returns the current CPU clock speed in Megahertz */
+    float getClockSpeed() const { return m_coreTempPlugin.getClockSpeed(); }
+
+    /* Returns the current CPU voltage in volts */
+    float getVoltage() const { return m_coreTempPlugin.getVoltage(); }
+
+    /* Returns the temperature of the specified core */
+    float getTemp(uint32_t coreNum) const { return m_coreTempPlugin.getTemp(coreNum); }
+
+    /* Gets description of the CPU model */
     const std::string& getCPUName() const { return m_cpuName; }
 
+    /* Returns the CPU's total load history */
     const std::vector<float>& getUsageData() const { return m_usageData; }
 
-    const std::vector<std::vector<float>>& getPerCoreUsageData() const {
-        return m_perCoreData;
-    }
+    /* Returns list of each core's load history */
+    const std::vector<std::vector<float>>& getPerCoreUsageData() const { return m_perCoreData; }
 
     /* Returns the maximum number of CPU usage samples stored */
     size_t getDataSize() const { return dataSize; }

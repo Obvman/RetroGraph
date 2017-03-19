@@ -88,6 +88,11 @@ void mainLoop(rg::Window& mainWindow) {
             ticks = 1U;
         }
 
+        // Force flush to stdout for Cygwin
+        #if _DEBUG
+            fflush(stdout);
+        #endif
+
         // Lay off the CPU a little
         Sleep(15);
     }

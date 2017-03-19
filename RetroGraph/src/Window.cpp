@@ -109,6 +109,31 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
                              contextSpawnX, contextSpawnY);
             return 0;
         }
+        case WM_NCHITTEST: {
+            /*if (!m_dragging) {
+                POINT p;
+                p.x = LOWORD(lParam);
+                p.y = HIWORD(lParam);
+                ScreenToClient(m_hWndMain, &p);
+                p.y = m_height - p.y;
+
+                unsigned char pixels[4];
+                glReadPixels(p.x, p.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, 
+                             &pixels[0]);
+
+                // If the pixel is the background color, we don't want to drag
+                if (pixels[0] == BGCOLOR_R &&
+                    pixels[1] == BGCOLOR_B &&
+                    pixels[2] == BGCOLOR_G &&
+                    pixels[3] == BGCOLOR_A) {
+
+                    return HTTRANSPARENT;
+                } else {
+                    ;
+                }
+            }*/
+            break;
+        }
         case WM_SETCURSOR:
             break;
         case WM_LBUTTONDOWN:
@@ -117,8 +142,10 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
             handleClick(clickX, clickY);
             return 0;
         case WM_LBUTTONUP:
-            m_dragging = false;
-            ReleaseCapture();
+            if (m_dragging) {
+                m_dragging = false;
+                ReleaseCapture();
+            }
             return 0;
         case WM_MOUSEMOVE: {
             if (m_dragging) {
@@ -154,14 +181,11 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
 }
 
 void Window::handleClick(DWORD clickX, DWORD clickY) {
-    m_dragging = true;
-    SetCapture(m_hWndMain);
-
     // Origin is at top left for click coords, so convert to bottom left
     clickY = m_height - clickY;
 
     // Get the RGB value at the point clicked
-    std::vector<unsigned char> pixels( 1 * 1 * 4 );
+    unsigned char pixels[4];
     glReadPixels(clickX, clickY, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
 
     // If the pixel is the background color, we don't want to drag
@@ -170,6 +194,9 @@ void Window::handleClick(DWORD clickX, DWORD clickY) {
         pixels[2] == BGCOLOR_G &&
         pixels[3] == BGCOLOR_A) {
         m_dragging = false;
+    } else {
+        m_dragging = true;
+        SetCapture(m_hWndMain);
     }
 }
 
@@ -307,13 +334,13 @@ bool Window::createHGLRC() {
        http://nehe.gamedev.net/tutorial/fullscreen_antialiasing/16008/ */
 
     if (m_arbMultisampleSupported) {
-        m_hWndMain = CreateWindowEx(WS_EX_APPWINDOW, "RetroGraph", "RetroGraph",
+        m_hWndMain = CreateWindowEx(WS_EX_APPWINDOW | WS_EX_TRANSPARENT, "RetroGraph", "RetroGraph",
                                     WS_VISIBLE | WS_POPUP, m_startPosX, m_startPosY, m_width, m_height,
                                     nullptr, nullptr, m_hInstance, nullptr);
     } else {
         // Create test window that doesn't appear in taskbar to query
         // anti-aliasing capabilities
-        m_hWndMain = CreateWindowEx(WS_EX_TOOLWINDOW, "RetroGraph", "Dummy",
+        m_hWndMain = CreateWindowEx(WS_EX_TOOLWINDOW | WS_EX_TRANSPARENT, "RetroGraph", "Dummy",
                                     WS_VISIBLE | WS_POPUP, m_startPosX, m_startPosY, m_width, m_height,
                                     nullptr, nullptr, m_hInstance, nullptr);
     }

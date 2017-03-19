@@ -125,7 +125,12 @@ void Renderer::initViewports(uint32_t windowWidth, uint32_t windowHeight) {
                              windowWidth/5, windowHeight/2);
 
     m_coreGraphsVP.set(m_rightGraphWidgetVP.x, m_rightGraphWidgetVP.y,
-                       m_rightGraphWidgetVP.width, m_rightGraphWidgetVP.height/2);
+                       m_rightGraphWidgetVP.width, m_rightGraphWidgetVP.height/2 - 5);
+
+    m_rightStatsVP.set(m_rightGraphWidgetVP.x,
+                       m_rightGraphWidgetVP.y + m_rightGraphWidgetVP.height/2 + 5,
+                       m_rightGraphWidgetVP.width,
+                       m_rightGraphWidgetVP.height/2);
 }
 
 void Renderer::initVBOs() {
@@ -206,12 +211,12 @@ void Renderer::drawRightGraphWidget() const {
                m_rightGraphWidgetVP.width, m_rightGraphWidgetVP.height);
 
     drawCoreGraphs();
+    drawRightStatsWidget();
 }
 
 void Renderer::drawCoreGraphs() const {
     glViewport(m_coreGraphsVP.x, m_coreGraphsVP.y,
                m_coreGraphsVP.width, m_coreGraphsVP.height);
-    drawViewportBorder();
 
     // Draw x rows of core graphs, with 2 graphs per row until all graphs
     // are drawn
@@ -241,6 +246,73 @@ void Renderer::drawCoreGraphs() const {
         snprintf(str, sizeof(str), "Core %d", i);
         m_fontManager.renderLine(RG_FONT_SMALL, str, 0, 0, 0, 0,
                                  RG_ALIGN_TOP | RG_ALIGN_LEFT, 10, 10);
+    }
+}
+
+void Renderer::drawRightStatsWidget() const {
+    glViewport(m_rightStatsVP.x, m_rightStatsVP.y,
+               m_rightStatsVP.width, m_rightStatsVP.height);
+
+    glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
+    drawTopSerifLine(-1.0f, 1.0f);
+    drawBottomSerifLine(-1.0f, 1.0f);
+
+    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
+    const auto fontHeight{ m_fontManager.getFontCharHeight(RG_FONT_STANDARD) };
+    constexpr auto bottomTextMargin{ 10U };
+
+    char voltBuff[7];
+    char clockBuff[12];
+    snprintf(voltBuff, sizeof(voltBuff), "%.3fv", m_cpuMeasure->getVoltage());
+    snprintf(clockBuff, sizeof(clockBuff), "%7.3fMHz", m_cpuMeasure->getClockSpeed());
+
+    m_fontManager.renderLine(RG_FONT_STANDARD, voltBuff, 0, 0, 0, 0,
+            RG_ALIGN_LEFT | RG_ALIGN_BOTTOM, bottomTextMargin, bottomTextMargin);
+    m_fontManager.renderLine(RG_FONT_STANDARD, clockBuff, 0, 0, 0, 0,
+            RG_ALIGN_RIGHT | RG_ALIGN_BOTTOM, bottomTextMargin, bottomTextMargin);
+
+    // Draw the temperature bar for each CPU core
+    const auto numCores{ m_cpuMeasure->getNumCores() };
+    for (auto i = size_t{ 0U }; i < numCores; ++i) {
+
+        glViewport(m_rightStatsVP.x + i * m_rightStatsVP.width/numCores,
+                   // Leave space for text below the bars
+                   m_rightStatsVP.y + fontHeight + bottomTextMargin,
+                   m_rightStatsVP.width / numCores,
+                   m_rightStatsVP.height - fontHeight - bottomTextMargin);
+
+        constexpr auto maxTemp = float{ 100.0f };
+        constexpr auto barWidth = float{ 0.3f };
+        constexpr auto bottomY = float{ -0.7f };
+        constexpr auto topY = float{ 0.7f };
+        constexpr auto rangeY { topY - bottomY };
+        constexpr auto barStartX{ ((2.0f - barWidth) / 2.0f) - 1.0f };
+        const auto percentage{ m_cpuMeasure->getTemp(i) / maxTemp };
+
+        glBegin(GL_QUADS); {
+            glColor3f(BARFILLED_R, BARFILLED_G, BARFILLED_B);
+            glVertex2f(barStartX, bottomY);
+            glVertex2f(barStartX,  bottomY + percentage * rangeY);
+            glVertex2f(barStartX + barWidth, bottomY + percentage * rangeY);
+            glVertex2f(barStartX + barWidth, bottomY);
+
+            glColor3f(BARFREE_R, BARFREE_G, BARFREE_B);
+            glVertex2f(barStartX, bottomY + percentage * rangeY);
+            glVertex2f(barStartX,  topY);
+            glVertex2f(barStartX + barWidth,  topY);
+            glVertex2f(barStartX + barWidth, bottomY + percentage * rangeY);
+        } glEnd();
+
+        glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
+        char coreBuff[3] = { 'C', '0' + static_cast<char>(i), '\0' };
+        m_fontManager.renderLine(RG_FONT_STANDARD, coreBuff, 0, 0, 0, 0,
+                                 RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_BOTTOM,
+                                 10, 10);
+        char tempBuff[6];
+        snprintf(tempBuff, sizeof(tempBuff), "%.0fC", m_cpuMeasure->getTemp(i));
+        m_fontManager.renderLine(RG_FONT_STANDARD, tempBuff, 0, 0, 0, 0,
+                                 RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_TOP,
+                                 10, 10);
     }
 }
 
@@ -535,7 +607,7 @@ void Renderer::drawStatsWidget() const {
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
     m_fontManager.renderLines(RG_FONT_STANDARD, m_statsStrings, 0, 0,
                               m_statsVP.width, m_statsVP.height,
-                              RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_CENTERED_VERTICAL, 15, 10);
+                              RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL, 15, 10);
 }
 
 void Renderer::drawHDDWidget() const {

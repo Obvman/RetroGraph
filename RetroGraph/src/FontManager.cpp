@@ -111,7 +111,6 @@ void FontManager::renderLine(RGFONTCODE fontCode,
         rasterX = pixelsToVPCoords(drawXPx, areaWidth);
     } else if (alignFlags & RG_ALIGN_LEFT) {
         rasterX = pixelsToVPCoords(alignMarginX, areaWidth);
-
     } else if (alignFlags & RG_ALIGN_RIGHT) {
         rasterX = pixelsToVPCoords(areaWidth - strWidthPx - alignMarginX, areaWidth);
     }
