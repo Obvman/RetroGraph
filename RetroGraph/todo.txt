@@ -1,13 +1,18 @@
 rainmeter plugins github - https://github.com/rainmeter/rainmeter/tree/eeeef4a7f2695280ba3506e98a71d163e613b1da/Plugins
 
 animate on startup
+
 colour code high usage processes
+
 hdd read/write usage
+
 network connectivity status
+
 media - foobar status
+
 volume, current sound output level bar - IAudioPeakMeter
+
 3D effects on graph
-framerate of currently focussed window
 
 have config options for polling intervals of individual measures
 

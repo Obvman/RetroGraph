@@ -211,6 +211,7 @@ void Renderer::drawRightGraphWidget() const {
 void Renderer::drawCoreGraphs() const {
     glViewport(m_coreGraphsVP.x, m_coreGraphsVP.y,
                m_coreGraphsVP.width, m_coreGraphsVP.height);
+    drawViewportBorder();
 
     // Draw x rows of core graphs, with 2 graphs per row until all graphs
     // are drawn
