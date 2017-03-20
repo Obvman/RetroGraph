@@ -331,15 +331,25 @@ bool Window::createHGLRC() {
        Colt McAnlis. Code and explanations:
        http://nehe.gamedev.net/tutorial/fullscreen_antialiasing/16008/ */
 
+#if _DEBUG
+    const char* windowName{ "RetroGraph (Debug)" };
+#else
+    const char* windowName{ "RetroGraph" };
+#endif
+
     if (m_arbMultisampleSupported) {
-        m_hWndMain = CreateWindowEx(WS_EX_APPWINDOW | WS_EX_TRANSPARENT, "RetroGraph", "RetroGraph",
-                                    WS_VISIBLE | WS_POPUP, m_startPosX, m_startPosY, m_width, m_height,
+        m_hWndMain = CreateWindowEx(WS_EX_APPWINDOW | WS_EX_TRANSPARENT,
+                                    "RetroGraph", windowName,
+                                    WS_VISIBLE | WS_POPUP,
+                                    m_startPosX, m_startPosY, m_width, m_height,
                                     nullptr, nullptr, m_hInstance, nullptr);
     } else {
         // Create test window that doesn't appear in taskbar to query
         // anti-aliasing capabilities
-        m_hWndMain = CreateWindowEx(WS_EX_TOOLWINDOW | WS_EX_TRANSPARENT, "RetroGraph", "Dummy",
-                                    WS_VISIBLE | WS_POPUP, m_startPosX, m_startPosY, m_width, m_height,
+        m_hWndMain = CreateWindowEx(WS_EX_TOOLWINDOW | WS_EX_TRANSPARENT,
+                                    "RetroGraph", "Dummy",
+                                    WS_VISIBLE | WS_POPUP,
+                                    m_startPosX, m_startPosY, m_width, m_height,
                                     nullptr, nullptr, m_hInstance, nullptr);
     }
 

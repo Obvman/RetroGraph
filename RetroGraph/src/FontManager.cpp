@@ -1,5 +1,6 @@
 #include "../headers/FontManager.h"
 
+#include <stdio.h>
 #include <iostream>
 #include <algorithm>
 #include <cmath>
@@ -107,10 +108,6 @@ void FontManager::renderLine(RGFONTCODE fontCode,
 
     auto rasterX = float{ 0.0f };
     const auto strWidthPx{ calculateStringWidth(text, strlen(text), fontCode) };
-    if (fontCode == RG_FONT_TIME) {
-        printf("%d = %d\n", strWidthPx, areaWidth);
-        fflush(stdout);
-    }
 
     // Handle horizontal alignment
     if (alignFlags & RG_ALIGN_CENTERED_HORIZONTAL) {

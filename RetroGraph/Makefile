@@ -14,10 +14,16 @@ debug: FORCE
 release: FORCE
 	$(DEVENV) $(SOLN) -build Release
 
-runD: FORCE
+brd: debug
 	exec ../Debug/RetroGraph.exe
 
-runR: FORCE
+brr: debug
+	exec ../Release/RetroGraph.exe
+
+rund: FORCE
+	exec ../Debug/RetroGraph.exe
+
+runr: FORCE
 	cygstart --action=runas ../Release/RetroGraph.exe
 
 FORCE:

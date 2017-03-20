@@ -728,30 +728,29 @@ void Renderer::drawTimeWidget() const {
     {
         time_t now = time(0);
         tm t;
-        char buf[9];
+        char timeBuff[10];
         localtime_s(&t, &now);
-        strftime(buf, sizeof(buf), "%T", &t);
+        strftime(timeBuff, sizeof(timeBuff), "%T", &t);
 
         // Get font width in pixels for horizontal centering
         const auto midDivYPx{ vpCoordsToPixels(midDivY, m_timeVP.height) };
 
-        m_fontManager.renderLine(RG_FONT_TIME, buf, 0, midDivYPx,
+        m_fontManager.renderLine(RG_FONT_TIME, timeBuff, 0, midDivYPx,
                                  m_timeVP.width, m_timeVP.height - midDivYPx,
                                  RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_CENTERED_HORIZONTAL);
 
-        // Draw the year and month in bottom-middle
-        // TODO use full month names
-        char dateBuf[12];
-        strftime(dateBuf, sizeof(dateBuf), "%d %B", &t);
-        m_fontManager.renderLine(RG_FONT_STANDARD, dateBuf,
+        // Draw the year and month and day in bottom-middle
+        char dateBuff[12];
+        strftime(dateBuff, sizeof(dateBuff), "%d %B", &t);
+        m_fontManager.renderLine(RG_FONT_STANDARD, dateBuff,
                                  vpCoordsToPixels(leftDivX, m_timeVP.width), 0,
                                  m_timeVP.width/3,
                                  vpCoordsToPixels(midDivY, m_timeVP.height),
                                  RG_ALIGN_BOTTOM | RG_ALIGN_CENTERED_HORIZONTAL, 10, 15);
 
-        char yearBuf[5];
-        strftime(yearBuf, sizeof(yearBuf), "%Y", &t);
-        m_fontManager.renderLine(RG_FONT_STANDARD_BOLD, yearBuf,
+        char dayBuff[10];
+        strftime(dayBuff, sizeof(dayBuff), "%A", &t);
+        m_fontManager.renderLine(RG_FONT_STANDARD_BOLD, dayBuff,
                                  vpCoordsToPixels(leftDivX, m_timeVP.width), 0,
                                  m_timeVP.width/3,
                                  vpCoordsToPixels(midDivY, m_timeVP.height),
@@ -759,20 +758,16 @@ void Renderer::drawTimeWidget() const {
     }
 
     // Draw the uptime in bottom-left
-    {
-        // Convert pixel value to viewport coordinates
-        m_fontManager.renderLine(RG_FONT_STANDARD_BOLD, "UPTIME",
-                                 0, 0,
-                                 m_timeVP.width/3,
-                                 vpCoordsToPixels(midDivY, m_timeVP.height),
-                                 RG_ALIGN_RIGHT | RG_ALIGN_TOP, 10, 15);
-
-        m_fontManager.renderLine(RG_FONT_STANDARD, m_cpuMeasure->getUptimeStr().c_str(),
-                                 0, 0,
-                                 m_timeVP.width/3,
-                                 vpCoordsToPixels(midDivY, m_timeVP.height),
-                                 RG_ALIGN_RIGHT | RG_ALIGN_BOTTOM, 10, 15);
-    }
+    m_fontManager.renderLine(RG_FONT_STANDARD_BOLD, "Uptime",
+                             0, 0,
+                             m_timeVP.width/3,
+                             vpCoordsToPixels(midDivY, m_timeVP.height),
+                             RG_ALIGN_RIGHT | RG_ALIGN_TOP, 10, 15);
+    m_fontManager.renderLine(RG_FONT_STANDARD, m_cpuMeasure->getUptimeStr().c_str(),
+                             0, 0,
+                             m_timeVP.width/3,
+                             vpCoordsToPixels(midDivY, m_timeVP.height),
+                             RG_ALIGN_RIGHT | RG_ALIGN_BOTTOM, 10, 15);
 
     // Draw network connection status in bottom-right
     {
@@ -782,7 +777,7 @@ void Renderer::drawTimeWidget() const {
         const auto renderWidth{ m_timeVP.width - renderX };
         const auto renderHeight{ vpCoordsToPixels(midDivY, m_timeVP.height) };
 
-        m_fontManager.renderLine(RG_FONT_STANDARD_BOLD, "NETWORK", renderX,
+        m_fontManager.renderLine(RG_FONT_STANDARD_BOLD, "Network", renderX,
                                  renderY, renderWidth, renderHeight,
                                  RG_ALIGN_LEFT | RG_ALIGN_TOP, 10, 15);
 

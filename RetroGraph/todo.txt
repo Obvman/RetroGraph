@@ -1,5 +1,7 @@
 rainmeter plugins github - https://github.com/rainmeter/rainmeter/tree/eeeef4a7f2695280ba3506e98a71d163e613b1da/Plugins
 
+Day of the week in the time widget
+
 animate on startup
 
 colour code high usage processes
