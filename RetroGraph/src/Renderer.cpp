@@ -709,8 +709,8 @@ void Renderer::drawTimeWidget() const {
     constexpr float leftDivX{ -0.33f };
     constexpr float rightDivX{ 0.33f };
     constexpr float midDivY{ -0.3f };
+    const auto midDivYPx{ vpCoordsToPixels(midDivY, m_timeVP.height) };
 
-    // Draw dividers
     drawTopSerifLine(-1.0f, 1.0f);
     drawBottomSerifLine(-1.0f, 1.0f);
     drawSerifLine(-0.9f, 0.9f, midDivY);
@@ -724,7 +724,7 @@ void Renderer::drawTimeWidget() const {
     } glEnd();
 
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-    // Draw the big system time
+    // Draw the big system time and the date below
     {
         time_t now = time(0);
         tm t;
@@ -733,8 +733,6 @@ void Renderer::drawTimeWidget() const {
         strftime(timeBuff, sizeof(timeBuff), "%T", &t);
 
         // Get font width in pixels for horizontal centering
-        const auto midDivYPx{ vpCoordsToPixels(midDivY, m_timeVP.height) };
-
         m_fontManager.renderLine(RG_FONT_TIME, timeBuff, 0, midDivYPx,
                                  m_timeVP.width, m_timeVP.height - midDivYPx,
                                  RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_CENTERED_HORIZONTAL);
@@ -744,29 +742,24 @@ void Renderer::drawTimeWidget() const {
         strftime(dateBuff, sizeof(dateBuff), "%d %B", &t);
         m_fontManager.renderLine(RG_FONT_STANDARD, dateBuff,
                                  vpCoordsToPixels(leftDivX, m_timeVP.width), 0,
-                                 m_timeVP.width/3,
-                                 vpCoordsToPixels(midDivY, m_timeVP.height),
+                                 m_timeVP.width/3, midDivYPx,
                                  RG_ALIGN_BOTTOM | RG_ALIGN_CENTERED_HORIZONTAL, 10, 15);
 
         char dayBuff[10];
         strftime(dayBuff, sizeof(dayBuff), "%A", &t);
         m_fontManager.renderLine(RG_FONT_STANDARD_BOLD, dayBuff,
                                  vpCoordsToPixels(leftDivX, m_timeVP.width), 0,
-                                 m_timeVP.width/3,
-                                 vpCoordsToPixels(midDivY, m_timeVP.height),
+                                 m_timeVP.width/3, midDivYPx,
                                  RG_ALIGN_TOP | RG_ALIGN_CENTERED_HORIZONTAL, 10, 15);
     }
 
     // Draw the uptime in bottom-left
-    m_fontManager.renderLine(RG_FONT_STANDARD_BOLD, "Uptime",
-                             0, 0,
-                             m_timeVP.width/3,
-                             vpCoordsToPixels(midDivY, m_timeVP.height),
+    m_fontManager.renderLine(RG_FONT_STANDARD_BOLD, "Uptime", 0, 0,
+                             m_timeVP.width/3, midDivYPx,
                              RG_ALIGN_RIGHT | RG_ALIGN_TOP, 10, 15);
     m_fontManager.renderLine(RG_FONT_STANDARD, m_cpuMeasure->getUptimeStr().c_str(),
                              0, 0,
-                             m_timeVP.width/3,
-                             vpCoordsToPixels(midDivY, m_timeVP.height),
+                             m_timeVP.width/3, midDivYPx,
                              RG_ALIGN_RIGHT | RG_ALIGN_BOTTOM, 10, 15);
 
     // Draw network connection status in bottom-right
