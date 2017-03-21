@@ -7,6 +7,9 @@
 #include <GL/glew.h>
 
 #include "FontManager.h"
+#include "TimeWidget.h"
+#include "HDDWidget.h"
+#include "CPUStatsWidget.h"
 #include "drawUtils.h"
 
 namespace rg {
@@ -51,12 +54,10 @@ private:
     /* Compiles and retrieves uniform locations */
     void initShaders();
 
+    void initWidgets(int32_t windowWidth, int32_t windowHeight);
+
     // Widgets
     void drawMainWidget() const;
-
-    void drawRightGraphWidget() const;
-    void drawCoreGraphs() const;
-    void drawCPUStatsWidget() const;
 
     void drawLeftGraphWidget() const;
     void drawCpuGraph() const;
@@ -71,19 +72,10 @@ private:
     void drawLeftStatsWidget() const;
     void drawRightStatsWidget() const;
 
-    /* Draw labelled capacity bars of all fixed drives in the system */
-    void drawHDDWidget() const;
-
-    /* Draws a labelled capacity bar for the given DriveInfo object */
-    void drawHDDBar(const DriveInfo& di) const;
-
-    /* Draws widget with time, date, uptime */
-    void drawTimeWidget() const;
-
-
     HWND m_renderTargetHandle;
 
     // measure observers
+    // TODO may not need these once all widget classes are done
     const CPUMeasure* m_cpuMeasure;
     const GPUMeasure* m_gpuMeasure;
     const RAMMeasure* m_ramMeasure;
@@ -94,11 +86,14 @@ private:
 
     FontManager m_fontManager;
 
+    // TODO refactor these into vector of Widget ptrs
+    TimeWidget m_timeWidget;
+    HDDWidget m_hddWidget;
+    CPUStatsWidget m_cpuStatsWidget;
+
     std::vector<std::string> m_statsStrings;
 
     // Viewports for each widget
-    Viewport m_timeVP;
-    Viewport m_hddVP;
     Viewport m_procVP;
     Viewport m_leftStatsVP;
     Viewport m_rightStatsVP;

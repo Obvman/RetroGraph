@@ -6,6 +6,11 @@
 #include "../headers/colors.h"
 
 namespace rg {
+
+GLuint graphGridVertsID;
+GLuint graphGridIndicesID;
+GLsizei graphIndicesSize;
+
 // Automatically binds/unbinds given VBOs and executes the function given
 template<typename F>
 void vboDrawScope(GLuint vertID, GLuint indexID, F f) {
@@ -53,10 +58,9 @@ void drawLineGraph(const std::vector<float>& data) {
     } glEnd();
 }
 
-void drawGraphGrid(GLuint graphGridVertsID, GLuint graphGridIndicesID,
-                   size_t graphIndicesSize) {
+void drawGraphGrid() {
     // Draw the background grid for the graph
-    vboDrawScope(graphGridVertsID, graphGridIndicesID, [graphIndicesSize]() {
+    vboDrawScope(graphGridVertsID, graphGridIndicesID, []() {
         glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.2f);
         glLineWidth(0.5f);
         glDrawElements(GL_LINES, graphIndicesSize, GL_UNSIGNED_INT, 0);

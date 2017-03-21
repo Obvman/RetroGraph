@@ -19,10 +19,6 @@ constexpr uint32_t ticksPerSecond{ 1000U / tickDuration };
    is used to separate drawing bounds from the very edge */
 constexpr float bDelta{ 0.0001f };
 
-/* Minimum distance from the edge of the screen to draw each object (in pixels) */
-constexpr uint32_t marginX{ 16U };
-constexpr uint32_t marginY{ 10U };
-
 /* Displays an Error message box with the given string as a message */
 void showMessageBox(const std::string& s);
 

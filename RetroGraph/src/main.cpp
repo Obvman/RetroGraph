@@ -16,6 +16,7 @@
 #include "../headers/utils.h"
 #include "../headers/CPUMeasure.h"
 #include "../headers/Window.h"
+#include "../headers/debugUtils.h"
 
 void mainLoop(rg::Window& mainWindow);
 
@@ -28,6 +29,8 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 #endif
 
     try {
+        const auto tb = rg::TimedBlock{ 0U };
+
         rg::Window mainWindow{ hInstance };
         mainWindow.init();
 

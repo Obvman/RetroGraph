@@ -85,8 +85,8 @@ void FontManager::renderLine(RGFONTCODE fontCode,
 
     // Set the area to viewport if default values are given
     if (areaWidth == 0 && areaHeight == 0 && areaX == 0 && areaY == 0) {
-        areaWidth = vp[VP_WIDTH];
-        areaHeight = vp[VP_HEIGHT];
+        areaWidth = vp[2];
+        areaHeight = vp[3];
     } else {
         glViewport(vp[0] + areaX, vp[1] + areaY, areaWidth, areaHeight);
     }
@@ -143,8 +143,8 @@ void FontManager::renderLines(RGFONTCODE fontCode,
 
     /* If width and height are given default values, use the current viewport as area*/
     if (areaWidth == 0 && areaHeight == 0 && areaX == 0 && areaY == 0) {
-        areaWidth = vp[VP_WIDTH];
-        areaHeight = vp[VP_HEIGHT];
+        areaWidth = vp[2];
+        areaHeight = vp[3];
     } else {
         glViewport(vp[0] + areaX, vp[1] + areaY, areaWidth, areaHeight);
     }

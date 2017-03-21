@@ -46,6 +46,11 @@ void Renderer::init(HWND hWnd, uint32_t windowWidth, uint32_t windowHeight,
     m_driveMeasure = &_drive;
     m_sysInfo = &_sys;
 
+    m_fontManager.init(hWnd, windowHeight);
+    initViewports(windowWidth, windowHeight);
+
+    initWidgets(windowWidth, windowHeight);
+
     // Initialise static statistics strings for drawing stats widget
     m_statsStrings.emplace_back(m_sysInfo->getUserName() + "@" +
                                 m_sysInfo->getComputerName());
@@ -58,8 +63,6 @@ void Renderer::init(HWND hWnd, uint32_t windowWidth, uint32_t windowHeight,
     m_statsStrings.emplace_back("MAC: " + m_netMeasure->getAdapterMAC());
     m_statsStrings.emplace_back("LAN IP: " + m_netMeasure->getAdapterIP());
 
-    m_fontManager.init(hWnd, windowHeight);
-    initViewports(windowWidth, windowHeight);
     initVBOs();
     initShaders();
 }
@@ -75,13 +78,14 @@ void Renderer::draw(uint32_t) const {
     drawLeftGraphWidget();
 
     drawProcessWidget();
-    drawTimeWidget();
-    drawHDDWidget();
+
+    m_timeWidget.draw();
+    m_hddWidget.draw();
+    m_cpuStatsWidget.draw();
 
     drawLeftStatsWidget();
     drawRightStatsWidget();
 
-    drawRightGraphWidget();
 }
 
 void Renderer::release() {
@@ -93,18 +97,30 @@ void Renderer::release() {
 }
 
 /********************* Private Functions ********************/
-void Renderer::initViewports(uint32_t windowWidth, uint32_t windowHeight) {
+void Renderer::initWidgets(int32_t windowWidth, int32_t windowHeight) {
     const auto widgetW{ windowWidth/5 };
     const auto widgetH{ windowHeight/6 };
     const auto sideWidgetH{ windowHeight/2 };
 
-    // Top left
-    m_timeVP.set(marginX, windowHeight - marginY - widgetH,
-                 widgetW, widgetH);
+    m_timeWidget.init(&m_fontManager, m_cpuMeasure, m_netMeasure, 
+            Viewport{ marginX, windowHeight - marginY - widgetH,
+                      widgetW, widgetH});
 
-    // Top right
-    m_hddVP.set(windowWidth - widgetW - marginX, windowHeight - marginY - widgetH,
-                widgetW, widgetH);
+    m_hddWidget.init(&m_fontManager, m_driveMeasure,
+            Viewport{windowWidth - widgetW - marginX, windowHeight - marginY - widgetH,
+                     widgetW, widgetH});
+
+    m_cpuStatsWidget.init(&m_fontManager, m_cpuMeasure,
+            Viewport{windowWidth - widgetW - marginX, 
+                     windowHeight/2 - windowHeight/4,
+                     widgetW, 
+                     sideWidgetH});
+}
+
+void Renderer::initViewports(uint32_t windowWidth, uint32_t windowHeight) {
+    const auto widgetW{ windowWidth/5 };
+    const auto widgetH{ windowHeight/6 };
+    const auto sideWidgetH{ windowHeight/2 };
 
     // Bottom middle, twice as wide as regular widgets
     m_procVP.set(marginX + windowWidth/2 - widgetW, marginY,
@@ -202,17 +218,17 @@ void Renderer::initVBOs() {
             gIndices.push_back(vertLineIndexCount + 2*i);
             gIndices.push_back(vertLineIndexCount + 2*i+1);
         }
-        m_graphIndicesSize = gIndices.size();
+        graphIndicesSize = gIndices.size();
 
         // Initialise the graph grid VBO
-        glGenBuffers(1, &m_graphGridVertsID);
-        glBindBuffer(GL_ARRAY_BUFFER, m_graphGridVertsID);
+        glGenBuffers(1, &graphGridVertsID);
+        glBindBuffer(GL_ARRAY_BUFFER, graphGridVertsID);
         glBufferData(GL_ARRAY_BUFFER, gVerts.size() * sizeof(GLfloat),
                      gVerts.data(), GL_STATIC_DRAW);
 
         // Initialise graph grid index array
-        glGenBuffers(1, &m_graphGridIndicesID);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_graphGridIndicesID);
+        glGenBuffers(1, &graphGridIndicesID);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, graphGridIndicesID);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, gIndices.size() * sizeof(GLuint),
                      gIndices.data(), GL_STATIC_DRAW);
     }
@@ -237,116 +253,6 @@ void Renderer::drawMainWidget() const {
                m_mainWidgetVP.width, m_mainWidgetVP.height);
 }
 
-void Renderer::drawRightGraphWidget() const {
-    glViewport(m_rightGraphWidgetVP.x, m_rightGraphWidgetVP.y,
-               m_rightGraphWidgetVP.width, m_rightGraphWidgetVP.height);
-
-    drawCoreGraphs();
-    drawCPUStatsWidget();
-}
-
-void Renderer::drawCoreGraphs() const {
-    glViewport(m_coreGraphsVP.x, m_coreGraphsVP.y,
-               m_coreGraphsVP.width, m_coreGraphsVP.height);
-
-    // Draw x rows of core graphs, with 2 graphs per row until all graphs
-    // are drawn
-    const auto numCores{ m_cpuMeasure->getPerCoreUsageData().size() };
-    const auto numRows{ numCores / 2 }; // Fair to assume we have an even number of cores
-
-    glLineWidth(0.5f);
-    glColor4f(GRAPHLINE_A, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
-    for (auto i = size_t{ 0U }; i < numCores; ++i) {
-        // Set the viewport for the current graph. The y position
-        // of each graph changes as we draw more
-        glViewport(m_coreGraphsVP.x,
-                   (m_coreGraphsVP.y + (numCores-1)*m_coreGraphsVP.height/numCores)
-                   - i*m_coreGraphsVP.height/(numCores),
-                   m_coreGraphsVP.width,
-                   m_coreGraphsVP.height/numCores);
-
-        drawLineGraph(m_cpuMeasure->getPerCoreUsageData()[i]);
-
-        // Draw the border for this core graph
-        drawBorder();
-        drawGraphGrid(m_graphGridVertsID, m_graphGridIndicesID, m_graphIndicesSize);
-
-        // Draw a label for the core graph
-        glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-        char str[7];
-        snprintf(str, sizeof(str), "Core %d", i);
-        m_fontManager.renderLine(RG_FONT_SMALL, str, 0, 0, 0, 0,
-                                 RG_ALIGN_TOP | RG_ALIGN_LEFT, 10, 10);
-    }
-}
-
-void Renderer::drawCPUStatsWidget() const {
-    glViewport(m_rightCPUStatsVP.x, m_rightCPUStatsVP.y,
-               m_rightCPUStatsVP.width, m_rightCPUStatsVP.height);
-
-    glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
-    drawTopSerifLine(-1.0f, 1.0f);
-    drawBottomSerifLine(-1.0f, 1.0f);
-
-    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-    const auto fontHeight{ m_fontManager.getFontCharHeight(RG_FONT_STANDARD) };
-    constexpr auto bottomTextMargin{ 10U };
-
-    char voltBuff[7];
-    char clockBuff[12];
-    snprintf(voltBuff, sizeof(voltBuff), "%.3fv", m_cpuMeasure->getVoltage());
-    snprintf(clockBuff, sizeof(clockBuff), "%7.3fMHz", m_cpuMeasure->getClockSpeed());
-
-    m_fontManager.renderLine(RG_FONT_STANDARD, voltBuff, 0, 0, 0, 0,
-            RG_ALIGN_LEFT | RG_ALIGN_BOTTOM, bottomTextMargin, bottomTextMargin);
-    m_fontManager.renderLine(RG_FONT_STANDARD, clockBuff, 0, 0, 0, 0,
-            RG_ALIGN_RIGHT | RG_ALIGN_BOTTOM, bottomTextMargin, bottomTextMargin);
-
-    // Draw the temperature bar for each CPU core
-    const auto numCores{ m_cpuMeasure->getNumCores() };
-    for (auto i = size_t{ 0U }; i < numCores; ++i) {
-
-        glViewport(m_rightCPUStatsVP.x + i * m_rightCPUStatsVP.width/numCores,
-                   // Leave space for text below the bars
-                   m_rightCPUStatsVP.y + fontHeight + bottomTextMargin,
-                   m_rightCPUStatsVP.width / numCores,
-                   m_rightCPUStatsVP.height - fontHeight - bottomTextMargin);
-
-        constexpr auto maxTemp = float{ 100.0f };
-        constexpr auto barWidth = float{ 0.3f };
-        constexpr auto bottomY = float{ -0.7f };
-        constexpr auto topY = float{ 0.7f };
-        constexpr auto rangeY { topY - bottomY };
-        constexpr auto barStartX{ ((2.0f - barWidth) / 2.0f) - 1.0f };
-        const auto percentage{ m_cpuMeasure->getTemp(i) / maxTemp };
-
-        // Draw the Core temperature bar
-        glBegin(GL_QUADS); {
-            glColor3f(BARFILLED_R, BARFILLED_G, BARFILLED_B);
-            glVertex2f(barStartX, bottomY);
-            glVertex2f(barStartX,  bottomY + percentage * rangeY);
-            glVertex2f(barStartX + barWidth, bottomY + percentage * rangeY);
-            glVertex2f(barStartX + barWidth, bottomY);
-
-            glColor3f(BARFREE_R, BARFREE_G, BARFREE_B);
-            glVertex2f(barStartX, bottomY + percentage * rangeY);
-            glVertex2f(barStartX,  topY);
-            glVertex2f(barStartX + barWidth,  topY);
-            glVertex2f(barStartX + barWidth, bottomY + percentage * rangeY);
-        } glEnd();
-
-        glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-        char coreBuff[3] = { 'C', '0' + static_cast<char>(i), '\0' };
-        m_fontManager.renderLine(RG_FONT_STANDARD, coreBuff, 0, 0, 0, 0,
-                                 RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_BOTTOM,
-                                 10, 10);
-        char tempBuff[6];
-        snprintf(tempBuff, sizeof(tempBuff), "%.0fC", m_cpuMeasure->getTemp(i));
-        m_fontManager.renderLine(RG_FONT_STANDARD, tempBuff, 0, 0, 0, 0,
-                                 RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_TOP,
-                                 10, 10);
-    }
-}
 
 void Renderer::drawLeftGraphWidget() const {
     glViewport(m_leftGraphWidgetVP.x, m_leftGraphWidgetVP.y,
@@ -367,7 +273,7 @@ void Renderer::drawCpuGraph() const {
     glViewport(m_cpuGraphVP.x, m_cpuGraphVP.y,
                (m_cpuGraphVP.width * 4)/5, m_cpuGraphVP.height);
 
-    drawGraphGrid(m_graphGridVertsID, m_graphGridIndicesID, m_graphIndicesSize);
+    drawGraphGrid();
     glLineWidth(0.5f);
     drawLineGraph(m_cpuMeasure->getUsageData());
 
@@ -400,7 +306,7 @@ void Renderer::drawRamGraph() const {
                (m_ramGraphVP.width*4)/5 , m_ramGraphVP.height);
 
     // Draw the background grid for the graph
-    drawGraphGrid(m_graphGridVertsID, m_graphGridIndicesID, m_graphIndicesSize);
+    drawGraphGrid();
 
     drawLineGraph(m_ramMeasure->getUsageData());
 
@@ -432,7 +338,7 @@ void Renderer::drawGpuGraph() const {
     // Set the viewport for the graph to be left section
     glViewport(m_gpuGraphVP.x, m_gpuGraphVP.y,
                (m_gpuGraphVP.width*4)/5 , m_gpuGraphVP.height);
-    drawGraphGrid(m_graphGridVertsID, m_graphGridIndicesID, m_graphIndicesSize);
+    drawGraphGrid();
     glLineWidth(0.5f);
     drawLineGraph(m_gpuMeasure->getUsageData());
 
@@ -463,7 +369,7 @@ void Renderer::drawNetGraph() const {
     // Set the viewport for the graph to be left section
     glViewport(m_netGraphVP.x, m_netGraphVP.y,
                (m_netGraphVP.width*4)/5 , m_netGraphVP.height);
-    drawGraphGrid(m_graphGridVertsID, m_graphGridIndicesID, m_graphIndicesSize);
+    drawGraphGrid();
 
     {// Draw the line graph
         glLineWidth(0.5f);
@@ -645,146 +551,8 @@ void Renderer::drawLeftStatsWidget() const {
 void Renderer::drawRightStatsWidget() const {
     glViewport(m_rightStatsVP.x, m_rightStatsVP.y,
                m_rightStatsVP.width, m_rightStatsVP.height);
-    drawViewportBorder();
-}
-
-void Renderer::drawHDDWidget() const {
-    glViewport(m_hddVP.x, m_hddVP.y,
-               m_hddVP.width, m_hddVP.height);
-
-    glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
-    glLineWidth(0.5f);
     drawTopSerifLine(-1.0f, 1.0f);
     drawBottomSerifLine(-1.0f, 1.0f);
-
-    // Draw each drive status section
-    const auto& drives{ m_driveMeasure->getDrives() };
-    for (auto i = size_t{ 0 }; i < drives.size(); ++i) {
-        glViewport(m_hddVP.x + i * (m_hddVP.width/drives.size()), m_hddVP.y,
-                   m_hddVP.width/drives.size(), m_hddVP.height);
-
-        // Draw the drive label on the bottom
-        glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-        const char label[3]{ drives[i]->getDriveLetter(), ':', '\0' };
-        m_fontManager.renderLine(RG_FONT_STANDARD, label, 0, 0, 0, 0,
-                                 RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_BOTTOM,
-                                 0, 10);
-
-        // Draw the capacity up top
-        m_fontManager.renderLine(RG_FONT_STANDARD,
-                                 drives[i]->getCapacityStr().c_str(),
-                                 0, 0, 0, 0,
-                                 RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_TOP,
-                                 0, 10);
-
-        const auto percentage{ static_cast<float>(drives[i]->getUsedBytes()) /
-                               drives[i]->getTotalBytes() };
-        constexpr auto barWidth = float{ 0.3f };
-        constexpr auto bottomY = float{ -0.5f };
-        constexpr auto topY = float{ 0.5f };
-        constexpr auto rangeY{ topY - bottomY };
-        const float barStartX{ ((2.0f - barWidth) / 2.0f) - 1.0f};
-        glBegin(GL_QUADS); {
-            glColor3f(BARFILLED_R, BARFILLED_G, BARFILLED_B);
-            glVertex2f(barStartX, bottomY);
-            glVertex2f(barStartX,  bottomY + percentage * rangeY);
-            glVertex2f(barStartX + barWidth, bottomY + percentage * rangeY);
-            glVertex2f(barStartX + barWidth, bottomY);
-
-            glColor3f(BARFREE_R, BARFREE_G, BARFREE_B);
-            glVertex2f(barStartX, bottomY + percentage * rangeY);
-            glVertex2f(barStartX,  topY);
-            glVertex2f(barStartX + barWidth,  topY);
-            glVertex2f(barStartX + barWidth, bottomY + percentage * rangeY);
-        } glEnd();
-    }
-}
-
-void Renderer::drawTimeWidget() const {
-    glViewport(m_timeVP.x, m_timeVP.y,
-               m_timeVP.width, m_timeVP.height);
-    glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
-    glLineWidth(0.5f);
-
-    constexpr float leftDivX{ -0.33f };
-    constexpr float rightDivX{ 0.33f };
-    constexpr float midDivY{ -0.3f };
-    const auto midDivYPx{ vpCoordsToPixels(midDivY, m_timeVP.height) };
-
-    drawTopSerifLine(-1.0f, 1.0f);
-    drawBottomSerifLine(-1.0f, 1.0f);
-    drawSerifLine(-0.9f, 0.9f, midDivY);
-
-    glBegin(GL_LINES); {
-        glVertex2f(leftDivX, -1.0f);
-        glVertex2f(leftDivX, -0.3f); // Left vertical
-
-        glVertex2f(rightDivX, -1.0f);
-        glVertex2f(rightDivX, -0.3f); // Right vertical
-    } glEnd();
-
-    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-    // Draw the big system time and the date below
-    {
-        time_t now = time(0);
-        tm t;
-        char timeBuff[10];
-        localtime_s(&t, &now);
-        strftime(timeBuff, sizeof(timeBuff), "%T", &t);
-
-        // Get font width in pixels for horizontal centering
-        m_fontManager.renderLine(RG_FONT_TIME, timeBuff, 0, midDivYPx,
-                                 m_timeVP.width, m_timeVP.height - midDivYPx,
-                                 RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_CENTERED_HORIZONTAL);
-
-        // Draw the year and month and day in bottom-middle
-        char dateBuff[12];
-        strftime(dateBuff, sizeof(dateBuff), "%d %B", &t);
-        m_fontManager.renderLine(RG_FONT_STANDARD, dateBuff,
-                                 vpCoordsToPixels(leftDivX, m_timeVP.width), 0,
-                                 m_timeVP.width/3, midDivYPx,
-                                 RG_ALIGN_BOTTOM | RG_ALIGN_CENTERED_HORIZONTAL, 10, 15);
-
-        char dayBuff[10];
-        strftime(dayBuff, sizeof(dayBuff), "%A", &t);
-        m_fontManager.renderLine(RG_FONT_STANDARD_BOLD, dayBuff,
-                                 vpCoordsToPixels(leftDivX, m_timeVP.width), 0,
-                                 m_timeVP.width/3, midDivYPx,
-                                 RG_ALIGN_TOP | RG_ALIGN_CENTERED_HORIZONTAL, 10, 15);
-    }
-
-    // Draw the uptime in bottom-left
-    m_fontManager.renderLine(RG_FONT_STANDARD_BOLD, "Uptime", 0, 0,
-                             m_timeVP.width/3, midDivYPx,
-                             RG_ALIGN_RIGHT | RG_ALIGN_TOP, 10, 15);
-    m_fontManager.renderLine(RG_FONT_STANDARD, m_cpuMeasure->getUptimeStr().c_str(),
-                             0, 0,
-                             m_timeVP.width/3, midDivYPx,
-                             RG_ALIGN_RIGHT | RG_ALIGN_BOTTOM, 10, 15);
-
-    // Draw network connection status in bottom-right
-    {
-        // Get region to render text in
-        const auto renderX{ vpCoordsToPixels(rightDivX, m_timeVP.width) };
-        const auto renderY{ 0 };
-        const auto renderWidth{ m_timeVP.width - renderX };
-        const auto renderHeight{ vpCoordsToPixels(midDivY, m_timeVP.height) };
-
-        m_fontManager.renderLine(RG_FONT_STANDARD_BOLD, "Network", renderX,
-                                 renderY, renderWidth, renderHeight,
-                                 RG_ALIGN_LEFT | RG_ALIGN_TOP, 10, 15);
-
-        if (m_netMeasure->isConnected()) {
-            m_fontManager.renderLine(RG_FONT_STANDARD, "UP", renderX,
-                                     renderY, renderWidth, renderHeight,
-                                     RG_ALIGN_LEFT | RG_ALIGN_BOTTOM, 10, 15);
-            // TODO print ping in ms
-        } else {
-            m_fontManager.renderLine(RG_FONT_STANDARD, "DOWN", renderX,
-                                     renderY, renderWidth, renderHeight,
-                                     RG_ALIGN_LEFT | RG_ALIGN_BOTTOM, 10, 15);
-        }
-    }
 }
 
 }

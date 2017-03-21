@@ -6,16 +6,21 @@
 #ifndef __GL_H__
 typedef float GLfloat;
 typedef unsigned int GLuint;
+typedef int GLsizei;
 typedef int GLint;
 #endif
 
 namespace rg {
 constexpr float serifLen{ 0.05f };
 
-constexpr size_t VP_X{ 0U };
-constexpr size_t VP_Y{ 1U };
-constexpr size_t VP_WIDTH{ 2U };
-constexpr size_t VP_HEIGHT{ 3U };
+/* Minimum distance from the edge of the screen to draw each object (in pixels) */
+constexpr int32_t marginX{ 16 };
+constexpr int32_t marginY{ 10 };
+
+// TODO remove these globals
+extern GLuint graphGridVertsID;
+extern GLuint graphGridIndicesID;
+extern GLsizei graphIndicesSize;
 
 struct Viewport {
     GLint x;
@@ -26,6 +31,8 @@ struct Viewport {
     Viewport() {}
     Viewport(GLint* vals) : x{ vals[0] }, y{ vals[1] },
                             width{vals[2]}, height{ vals[3] } {}
+    Viewport(GLint _x, GLint _y, GLint _width, GLint _height) :
+        x{ _x }, y{ _y }, width{ _width }, height{ _height } {}
     void set(GLint _x, GLint _y, GLint _width, GLint _height) {
         x = _x; y = _y; width = _width; height = _height;
     }
@@ -34,8 +41,7 @@ struct Viewport {
 
 void drawFilledGraph(const std::vector<float>& data);
 void drawLineGraph(const std::vector<float>& data);
-void drawGraphGrid(GLuint graphGridVertsID, GLuint graphGridIndicesID,
-                   size_t graphIndicesSize);
+void drawGraphGrid();
 void drawBorder();
 
 // Primitive drawing
