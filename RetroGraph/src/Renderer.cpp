@@ -18,16 +18,8 @@ namespace rg {
 
 Renderer::Renderer() :
     m_renderTargetHandle{ nullptr },
-    m_cpuMeasure{ nullptr },
-    m_gpuMeasure{ nullptr },
-    m_ramMeasure{ nullptr },
-    m_netMeasure{ nullptr },
-    m_processMeasure{ nullptr },
-    m_driveMeasure{ nullptr },
-    m_sysInfo{ nullptr },
-    m_statsStrings{},
     m_fontManager{}
-{ /* Empty */ }
+{}
 
 Renderer::~Renderer() {
 }
@@ -38,30 +30,10 @@ void Renderer::init(HWND hWnd, uint32_t windowWidth, uint32_t windowHeight,
                     const ProcessMeasure& _proc, const DriveMeasure& _drive,
                     const SystemInfo& _sys) {
     m_renderTargetHandle = hWnd;
-    m_cpuMeasure = &_cpu;
-    m_gpuMeasure = &_gpu;
-    m_ramMeasure = &_ram;
-    m_netMeasure = &_net;
-    m_processMeasure = &_proc;
-    m_driveMeasure = &_drive;
-    m_sysInfo = &_sys;
 
     m_fontManager.init(hWnd, windowHeight);
-    initViewports(windowWidth, windowHeight);
 
-    initWidgets(windowWidth, windowHeight);
-
-    // Initialise static statistics strings for drawing stats widget
-    m_statsStrings.emplace_back(m_sysInfo->getUserName() + "@" +
-                                m_sysInfo->getComputerName());
-    m_statsStrings.emplace_back(m_sysInfo->getOSInfoStr());
-    m_statsStrings.emplace_back(m_cpuMeasure->getCPUName());
-    m_statsStrings.emplace_back(m_sysInfo->getGPUDescription());
-    m_statsStrings.emplace_back(m_sysInfo->getRAMDescription());
-    m_statsStrings.emplace_back("DNS: " + m_netMeasure->getDNS());
-    m_statsStrings.emplace_back("Hostname: " + m_netMeasure->getHostname());
-    m_statsStrings.emplace_back("MAC: " + m_netMeasure->getAdapterMAC());
-    m_statsStrings.emplace_back("LAN IP: " + m_netMeasure->getAdapterIP());
+    initWidgets(windowWidth, windowHeight, &_cpu, &_gpu, &_ram, &_net, &_proc, &_drive, &_sys);
 
     initVBOs();
     initShaders();
@@ -75,16 +47,13 @@ void Renderer::draw(uint32_t) const {
     glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
     //glDisable(GL_SCISSOR_TEST);
 
-    drawLeftGraphWidget();
-
-    drawProcessWidget();
-
     m_timeWidget.draw();
     m_hddWidget.draw();
     m_cpuStatsWidget.draw();
-
-    drawLeftStatsWidget();
-    drawRightStatsWidget();
+    m_processWidget.draw();
+    m_graphWidget.draw();
+    m_systemStatsWidget.draw();
+    m_mainWidget.draw();
 
 }
 
@@ -97,87 +66,44 @@ void Renderer::release() {
 }
 
 /********************* Private Functions ********************/
-void Renderer::initWidgets(int32_t windowWidth, int32_t windowHeight) {
+
+void Renderer::initWidgets(int32_t windowWidth, int32_t windowHeight,
+                           const CPUMeasure* _cpu, const GPUMeasure* _gpu,
+                           const RAMMeasure* _ram, const NetMeasure* _net,
+                           const ProcessMeasure* _proc, const DriveMeasure* _drive,
+                           const SystemInfo* _sys) {
     const auto widgetW{ windowWidth/5 };
     const auto widgetH{ windowHeight/6 };
     const auto sideWidgetH{ windowHeight/2 };
 
-    m_timeWidget.init(&m_fontManager, m_cpuMeasure, m_netMeasure, 
+    m_timeWidget.init(&m_fontManager, _cpu, _net, 
             Viewport{ marginX, windowHeight - marginY - widgetH,
                       widgetW, widgetH});
 
-    m_hddWidget.init(&m_fontManager, m_driveMeasure,
+    m_hddWidget.init(&m_fontManager, _drive,
             Viewport{windowWidth - widgetW - marginX, windowHeight - marginY - widgetH,
                      widgetW, widgetH});
 
-    m_cpuStatsWidget.init(&m_fontManager, m_cpuMeasure,
+    m_cpuStatsWidget.init(&m_fontManager, _cpu,
             Viewport{windowWidth - widgetW - marginX, 
                      windowHeight/2 - windowHeight/4,
                      widgetW, 
                      sideWidgetH});
-}
 
-void Renderer::initViewports(uint32_t windowWidth, uint32_t windowHeight) {
-    const auto widgetW{ windowWidth/5 };
-    const auto widgetH{ windowHeight/6 };
-    const auto sideWidgetH{ windowHeight/2 };
+    m_processWidget.init(&m_fontManager, _proc,
+            Viewport{ marginX + windowWidth/2 - widgetW, marginY,
+                      2*widgetW, widgetH });
 
-    // Bottom middle, twice as wide as regular widgets
-    m_procVP.set(marginX + windowWidth/2 - widgetW, marginY,
-                 2*widgetW, widgetH);
+    m_graphWidget.init(&m_fontManager, _cpu, _ram, _net, _gpu,
+            Viewport{ marginX, windowHeight/2 - windowHeight/4,
+                      widgetW, windowHeight/2 });
 
-    // Bottom left
-    m_leftStatsVP.set(marginX, marginY, widgetW, widgetH);
+    m_systemStatsWidget.init(&m_fontManager, _sys, _cpu, _net,
+            Viewport{ marginX, marginY, widgetW, widgetH });
 
-    // Bottom right
-    m_rightStatsVP.set(windowWidth - marginX - widgetW, marginY, 
-                       widgetW, widgetH);
-
-    // Mid left
-    m_leftGraphWidgetVP.set(marginX, windowHeight/2 - windowHeight/4,
-                            widgetW, windowHeight/2);
-    // Each of these graphs are one after the other vertically
-    m_cpuGraphVP.set(m_leftGraphWidgetVP.x,
-                     m_leftGraphWidgetVP.y + 3*m_leftGraphWidgetVP.height/4,
-                     m_leftGraphWidgetVP.width,
-                     m_leftGraphWidgetVP.height/4);
-
-    m_ramGraphVP.set(m_leftGraphWidgetVP.x,
-                     m_leftGraphWidgetVP.y + 2*m_leftGraphWidgetVP.height/4,
-                     m_leftGraphWidgetVP.width,
-                     m_leftGraphWidgetVP.height/4);
-
-    m_gpuGraphVP.set(m_leftGraphWidgetVP.x,
-                     m_leftGraphWidgetVP.y + 1*m_leftGraphWidgetVP.height/4,
-                     m_leftGraphWidgetVP.width,
-                     m_leftGraphWidgetVP.height/4);
-
-    m_netGraphVP.set(m_leftGraphWidgetVP.x,
-                     m_leftGraphWidgetVP.y + 0*m_leftGraphWidgetVP.height/4,
-                     m_leftGraphWidgetVP.width,
-                     m_leftGraphWidgetVP.height/4);
-
-    // Middle
-    m_mainWidgetVP.set(marginX + sideWidgetH - widgetW,
-                       2*marginY + windowHeight/4,
-                       2 * widgetW,
-                       sideWidgetH);
-
-    // Mid right
-    m_rightGraphWidgetVP.set(windowWidth - widgetW - marginX, 
-                             windowHeight/2 - windowHeight/4,
-                             widgetW, 
-                             sideWidgetH);
-
-    m_coreGraphsVP.set(m_rightGraphWidgetVP.x,
-                       m_rightGraphWidgetVP.y,
-                       m_rightGraphWidgetVP.width,
-                       m_rightGraphWidgetVP.height/2 - 5);
-
-    m_rightCPUStatsVP.set(m_rightGraphWidgetVP.x,
-                          m_rightGraphWidgetVP.y + m_rightGraphWidgetVP.height/2 + 5,
-                          m_rightGraphWidgetVP.width,
-                          m_rightGraphWidgetVP.height/2);
+    m_mainWidget.init(&m_fontManager,
+            Viewport{ marginX + windowWidth/2 - widgetW, 2*marginY + windowHeight/4,
+                      2 * widgetW, sideWidgetH });
 }
 
 void Renderer::initVBOs() {
@@ -246,313 +172,6 @@ void Renderer::initShaders() {
     if (m_graphAlphaLoc == -1) {
         //std::cout << "Failed to get uniform location for \'lineAlpha\'\n";
     }
-}
-
-void Renderer::drawMainWidget() const {
-    glViewport(m_mainWidgetVP.x, m_mainWidgetVP.y,
-               m_mainWidgetVP.width, m_mainWidgetVP.height);
-}
-
-
-void Renderer::drawLeftGraphWidget() const {
-    glViewport(m_leftGraphWidgetVP.x, m_leftGraphWidgetVP.y,
-               m_leftGraphWidgetVP.width, m_leftGraphWidgetVP.height);
-
-    drawCpuGraph();
-    drawRamGraph();
-    drawGpuGraph();
-    drawNetGraph();
-}
-
-void Renderer::drawCpuGraph() const {
-    glViewport(m_cpuGraphVP.x, m_cpuGraphVP.y,
-               m_cpuGraphVP.width, m_cpuGraphVP.height);
-    drawBorder();
-
-    // Set the viewport for the graph to be left section
-    glViewport(m_cpuGraphVP.x, m_cpuGraphVP.y,
-               (m_cpuGraphVP.width * 4)/5, m_cpuGraphVP.height);
-
-    drawGraphGrid();
-    glLineWidth(0.5f);
-    drawLineGraph(m_cpuMeasure->getUsageData());
-
-    // Text
-    glViewport(m_cpuGraphVP.x + (4 * m_cpuGraphVP.width) / 5, m_cpuGraphVP.y,
-               m_cpuGraphVP.width / 5, m_cpuGraphVP.height);
-    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-
-    m_fontManager.renderLine(RG_FONT_SMALL, "0%",
-                             0, 0,
-                             m_cpuGraphVP.width/5, m_cpuGraphVP.height,
-                             RG_ALIGN_BOTTOM | RG_ALIGN_LEFT, 10);
-    m_fontManager.renderLine(RG_FONT_SMALL, "CPU Load",
-                             0, 0,
-                             m_cpuGraphVP.width/5, m_cpuGraphVP.height,
-                             RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT, 10);
-    m_fontManager.renderLine(RG_FONT_SMALL, "100%",
-                             0, 0,
-                             m_cpuGraphVP.width/5, m_cpuGraphVP.height,
-                             RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
-}
-
-void Renderer::drawRamGraph() const {
-    glViewport(m_ramGraphVP.x, m_ramGraphVP.y,
-               m_ramGraphVP.width , m_ramGraphVP.height);
-    drawBorder();
-
-    // Set the viewport for the graph itself to be left section
-    glViewport(m_ramGraphVP.x, m_ramGraphVP.y,
-               (m_ramGraphVP.width*4)/5 , m_ramGraphVP.height);
-
-    // Draw the background grid for the graph
-    drawGraphGrid();
-
-    drawLineGraph(m_ramMeasure->getUsageData());
-
-    // Set viewport for text drawing
-    glViewport(m_ramGraphVP.x + (4 * m_ramGraphVP.width) / 5, m_ramGraphVP.y,
-               m_ramGraphVP.width / 5, m_ramGraphVP.height);
-    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-
-    m_fontManager.renderLine(RG_FONT_SMALL, "0%",
-                             0, 0,
-                             m_ramGraphVP.width/5, m_ramGraphVP.height,
-                             RG_ALIGN_BOTTOM | RG_ALIGN_LEFT, 10);
-    m_fontManager.renderLine(RG_FONT_SMALL, "RAM Load",
-                             0, 0,
-                             m_ramGraphVP.width/5, m_ramGraphVP.height,
-                             RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT, 10);
-    m_fontManager.renderLine(RG_FONT_SMALL, "100%",
-                             0, 0,
-                             m_ramGraphVP.width/5, m_ramGraphVP.height,
-                             RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
-
-}
-
-void Renderer::drawGpuGraph() const {
-    glViewport(m_gpuGraphVP.x, m_gpuGraphVP.y,
-               m_gpuGraphVP.width , m_gpuGraphVP.height);
-    drawBorder();
-
-    // Set the viewport for the graph to be left section
-    glViewport(m_gpuGraphVP.x, m_gpuGraphVP.y,
-               (m_gpuGraphVP.width*4)/5 , m_gpuGraphVP.height);
-    drawGraphGrid();
-    glLineWidth(0.5f);
-    drawLineGraph(m_gpuMeasure->getUsageData());
-
-    // Set viewport for text drawing
-    glViewport(m_gpuGraphVP.x + (4 * m_gpuGraphVP.width) / 5, m_gpuGraphVP.y,
-               m_gpuGraphVP.width / 5, m_gpuGraphVP.height);
-    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-
-    m_fontManager.renderLine(RG_FONT_SMALL, "0%",
-                             0, 0,
-                             m_gpuGraphVP.width/5, m_gpuGraphVP.height,
-                             RG_ALIGN_BOTTOM | RG_ALIGN_LEFT, 10);
-    m_fontManager.renderLine(RG_FONT_SMALL, "GPU Load",
-                             0, 0,
-                             m_gpuGraphVP.width/5, m_gpuGraphVP.height,
-                             RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT, 10);
-    m_fontManager.renderLine(RG_FONT_SMALL, "100%",
-                             0, 0,
-                             m_gpuGraphVP.width/5, m_gpuGraphVP.height,
-                             RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
-}
-
-void Renderer::drawNetGraph() const {
-    glViewport(m_netGraphVP.x, m_netGraphVP.y,
-               m_netGraphVP.width , m_netGraphVP.height);
-    drawBorder();
-
-    // Set the viewport for the graph to be left section
-    glViewport(m_netGraphVP.x, m_netGraphVP.y,
-               (m_netGraphVP.width*4)/5 , m_netGraphVP.height);
-    drawGraphGrid();
-
-    {// Draw the line graph
-        glLineWidth(0.5f);
-        const auto& downData{ m_netMeasure->getDownData() };
-        const auto& upData{ m_netMeasure->getUpData() };
-        const auto maxDownValMB{ m_netMeasure->getMaxDownValue() /
-                                 static_cast<float>(MB) };
-        const auto maxUpValMB{ m_netMeasure->getMaxUpValue() /
-                               static_cast<float>(MB) };
-
-        const auto maxValMB{ max(maxUpValMB, maxDownValMB) };
-
-        // Draw the download graph
-        glBegin(GL_LINE_STRIP); {
-            glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.7f);
-            for (auto i = size_t{ 0U }; i < downData.size() - 1; ++i) {
-                const auto percent1 = float{ (downData[i] / static_cast<float>(MB)) / maxValMB };
-                const auto percent2 = float{ (downData[i+1] / static_cast<float>(MB)) / maxValMB };
-
-                const auto x1 = float{ (static_cast<float>(i) / (downData.size() - 1)) * 2.0f - 1.0f };
-                const auto y1 = float{ percent1 * 2.0f - 1.0f };
-                const auto x2 = float{ (static_cast<float>(i+1) / (downData.size() - 1)) * 2.0f - 1.0f };
-                const auto y2 = float{ percent2 * 2.0f - 1.0f };
-
-                glVertex2f(x1, y1);    // Top-left
-                glVertex2f(x2, y2);    // Top-right
-            }
-        } glEnd();
-
-        // Draw the upload graph
-        glBegin(GL_LINE_STRIP); {
-            glColor4f(PINK1_R, PINK1_G, PINK1_B, 0.7f);
-            for (auto i = size_t{ 0U }; i < upData.size() - 1; ++i) {
-                const auto percent1 = float{ (upData[i] / static_cast<float>(MB)) / maxValMB };
-                const auto percent2 = float{ (upData[i+1] / static_cast<float>(MB)) / maxValMB };
-
-                const auto x1 = float{ (static_cast<float>(i) / (upData.size() - 1)) * 2.0f - 1.0f };
-                const auto y1 = float{ percent1 * 2.0f - 1.0f };
-                const auto x2 = float{ (static_cast<float>(i+1) / (upData.size() - 1)) * 2.0f - 1.0f };
-                const auto y2 = float{ percent2 * 2.0f - 1.0f };
-
-                glVertex2f(x1, y1); // Top-left
-                glVertex2f(x2, y2); // Top-right
-            }
-        } glEnd();
-    }
-
-    {// Text
-        glViewport(m_netGraphVP.x + (4 * m_netGraphVP.width) / 5, m_netGraphVP.y,
-                   m_netGraphVP.width / 5, m_netGraphVP.height);
-        glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-
-        const auto maxVal{ m_netMeasure->getMaxDownValue() };
-        std::string suffix{ "B" };
-        if (maxVal > 1000 * 1000) {
-            suffix = "MB";
-        } else if (maxVal > 1000) {
-            suffix = "KB";
-        }
-
-        /* Print the maximum throughput as the scale at the top of the graph */
-        if (suffix == "MB") {
-            char buff[8];
-            snprintf(buff, sizeof(buff), "%5.1fMB", maxVal/static_cast<float>(MB));
-            m_fontManager.renderLine(RG_FONT_SMALL, buff, 0, 0,
-                                     m_gpuGraphVP.width/5, m_gpuGraphVP.height,
-                                     RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
-        } else if (suffix == "KB") {
-            char buff[8];
-            snprintf(buff, sizeof(buff), "%5.1fKB", maxVal/static_cast<float>(KB));
-            m_fontManager.renderLine(RG_FONT_SMALL, buff, 0, 0,
-                                     m_gpuGraphVP.width/5, m_gpuGraphVP.height,
-                                     RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
-        } else {
-            const auto top{ std::to_string(maxVal) + suffix };
-            char buff[5];
-            snprintf(buff, sizeof(buff), "%3lluB", maxVal);
-            m_fontManager.renderLine(RG_FONT_SMALL, buff, 0, 0,
-                                     m_gpuGraphVP.width/5, m_gpuGraphVP.height,
-                                     RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
-        }
-
-        const auto bottom = std::string{ "0" + suffix };
-        m_fontManager.renderLine(RG_FONT_SMALL, bottom.c_str(), 0, 0,
-                                 m_gpuGraphVP.width/5, m_gpuGraphVP.height,
-                                 RG_ALIGN_BOTTOM | RG_ALIGN_LEFT, 10);
-        m_fontManager.renderLine(RG_FONT_SMALL, "Down / Up", 0, 0,
-                                 m_gpuGraphVP.width/5, m_gpuGraphVP.height,
-                                 RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT, 10);
-    }
-}
-
-void Renderer::drawProcessWidget() const {
-    glViewport(m_procVP.x, m_procVP.y,
-               m_procVP.width, m_procVP.height);
-
-    glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
-    glLineWidth(0.5f);
-    drawTopSerifLine(-1.0f, 1.0f);
-    drawBottomSerifLine(-1.0f, 1.0f);
-    glBegin(GL_LINES); {
-        glVertex2f(0.0f, -1.0f);
-        glVertex2f(0.0f,  1.0f); // Middle line
-    } glEnd();
-
-    drawProcCPUList();
-    drawProcRAMList();
-}
-
-void Renderer::drawProcCPUList() const {
-    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-
-    auto procNames = std::vector<std::string>{  };
-    auto procPercentages = std::vector<std::string>{  };
-    procNames.reserve(m_processMeasure->getProcCPUData().size());
-    procPercentages.reserve(m_processMeasure->getProcCPUData().size());
-    for (const auto& pair : m_processMeasure->getProcCPUData()) {
-        procNames.emplace_back(pair.first);
-
-        // Convert percentage to string format
-        char buff[6];
-        snprintf(buff, sizeof(buff), "%4.1f%%", pair.second);
-        procPercentages.emplace_back(buff);
-    }
-
-    m_fontManager.renderLines(RG_FONT_STANDARD, procNames, 0, 0,
-                              m_procVP.width/2, m_procVP.height,
-                              RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL, 15, 5);
-    m_fontManager.renderLines(RG_FONT_STANDARD, procPercentages, 0, 0,
-                              m_procVP.width/2, m_procVP.height,
-                              RG_ALIGN_RIGHT | RG_ALIGN_CENTERED_VERTICAL, 15, 5);
-}
-
-void Renderer::drawProcRAMList() const {
-    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-
-    auto procNames = std::vector<std::string>{  };
-    auto procRamUsages = std::vector<std::string>{  };
-
-    procNames.reserve(m_processMeasure->getProcRAMData().size());
-    procRamUsages.reserve(m_processMeasure->getProcRAMData().size());
-    for (const auto& pair : m_processMeasure->getProcRAMData()) {
-        procNames.emplace_back(pair.first);
-
-        // Convert RAM value to string format, assuming top RAM usages are only
-        // ever in megabytes or gigabytes
-        char buff[6];
-        if (pair.second >= 1000) {
-            snprintf(buff, sizeof(buff), "%.1fGB", pair.second / 1024.0f);
-        } else {
-            snprintf(buff, sizeof(buff), "%dMB", pair.second);
-        }
-        procRamUsages.emplace_back(buff);
-    }
-
-    m_fontManager.renderLines(RG_FONT_STANDARD, procNames, m_procVP.width/2, 0,
-                              m_procVP.width/2, m_procVP.height,
-                              RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL, 15, 5);
-    m_fontManager.renderLines(RG_FONT_STANDARD, procRamUsages, m_procVP.width/2, 0,
-                              m_procVP.width/2, m_procVP.height,
-                              RG_ALIGN_RIGHT | RG_ALIGN_CENTERED_VERTICAL, 15, 5);
-
-}
-
-void Renderer::drawLeftStatsWidget() const {
-    glViewport(m_leftStatsVP.x, m_leftStatsVP.y, m_leftStatsVP.width, m_leftStatsVP.height);
-
-    glColor4f(DIVIDER_R, DIVIDER_G, DIVIDER_B, DIVIDER_A);
-    glLineWidth(0.5f);
-    drawTopSerifLine(-1.0f, 1.0f);
-    drawBottomSerifLine(-1.0f, 1.0f);
-
-    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-    m_fontManager.renderLines(RG_FONT_STANDARD, m_statsStrings, 0, 0,
-                              m_leftStatsVP.width, m_leftStatsVP.height,
-                              RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL, 15, 10);
-}
-
-void Renderer::drawRightStatsWidget() const {
-    glViewport(m_rightStatsVP.x, m_rightStatsVP.y,
-               m_rightStatsVP.width, m_rightStatsVP.height);
-    drawTopSerifLine(-1.0f, 1.0f);
-    drawBottomSerifLine(-1.0f, 1.0f);
 }
 
 }
