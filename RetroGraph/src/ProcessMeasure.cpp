@@ -44,6 +44,19 @@ ProcessMeasure::~ProcessMeasure() {
 }
 
 void ProcessMeasure::init() {
+#if !_DEBUG
+    // Set the debug privilege in order to gain access to system processes
+    HANDLE hToken;
+    if (!OpenProcessToken(GetCurrentProcess(), 
+                TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken)) {
+        fatalMessageBox("Failed OpenThreadToken");
+    }
+    if (!setDebugPrivileges(hToken, SE_DEBUG_NAME, true)) {
+        CloseHandle(hToken);
+        fatalMessageBox("Failed to set privilege");
+    }
+#endif
+
     populateList();
     fillRAMData();
 }
@@ -93,6 +106,54 @@ void ProcessMeasure::update(uint32_t ticks) {
     if ((ticks % (ticksPerSecond * 5)) == 0) {
         fillRAMData();
     }
+}
+
+bool ProcessMeasure::setDebugPrivileges(HANDLE hToken, LPCTSTR Privilege,
+                                        bool enablePrivilege) {
+    TOKEN_PRIVILEGES tp;
+    LUID luid;
+    TOKEN_PRIVILEGES tpPrevious;
+    DWORD cbPrevious=sizeof(TOKEN_PRIVILEGES);
+
+    if(!LookupPrivilegeValue( NULL, Privilege, &luid )) return false;
+
+    // 
+    // first pass.  get current privilege setting
+    // 
+    tp.PrivilegeCount           = 1;
+    tp.Privileges[0].Luid       = luid;
+    tp.Privileges[0].Attributes = 0;
+
+    AdjustTokenPrivileges(
+        hToken,
+        FALSE,
+        &tp,
+        sizeof(TOKEN_PRIVILEGES),
+        &tpPrevious,
+        &cbPrevious
+    );
+
+    if (GetLastError() != ERROR_SUCCESS) return false;
+
+    // 
+    // second pass.  set privilege based on previous setting
+    // 
+    tpPrevious.PrivilegeCount       = 1;
+    tpPrevious.Privileges[0].Luid   = luid;
+
+    if(enablePrivilege) {
+        tpPrevious.Privileges[0].Attributes |= (SE_PRIVILEGE_ENABLED);
+    }
+    else {
+        tpPrevious.Privileges[0].Attributes ^= (SE_PRIVILEGE_ENABLED &
+                                                tpPrevious.Privileges[0].Attributes);
+    }
+
+    AdjustTokenPrivileges(hToken, FALSE, &tpPrevious, cbPrevious, NULL, NULL);
+
+    if (GetLastError() != ERROR_SUCCESS) return false;
+
+    return true;
 }
 
 

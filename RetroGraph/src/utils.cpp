@@ -46,35 +46,6 @@ uint64_t subtractTimes(const FILETIME& ftA, const FILETIME& ftB) {
      return a.QuadPart - b.QuadPart;
 }
 
-void drawViewportBorder() {
-    float color[4];
-    glGetFloatv(GL_CURRENT_COLOR, color);
-
-    glColor3f(DEBUG_BORDER_R, DEBUG_BORDER_G, DEBUG_BORDER_B);
-
-    // Preserve initial line width
-    GLfloat lineWidth;
-    glGetFloatv(GL_LINE_WIDTH, &lineWidth);
-
-    glLineWidth(5.0f);
-
-    glBegin(GL_LINES); {
-        glVertex2f(-1.0f, -1.0f);
-        glVertex2f(-1.0f,  1.0f);
-
-        glVertex2f(-1.0f,  1.0f);
-        glVertex2f( 1.0f,  1.0f);
-
-        glVertex2f( 1.0f,  1.0f);
-        glVertex2f( 1.0f, -1.0f);
-
-        glVertex2f( 1.0f, -1.0f);
-        glVertex2f(-1.0f, -1.0f);
-    } glEnd();
-
-    glColor4f(color[0], color[1], color[2], color[3]);
-    glLineWidth(lineWidth);
-}
 
 constexpr float lerp(float x1, float x2, float t) {
     //return x1 + (x2 - x1) * t;

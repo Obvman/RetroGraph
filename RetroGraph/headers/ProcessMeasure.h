@@ -36,6 +36,10 @@ public:
     /* Gets vector containing top RAM using processes and their RAM usage */
     const std::vector<std::pair<std::string, size_t>>& getProcRAMData() const { return m_procRAMListData; }
 private:
+    /* Sets the debug privileges of the programs to allow reading of system
+     * processes */
+    bool setDebugPrivileges(HANDLE hToken, LPCTSTR Privilege, bool enablePrivilege);
+
     /* Fills the CPU usage process vector with top CPU using processes */
     void fillCPUData();
 

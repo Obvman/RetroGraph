@@ -33,19 +33,15 @@ void Renderer::init(HWND hWnd, uint32_t windowWidth, uint32_t windowHeight,
 
     m_fontManager.init(hWnd, windowHeight);
 
-    initWidgets(windowWidth, windowHeight, &_cpu, &_gpu, &_ram, &_net, &_proc, &_drive, &_sys);
+    initWidgets(windowWidth, windowHeight, _cpu, _gpu, _ram, _net, _proc, _drive, _sys);
 
     initVBOs();
     initShaders();
 }
 
 void Renderer::draw(uint32_t) const {
-    //glScissor(m_leftGraphWidgetVP.x, m_leftGraphWidgetVP.y,
-               //m_leftGraphWidgetVP.width, m_leftGraphWidgetVP.height);
-    //glEnable(GL_SCISSOR_TEST);
     glClear(GL_COLOR_BUFFER_BIT);
     glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
-    //glDisable(GL_SCISSOR_TEST);
 
     m_timeWidget.draw();
     m_hddWidget.draw();
@@ -68,41 +64,41 @@ void Renderer::release() {
 /********************* Private Functions ********************/
 
 void Renderer::initWidgets(int32_t windowWidth, int32_t windowHeight,
-                           const CPUMeasure* _cpu, const GPUMeasure* _gpu,
-                           const RAMMeasure* _ram, const NetMeasure* _net,
-                           const ProcessMeasure* _proc, const DriveMeasure* _drive,
-                           const SystemInfo* _sys) {
+                           const CPUMeasure& _cpu, const GPUMeasure& _gpu,
+                           const RAMMeasure& _ram, const NetMeasure& _net,
+                           const ProcessMeasure& _proc, const DriveMeasure& _drive,
+                           const SystemInfo& _sys) {
     const auto widgetW{ windowWidth/5 };
     const auto widgetH{ windowHeight/6 };
     const auto sideWidgetH{ windowHeight/2 };
 
-    m_timeWidget.init(&m_fontManager, _cpu, _net, 
+    m_timeWidget.init(&m_fontManager, &_cpu, &_net, 
             Viewport{ marginX, windowHeight - marginY - widgetH,
                       widgetW, widgetH});
 
-    m_hddWidget.init(&m_fontManager, _drive,
+    m_hddWidget.init(&m_fontManager, &_drive,
             Viewport{windowWidth - widgetW - marginX, windowHeight - marginY - widgetH,
                      widgetW, widgetH});
 
-    m_cpuStatsWidget.init(&m_fontManager, _cpu,
+    m_cpuStatsWidget.init(&m_fontManager, &_cpu,
             Viewport{windowWidth - widgetW - marginX, 
                      windowHeight/2 - windowHeight/4,
                      widgetW, 
                      sideWidgetH});
 
-    m_processWidget.init(&m_fontManager, _proc,
+    m_processWidget.init(&m_fontManager, &_proc,
             Viewport{ marginX + windowWidth/2 - widgetW, marginY,
                       2*widgetW, widgetH });
 
-    m_graphWidget.init(&m_fontManager, _cpu, _ram, _net, _gpu,
+    m_graphWidget.init(&m_fontManager, &_cpu, &_ram, &_net, &_gpu,
             Viewport{ marginX, windowHeight/2 - windowHeight/4,
                       widgetW, windowHeight/2 });
 
-    m_systemStatsWidget.init(&m_fontManager, _sys, _cpu, _net,
+    m_systemStatsWidget.init(&m_fontManager, &_sys, &_cpu, &_net,
             Viewport{ marginX, marginY, widgetW, widgetH });
 
     m_mainWidget.init(&m_fontManager,
-            Viewport{ marginX + windowWidth/2 - widgetW, 2*marginY + windowHeight/4,
+            Viewport{ marginX + windowWidth/2 - widgetW, windowHeight/2 - windowHeight/4,
                       2 * widgetW, sideWidgetH });
 }
 

@@ -1,12 +1,10 @@
 rainmeter plugins github - https://github.com/rainmeter/rainmeter/tree/eeeef4a7f2695280ba3506e98a71d163e613b1da/Plugins
 
-move drawViewportBorder to drawUtils.h
-
 use tjmax value from coretemp as the CPU max temp value
 
 g++ compilation!
 
-Day of the week in the time widget
+have a taskbar replacement
 
 animate on startup
 
@@ -23,8 +21,6 @@ volume, current sound output level bar - IAudioPeakMeter
 rounded HDD/RAM bars
 
 have config options for polling intervals of individual measures
-
-REFACTOR INTO SMALLER FUNCTIONS!
 
 separate net traffic graphs
 

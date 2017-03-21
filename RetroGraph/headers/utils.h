@@ -38,9 +38,6 @@ ULARGE_INTEGER ftToULI(const FILETIME& ft);
 /* Subtracts the FILETIMES and returns result as 64 bit unsigned integer */
 uint64_t subtractTimes(const FILETIME& ftA, const FILETIME& ftB);
 
-/* Draws the outline of the current glViewport bounds for debugging */
-void drawViewportBorder();
-
 /* Linear interpolation */
 constexpr float lerp(float x1, float x2, float t);
 

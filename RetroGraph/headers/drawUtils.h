@@ -38,11 +38,11 @@ struct Viewport {
     }
 };
 
-
 void drawFilledGraph(const std::vector<float>& data);
 void drawLineGraph(const std::vector<float>& data);
 void drawGraphGrid();
 void drawBorder();
+void drawViewportBorder();
 
 // Primitive drawing
 void drawSerifLine(GLfloat x1, GLfloat x2, GLfloat y);

@@ -38,7 +38,7 @@ void GraphWidget::init(const FontManager* fontManager, const CPUMeasure* cpuMeas
                      viewport.height/4 };
     m_ramGraphVP = Viewport{
                      viewport.x,
-                     viewport.y + 2*viewport.height/4,
+                     viewport.y + 0*viewport.height/4,
                      viewport.width,
                      viewport.height/4 };
     m_netGraphVP = Viewport{
@@ -48,7 +48,7 @@ void GraphWidget::init(const FontManager* fontManager, const CPUMeasure* cpuMeas
                      viewport.height/4 };
     m_gpuGraphVP = Viewport{
                      viewport.x,
-                     viewport.y + 0*viewport.height/4,
+                     viewport.y + 2*viewport.height/4,
                      viewport.width,
                      viewport.height/4 };
 }
