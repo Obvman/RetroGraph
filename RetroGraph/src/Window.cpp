@@ -13,6 +13,14 @@
 #include "../headers/resource.h"
 #include "../headers/utils.h"
 #include "../headers/colors.h"
+#include "../headers/CPUMeasure.h"
+#include "../headers/GPUMeasure.h"
+#include "../headers/RAMMeasure.h"
+#include "../headers/ProcessMeasure.h"
+#include "../headers/NetMeasure.h"
+#include "../headers/DriveMeasure.h"
+#include "../headers/MusicMeasure.h"
+#include "../headers/SystemLogMeasure.h"
 
 namespace rg {
 
@@ -227,6 +235,10 @@ void Window::init() {
     m_measures.push_back(std::move(std::make_unique<NetMeasure>(m_userSettings)));
     m_measures.push_back(std::move(std::make_unique<ProcessMeasure>()));
     m_measures.push_back(std::move(std::make_unique<DriveMeasure>()));
+    // Music measure initialises with pointer to ProcessMeasure
+    m_measures.push_back(std::move(std::make_unique<MusicMeasure>(
+                    dynamic_cast<ProcessMeasure*>(m_measures[4].get()))));
+    m_measures.push_back(std::move(std::make_unique<SystemLogMeasure>()));
 
     for (const auto& pMeasure : m_measures)
         pMeasure->init();
@@ -239,7 +251,8 @@ void Window::init() {
                     dynamic_cast<NetMeasure&>(*m_measures[3]),
                     dynamic_cast<ProcessMeasure&>(*m_measures[4]),
                     dynamic_cast<DriveMeasure&>(*m_measures[5]),
-                    m_systemInfo);
+                    dynamic_cast<MusicMeasure&>(*m_measures[6]),
+                    m_systemInfo, m_userSettings);
 
     update(0);
     draw(0);

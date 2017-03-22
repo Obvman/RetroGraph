@@ -34,12 +34,19 @@ constexpr float PINK3_R{ 0x77 / 255.0f };
 constexpr float PINK3_G{ 0x00 / 255.0f };
 constexpr float PINK3_B{ 0x43 / 255.0f };
 
-
+constexpr float RED_R{ 0xFF / 255.0f };
+constexpr float RED_G{ 0x00 / 255.0f };
+constexpr float RED_B{ 0x00 / 255.0f };
 
 constexpr float TEXT_R{ WHITE_R };
 constexpr float TEXT_G{ WHITE_G };
 constexpr float TEXT_B{ WHITE_B };
 constexpr float TEXT_A{ 0.7f };
+
+constexpr float WARNING_TEXT_R{ RED_R };
+constexpr float WARNING_TEXT_G{ RED_G };
+constexpr float WARNING_TEXT_B{ RED_B };
+constexpr float WARNING_TEXT_A{ 0.7f };
 
 constexpr float DEBUG_BORDER_R{ 0.2f };
 constexpr float DEBUG_BORDER_G{ 0.8f };

@@ -30,6 +30,8 @@ public:
 
     uint32_t getNumProcessesRunning() const { return m_allProcessData.size(); }
 
+    int32_t getPIDFromName(const std::string& name) const;
+
     /* Gets vector containing top CPU using processes and their CPU usage */
     const std::vector<std::pair<std::string, double>>& getProcCPUData() const { return m_procCPUListData; }
 

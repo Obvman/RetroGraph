@@ -4,15 +4,10 @@
 #include <Windows.h>
 #include <vector>
 
-#include "CPUMeasure.h"
-#include "GPUMeasure.h"
-#include "RAMMeasure.h"
-#include "ProcessMeasure.h"
-#include "NetMeasure.h"
-#include "SystemInfo.h"
-#include "DriveMeasure.h"
 #include "Renderer.h"
 #include "UserSettings.h"
+#include "SystemInfo.h"
+#include "Measure.h"
 
 namespace rg {
 

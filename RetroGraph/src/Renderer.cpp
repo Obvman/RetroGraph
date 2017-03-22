@@ -10,6 +10,7 @@
 #include "../headers/ProcessMeasure.h"
 #include "../headers/DriveMeasure.h"
 #include "../headers/SystemInfo.h"
+#include "../headers/UserSettings.h"
 #include "../headers/colors.h"
 #include "../headers/utils.h"
 #include "../headers/GLShaders.h"
@@ -28,12 +29,14 @@ void Renderer::init(HWND hWnd, uint32_t windowWidth, uint32_t windowHeight,
                     const CPUMeasure& _cpu, const GPUMeasure& _gpu,
                     const RAMMeasure& _ram, const NetMeasure& _net,
                     const ProcessMeasure& _proc, const DriveMeasure& _drive,
-                    const SystemInfo& _sys) {
+                    const MusicMeasure& _music, const SystemInfo& _sys,
+                    const UserSettings& settings) {
     m_renderTargetHandle = hWnd;
 
     m_fontManager.init(hWnd, windowHeight);
 
-    initWidgets(windowWidth, windowHeight, _cpu, _gpu, _ram, _net, _proc, _drive, _sys);
+    initWidgets(settings, windowWidth, windowHeight,
+            _cpu, _gpu, _ram, _net, _proc, _drive, _music, _sys);
 
     initVBOs();
     initShaders();
@@ -50,6 +53,7 @@ void Renderer::draw(uint32_t) const {
     m_graphWidget.draw();
     m_systemStatsWidget.draw();
     m_mainWidget.draw();
+    m_musicWidget.draw();
 
 }
 
@@ -63,11 +67,12 @@ void Renderer::release() {
 
 /********************* Private Functions ********************/
 
-void Renderer::initWidgets(int32_t windowWidth, int32_t windowHeight,
+void Renderer::initWidgets(const UserSettings&,
+                           int32_t windowWidth, int32_t windowHeight,
                            const CPUMeasure& _cpu, const GPUMeasure& _gpu,
                            const RAMMeasure& _ram, const NetMeasure& _net,
                            const ProcessMeasure& _proc, const DriveMeasure& _drive,
-                           const SystemInfo& _sys) {
+                           const MusicMeasure& _music, const SystemInfo& _sys) {
     const auto widgetW{ windowWidth/5 };
     const auto widgetH{ windowHeight/6 };
     const auto sideWidgetH{ windowHeight/2 };
@@ -100,6 +105,10 @@ void Renderer::initWidgets(int32_t windowWidth, int32_t windowHeight,
     m_mainWidget.init(&m_fontManager,
             Viewport{ marginX + windowWidth/2 - widgetW, windowHeight/2 - windowHeight/4,
                       2 * widgetW, sideWidgetH });
+
+    m_musicWidget.init(&m_fontManager, &_music,
+            Viewport{ windowWidth - widgetW - marginX, marginY, 
+                      widgetW, widgetH} );
 }
 
 void Renderer::initVBOs() {

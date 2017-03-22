@@ -66,7 +66,7 @@ void GPUMeasure::update(uint32_t ticks) {
     if (ticks % (ticksPerSecond / 2) == 0) {
         //updateGpuTemp(); // High CPU usage function
         //getClockFrequencies(); // High CPU usage function
-        getMemInformation();
+        //getMemInformation();
         getGpuUsage();
 
         m_usageData[0] = m_gpuUsage / 100.0f;

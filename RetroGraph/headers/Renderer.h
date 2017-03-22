@@ -6,6 +6,7 @@
 #include <Windows.h>
 #include <GL/glew.h>
 
+// TODO just forward declare the widgets
 #include "FontManager.h"
 #include "TimeWidget.h"
 #include "HDDWidget.h"
@@ -14,10 +15,10 @@
 #include "GraphWidget.h"
 #include "SystemStatsWidget.h"
 #include "MainWidget.h"
+#include "MusicWidget.h"
 #include "drawUtils.h"
 
 namespace rg {
-
 
 class CPUMeasure;
 class GPUMeasure;
@@ -28,6 +29,7 @@ class DriveMeasure;
 class DriveInfo;
 class SystemInfo;
 class GLShaderHandler;
+class UserSettings;
 
 /* In charge of rendering each component's data to the window */
 class Renderer {
@@ -41,7 +43,8 @@ public:
               const CPUMeasure& _cpu, const GPUMeasure& _gpu,
               const RAMMeasure& _ram, const NetMeasure& _net,
               const ProcessMeasure& _proc, const DriveMeasure& _drive,
-              const SystemInfo& _sys);
+              const MusicMeasure& _music, const SystemInfo& _sys,
+              const UserSettings& settings);
 
     /* Releases all resources */
     void release();
@@ -54,11 +57,12 @@ private:
     /* Compiles and retrieves uniform locations */
     void initShaders();
 
-    void initWidgets(int32_t windowWidth, int32_t windowHeight,
+    void initWidgets(const UserSettings& settings,
+                     int32_t windowWidth, int32_t windowHeight,
                      const CPUMeasure& _cpu, const GPUMeasure& _gpu,
                      const RAMMeasure& _ram, const NetMeasure& _net,
                      const ProcessMeasure& _proc, const DriveMeasure& _drive,
-                     const SystemInfo& _sys);
+                     const MusicMeasure& _music, const SystemInfo& _sys);
 
     HWND m_renderTargetHandle;
 
@@ -72,6 +76,7 @@ private:
     GraphWidget m_graphWidget;
     SystemStatsWidget m_systemStatsWidget;
     MainWidget m_mainWidget;
+    MusicWidget m_musicWidget;
 
     // VBO members
     GLuint m_graphGridVertsID;

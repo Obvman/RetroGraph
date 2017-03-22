@@ -40,7 +40,9 @@ UserSettings::UserSettings() :
     m_windowHeight{ 1170U },
     m_startupMonitor{ 0U },
     m_netAdapterName{ "Intel(R) Ethernet Connection (2) I219-V"},
-    m_pingServer{ "http://www.google.com/" } {
+    m_pingServer{ "http://www.google.com/" },
+    m_processCPUUsageThreshold{ 0.2f },
+    m_processRAMUsageThresholdMB{ 1024U } {
 }
 
 UserSettings::~UserSettings() {
@@ -58,6 +60,11 @@ void UserSettings::init() {
             m_startupMonitor = propTree.get<uint32_t>("Window.Monitor");
             m_netAdapterName = propTree.get<std::string>("Network.NetworkAdapter");
             m_pingServer = propTree.get<std::string>("Network.PingServer");
+
+            m_processCPUUsageThreshold = propTree.get<float>(
+                    "Processes.HighCPUUsageThreshold");
+            m_processRAMUsageThresholdMB = propTree.get<uint32_t>(
+                    "Processes.HighRAMUsageThresholdMB");
         }
 
 
@@ -104,6 +111,9 @@ void UserSettings::generateDefaultFile(pt::ptree& propTree) {
 
     propTree.put("Network.NetworkAdapter", m_netAdapterName);
     propTree.put("Network.PingServer", m_pingServer);
+
+    propTree.put("Processes.HighCPUUsageThreshold", m_processCPUUsageThreshold);
+    propTree.put("Processes.HighRAMUsageThresholdMB", m_processRAMUsageThresholdMB);
 
     pt::ini_parser::write_ini(iniPath, propTree);
 }

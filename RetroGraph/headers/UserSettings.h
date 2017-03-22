@@ -27,6 +27,10 @@ public:
 
     const std::string& getNetAdapterName() const { return m_netAdapterName; }
     const std::string& getPingServer() const { return m_pingServer; }
+
+    float getHighCPUUsageThreshold() const { return m_processCPUUsageThreshold; }
+    uint32_t getHighRAMUsageThresholdMB() const { return m_processRAMUsageThresholdMB; }
+
 private:
     void generateDefaultFile(pt::ptree& propTree);
 
@@ -40,6 +44,10 @@ private:
     // Network options
     std::string m_netAdapterName;
     std::string m_pingServer;
+
+    // Appearance options
+    float m_processCPUUsageThreshold;
+    uint32_t m_processRAMUsageThresholdMB;
 };
 
 }

@@ -4,6 +4,8 @@ system event log measure (OpenEventLog())
 
 g++ compilation!
 
+retrograph performance stats (clocks per frame, RAM, etc)
+
 have a taskbar replacement
 
 animate on startup
@@ -43,7 +45,7 @@ Notification icon in system tray
 
 test suite
 
-specify widget position/size
+specify widget position/size in config
 
 use glScissor so we don't unnecessarily redraw static parts of the window,
 and stutter draw times for different draw frequencies

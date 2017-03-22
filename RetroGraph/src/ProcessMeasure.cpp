@@ -108,6 +108,18 @@ void ProcessMeasure::update(uint32_t ticks) {
     }
 }
 
+int32_t ProcessMeasure::getPIDFromName(const std::string& name) const {
+    const auto it{ std::find_if(m_allProcessData.cbegin(), m_allProcessData.cend(),
+            [&name](const auto& sp) {
+                return sp->getName() == name;
+            }) };
+    if (it != m_allProcessData.cend()) {
+        return (*it)->getPID();
+    } else {
+        return -1;
+    }
+}
+
 bool ProcessMeasure::setDebugPrivileges(HANDLE hToken, LPCTSTR Privilege,
                                         bool enablePrivilege) {
     TOKEN_PRIVILEGES tp;
