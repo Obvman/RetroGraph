@@ -6,11 +6,12 @@
 
 namespace rg {
 
-BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam);
-
 MusicMeasure::MusicMeasure(const ProcessMeasure* procMeasure) :
+    m_playerTitlePattern{ "[foobar2000 v1." },
     m_processMeasure{ procMeasure },
-    m_playerRunning{ false } {
+    m_playerRunning{ false },
+    m_playerHandle{ nullptr },
+    m_playerWindowClassName{ "" } {
 
 }
 
@@ -19,42 +20,43 @@ MusicMeasure::~MusicMeasure() {
 }
 
 void MusicMeasure::init() {
+    EnumWindows(MusicMeasure::EnumWindowsProc, reinterpret_cast<LPARAM>(this));
 }
 
 void MusicMeasure::update(uint32_t ticks) {
     if ((ticks % (ticksPerSecond * 5)) == 0) {
-        /* // Check if foobar is running in the process list */
-        /* const auto foobarPID{ m_processMeasure->getPIDFromName("foobar2000") }; */
-        /* if (foobarPID < 0) { */
-        /*     printf("Foobar is not running\n"); */
-        /*     m_playerRunning = false; */
-        /* } else { */
-        /*     printf("Foobar is running\n"); */
-        /*     m_playerRunning = true; */
-
-        /*     // Make check if the PID has changed since the last update, if so, */
-        /*     // We'll need to find the window handle again */
-        /*     if (foobarPID != m_playerPID) { */
-        /*         // Find window handle */
-        /*     } */
-
-        /*     m_playerPID = foobarPID; */
-        /* } */
-        // Enumerate all the currently open windows, searching for the music player
-        EnumWindows(EnumWindowsProc, 0);
+        // Get the window class name for the player if it hasn't yet been set
+        if (m_playerWindowClassName.size() == 0) {
+            // Encode the this pointer into lParam so the proc can access members
+            EnumWindows(MusicMeasure::EnumWindowsProc, reinterpret_cast<LPARAM>(this));
+        } else {
+            // Check if the player window is currently open by matching the class name
+            m_playerHandle = FindWindow(m_playerWindowClassName.c_str(), nullptr);
+            if (!m_playerHandle) {
+                m_playerRunning = false;
+            } else {
+                m_playerRunning = true;
+            }
+        }
     }
 }
 
-BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM) {
-    char title[80];
-    char windowClass[80];
+BOOL CALLBACK MusicMeasure::EnumWindowsProc(HWND hwnd, LPARAM lParam) {
+    auto This{ reinterpret_cast<MusicMeasure*>(lParam) };
+
+    char title[256];
+    char windowClass[256];
     GetClassName(hwnd, windowClass, sizeof(windowClass));
     GetWindowText(hwnd, title, sizeof(title));
 
-    //printf("%s\n", title);
-    //printf("%s\n", windowClass);
-    //fflush(stdout);
+    std::string className{ title };
+    if (className.find(This->m_playerTitlePattern) != std::string::npos) {
+        This->m_playerWindowClassName = std::string{ windowClass };
+        This->m_playerHandle = hwnd;
+        This->m_playerRunning = true;
 
+        return FALSE;
+    }
     return TRUE;
 }
 
