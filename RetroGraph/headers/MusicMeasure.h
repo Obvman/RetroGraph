@@ -32,12 +32,21 @@ public:
 
     /* Returns true if the music player window is currently running */
     bool isPlayerRunning() const { return m_playerRunning; }
+
+    bool isMusicPlaying() const { return m_isPlaying; }
+    const std::string& getTrackName() const { return m_trackName; }
+    const std::string& getArtist() const { return m_artist; };
+    const std::string& getAlbum() const { return m_album; };
 private:
     /* Called for each window running in the operating system. Tries to find
      * the music player by matching against the window title. If found, 
      * sets the player class name member
      */
     static BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam);
+
+    void updateTitleString();
+
+    void scrapeInfoFromTitle();
 
     const char* m_playerTitlePattern;
 
@@ -46,5 +55,13 @@ private:
     bool m_playerRunning;
     HWND m_playerHandle;
     std::string m_playerWindowClassName;
+    std::string m_playerWindowTitle;
+
+    // Current music status
+    bool m_isPlaying;
+    std::string m_trackName;
+    std::string m_artist;
+    std::string m_album;
+    // TODO timestamp/runtime
 };
 }

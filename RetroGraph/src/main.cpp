@@ -68,13 +68,17 @@ void mainLoop(rg::Window& mainWindow) {
 
         // Execute timed actions when the tick rolls over
         if (lastTick != ticks) {
+            /* rg::printTimeToExecuteHighRes("Update", [&]() { */
             mainWindow.update(ticks);
+            /* }); */
 
             // Draw according to the framerate
             if ((lastTick % std::lround(
                 static_cast<float>(rg::ticksPerSecond)/framesPerSecond)) == 0) {
 
+                /* rg::printTimeToExecuteHighRes("Draw", [&]() { */
                 mainWindow.draw(ticks);
+                /* }); */
             }
 
             lastTick = ticks;

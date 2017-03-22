@@ -1,17 +1,29 @@
 #include "../headers/MusicMeasure.h"
 
+#include <cstring>
+#include <iterator>
+#include <algorithm>
+#include <sstream>
+#include <vector>
 #include <stdio.h>
 
 #include "../headers/ProcessMeasure.h"
 
+#pragma warning(disable : 4996)
+
 namespace rg {
 
 MusicMeasure::MusicMeasure(const ProcessMeasure* procMeasure) :
-    m_playerTitlePattern{ "[foobar2000 v1." },
+    m_playerTitlePattern{ "foobar2000 v1.3." },
     m_processMeasure{ procMeasure },
     m_playerRunning{ false },
     m_playerHandle{ nullptr },
-    m_playerWindowClassName{ "" } {
+    m_playerWindowClassName{ "" },
+    m_playerWindowTitle{ "" },
+    m_isPlaying{ false },
+    m_trackName{ "" },
+    m_artist{ "" },
+    m_album{ "" } {
 
 }
 
@@ -20,24 +32,123 @@ MusicMeasure::~MusicMeasure() {
 }
 
 void MusicMeasure::init() {
-    EnumWindows(MusicMeasure::EnumWindowsProc, reinterpret_cast<LPARAM>(this));
+    update(0);
 }
 
 void MusicMeasure::update(uint32_t ticks) {
-    if ((ticks % (ticksPerSecond * 5)) == 0) {
-        // Get the window class name for the player if it hasn't yet been set
-        if (m_playerWindowClassName.size() == 0) {
-            // Encode the this pointer into lParam so the proc can access members
-            EnumWindows(MusicMeasure::EnumWindowsProc, reinterpret_cast<LPARAM>(this));
-        } else {
-            // Check if the player window is currently open by matching the class name
-            m_playerHandle = FindWindow(m_playerWindowClassName.c_str(), nullptr);
-            if (!m_playerHandle) {
-                m_playerRunning = false;
+    if ((ticks % (ticksPerSecond * 1)) == 0) {
+        if ((ticks % (ticksPerSecond * 5)) == 0) {
+            // Get the window class name for the player if it hasn't yet been set
+            if (m_playerWindowClassName.size() == 0) {
+                // Encode the this pointer into lParam so the proc can access members
+                EnumWindows(MusicMeasure::EnumWindowsProc, reinterpret_cast<LPARAM>(this));
             } else {
-                m_playerRunning = true;
+                // Check if the player window is currently open by matching the class name
+                m_playerHandle = FindWindow(m_playerWindowClassName.c_str(), nullptr);
+                if (!m_playerHandle) {
+                    m_playerRunning = false;
+                } else {
+                    m_playerRunning = true;
+
+                }
             }
         }
+        if (m_playerRunning) {
+            updateTitleString();
+            scrapeInfoFromTitle();
+        }
+    }
+}
+
+void MusicMeasure::updateTitleString() {
+    // Get the title string
+    const auto titleLen{ GetWindowTextLength(m_playerHandle) + 1 };
+    if ((titleLen - 1) == 0) {
+        fatalMessageBox("Failed to get player title length");
+    } 
+
+    m_playerWindowTitle.resize(titleLen);
+    if (!GetWindowText(m_playerHandle, &m_playerWindowTitle[0], titleLen)) {
+        fatalMessageBox("Failed to get music player window title");
+    }
+    // Resize to avoid double NULL terminators
+    m_playerWindowTitle.resize(titleLen-1);
+}
+
+template<typename Out>
+void split(const std::string& s, char delim, Out result) {
+    std::stringstream ss;
+    ss.str(s);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        *(result++) = item;
+    }
+}
+
+std::vector<std::string> split(const std::string& s, char delim) {
+    std::vector<std::string> elems;
+    split(s, delim, std::back_inserter(elems));
+    return elems;
+}
+
+void MusicMeasure::scrapeInfoFromTitle() {
+    std::vector<std::string> tokens{};
+
+    char title[256];
+    // Copy and null-terminate
+    title[m_playerWindowTitle.copy(title, sizeof(title), 0)] = '\0';
+    const char* delim{ "|" };
+    char* nextToken;
+    char* whitespace{ "\n \t" };
+
+    char* token{ strtok_s(title, delim, &nextToken) };
+    // Split each section (deliminated by |) of the title into the token vector
+    while (token) {
+        auto tokenStr = std::string{ token };
+        // Trim leading whitespace and add to the token vector
+        const auto begin{ tokenStr.find_first_not_of(whitespace) };
+        if (begin != std::string::npos) {
+            tokens.emplace_back(tokenStr.substr(begin, tokenStr.size()));
+        } else {
+            // Empty regions (e.g. song with no album/artist)
+            tokens.emplace_back("-");
+        }
+
+        token = strtok_s(nullptr, delim, &nextToken);
+    }
+
+    // The last element of the vector contains the player version which we don't
+    // need, so pop it off
+    tokens.pop_back();
+
+    // Handle case where player is open but no song is playing
+    if (tokens.size() == 0) {
+        m_isPlaying = false;
+        m_trackName = "-";
+        m_artist = "-";
+        m_album = "-";
+        return;
+    }
+
+    // Assume token ordering of: track name, artist, album+track number, playstate
+    m_trackName = tokens[0];
+
+    // Handle non-existing cases for album/artist
+    if (tokens[1] == "-") {
+        m_artist.clear();
+    } else {
+        m_artist = tokens[1];
+    }
+    if (tokens[2] == "-") {
+        m_album.clear();
+    } else {
+        m_album = tokens[2];
+    }
+
+    if (tokens[3] == "Playing") {
+        m_isPlaying = true;
+    } else {
+        m_isPlaying = false;
     }
 }
 
@@ -49,11 +160,12 @@ BOOL CALLBACK MusicMeasure::EnumWindowsProc(HWND hwnd, LPARAM lParam) {
     GetClassName(hwnd, windowClass, sizeof(windowClass));
     GetWindowText(hwnd, title, sizeof(title));
 
-    std::string className{ title };
-    if (className.find(This->m_playerTitlePattern) != std::string::npos) {
+    std::string windowTitle{ title };
+    if (windowTitle.find(This->m_playerTitlePattern) != std::string::npos) {
         This->m_playerWindowClassName = std::string{ windowClass };
         This->m_playerHandle = hwnd;
         This->m_playerRunning = true;
+        This->m_playerWindowTitle = windowTitle;
 
         return FALSE;
     }

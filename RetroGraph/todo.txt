@@ -14,8 +14,6 @@ colour code high usage processes
 
 hdd read/write usage
 
-media - foobar status
-
 volume, current sound output level bar - IAudioPeakMeter
 
 3D effects on graph
@@ -52,3 +50,5 @@ and stutter draw times for different draw frequencies
 
 // LOW
 use offset updates to avoid CPU spikes
+
+Foobar status format=%title% | [%album artist% | ][%album%[ CD%discnumber%][ #%tracknumber%]] | $if(%ispaused%,Paused,Playing)

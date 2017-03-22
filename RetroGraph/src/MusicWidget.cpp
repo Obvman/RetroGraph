@@ -34,8 +34,13 @@ void MusicWidget::draw() const {
     drawBottomSerifLine(-1.0f, 1.0f);
 
     if (m_musicMeasure->isPlayerRunning()) {
-        m_fontManager->renderLine(RG_FONT_TIME, "FOOBAR", 0, 0, 0, 0,
-                RG_ALIGN_TOP | RG_ALIGN_LEFT, 10, 10);
+        std::vector<std::string> strings;
+        strings.push_back(m_musicMeasure->getTrackName());
+        strings.push_back(m_musicMeasure->getArtist());
+        strings.push_back(m_musicMeasure->getAlbum());
+
+        m_fontManager->renderLines(RG_FONT_STANDARD, strings, 0, 0, 0, 0,
+                RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT, 10, 10);
     }
 }
 
