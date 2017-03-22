@@ -77,7 +77,7 @@ void CPUStatsWidget::drawStats() const {
         constexpr auto topY = float{ 0.7f };
         constexpr auto rangeY { topY - bottomY };
         constexpr auto barStartX{ ((2.0f - barWidth) / 2.0f) - 1.0f };
-        const auto percentage{ m_cpuMeasure->getTemp(i) / maxTemp };
+        const auto percentage = float{ m_cpuMeasure->getTemp(i) / m_cpuMeasure->getTjMax() };
 
         // Draw the Core temperature bar
         glBegin(GL_QUADS); {

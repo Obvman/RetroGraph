@@ -46,6 +46,9 @@ public:
     /* Returns the temperature of the specified core */
     float getTemp(uint32_t coreNum) const { return m_coreTempPlugin.getTemp(coreNum); }
 
+    /* Returns the maximum allowable CPU temperature in degrees celsius */
+    uint32_t getTjMax() const { return m_coreTempPlugin.getTjMax(); }
+
     /* Gets description of the CPU model */
     const std::string& getCPUName() const { return m_cpuName; }
 

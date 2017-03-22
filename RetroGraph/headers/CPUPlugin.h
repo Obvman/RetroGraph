@@ -38,6 +38,9 @@ public:
     /* Returns the current load of the given core as an integer from 0-100 */
     uint32_t getLoad(uint32_t coreNum) const { return m_ctData.uiLoad[coreNum]; }
 
+    /* Returns the maximum allowable CPU temperature in degrees celsius */
+    uint32_t getTjMax() const { return m_ctData.uiTjMax[0]; }
+
     /* Returns true if the latest update managed to successfully fill the
        CORE_TEMP_SHARED_DATA struct */
     bool getCoreTempInfoSuccess() const { return m_getCoreTempInfoSuccess; }
