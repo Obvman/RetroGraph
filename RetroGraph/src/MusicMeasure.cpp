@@ -23,7 +23,9 @@ MusicMeasure::MusicMeasure(const ProcessMeasure* procMeasure) :
     m_isPlaying{ false },
     m_trackName{ "" },
     m_artist{ "" },
-    m_album{ "" } {
+    m_album{ "" },
+    m_elapsedTime{ 0U },
+    m_totalTime{ 0U } {
 
 }
 
@@ -132,6 +134,13 @@ void MusicMeasure::scrapeInfoFromTitle() {
     } else {
         m_isPlaying = false;
     }
+
+    auto& timeProgress{ tokens[4] };
+    const char* elapsed = strtok_s(&timeProgress[0], ",", &nextToken);
+    const char* total = strtok_s(nullptr, ",", &nextToken);
+    m_elapsedTime = std::stoi(elapsed);
+    m_totalTime = std::stoi(total);
+
 }
 
 BOOL CALLBACK MusicMeasure::EnumWindowsProc(HWND hwnd, LPARAM lParam) {

@@ -41,7 +41,8 @@ void FontManager::init(HWND hWnd, uint32_t windowHeight) {
     createFont(standardFontHeight, FW_BOLD, typefaces[0], RG_FONT_STANDARD_BOLD);
     createFont(72, FW_NORMAL, typefaces[7], RG_FONT_TIME);
     createFont(7*standardFontHeight/8, FW_NORMAL, typefaces[1], RG_FONT_SMALL);
-    createFont(standardFontHeight*3, FW_BOLD, typefaces[7], RG_FONT_MUSIC_LARGE);
+    createFont(3*standardFontHeight/2, FW_BOLD, typefaces[0], RG_FONT_MUSIC_LARGE);
+    createFont(standardFontHeight, FW_BOLD, typefaces[7], RG_FONT_MUSIC);
 
     // Set default font
     glListBase(m_fontBases[RG_FONT_STANDARD]);
@@ -97,11 +98,12 @@ void FontManager::renderLine(RGFONTCODE fontCode,
 
     // Handle vertical alignment
     if (alignFlags & RG_ALIGN_CENTERED_VERTICAL) {
-        const auto descent{ m_fontCharDescents[fontCode] };
-        const auto drawYPx{ (areaHeight - fontHeightPx) / 2 };
-        rasterY = pixelsToVPCoords(drawYPx + descent, areaHeight);
+        const auto drawYMidPx{ (areaHeight - fontHeightPx) / 2 };
+        rasterY = pixelsToVPCoords(drawYMidPx + m_fontCharDescents[fontCode], 
+                                   areaHeight);
     } else if (alignFlags & RG_ALIGN_BOTTOM) {
-        rasterY = pixelsToVPCoords(alignMarginY + m_fontCharDescents[fontCode], areaHeight);
+        rasterY = pixelsToVPCoords(alignMarginY + m_fontCharDescents[fontCode],
+                                   areaHeight);
     } else if (alignFlags & RG_ALIGN_TOP) {
         rasterY = pixelsToVPCoords(areaHeight - m_fontCharAscents[fontCode] - alignMarginY,
                                    areaHeight);
@@ -119,11 +121,12 @@ void FontManager::renderLine(RGFONTCODE fontCode,
             newText[i] = text[i];
             newStrWidthPx += m_fontCharWidths[fontCode][newText[i]];
 
+            // If we've gone over, remove last character and replace chars before
+            // with ellipses
             if (newStrWidthPx > areaWidth - alignMarginX) {
                 newText[i] = '\0';
                 newText[i-1] = '.';
                 newText[i-2] = '.';
-                newText[i-3] = '.';
                 break;
             }
         }
@@ -250,8 +253,14 @@ void FontManager::setFontCharacteristics(RGFONTCODE c, HDC hdc) {
 uint32_t FontManager::calculateStringWidth(const char* text, size_t textLen, 
                                           RGFONTCODE c) const {
     auto strWidthPx = int32_t{ 0 };
-    for (auto i = size_t{ 0U }; i < textLen; ++i)
-        strWidthPx += m_fontCharWidths[c][text[i]];
+    for (auto i = size_t{ 0U }; i < textLen; ++i) {
+        // Make sure the character is in range, if not, add default value
+        if (text[i] > RG_NUM_CHARS_IN_FONT || text[i] < 0) {
+            strWidthPx += m_fontCharWidths[c][0];
+        } else {
+            strWidthPx += m_fontCharWidths[c][text[i]];
+        }
+    }
     return strWidthPx;
 }
 

@@ -37,8 +37,9 @@ constexpr size_t RG_FONT_STANDARD_BOLD{ 1U };
 constexpr size_t RG_FONT_TIME{ 2U };
 constexpr size_t RG_FONT_SMALL{ 3U };
 constexpr size_t RG_FONT_MUSIC_LARGE{ 4U };
+constexpr size_t RG_FONT_MUSIC{ 5U };
 
-constexpr size_t RG_NUM_FONTS{ 5U };
+constexpr size_t RG_NUM_FONTS{ 6U };
 
 class FontManager {
 public:

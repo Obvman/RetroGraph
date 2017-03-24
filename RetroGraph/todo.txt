@@ -53,4 +53,4 @@ and stutter draw times for different draw frequencies
 // LOW
 use offset updates to avoid CPU spikes
 
-Foobar status format=%title% | [%album artist% | ][%album%[ CD%discnumber%][ #%tracknumber%]] | $if(%ispaused%,Paused,Playing)
+Foobar status format=%title% | [%album artist%] | [%album%[ CD%discnumber%][ #%tracknumber%]] | $if(%ispaused%,Paused,Playing) | [%_time_elapsed_seconds%, %_time_total_seconds%] | 

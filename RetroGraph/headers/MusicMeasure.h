@@ -35,8 +35,10 @@ public:
 
     bool isMusicPlaying() const { return m_isPlaying; }
     const std::string& getTrackName() const { return m_trackName; }
-    const std::string& getArtist() const { return m_artist; };
-    const std::string& getAlbum() const { return m_album; };
+    const std::string& getArtist() const { return m_artist; }
+    const std::string& getAlbum() const { return m_album; }
+    uint32_t getElapsedTime() const { return m_elapsedTime; }
+    uint32_t getTotalTime() const { return m_totalTime; }
 private:
     /* Called for each window running in the operating system. Tries to find
      * the music player by matching against the window title. If found, 
@@ -63,5 +65,7 @@ private:
     std::string m_artist;
     std::string m_album;
     // TODO timestamp/runtime
+    uint32_t m_elapsedTime;
+    uint32_t m_totalTime;
 };
 }
