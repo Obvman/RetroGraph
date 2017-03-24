@@ -71,28 +71,9 @@ void CPUStatsWidget::drawStats() const {
                    m_statsViewport.width / numCores,
                    m_statsViewport.height - fontHeight - bottomTextMargin);
 
-        constexpr auto maxTemp = float{ 100.0f };
-        constexpr auto barWidth = float{ 0.3f };
-        constexpr auto bottomY = float{ -0.7f };
-        constexpr auto topY = float{ 0.7f };
-        constexpr auto rangeY { topY - bottomY };
-        constexpr auto barStartX{ ((2.0f - barWidth) / 2.0f) - 1.0f };
-        const auto percentage = float{ m_cpuMeasure->getTemp(i) / m_cpuMeasure->getTjMax() };
-
-        // Draw the Core temperature bar
-        glBegin(GL_QUADS); {
-            glColor3f(BARFILLED_R, BARFILLED_G, BARFILLED_B);
-            glVertex2f(barStartX, bottomY);
-            glVertex2f(barStartX,  bottomY + percentage * rangeY);
-            glVertex2f(barStartX + barWidth, bottomY + percentage * rangeY);
-            glVertex2f(barStartX + barWidth, bottomY);
-
-            glColor3f(BARFREE_R, BARFREE_G, BARFREE_B);
-            glVertex2f(barStartX, bottomY + percentage * rangeY);
-            glVertex2f(barStartX,  topY);
-            glVertex2f(barStartX + barWidth,  topY);
-            glVertex2f(barStartX + barWidth, bottomY + percentage * rangeY);
-        } glEnd();
+        drawVerticalProgressBar(0.3f, -0.7f, 0.7f,
+                m_cpuMeasure->getTemp(i), 
+                static_cast<float>(m_cpuMeasure->getTjMax()) );
 
         glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
         char coreBuff[3] = { 'C', '0' + static_cast<char>(i), '\0' };

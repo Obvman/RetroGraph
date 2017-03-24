@@ -52,41 +52,15 @@ void MusicWidget::draw() const {
                 0, 0, 0, 0, RG_ALIGN_BOTTOM | RG_ALIGN_CENTERED_HORIZONTAL,
                 10, 30);
 
-        // Draw the progression bar
         glViewport(m_viewport.x, m_viewport.y,
                    m_viewport.width, m_viewport.height/4);
-        drawProgressBar();
+        drawHorizontalProgressBar(0.3f, -0.8f, 0.8f, 
+                static_cast<float>(m_musicMeasure->getElapsedTime()), 
+                static_cast<float>(m_musicMeasure->getTotalTime()));
     } else {
         m_fontManager->renderLine(RG_FONT_TIME, "No Media", 0, 0, 0, 0,
                 RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_CENTERED_HORIZONTAL, 10, 10);
     }
 }
-
-void MusicWidget::drawProgressBar() const {
-    const auto elapsed{ m_musicMeasure->getElapsedTime() };
-    const auto total{ m_musicMeasure->getTotalTime() };
-
-    const auto percentage = float{ (static_cast<float>(elapsed) / total) };
-    constexpr auto barWidth = float{ 0.3f };
-    constexpr auto startX = float{ -0.8f };
-    constexpr auto endX = float{ 0.8f };
-    constexpr auto rangeX{ endX - startX };
-    const float barStartY{ ((2.0f - barWidth) / 2.0f) - 1.0f };
-
-    glBegin(GL_QUADS); {
-        glColor3f(BARFILLED_R, BARFILLED_G, BARFILLED_B);
-        glVertex2f(startX,                       barStartY);
-        glVertex2f(startX,                       barStartY + barWidth);
-        glVertex2f(startX + percentage * rangeX, barStartY + barWidth);
-        glVertex2f(startX + percentage * rangeX, barStartY);
-
-        glColor3f(BARFREE_R, BARFREE_G, BARFREE_B);
-        glVertex2f(startX + percentage * rangeX, barStartY);
-        glVertex2f(startX + percentage * rangeX, barStartY + barWidth);
-        glVertex2f(endX,                         barStartY + barWidth);
-        glVertex2f(endX,                         barStartY);
-    } glEnd();
-}
-
 
 }

@@ -109,6 +109,49 @@ void drawViewportBorder() {
     glLineWidth(lineWidth);
 }
 
+void drawVerticalProgressBar(float barWidth, float startY, float endY,
+                             float currValue, float totalValue) {
+    const auto percentage{ currValue / totalValue };
+    const auto startX = float{ ((2.0f - barWidth) / 2.0f) - 1.0f };
+    const auto rangeY{ endY - startY };
+
+    glBegin(GL_QUADS); {
+        glColor3f(BARFILLED_R, BARFILLED_G, BARFILLED_B);
+        glVertex2f(startX, startY);
+        glVertex2f(startX, startY + percentage * rangeY);
+        glVertex2f(startX + barWidth, startY + percentage * rangeY);
+        glVertex2f(startX + barWidth, startY);
+
+        glColor3f(BARFREE_R, BARFREE_G, BARFREE_B);
+        glVertex2f(startX, startY + percentage * rangeY);
+        glVertex2f(startX, endY);
+        glVertex2f(startX + barWidth, endY);
+        glVertex2f(startX + barWidth, startY + percentage * rangeY);
+    } glEnd();
+}
+
+void drawHorizontalProgressBar(float barWidth, float startX, float endX,
+                               float currValue, float totalValue) {
+
+    const auto percentage{ currValue / totalValue };
+    const auto barStartY = float{ ((2.0f - barWidth) / 2.0f) - 1.0f };
+    const auto rangeX{ endX - startX };
+
+    glBegin(GL_QUADS); {
+        glColor3f(BARFILLED_R, BARFILLED_G, BARFILLED_B);
+        glVertex2f(startX,                       barStartY);
+        glVertex2f(startX,                       barStartY + barWidth);
+        glVertex2f(startX + percentage * rangeX, barStartY + barWidth);
+        glVertex2f(startX + percentage * rangeX, barStartY);
+
+        glColor3f(BARFREE_R, BARFREE_G, BARFREE_B);
+        glVertex2f(startX + percentage * rangeX, barStartY);
+        glVertex2f(startX + percentage * rangeX, barStartY + barWidth);
+        glVertex2f(endX,                         barStartY + barWidth);
+        glVertex2f(endX,                         barStartY);
+    } glEnd();
+}
+
 void drawSerifLine(GLfloat x1, GLfloat x2, GLfloat y) {
     glBegin(GL_LINES); {
         glVertex2f(x1, y);

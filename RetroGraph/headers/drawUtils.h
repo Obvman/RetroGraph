@@ -44,6 +44,14 @@ void drawGraphGrid();
 void drawBorder();
 void drawViewportBorder();
 
+/* Draws a vertical bar that is centerred horizontally in the current viewport */
+void drawVerticalProgressBar(float barWidth, float startY, float endY,
+                             float currValue, float totalValue);
+
+/* Draws a horizontal bar that is centerred vertically in the current viewport */
+void drawHorizontalProgressBar(float barWidth, float startX, float endX,
+                               float currValue, float totalValue);
+
 // Primitive drawing
 void drawSerifLine(GLfloat x1, GLfloat x2, GLfloat y);
 void drawTopSerifLine(GLfloat x1, GLfloat x2);

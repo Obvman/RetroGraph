@@ -55,27 +55,9 @@ void HDDWidget::draw() const {
                                   0, 0, 0, 0,
                                   RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_TOP,
                                   0, 10);
-
-        const auto percentage{ static_cast<float>(drives[i]->getUsedBytes()) /
-                               drives[i]->getTotalBytes() };
-        constexpr auto barWidth = float{ 0.3f };
-        constexpr auto bottomY = float{ -0.5f };
-        constexpr auto topY = float{ 0.5f };
-        constexpr auto rangeY{ topY - bottomY };
-        const float barStartX{ ((2.0f - barWidth) / 2.0f) - 1.0f };
-        glBegin(GL_QUADS); {
-            glColor3f(BARFILLED_R, BARFILLED_G, BARFILLED_B);
-            glVertex2f(barStartX, bottomY);
-            glVertex2f(barStartX, bottomY + percentage * rangeY);
-            glVertex2f(barStartX + barWidth, bottomY + percentage * rangeY);
-            glVertex2f(barStartX + barWidth, bottomY);
-
-            glColor3f(BARFREE_R, BARFREE_G, BARFREE_B);
-            glVertex2f(barStartX, bottomY + percentage * rangeY);
-            glVertex2f(barStartX, topY);
-            glVertex2f(barStartX + barWidth, topY);
-            glVertex2f(barStartX + barWidth, bottomY + percentage * rangeY);
-        } glEnd();
+        drawVerticalProgressBar(0.3f, -0.5f, 0.5f,
+                static_cast<float>(drives[i]->getUsedBytes()), 
+                static_cast<float>(drives[i]->getTotalBytes()));
     }
 }
 

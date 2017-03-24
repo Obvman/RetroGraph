@@ -21,8 +21,6 @@ public:
               Viewport viewport);
 
 private:
-    void drawProgressBar() const;
-
     const FontManager* m_fontManager;
     Viewport m_viewport;
 
