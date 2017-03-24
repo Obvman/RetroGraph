@@ -37,23 +37,21 @@ void MusicMeasure::init() {
 
 void MusicMeasure::update(uint32_t ticks) {
     if ((ticks % (ticksPerSecond * 1)) == 0) {
-        if ((ticks % (ticksPerSecond * 5)) == 0) {
-            // Get the window class name for the player if it hasn't yet been set
-            if (m_playerWindowClassName.size() == 0) {
-                // Encode the this pointer into lParam so the proc can access members
-                EnumWindows(MusicMeasure::EnumWindowsProc, reinterpret_cast<LPARAM>(this));
-            } else {
-                // Check if the player window is currently open by matching the class name
-                m_playerHandle = FindWindow(m_playerWindowClassName.c_str(), nullptr);
-                if (!m_playerHandle) {
-                    m_playerRunning = false;
-                } else {
-                    m_playerRunning = true;
-
-                }
-            }
+        // Get the window class name for the player if it hasn't yet been set
+        // Encode the this pointer into lParam so the proc can access members
+        if ((ticks % (ticksPerSecond * 5)) == 0 &&
+            (m_playerWindowClassName.size() == 0)) {
+            EnumWindows(MusicMeasure::EnumWindowsProc, reinterpret_cast<LPARAM>(this));
         }
-        if (m_playerRunning) {
+
+        // Check if the player window is currently open by matching the class name
+        // We must validate existence of window every time before we scrape
+        // title information
+        m_playerHandle = FindWindow(m_playerWindowClassName.c_str(), nullptr);
+        if (!m_playerHandle) {
+            m_playerRunning = false;
+        } else {
+            m_playerRunning = true;
             updateTitleString();
             scrapeInfoFromTitle();
         }
@@ -73,22 +71,6 @@ void MusicMeasure::updateTitleString() {
     }
     // Resize to avoid double NULL terminators
     m_playerWindowTitle.resize(titleLen-1);
-}
-
-template<typename Out>
-void split(const std::string& s, char delim, Out result) {
-    std::stringstream ss;
-    ss.str(s);
-    std::string item;
-    while (std::getline(ss, item, delim)) {
-        *(result++) = item;
-    }
-}
-
-std::vector<std::string> split(const std::string& s, char delim) {
-    std::vector<std::string> elems;
-    split(s, delim, std::back_inserter(elems));
-    return elems;
 }
 
 void MusicMeasure::scrapeInfoFromTitle() {

@@ -31,12 +31,14 @@ enum RG_ALIGN {
 };
 
 constexpr size_t RG_NUM_CHARS_IN_FONT{ 256 };
+
 constexpr size_t RG_FONT_STANDARD{ 0U };
 constexpr size_t RG_FONT_STANDARD_BOLD{ 1U };
 constexpr size_t RG_FONT_TIME{ 2U };
 constexpr size_t RG_FONT_SMALL{ 3U };
+constexpr size_t RG_FONT_MUSIC_LARGE{ 4U };
 
-constexpr size_t RG_NUM_FONTS{ 4U };
+constexpr size_t RG_NUM_FONTS{ 5U };
 
 class FontManager {
 public:
@@ -103,8 +105,10 @@ private:
     void createFont(uint32_t fontHeight, int32_t weight, const char* typeface,
                     RGFONTCODE code);
     void setFontCharacteristics(RGFONTCODE c, HDC hdc);
-    int32_t calculateStringWidth(const char* text, size_t textLen,
+    uint32_t calculateStringWidth(const char* text, size_t textLen,
                                  RGFONTCODE c) const;
+    float getRasterXAlignment(int32_t alignFlags, uint32_t strWidthPx, 
+                              uint32_t areaWidth, uint32_t alignMargin) const;
 
     HWND m_hWnd;
     std::array<GLuint, RG_NUM_FONTS> m_fontBases;

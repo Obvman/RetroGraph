@@ -39,9 +39,18 @@ void MusicWidget::draw() const {
         strings.push_back(m_musicMeasure->getArtist());
         strings.push_back(m_musicMeasure->getAlbum());
 
-        m_fontManager->renderLines(RG_FONT_STANDARD, strings, 0, 0, 0, 0,
+        m_fontManager->renderLine(RG_FONT_STANDARD, strings[0].c_str(), 0, 0, 0, 0,
                 RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT, 10, 10);
+        m_fontManager->renderLine(RG_FONT_STANDARD, strings[1].c_str(), 0, 0, 0, 0,
+                RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT, 10, 10);
+        m_fontManager->renderLine(RG_FONT_STANDARD, strings[2].c_str(), 0, 0, 0, 0,
+                RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT, 10, 10);
+    } else {
+        m_fontManager->renderLine(RG_FONT_MUSIC_LARGE, "No Media Playing", 0, 0, 0, 0,
+                RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_CENTERED_HORIZONTAL, 10, 10);
     }
+
+
 }
 
 
