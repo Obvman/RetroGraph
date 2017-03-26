@@ -38,9 +38,9 @@ constexpr float RED_R{ 0xFF / 255.0f };
 constexpr float RED_G{ 0x00 / 255.0f };
 constexpr float RED_B{ 0x00 / 255.0f };
 
-constexpr float TEXT_R{ WHITE_R };
-constexpr float TEXT_G{ WHITE_G };
-constexpr float TEXT_B{ WHITE_B };
+constexpr float TEXT_R{ 0.8f };
+constexpr float TEXT_G{ 1.0f };
+constexpr float TEXT_B{ 0.8f };
 constexpr float TEXT_A{ 0.7f };
 
 constexpr float WARNING_TEXT_R{ RED_R };

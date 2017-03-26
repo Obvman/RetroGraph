@@ -5,7 +5,7 @@
 
 namespace rg {
 
-constexpr uint32_t maxVolumeNameSize{ 64U };
+constexpr auto maxVolumeNameSize = uint32_t{ 64U };
 
 /* Stores information about a single system fixed drive (SSD, HDD etc) */
 class DriveInfo {

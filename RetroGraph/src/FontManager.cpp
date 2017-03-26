@@ -256,7 +256,7 @@ uint32_t FontManager::calculateStringWidth(const char* text, size_t textLen,
     for (auto i = size_t{ 0U }; i < textLen; ++i) {
         // Make sure the character is in range, if not, add default value
         if (text[i] > RG_NUM_CHARS_IN_FONT || text[i] < 0) {
-            strWidthPx += m_fontCharWidths[c][0];
+            strWidthPx += m_fontCharWidths[c]['A'];
         } else {
             strWidthPx += m_fontCharWidths[c][text[i]];
         }
