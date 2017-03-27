@@ -259,8 +259,13 @@ void Window::init() {
 }
 
 void Window::update(uint32_t ticks) {
-    for (const auto& pMeasure : m_measures)
-        pMeasure->update(ticks);
+    // Update with a tick offset so all measures don't update in the same
+    // cycle
+    auto i = uint32_t{ 0U };
+    for (const auto& pMeasure : m_measures) {
+        pMeasure->update(ticks + i);
+        ++i;
+    }
 }
 
 void Window::draw(uint32_t ticks) const {
