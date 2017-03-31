@@ -11,29 +11,6 @@ namespace rg {
 
 const std::string iniPath{ ((IsDebuggerPresent()) ? "resources\\config.ini" : "..\\RetroGraph\\resources\\config.ini") };
 
-struct MonitorInfo {
-    MonitorInfo(int32_t _index) : index{ _index }, handle{ nullptr } {}
-
-    int32_t index{ -1 };
-    HMONITOR handle{ nullptr };
-};
-
-BOOL CALLBACK MonitorCallback(HMONITOR hMonitor,
-                              HDC,
-                              LPRECT,
-                              LPARAM dwData) {
-    static int32_t monCount{ 0 };
-
-    auto info{ reinterpret_cast<MonitorInfo*>(dwData) };
-
-    if (info->index == monCount) {
-        info->handle = hMonitor;
-    }
-
-    ++monCount;
-    return TRUE;
-}
-
 
 UserSettings::UserSettings() :
     m_windowWidth{ 1920U },
@@ -77,30 +54,6 @@ void UserSettings::init() {
     } catch (const pt::ini_parser_error&) {
         generateDefaultFile(propTree);
     }
-
-    // Get handle to the monitor that the window will be created on
-    MonitorInfo info{ m_startupMonitor };
-    if (!EnumDisplayMonitors(nullptr, nullptr, MonitorCallback, (LPARAM)&info)) {
-        fatalMessageBox("Failed to enumerate monitors");
-    }
-    if (!info.handle) {
-        fatalMessageBox("Failed to get handle for monitor " + std::to_string(m_startupMonitor));
-    }
-
-    // If the window height/width values are 0, get the workspace area of the
-    // monitor as the window resolution
-    if (m_windowWidth == 0U || m_windowHeight == 0U) {
-        MONITORINFO monitorInfo;
-        monitorInfo.cbSize = sizeof(MONITORINFO);
-        GetMonitorInfo(info.handle, &monitorInfo);
-
-
-        m_windowHeight = monitorInfo.rcWork.bottom - monitorInfo.rcWork.top;
-        m_windowWidth = monitorInfo.rcWork.right - monitorInfo.rcWork.left;
-        m_createWindowX = monitorInfo.rcWork.left;
-        m_createWindowY = monitorInfo.rcWork.top;
-    }
-
 }
 
 void UserSettings::generateDefaultFile(pt::ptree& propTree) {

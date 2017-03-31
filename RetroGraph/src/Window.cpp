@@ -26,8 +26,7 @@ namespace rg {
 
 constexpr int32_t ID_EXIT{ 1 };
 constexpr int32_t ID_SEND_TO_BACK{ 2 };
-constexpr int32_t ID_RESET_POS{ 3 };
-constexpr int32_t ID_CHANGE_DISPLAY_MONITOR{ 4 };
+constexpr int32_t ID_CHANGE_DISPLAY_MONITOR{ 3 };
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -93,10 +92,6 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
                     RECT wndRect;
                     GetWindowRect(hWnd, &wndRect);
                     SetWindowPos(hWnd, HWND_BOTTOM, wndRect.left, wndRect.top,
-                                 m_width, m_height, 0);
-                    break;
-                case ID_RESET_POS:
-                    SetWindowPos(hWnd, HWND_BOTTOM, m_startPosX, m_startPosY,
                                  m_width, m_height, 0);
                     break;
                 // Default case handles monitor selection list
@@ -237,8 +232,6 @@ void Window::createRClickMenu(HWND hWnd, DWORD cursorX, DWORD cursorY) {
     auto hPopupMenu{ CreatePopupMenu() };
     InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_EXIT, "Exit");
     InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_SEND_TO_BACK, "Send to back");
-    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_RESET_POS, "Reset position");
-    //InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_CHANGE_DISPLAY_MONITOR, "Move monitor");
 
     // Create an option for each monitor
     const auto& md{ m_monitors.getMonitorData() };
@@ -248,7 +241,7 @@ void Window::createRClickMenu(HWND hWnd, DWORD cursorX, DWORD cursorY) {
         InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
                 ID_CHANGE_DISPLAY_MONITOR + i, optionName);
     }
-    
+
     SetForegroundWindow(hWnd);
 
     TrackPopupMenuEx(hPopupMenu, TPM_TOPALIGN | TPM_LEFTALIGN | TPM_RIGHTBUTTON,
@@ -260,10 +253,12 @@ void Window::init() {
     m_monitors.init();
     m_userSettings.init();
     m_currMonitor = m_userSettings.getStartupMonitor();
-    m_width = m_userSettings.getWindowWidth();
-    m_height = m_userSettings.getWindowHeight();
-    m_startPosX = m_userSettings.getWindowX();
-    m_startPosY = m_userSettings.getWindowY();
+
+    const auto& currMonitorData{ m_monitors.getMonitorData()[m_currMonitor] };
+    m_width = currMonitorData.width;
+    m_height = currMonitorData.height;
+    m_startPosX = currMonitorData.x;
+    m_startPosY = currMonitorData.y;
 
     createWindow();
 

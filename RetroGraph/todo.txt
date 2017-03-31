@@ -1,4 +1,3 @@
-rainmeter plugins github - https://github.com/rainmeter/rainmeter/tree/eeeef4a7f2695280ba3506e98a71d163e613b1da/Plugins
 
 network: show how many MB have been downloaded since retrograph started
 
@@ -6,9 +5,7 @@ Music widget:
     Play/paused indication
     make song name 2 lines if it's too long
 
-Dynamic window resizing!!!
-
-system event log measure (OpenEventLog())
+display information (resolution)
 
 g++ compilation!
 
