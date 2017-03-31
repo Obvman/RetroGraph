@@ -40,6 +40,12 @@ private:
     /* Creates the window and the OpenGL context */
     void createWindow();
 
+    /* Creates and displays program icon in the system tray */
+    void createTrayIcon();
+
+    /* Moves the window to the specified monitor and resizes elements to fit
+     * the monitor
+     */
     void changeMonitor(HWND hWnd, uint32_t monIndex);
 
     /* Initialises OpenGL settings and renderer */
@@ -61,19 +67,21 @@ private:
     /* Destroys the win32 window and releases resources */
     void destroy();
 
-    /* Creates the popup menu in response to a right click*/
-    void createRClickMenu(HWND hWnd, DWORD cursorX, DWORD cursorY);
-
     /* Decides whether a click sets the dragging state based on the colour
      * of the click position. Clicking the background of the window does not
      * allow dragging, clicking on a coloured pixel allows dragging
      */
     void handleClick(DWORD clickX, DWORD clickY);
 
+    /* Creates menu on interaction with notification tray icon
+     */
+    void handleTrayMessage(HWND hWnd, WPARAM wParam, LPARAM lParam);
+
     Monitors m_monitors;
     UserSettings m_userSettings;
 
     HINSTANCE m_hInstance;
+    NOTIFYICONDATA m_tray;
     bool m_dragging;
     int32_t m_currMonitor;
     uint32_t m_width;

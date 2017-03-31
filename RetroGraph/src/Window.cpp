@@ -7,6 +7,7 @@
 #include <GL/wglew.h>
 #include <GL/gl.h>
 #include <dwmapi.h>
+#include <Windowsx.h>
 #include <iostream>
 #include <thread>
 
@@ -23,6 +24,8 @@
 #include "../headers/SystemLogMeasure.h"
 
 namespace rg {
+
+constexpr int32_t WM_NOTIFY_RG_TRAY{ 3141 };
 
 constexpr int32_t ID_EXIT{ 1 };
 constexpr int32_t ID_SEND_TO_BACK{ 2 };
@@ -77,31 +80,10 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
             glViewport(0, 0, LOWORD(lParam), HIWORD(lParam));
             PostMessage(hWnd, WM_PAINT, 0, 0);
             return 0;
-        case WM_WINDOWPOSCHANGING:
+        case WM_NOTIFY_RG_TRAY:
+            handleTrayMessage(hWnd, wParam, lParam);
             break;
-        case WM_WINDOWPOSCHANGED:
-            break;
-        case WM_CREATE:
-            break;
-        case WM_COMMAND:
-            switch (LOWORD(wParam)) {
-                case ID_EXIT:
-                    SendMessage(hWnd, WM_QUIT, wParam, lParam);
-                    break;
-                case ID_SEND_TO_BACK:
-                    RECT wndRect;
-                    GetWindowRect(hWnd, &wndRect);
-                    SetWindowPos(hWnd, HWND_BOTTOM, wndRect.left, wndRect.top,
-                                 m_width, m_height, 0);
-                    break;
-                // Default case handles monitor selection list
-                default: {
-                    changeMonitor(hWnd, LOWORD(wParam) - ID_CHANGE_DISPLAY_MONITOR);
-                    break;
-                 }
-            }
-            break;
-        case WM_CONTEXTMENU: {
+        /*case WM_CONTEXTMENU: {
             int32_t contextSpawnX{ LOWORD(lParam) };
             int32_t contextSpawnY{ HIWORD(lParam) };
             // The lParam we receive is an unsigned int, but we can open
@@ -118,7 +100,7 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
             createRClickMenu(reinterpret_cast<HWND>(wParam),
                              contextSpawnX, contextSpawnY);
             return 0;
-        }
+        }*/
         case WM_NCHITTEST: {
             /*if (!m_dragging) {
                 POINT p;
@@ -173,8 +155,6 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
             }
             return 0;
         }
-        case WM_GETTEXT:
-            break;
         case WM_QUIT:
         case WM_CLOSE:
             PostQuitMessage(0);
@@ -228,24 +208,54 @@ void Window::changeMonitor(HWND hWnd, uint32_t monIndex) {
     }
 }
 
-void Window::createRClickMenu(HWND hWnd, DWORD cursorX, DWORD cursorY) {
-    auto hPopupMenu{ CreatePopupMenu() };
-    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_EXIT, "Exit");
-    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_SEND_TO_BACK, "Send to back");
+void Window::handleTrayMessage(HWND hWnd, WPARAM wParam, LPARAM lParam) {
+    switch (LOWORD(lParam)) {
+        case WM_RBUTTONUP:
+        case WM_LBUTTONUP: {
+            POINT p;
+            GetCursorPos(&p);
+            SetForegroundWindow(hWnd);
 
-    // Create an option for each monitor
-    const auto& md{ m_monitors.getMonitorData() };
-    for (auto i = size_t{ 0U }; i < md.size(); ++i) {
-        char optionName[] = "Move to display 0";
-        optionName[16] = '0' + static_cast<char>(i);
-        InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
-                ID_CHANGE_DISPLAY_MONITOR + i, optionName);
+            // Create options for popup menu
+            auto hPopupMenu{ CreatePopupMenu() };
+            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_EXIT, "Exit");
+            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_SEND_TO_BACK, "Send to back");
+
+            // Create an option for each monitor
+            const auto& md{ m_monitors.getMonitorData() };
+            for (auto i = size_t{ 0U }; i < md.size(); ++i) {
+                char optionName[] = "Move to display 0";
+                optionName[16] = '0' + static_cast<char>(i);
+                InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
+                        ID_CHANGE_DISPLAY_MONITOR + i, optionName);
+            }
+
+            // Display menu and wait for user's selection
+            const int32_t selection{ TrackPopupMenuEx(hPopupMenu,
+                    TPM_TOPALIGN | TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD,
+                    p.x, p.y, hWnd, nullptr) };
+
+            switch (selection) {
+                case ID_EXIT:
+                    SendMessage(hWnd, WM_QUIT, wParam, lParam);
+                    break;
+                case ID_SEND_TO_BACK:
+                    RECT wndRect;
+                    GetWindowRect(hWnd, &wndRect);
+                    SetWindowPos(hWnd, HWND_BOTTOM, wndRect.left, wndRect.top,
+                                 m_width, m_height, 0);
+                    break;
+                default:
+                    // Default case handles monitor selection list
+                     changeMonitor(hWnd, selection - ID_CHANGE_DISPLAY_MONITOR);
+                     break;
+            }
+
+            break;
+        }
+        default:
+            break;
     }
-
-    SetForegroundWindow(hWnd);
-
-    TrackPopupMenuEx(hPopupMenu, TPM_TOPALIGN | TPM_LEFTALIGN | TPM_RIGHTBUTTON,
-                     cursorX, cursorY, hWnd, nullptr);
 }
 
 void Window::init() {
@@ -351,11 +361,28 @@ void Window::createWindow() {
         fatalMessageBox("Failed to create OpenGL Window");
     }
 
+    createTrayIcon();
+
     initOpenGL();
 
     updateSize(m_width, m_height);
 
     ReleaseDC(m_hWndMain, m_hdc);
+}
+
+void Window::createTrayIcon() {
+    m_tray.cbSize = sizeof(m_tray);
+    m_tray.hIcon = LoadIcon(m_hInstance, MAKEINTRESOURCE(IDI_ICON1));
+    m_tray.hWnd = m_hWndMain;
+    m_tray.uVersion = NOTIFYICON_VERSION_4;
+    strcpy_s(m_tray.szTip, 128, "RetroGraph");
+    m_tray.uCallbackMessage = WM_NOTIFY_RG_TRAY;
+    m_tray.uFlags = NIF_ICON | NIF_TIP | NIF_MESSAGE;
+    m_tray.uID = 101;
+
+    if (!Shell_NotifyIcon(NIM_ADD, &m_tray)) {
+        fatalMessageBox("Failed to display notification icon");
+    } 
 }
 
 void Window::initOpenGL() {
@@ -396,7 +423,10 @@ bool Window::createHGLRC() {
 #endif
 
     if (m_arbMultisampleSupported) {
-        m_hWndMain = CreateWindowEx(WS_EX_APPWINDOW | WS_EX_TRANSPARENT,
+        // Create main window with clicking through to windows underneath, 
+        // no taskbar display, and transparency
+        m_hWndMain = CreateWindowEx(
+                WS_EX_TOOLWINDOW | WS_EX_COMPOSITED | WS_EX_TRANSPARENT | WS_EX_LAYERED,
                 "RetroGraph", windowName,
                 WS_VISIBLE | WS_POPUP,
                 m_startPosX, m_startPosY, m_width, m_height,

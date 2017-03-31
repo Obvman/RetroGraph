@@ -102,8 +102,9 @@ void NetMeasure::getMACAndLocalIP() {
 
     // Get the MAC address and LAN IP address of the main adapter
     if (GetAdaptersInfo(pAdapterInfo, &ulOutBufLen) == NO_ERROR) {
-        auto currAdapter{ pAdapterInfo };
-        while (currAdapter) {
+        for (auto currAdapter{ pAdapterInfo };
+             currAdapter;
+             currAdapter = currAdapter->Next) {
 
             // Convert adapter description from wchar_t for string comparison
             size_t dummy;
@@ -112,6 +113,7 @@ void NetMeasure::getMACAndLocalIP() {
                        m_adapterEntry->Description, sizeof(adapterDesc) - 1);
             if (strcmp(currAdapter->Description, adapterDesc) == 0) {
 
+                // Convert the MAC address into a string
                 std::stringstream macStream;
                 macStream << std::hex << std::uppercase << std::setfill('0');
                 for (auto i = size_t{ 0U }; i < currAdapter->AddressLength; i++) {
@@ -131,7 +133,6 @@ void NetMeasure::getMACAndLocalIP() {
                 };
                 break;
             }
-            currAdapter = currAdapter->Next;
         }
     } else {
         fatalMessageBox("GetAdaptersInfo failed");

@@ -1,5 +1,3 @@
-remove mainAdapter option and retrieve mac/ip/dns etc using m_adapterEntry
-
 network: show how many MB have been downloaded since retrograph started
 
 Music widget:
@@ -11,8 +9,6 @@ display information (resolution)
 g++ compilation!
 
 retrograph performance stats (clocks per frame, RAM, etc)
-
-have a taskbar replacement
 
 animate on startup
 
@@ -33,8 +29,6 @@ separate net traffic graphs
 have an average ping time display
 
 click through to windows behind
-
-lightweight mode
 
 net speed seems to max at 7.5MB when it really hits 13MB according to task mgr
 
