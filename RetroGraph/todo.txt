@@ -1,3 +1,4 @@
+remove mainAdapter option and retrieve mac/ip/dns etc using m_adapterEntry
 
 network: show how many MB have been downloaded since retrograph started
 
@@ -36,9 +37,6 @@ click through to windows behind
 lightweight mode
 
 net speed seems to max at 7.5MB when it really hits 13MB according to task mgr
-
-have appearance states for when API calls fail/don't return a value, also
-prevent update calls that fail from crashing the program
 
 BUG: right click menu pauses drawing.
 

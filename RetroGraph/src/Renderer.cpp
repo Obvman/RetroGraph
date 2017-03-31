@@ -9,7 +9,7 @@
 #include "../headers/NetMeasure.h"
 #include "../headers/ProcessMeasure.h"
 #include "../headers/DriveMeasure.h"
-#include "../headers/SystemInfo.h"
+#include "../headers/SystemMeasure.h"
 #include "../headers/UserSettings.h"
 #include "../headers/colors.h"
 #include "../headers/utils.h"
@@ -29,7 +29,7 @@ void Renderer::init(HWND hWnd, uint32_t windowWidth, uint32_t windowHeight,
                     const CPUMeasure& _cpu, const GPUMeasure& _gpu,
                     const RAMMeasure& _ram, const NetMeasure& _net,
                     const ProcessMeasure& _proc, const DriveMeasure& _drive,
-                    const MusicMeasure& _music, const SystemInfo& _sys,
+                    const MusicMeasure& _music, const SystemMeasure& _sys,
                     const UserSettings& settings) {
     m_renderTargetHandle = hWnd;
 
@@ -77,7 +77,7 @@ void Renderer::initWidgets(const UserSettings&,
                            const CPUMeasure& _cpu, const GPUMeasure& _gpu,
                            const RAMMeasure& _ram, const NetMeasure& _net,
                            const ProcessMeasure& _proc, const DriveMeasure& _drive,
-                           const MusicMeasure& _music, const SystemInfo& _sys) {
+                           const MusicMeasure& _music, const SystemMeasure& _sys) {
     const auto widgetW{ windowWidth/5 };
     const auto widgetH{ windowHeight/6 };
     const auto sideWidgetH{ windowHeight/2 };

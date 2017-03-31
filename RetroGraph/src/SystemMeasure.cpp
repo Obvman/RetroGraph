@@ -1,4 +1,4 @@
-#include "../headers/SystemInfo.h"
+#include "../headers/SystemMeasure.h"
 
 #include <iostream>
 #include <Winver.h>
@@ -12,7 +12,7 @@
 
 namespace rg {
 
-SystemInfo::SystemInfo() :
+SystemMeasure::SystemMeasure() :
     m_osInfoStr{},
     m_gpuDescription{},
     m_cpuDescription{},
@@ -22,10 +22,10 @@ SystemInfo::SystemInfo() :
 }
 
 
-SystemInfo::~SystemInfo() {
+SystemMeasure::~SystemMeasure() {
 }
 
-void SystemInfo::init() {
+void SystemMeasure::init() {
     getOSVersionInfo();
     getCPUInfo();
     getRAMInfo();
@@ -44,7 +44,11 @@ void SystemInfo::init() {
     m_computerName.append(cNameBuf);
 }
 
-void SystemInfo::getOSVersionInfo() {
+void SystemMeasure::update(uint32_t ticks) {
+
+}
+
+void SystemMeasure::getOSVersionInfo() {
     // Use kernel32.dll's meta information to get the OS version
     const char* filePath{ "kernel32.dll" };
 
@@ -75,7 +79,7 @@ void SystemInfo::getOSVersionInfo() {
                                std::to_string(dwSecondRight)+ "." + std::to_string(dwRightMost)};
 }
 
-void SystemInfo::getCPUInfo() {
+void SystemMeasure::getCPUInfo() {
     SYSTEM_INFO info;
     GetSystemInfo(&info);
 
@@ -121,7 +125,7 @@ void SystemInfo::getCPUInfo() {
     m_cpuDescription = ss.str();
 }
 
-void SystemInfo::getRAMInfo() {
+void SystemMeasure::getRAMInfo() {
     MEMORYSTATUSEX memStatus;
     memStatus.dwLength = sizeof(MEMORYSTATUSEX);
     GlobalMemoryStatusEx(&memStatus);
@@ -131,7 +135,7 @@ void SystemInfo::getRAMInfo() {
     m_ramDescription = buff;
 }
 
-void SystemInfo::updateGPUDescription() {
+void SystemMeasure::updateGPUDescription() {
     // Use a stringstream because glGetString() returns GLubyte* which is messy
     // to deal with otherwise
     //const auto gpuVendor{ glGetString(GL_VENDOR) };
@@ -146,7 +150,7 @@ void SystemInfo::updateGPUDescription() {
     m_gpuDescription = std::string{ "GPU: " + ss.str() };
 }
 
-void SystemInfo::getGPUInfo() {
+void SystemMeasure::getGPUInfo() {
 }
 
 }

@@ -6,7 +6,7 @@
 
 #include "../headers/colors.h"
 #include "../headers/FontManager.h"
-#include "../headers/SystemInfo.h"
+#include "../headers/SystemMeasure.h"
 #include "../headers/CPUMeasure.h"
 #include "../headers/NetMeasure.h"
 
@@ -20,7 +20,7 @@ SystemStatsWidget::~SystemStatsWidget() {
 
 }
 
-void SystemStatsWidget::init(const FontManager* fontManager, const SystemInfo* sysInfo,
+void SystemStatsWidget::init(const FontManager* fontManager, const SystemMeasure* sysInfo,
                              const CPUMeasure* cpuMeasure, const NetMeasure* netMeasure) {
     m_fontManager = fontManager;
 

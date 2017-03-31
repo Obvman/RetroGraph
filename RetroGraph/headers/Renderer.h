@@ -27,7 +27,7 @@ class NetMeasure;
 class ProcessMeasure;
 class DriveMeasure;
 class DriveInfo;
-class SystemInfo;
+class SystemMeasure;
 class GLShaderHandler;
 class UserSettings;
 
@@ -43,7 +43,7 @@ public:
               const CPUMeasure& _cpu, const GPUMeasure& _gpu,
               const RAMMeasure& _ram, const NetMeasure& _net,
               const ProcessMeasure& _proc, const DriveMeasure& _drive,
-              const MusicMeasure& _music, const SystemInfo& _sys,
+              const MusicMeasure& _music, const SystemMeasure& _sys,
               const UserSettings& settings);
 
     /* Releases all resources */
@@ -66,7 +66,7 @@ private:
                      const CPUMeasure& _cpu, const GPUMeasure& _gpu,
                      const RAMMeasure& _ram, const NetMeasure& _net,
                      const ProcessMeasure& _proc, const DriveMeasure& _drive,
-                     const MusicMeasure& _music, const SystemInfo& _sys);
+                     const MusicMeasure& _music, const SystemMeasure& _sys);
 
     HWND m_renderTargetHandle;
 

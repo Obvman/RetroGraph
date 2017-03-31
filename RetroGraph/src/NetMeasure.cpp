@@ -25,6 +25,7 @@ namespace rg {
 
 NetMeasure::NetMeasure(const UserSettings& settings) :
     m_adapterEntry{ nullptr },
+    m_table{ nullptr },
     m_mainAdapter{ settings.getNetAdapterName() },
     m_DNSIP{ "0.0.0.0" },
     m_hostname{ "" },
@@ -47,17 +48,30 @@ void NetMeasure::init() {
     m_downBytes.assign(dataSize, 0U);
     m_upBytes.assign(dataSize, 0U);
 
-    MIB_IF_TABLE2* table{ nullptr };
-    if (GetIfTable2(&table) != NO_ERROR) {
+    if (GetIfTable2(&m_table) != NO_ERROR) {
         fatalMessageBox("GetIfTable failed");
     }
 
+    /* Find and keep track of the entry for the most appropriate local network
+     * interface
+     */
+    DWORD bestIfaceIndex;
+    if (GetBestInterface(INADDR_ANY, &bestIfaceIndex) != NO_ERROR) {
+        fatalMessageBox("Failed to get best interface");
+    }
+
     // Get the adapter struct that corresponds to the hard-coded adapter name
-    for (auto i = size_t{ 0U }; i < table->NumEntries; ++i) {
-        if (wcscmp(table->Table[i].Description, strToWstr(m_mainAdapter).c_str()) == 0) {
-            m_adapterEntry = &table->Table[i];
+    for (auto i = size_t{ 0U }; i < m_table->NumEntries; ++i) {
+        if (m_table->Table[i].InterfaceIndex == bestIfaceIndex) {
+            std::wcout << L"Using interface " << m_table->Table[i].Description << '\n';
+            m_adapterEntry = &m_table->Table[i];
             break;
         }
+
+        /*if (wcscmp(m_table->Table[i].Description, strToWstr(m_mainAdapter).c_str()) == 0) {
+            m_adapterEntry = &m_table->Table[i];
+            break;
+        }*/
     }
 
     if (!m_adapterEntry) {
@@ -156,6 +170,19 @@ void NetMeasure::getDNSAndHostname() {
 
 void NetMeasure::update(uint32_t ticks) {
     if ((ticks % (ticksPerSecond / 2)) == 0) {
+        // Check if the best network interface has changed and update to the new
+        // one if so.
+        if ((ticks % (ticksPerSecond * 30)) == 0) {
+            DWORD bestIfaceIndex;
+            if (GetBestInterface(INADDR_ANY, &bestIfaceIndex) != NO_ERROR) {
+                fatalMessageBox("Failed to get best interface");
+            }
+
+            if (bestIfaceIndex != m_adapterEntry->InterfaceIndex) {
+                m_adapterEntry = &(m_table->Table[bestIfaceIndex]);
+            }
+        }
+
         const auto oldDown{ m_adapterEntry->InOctets };
         const auto oldUp{ m_adapterEntry->OutOctets };
 

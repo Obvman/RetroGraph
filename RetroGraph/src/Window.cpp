@@ -273,11 +273,12 @@ void Window::init() {
     m_measures.push_back(std::move(std::make_unique<MusicMeasure>(
                     dynamic_cast<ProcessMeasure*>(m_measures[4].get()))));
     m_measures.push_back(std::move(std::make_unique<SystemLogMeasure>()));
+    m_measures.push_back(std::move(std::make_unique<SystemMeasure>()));
 
     for (const auto& pMeasure : m_measures)
         pMeasure->init();
 
-    m_systemInfo.init();
+    //m_systemInfo.init();
     m_renderer.init(m_hWndMain, m_width, m_height,
                     dynamic_cast<CPUMeasure&>(*m_measures[0]),
                     dynamic_cast<GPUMeasure&>(*m_measures[1]),
@@ -286,7 +287,8 @@ void Window::init() {
                     dynamic_cast<ProcessMeasure&>(*m_measures[4]),
                     dynamic_cast<DriveMeasure&>(*m_measures[5]),
                     dynamic_cast<MusicMeasure&>(*m_measures[6]),
-                    m_systemInfo, m_userSettings);
+                    dynamic_cast<SystemMeasure&>(*m_measures[8]),
+                    m_userSettings);
 
     update(0);
     draw(0);

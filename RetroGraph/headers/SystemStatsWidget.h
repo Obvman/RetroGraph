@@ -9,7 +9,7 @@
 namespace rg {
 
 class FontManager;
-class SystemInfo;
+class SystemMeasure;
 class CPUMeasure;
 class NetMeasure;
 
@@ -22,7 +22,7 @@ public:
 
     virtual void draw() const override;
 
-    void init(const FontManager* fontManager, const SystemInfo* sysInfo,
+    void init(const FontManager* fontManager, const SystemMeasure* sysInfo,
               const CPUMeasure* cpuMeasure, const NetMeasure* netMeasure);
 
     void setViewport(Viewport vp) { m_viewport = vp; };

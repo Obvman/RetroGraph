@@ -6,7 +6,7 @@
 
 #include "Renderer.h"
 #include "UserSettings.h"
-#include "SystemInfo.h"
+#include "SystemMeasure.h"
 #include "Monitors.h"
 #include "Measure.h"
 
@@ -85,7 +85,7 @@ private:
     int32_t m_aaSamples;
 
     std::vector<std::unique_ptr<Measure>> m_measures;
-    SystemInfo m_systemInfo;
+    SystemMeasure m_systemInfo;
 
     Renderer m_renderer;
 
