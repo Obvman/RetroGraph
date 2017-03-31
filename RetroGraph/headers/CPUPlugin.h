@@ -45,10 +45,13 @@ public:
        CORE_TEMP_SHARED_DATA struct */
     bool getCoreTempInfoSuccess() const { return m_getCoreTempInfoSuccess; }
 
+    bool coreTempWasStarted() const { return m_coreTempWasStarted; }
+
 private:
     HMODULE m_libHandle;
     CORE_TEMP_SHARED_DATA m_ctData;
     mutable bool m_getCoreTempInfoSuccess;
+    bool m_coreTempWasStarted;
 };
 
 }

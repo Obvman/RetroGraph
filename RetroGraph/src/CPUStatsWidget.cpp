@@ -24,7 +24,6 @@ void CPUStatsWidget::init(const FontManager* fontManager,
 
     m_fontManager = fontManager;
     m_cpuMeasure = cpuMeasure;
-    // TODO what is that 5 for?
 }
 
 void CPUStatsWidget::setViewport(Viewport vp) { 
@@ -37,8 +36,23 @@ void CPUStatsWidget::setViewport(Viewport vp) {
 
 void CPUStatsWidget::draw() const {
     glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
-    drawCoreGraphs();
-    drawStats();
+
+    if (m_cpuMeasure->getCoreTempInfoSuccess()) {
+        drawCoreGraphs();
+        drawStats();
+    } else {
+        drawNoInfoState();
+    }
+}
+
+void CPUStatsWidget::drawNoInfoState() const {
+    glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
+    drawTopSerifLine(-1.0f, 1.0f);
+    drawBottomSerifLine(-1.0f, 1.0f);
+
+    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
+    m_fontManager->renderLine(RG_FONT_TIME, "No Data", 0, 0, 0, 0,
+            RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_CENTERED_VERTICAL, 0, 0);
 }
 
 void CPUStatsWidget::drawStats() const {

@@ -29,7 +29,12 @@ void SystemStatsWidget::init(const FontManager* fontManager, const SystemInfo* s
     m_statsStrings.emplace_back(sysInfo->getUserName() + "@" +
                                 sysInfo->getComputerName());
     m_statsStrings.emplace_back(sysInfo->getOSInfoStr());
-    m_statsStrings.emplace_back(cpuMeasure->getCPUName());
+
+    if (cpuMeasure->getCoreTempInfoSuccess())
+        m_statsStrings.emplace_back(cpuMeasure->getCPUName());
+    else
+        m_statsStrings.emplace_back("CPU Data Unavailable");
+
     m_statsStrings.emplace_back(sysInfo->getGPUDescription());
     m_statsStrings.emplace_back(sysInfo->getRAMDescription());
     m_statsStrings.emplace_back("DNS: " + netMeasure->getDNS());

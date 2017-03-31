@@ -103,6 +103,7 @@ public:
                                           RG_ALIGN_CENTERED_VERTICAL,
                      uint32_t alignMarginX = 10U,
                      uint32_t alignMarginY = 10U) const;
+
 private:
     void initFonts(uint32_t windowHeight);
 

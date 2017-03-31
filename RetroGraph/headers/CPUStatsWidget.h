@@ -24,6 +24,7 @@ public:
 private:
     void drawCoreGraphs() const;
     void drawStats() const;
+    void drawNoInfoState() const;
 
     const FontManager* m_fontManager;
     Viewport m_viewport;

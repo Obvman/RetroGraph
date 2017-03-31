@@ -58,6 +58,13 @@ void CPUMeasure::init() {
 void CPUMeasure::update(uint32_t ticks) {
     if (ticks % (ticksPerSecond / 2) == 0) {
         m_coreTempPlugin.update();
+
+        /* If the coretemp program was started in the last frame, reset usage
+         * vectors and resize them to the number of cores provided by coretemp
+         */
+        if (m_coreTempPlugin.coreTempWasStarted())
+            resetData();
+
         m_uptime = std::chrono::milliseconds(GetTickCount64());
 
         // Fill CPU name if CoreTemp interfacing was successful // TODO code duplication
@@ -121,6 +128,14 @@ float CPUMeasure::calculateCPULoad(uint64_t idleTicks, uint64_t totalTicks) {
     prevIdleTicks = idleTicks;
 
     return cpuLoad;
+}
+
+void CPUMeasure::resetData() {
+    m_perCoreData.clear();
+    m_perCoreData.resize(m_coreTempPlugin.getNumCores());
+    for (auto& vec : m_perCoreData) {
+        vec.assign(perCoreDataSize, 0.0f);
+    }
 }
 
 }

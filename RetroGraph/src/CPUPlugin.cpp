@@ -10,7 +10,8 @@ myGetCoreTempInfo GetCoreTempInfo;
 CPUPlugin::CPUPlugin() :
     m_libHandle{ nullptr },
     m_ctData{ 0 },
-    m_getCoreTempInfoSuccess{ false } {
+    m_getCoreTempInfoSuccess{ false },
+    m_coreTempWasStarted{ false } {
 }
 
 
@@ -39,7 +40,18 @@ void CPUPlugin::init() {
 }
 
 void CPUPlugin::update() {
-    m_getCoreTempInfoSuccess = GetCoreTempInfo(&m_ctData);
+    m_coreTempWasStarted = false;
+
+    /* If coreTemp failed to get information last frame but got it this frame,
+     * then the program must have been started
+     */
+    const auto coreTempSuccessThisFrame = bool{ GetCoreTempInfo(&m_ctData) };
+    if (!m_getCoreTempInfoSuccess && coreTempSuccessThisFrame) {
+        m_getCoreTempInfoSuccess = true;
+        m_coreTempWasStarted = true;
+    } else {
+        m_getCoreTempInfoSuccess = coreTempSuccessThisFrame;
+    }
 }
 
 }

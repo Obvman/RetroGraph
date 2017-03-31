@@ -61,9 +61,14 @@ public:
     /* Returns the maximum number of CPU usage samples stored */
     size_t getDataSize() const { return dataSize; }
 
+    bool getCoreTempInfoSuccess() const { return m_coreTempPlugin.getCoreTempInfoSuccess(); }
+
 private:
     /* Calculates the total CPU load with the given tick information */
     float calculateCPULoad(uint64_t idleTicks, uint64_t totalTicks);
+
+    /* Resets core usage data vector */
+    void resetData();
 
     CPUPlugin m_coreTempPlugin;
 
