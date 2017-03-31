@@ -32,6 +32,7 @@ constexpr int32_t ID_CHANGE_DISPLAY_MONITOR{ 4 };
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 Window::Window(HINSTANCE hInstance) :
+    m_monitors{ },
     m_userSettings{ },
     m_hInstance{ hInstance },
     m_dragging{ false },
@@ -98,12 +99,11 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
                     SetWindowPos(hWnd, HWND_BOTTOM, m_startPosX, m_startPosY,
                                  m_width, m_height, 0);
                     break;
-                case ID_CHANGE_DISPLAY_MONITOR:
-                    updateSize(2560, 1400);
-                    SetWindowPos(hWnd, HWND_TOP, 0, 0, 2560, 1400, 0);
-                    m_renderer.m_fontManager.refreshFonts(1400);
-                    m_renderer.updateWindowSize(2560, 1400);
+                // Default case handles monitor selection list
+                default: {
+                    changeMonitor(hWnd, LOWORD(wParam) - ID_CHANGE_DISPLAY_MONITOR);
                     break;
+                 }
             }
             break;
         case WM_CONTEXTMENU: {
@@ -215,12 +215,40 @@ void Window::handleClick(DWORD clickX, DWORD clickY) {
     }
 }
 
+void Window::changeMonitor(HWND hWnd, uint32_t monIndex) {
+    // Check monitor selection is in range and the monitor isn't
+    // the currently selected one
+    if (monIndex >= 0 &&
+        monIndex < m_monitors.getNumMonitors() &&
+        monIndex != static_cast<uint32_t>(m_currMonitor)) {
+
+        m_currMonitor = monIndex;
+
+        const auto& md{ m_monitors.getMonitorData()[m_currMonitor] };
+
+        updateSize(md.width, md.height);
+        SetWindowPos(hWnd, HWND_TOP, md.x, md.y, md.width, md.height, 0);
+        m_renderer.m_fontManager.refreshFonts(md.height);
+        m_renderer.updateWindowSize(md.width, md.height);
+    }
+}
+
 void Window::createRClickMenu(HWND hWnd, DWORD cursorX, DWORD cursorY) {
     auto hPopupMenu{ CreatePopupMenu() };
     InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_EXIT, "Exit");
     InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_SEND_TO_BACK, "Send to back");
     InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_RESET_POS, "Reset position");
-    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_CHANGE_DISPLAY_MONITOR, "Move monitor");
+    //InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_CHANGE_DISPLAY_MONITOR, "Move monitor");
+
+    // Create an option for each monitor
+    const auto& md{ m_monitors.getMonitorData() };
+    for (auto i = size_t{ 0U }; i < md.size(); ++i) {
+        char optionName[] = "Move to display 0";
+        optionName[16] = '0' + static_cast<char>(i);
+        InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
+                ID_CHANGE_DISPLAY_MONITOR + i, optionName);
+    }
+    
     SetForegroundWindow(hWnd);
 
     TrackPopupMenuEx(hPopupMenu, TPM_TOPALIGN | TPM_LEFTALIGN | TPM_RIGHTBUTTON,
@@ -229,7 +257,9 @@ void Window::createRClickMenu(HWND hWnd, DWORD cursorX, DWORD cursorY) {
 
 void Window::init() {
     // Initialise userSettings with config file data
+    m_monitors.init();
     m_userSettings.init();
+    m_currMonitor = m_userSettings.getStartupMonitor();
     m_width = m_userSettings.getWindowWidth();
     m_height = m_userSettings.getWindowHeight();
     m_startPosX = m_userSettings.getWindowX();

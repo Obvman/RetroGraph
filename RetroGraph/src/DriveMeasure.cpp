@@ -15,14 +15,6 @@
 
 namespace rg {
 
-DriveMeasure::DriveMeasure() :
-    m_drivePaths{},
-    m_drives{} {
-}
-
-DriveMeasure::~DriveMeasure() {
-}
-
 void DriveMeasure::init() {
     // Enumerate all available logical drives and store the drive paths
     const auto driveMask{ GetLogicalDrives() };

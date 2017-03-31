@@ -13,15 +13,16 @@ namespace rg {
 
 constexpr auto maxVolumeNameSize = uint32_t{ 64U };
 
+/* Per drive data storage container */
 class DriveInfo {
 public:
     DriveInfo(char _driveLetter, uint64_t initFreeBytes, uint64_t totalBytes,
               const char* volumeName) :
-        driveLetter{ _driveLetter },
-        totalFreeBytes{ initFreeBytes },
-        totalBytes{ totalBytes },
-        volumeName{ volumeName },
-        capacityStr{} {
+            driveLetter{ _driveLetter },
+            totalFreeBytes{ initFreeBytes },
+            totalBytes{ totalBytes },
+            volumeName{ volumeName },
+            capacityStr{} {
 
         const auto capacity{ totalBytes / GB };
         if (capacity < 1000) {
@@ -33,6 +34,7 @@ public:
         }
 
     }
+
     ~DriveInfo() = default;
     DriveInfo(const DriveInfo&) = delete;
     DriveInfo& operator=(const DriveInfo&) = delete;
@@ -48,8 +50,8 @@ public:
 /* Stores paths and statistics about all the system's fixed drives */
 class DriveMeasure : public Measure {
 public:
-    DriveMeasure();
-    virtual ~DriveMeasure();
+    DriveMeasure() = default;
+    virtual ~DriveMeasure() = default;
     DriveMeasure(const DriveMeasure&) = delete;
     DriveMeasure& operator=(const DriveMeasure&) = delete;
 

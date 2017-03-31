@@ -7,6 +7,7 @@
 #include "Renderer.h"
 #include "UserSettings.h"
 #include "SystemInfo.h"
+#include "Monitors.h"
 #include "Measure.h"
 
 namespace rg {
@@ -39,6 +40,8 @@ private:
     /* Creates the window and the OpenGL context */
     void createWindow();
 
+    void changeMonitor(HWND hWnd, uint32_t monIndex);
+
     /* Initialises OpenGL settings and renderer */
     void initOpenGL();
 
@@ -67,10 +70,12 @@ private:
      */
     void handleClick(DWORD clickX, DWORD clickY);
 
+    Monitors m_monitors;
     UserSettings m_userSettings;
 
     HINSTANCE m_hInstance;
     bool m_dragging;
+    int32_t m_currMonitor;
     uint32_t m_width;
     uint32_t m_height;
     int32_t m_startPosX;
