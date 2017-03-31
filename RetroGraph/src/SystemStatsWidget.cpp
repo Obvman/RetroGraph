@@ -33,7 +33,7 @@ void SystemStatsWidget::init(const FontManager* fontManager, const SystemMeasure
     if (cpuMeasure->getCoreTempInfoSuccess())
         m_statsStrings.emplace_back(cpuMeasure->getCPUName());
     else
-        m_statsStrings.emplace_back("CPU Data Unavailable");
+        m_statsStrings.emplace_back(sysInfo->getCPUDescription());
 
     m_statsStrings.emplace_back(sysInfo->getGPUDescription());
     m_statsStrings.emplace_back(sysInfo->getRAMDescription());

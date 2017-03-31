@@ -25,7 +25,6 @@ public:
     int32_t getWindowY() const { return m_createWindowY; }
     int32_t getStartupMonitor() const { return m_startupMonitor; }
 
-    const std::string& getNetAdapterName() const { return m_netAdapterName; }
     const std::string& getPingServer() const { return m_pingServer; }
     uint32_t getPingFreq() const { return m_pingFreq; }
 
@@ -43,7 +42,6 @@ private:
     int32_t m_startupMonitor;
 
     // Network options
-    std::string m_netAdapterName;
     std::string m_pingServer;
     uint32_t m_pingFreq;
 

@@ -26,7 +26,6 @@ namespace rg {
 NetMeasure::NetMeasure(const UserSettings& settings) :
     m_adapterEntry{ nullptr },
     m_table{ nullptr },
-    m_mainAdapter{ settings.getNetAdapterName() },
     m_DNSIP{ "0.0.0.0" },
     m_hostname{ "" },
     m_mainAdapterMAC{ "00-00-00-00-00-00" },
@@ -67,11 +66,6 @@ void NetMeasure::init() {
             m_adapterEntry = &m_table->Table[i];
             break;
         }
-
-        /*if (wcscmp(m_table->Table[i].Description, strToWstr(m_mainAdapter).c_str()) == 0) {
-            m_adapterEntry = &m_table->Table[i];
-            break;
-        }*/
     }
 
     if (!m_adapterEntry) {
@@ -110,7 +104,14 @@ void NetMeasure::getMACAndLocalIP() {
     if (GetAdaptersInfo(pAdapterInfo, &ulOutBufLen) == NO_ERROR) {
         auto currAdapter{ pAdapterInfo };
         while (currAdapter) {
-            if (m_mainAdapter == currAdapter->Description) {
+
+            // Convert adapter description from wchar_t for string comparison
+            size_t dummy;
+            char adapterDesc[128];
+            wcstombs_s(&dummy, adapterDesc, sizeof(adapterDesc),
+                       m_adapterEntry->Description, sizeof(adapterDesc) - 1);
+            if (strcmp(currAdapter->Description, adapterDesc) == 0) {
+
                 std::stringstream macStream;
                 macStream << std::hex << std::uppercase << std::setfill('0');
                 for (auto i = size_t{ 0U }; i < currAdapter->AddressLength; i++) {

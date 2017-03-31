@@ -40,7 +40,6 @@ private:
 
     _MIB_IF_TABLE2* m_table;
     _MIB_IF_ROW2* m_adapterEntry;
-    std::string m_mainAdapter;
 
     std::string m_DNSIP;
     std::string m_hostname;

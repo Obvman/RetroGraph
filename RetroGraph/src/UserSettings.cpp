@@ -16,7 +16,6 @@ UserSettings::UserSettings() :
     m_windowWidth{ 1920U },
     m_windowHeight{ 1170U },
     m_startupMonitor{ 0U },
-    m_netAdapterName{ "Intel(R) Ethernet Connection (2) I219-V"},
     m_pingServer{ "http://www.google.com/" },
     m_pingFreq{ 10U },
     m_processCPUUsageThreshold{ 0.2f },
@@ -36,7 +35,6 @@ void UserSettings::init() {
             m_windowWidth = propTree.get<uint32_t>("Window.WindowWidth");
             m_windowHeight = propTree.get<uint32_t>("Window.WindowHeight");
             m_startupMonitor = propTree.get<uint32_t>("Window.Monitor");
-            m_netAdapterName = propTree.get<std::string>("Network.NetworkAdapter");
             m_pingServer = propTree.get<std::string>("Network.PingServer");
             m_pingFreq = propTree.get<uint32_t>("Network.PingFrequency");
 
@@ -64,7 +62,6 @@ void UserSettings::generateDefaultFile(pt::ptree& propTree) {
     propTree.put("Window.WindowHeight", m_windowHeight);
     propTree.put("Window.Monitor", m_startupMonitor);
 
-    propTree.put("Network.NetworkAdapter", m_netAdapterName);
     propTree.put("Network.PingServer", m_pingServer);
     propTree.put("Network.PingFrequency", m_pingServer);
 
