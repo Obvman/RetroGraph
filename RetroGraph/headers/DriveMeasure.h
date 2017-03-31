@@ -6,10 +6,44 @@
 
 #include <GL/glew.h>
 
+#include "utils.h"
 #include "Measure.h"
-#include "DriveInfo.h"
 
 namespace rg {
+
+constexpr auto maxVolumeNameSize = uint32_t{ 64U };
+
+class DriveInfo {
+public:
+    DriveInfo(char _driveLetter, uint64_t initFreeBytes, uint64_t totalBytes,
+              const char* volumeName) :
+        driveLetter{ _driveLetter },
+        totalFreeBytes{ initFreeBytes },
+        totalBytes{ totalBytes },
+        volumeName{ volumeName },
+        capacityStr{} {
+
+        const auto capacity{ totalBytes / GB };
+        if (capacity < 1000) {
+            capacityStr = std::to_string(capacity) + "GB";
+        } else {
+            char buff[6];
+            snprintf(buff, sizeof(buff), "%.1fTB", capacity / 1024.0f);
+            capacityStr = buff;
+        }
+
+    }
+    ~DriveInfo() = default;
+    DriveInfo(const DriveInfo&) = delete;
+    DriveInfo& operator=(const DriveInfo&) = delete;
+
+
+    char driveLetter;
+    uint64_t totalFreeBytes;
+    uint64_t totalBytes;
+    std::string volumeName;
+    std::string capacityStr;
+};
 
 /* Stores paths and statistics about all the system's fixed drives */
 class DriveMeasure : public Measure {

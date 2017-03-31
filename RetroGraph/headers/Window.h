@@ -32,8 +32,9 @@ public:
     /* Updates the OpenGL viewport when the window size changes */
     void updateSize(int32_t width, int32_t height);
 
-    /* Window Proc that has access to this window class's members */
+    /* Window Proc that has access to this window class's members via lParam */
     LRESULT CALLBACK WndProc2(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 private:
     /* Creates the window and the OpenGL context */
     void createWindow();
@@ -58,8 +59,12 @@ private:
     void destroy();
 
     /* Creates the popup menu in response to a right click*/
-    static void createRClickMenu(HWND hWnd, DWORD cursorX, DWORD cursorY);
+    void createRClickMenu(HWND hWnd, DWORD cursorX, DWORD cursorY);
 
+    /* Decides whether a click sets the dragging state based on the colour
+     * of the click position. Clicking the background of the window does not
+     * allow dragging, clicking on a coloured pixel allows dragging
+     */
     void handleClick(DWORD clickX, DWORD clickY);
 
     UserSettings m_userSettings;
