@@ -21,11 +21,10 @@ MusicWidget::~MusicWidget() {
 
 }
 
-void MusicWidget::init(const FontManager* fontManager, const MusicMeasure* musicMeasure,
-                         Viewport viewport) {
+void MusicWidget::init(const FontManager* fontManager, 
+                       const MusicMeasure* musicMeasure) {
 
     m_fontManager = fontManager;
-    m_viewport = viewport;
     m_musicMeasure = musicMeasure;
 }
 

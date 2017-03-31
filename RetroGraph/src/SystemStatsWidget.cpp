@@ -21,10 +21,8 @@ SystemStatsWidget::~SystemStatsWidget() {
 }
 
 void SystemStatsWidget::init(const FontManager* fontManager, const SystemInfo* sysInfo,
-                             const CPUMeasure* cpuMeasure, const NetMeasure* netMeasure,
-                             Viewport viewport) {
+                             const CPUMeasure* cpuMeasure, const NetMeasure* netMeasure) {
     m_fontManager = fontManager;
-    m_viewport = viewport;
 
     // Just create stats string here since we expect it not to change during
     // the lifetime of the program

@@ -17,11 +17,9 @@ MainWidget::~MainWidget() {
 
 }
 
-void MainWidget::init(const FontManager* fontManager,
-                      Viewport viewport) {
+void MainWidget::init(const FontManager* fontManager) {
 
     m_fontManager = fontManager;
-    m_viewport = viewport;
 }
 
 void MainWidget::draw() const {

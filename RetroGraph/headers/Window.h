@@ -30,7 +30,7 @@ public:
     void draw(uint32_t ticks) const;
 
     /* Updates the OpenGL viewport when the window size changes */
-    void updateSize(int width, int height);
+    void updateSize(int32_t width, int32_t height);
 
     /* Window Proc that has access to this window class's members */
     LRESULT CALLBACK WndProc2(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

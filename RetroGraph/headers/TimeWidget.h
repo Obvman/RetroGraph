@@ -20,8 +20,9 @@ public:
 
     void init(const FontManager* fontManager,
               const CPUMeasure* cpuMeasure,
-              const NetMeasure* netMeasure,
-              Viewport viewport);
+              const NetMeasure* netMeasure);
+
+    void setViewport(Viewport vp) { m_viewport = vp; };
 private:
     const FontManager* m_fontManager;
 

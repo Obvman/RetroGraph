@@ -19,12 +19,10 @@ HDDWidget::~HDDWidget() {
 }
 
 void HDDWidget::init(const FontManager* fontManager,
-                     const DriveMeasure* driveMeasure,
-                     Viewport viewport) {
+                     const DriveMeasure* driveMeasure) {
 
     m_fontManager = fontManager;
     m_driveMeasure = driveMeasure;
-    m_viewport = viewport;
 }
 
 void HDDWidget::draw() const {

@@ -17,9 +17,9 @@ public:
 
     virtual void draw() const override;
 
-    void init(const FontManager* fontManager, const ProcessMeasure* procMeasure,
-              Viewport viewport);
+    void init(const FontManager* fontManager, const ProcessMeasure* procMeasure);
 
+    void setViewport(Viewport vp) { m_viewport = vp; };
 private:
     void drawCpuUsageList() const;
     void drawRamUsageList() const;

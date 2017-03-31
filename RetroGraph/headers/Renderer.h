@@ -51,7 +51,11 @@ public:
 
     /* Draws scene to the window */
     void draw(uint32_t ticks) const;
+
+    void updateWindowSize(int32_t newWidth, int32_t newHeight);
 private:
+    void setViewports(int32_t windowWidth, int32_t windowHeight);
+
     /* Fill VBOs with intial vertex data */
     void initVBOs();
     /* Compiles and retrieves uniform locations */
@@ -66,7 +70,9 @@ private:
 
     HWND m_renderTargetHandle;
 
+public:
     FontManager m_fontManager;
+private:
 
     // TODO refactor these into vector of Widget ptrs
     TimeWidget m_timeWidget;

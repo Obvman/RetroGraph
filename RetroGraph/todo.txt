@@ -6,8 +6,6 @@ Music widget:
     Play/paused indication
     make song name 2 lines if it's too long
 
-Have hardware measure handle bitlocked drives
-
 Dynamic window resizing!!!
 
 system event log measure (OpenEventLog())
@@ -37,8 +35,6 @@ separate net traffic graphs
 have an average ping time display
 
 click through to windows behind
-
-multithread pinging code
 
 lightweight mode
 

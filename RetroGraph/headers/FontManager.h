@@ -53,6 +53,9 @@ public:
     /* Releases font resources */
     void release();
 
+    /* Release current font data and reinitialises to match new window size */
+    void refreshFonts(uint32_t newWindowHeight);
+
     /* Gets the width of the given font's characters in pixels */
     //int32_t getFontCharWidth(RGFONTCODE c) const { return m_fontCharWidths[c]; }
     /* Gets the height of the given font's characters in pixels */
@@ -101,6 +104,8 @@ public:
                      uint32_t alignMarginX = 10U,
                      uint32_t alignMarginY = 10U) const;
 private:
+    void initFonts(uint32_t windowHeight);
+
     /* Creates a new font entry into the fontBases list and retrieves
        character width/pixel information */
     void createFont(uint32_t fontHeight, int32_t weight, const char* typeface,

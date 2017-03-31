@@ -18,11 +18,8 @@ ProcessWidget::~ProcessWidget() {
 
 }
 
-void ProcessWidget::init(const FontManager* fontManager, const ProcessMeasure* procMeasure,
-                         Viewport viewport) {
-
+void ProcessWidget::init(const FontManager* fontManager, const ProcessMeasure* procMeasure) {
     m_fontManager = fontManager;
-    m_viewport = viewport;
     m_procMeasure = procMeasure;
 }
 

@@ -27,6 +27,7 @@ namespace rg {
 constexpr int32_t ID_EXIT{ 1 };
 constexpr int32_t ID_SEND_TO_BACK{ 2 };
 constexpr int32_t ID_RESET_POS{ 3 };
+constexpr int32_t ID_CHANGE_DISPLAY_MONITOR{ 4 };
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -97,7 +98,14 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
                     SetWindowPos(hWnd, HWND_BOTTOM, m_startPosX, m_startPosY,
                                  m_width, m_height, 0);
                     break;
+                case ID_CHANGE_DISPLAY_MONITOR:
+                    updateSize(2560, 1400);
+                    SetWindowPos(hWnd, HWND_TOP, 0, 0, 2560, 1400, 0);
+                    m_renderer.m_fontManager.refreshFonts(1400);
+                    m_renderer.updateWindowSize(2560, 1400);
+                    break;
             }
+            break;
         case WM_CONTEXTMENU: {
             int32_t contextSpawnX{ LOWORD(lParam) };
             int32_t contextSpawnY{ HIWORD(lParam) };
@@ -212,6 +220,7 @@ void Window::createRClickMenu(HWND hWnd, DWORD cursorX, DWORD cursorY) {
     InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_EXIT, "Exit");
     InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_SEND_TO_BACK, "Send to back");
     InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_RESET_POS, "Reset position");
+    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_CHANGE_DISPLAY_MONITOR, "Move monitor");
     SetForegroundWindow(hWnd);
 
     TrackPopupMenuEx(hPopupMenu, TPM_TOPALIGN | TPM_LEFTALIGN | TPM_RIGHTBUTTON,
@@ -272,13 +281,17 @@ void Window::draw(uint32_t ticks) const {
     HDC hdc = GetDC(m_hWndMain);
     wglMakeCurrent(hdc, m_hrc);
 
+    glViewport(0, 0, m_width, m_height);
     m_renderer.draw(ticks);
 
     SwapBuffers(hdc);
     ReleaseDC(m_hWndMain, hdc);
 }
 
-void Window::updateSize(int width, int height) {
+void Window::updateSize(int32_t width, int32_t height) {
+    m_width = width;
+    m_height = height;
+
     glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();

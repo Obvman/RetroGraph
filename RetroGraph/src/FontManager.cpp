@@ -22,36 +22,18 @@ FontManager::~FontManager() {
 
 void FontManager::init(HWND hWnd, uint32_t windowHeight) {
     m_hWnd = hWnd;
-
-    /* List of fonts for quick experimentation */
-    const char* const typefaces[] = {
-        "Courier New",
-        "Lato Lights",
-        "Orator Std",
-        "Verdana",
-        "Letter Gothic Std",
-        "Kozuka Gothic Pr6N L",
-        "Algerian",
-        "United Sans Rg Md",
-    };
-
-    const auto standardFontHeight{ std::lround(windowHeight / 70.0f) };
-
-    createFont(standardFontHeight, FW_DONTCARE, typefaces[0], RG_FONT_STANDARD);
-    createFont(standardFontHeight, FW_BOLD, typefaces[0], RG_FONT_STANDARD_BOLD);
-    createFont(72, FW_NORMAL, typefaces[7], RG_FONT_TIME);
-    createFont(7*standardFontHeight/8, FW_NORMAL, typefaces[1], RG_FONT_SMALL);
-    createFont(3*standardFontHeight/2, FW_BOLD, typefaces[0], RG_FONT_MUSIC_LARGE);
-    createFont(standardFontHeight, FW_BOLD, typefaces[7], RG_FONT_MUSIC);
-
-    // Set default font
-    glListBase(m_fontBases[RG_FONT_STANDARD]);
+    initFonts(windowHeight);
 }
 
 void FontManager::release() {
     for (const auto base : m_fontBases) {
         glDeleteLists(base, RG_NUM_CHARS_IN_FONT);
     }
+}
+
+void FontManager::refreshFonts(uint32_t newWindowHeight) {
+    release();
+    initFonts(newWindowHeight);
 }
 
 void FontManager::renderLine(GLfloat rasterX, GLfloat rasterY,
@@ -218,6 +200,32 @@ void FontManager::renderLines(RGFONTCODE fontCode,
     }
 
     glViewport(vp[0], vp[1], vp[2], vp[3]);
+}
+
+void FontManager::initFonts(uint32_t windowHeight) {
+    /* List of fonts for quick experimentation */
+    const char* const typefaces[] = {
+        "Courier New",
+        "Lato Lights",
+        "Orator Std",
+        "Verdana",
+        "Letter Gothic Std",
+        "Kozuka Gothic Pr6N L",
+        "Algerian",
+        "United Sans Rg Md",
+    };
+
+    const auto standardFontHeight{ std::lround(windowHeight / 70.0f) };
+
+    createFont(standardFontHeight, FW_DONTCARE, typefaces[0], RG_FONT_STANDARD);
+    createFont(standardFontHeight, FW_BOLD, typefaces[0], RG_FONT_STANDARD_BOLD);
+    createFont(72, FW_NORMAL, typefaces[7], RG_FONT_TIME);
+    createFont(7*standardFontHeight/8, FW_NORMAL, typefaces[1], RG_FONT_SMALL);
+    createFont(3*standardFontHeight/2, FW_BOLD, typefaces[0], RG_FONT_MUSIC_LARGE);
+    createFont(standardFontHeight, FW_BOLD, typefaces[7], RG_FONT_MUSIC);
+
+    // Set default font
+    glListBase(m_fontBases[RG_FONT_STANDARD]);
 }
 
 void FontManager::createFont(uint32_t fontHeight, int32_t weight,

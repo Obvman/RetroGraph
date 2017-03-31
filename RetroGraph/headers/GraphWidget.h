@@ -22,7 +22,9 @@ public:
 
     void init(const FontManager* fontManager, const CPUMeasure* cpuMeasure,
               const RAMMeasure* ramMeasure, const NetMeasure* netMeasure,
-              const GPUMeasure* gpuMeasure, Viewport viewport);
+              const GPUMeasure* gpuMeasure);
+
+    void setViewport(Viewport vp);
 
 private:
     void drawCpuGraph() const;

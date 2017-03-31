@@ -33,7 +33,7 @@ NetMeasure::NetMeasure(const UserSettings& settings) :
     m_pingServer{ settings.getPingServer() },
     m_isConnected{ false },
     m_netConnectionThread{ },
-    m_pingFreqMs{ 1000 * 5 },
+    m_pingFreqMs{ 1000 * settings.getPingFreq() },
     m_downMaxVal{ 10U * GB },
     m_upMaxVal{ 10U * GB },
     dataSize{ 40U } {
@@ -70,6 +70,7 @@ void NetMeasure::init() {
     // Start thread that periodically checks connection to internet.
     m_netConnectionThread = std::thread{ [this]() {
         while (true) {
+            // !! is to convert Win32 BOOL to bool without compiler warning :/
             setIsConnected(!!InternetCheckConnectionA(
                 m_pingServer.c_str(), FLAG_ICC_FORCE_CONNECTION, 0));
             Sleep(m_pingFreqMs);

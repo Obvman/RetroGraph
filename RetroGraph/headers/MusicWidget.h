@@ -17,9 +17,9 @@ public:
 
     virtual void draw() const override;
 
-    void init(const FontManager* fontManager, const MusicMeasure* musicMeasure,
-              Viewport viewport);
+    void init(const FontManager* fontManager, const MusicMeasure* musicMeasure);
 
+    void setViewport(Viewport vp) { m_viewport = vp; };
 private:
     const FontManager* m_fontManager;
     Viewport m_viewport;

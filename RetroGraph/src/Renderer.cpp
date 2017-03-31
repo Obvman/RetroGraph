@@ -65,6 +65,11 @@ void Renderer::release() {
     m_fontManager.release();
 }
 
+void Renderer::updateWindowSize(int32_t newWidth, int32_t newHeight) {
+    setViewports(newWidth, newHeight);
+
+}
+
 /********************* Private Functions ********************/
 
 void Renderer::initWidgets(const UserSettings&,
@@ -77,38 +82,53 @@ void Renderer::initWidgets(const UserSettings&,
     const auto widgetH{ windowHeight/6 };
     const auto sideWidgetH{ windowHeight/2 };
 
-    m_timeWidget.init(&m_fontManager, &_cpu, &_net, 
-            Viewport{ marginX, windowHeight - marginY - widgetH,
-                      widgetW, widgetH});
+    m_timeWidget.init(&m_fontManager, &_cpu, &_net);
 
-    m_hddWidget.init(&m_fontManager, &_drive,
-            Viewport{windowWidth - widgetW - marginX, windowHeight - marginY - widgetH,
-                     widgetW, widgetH});
+    m_hddWidget.init(&m_fontManager, &_drive);
 
-    m_cpuStatsWidget.init(&m_fontManager, &_cpu,
-            Viewport{windowWidth - widgetW - marginX, 
-                     windowHeight/2 - windowHeight/4,
-                     widgetW, 
-                     sideWidgetH});
+    m_cpuStatsWidget.init(&m_fontManager, &_cpu);
 
-    m_processWidget.init(&m_fontManager, &_proc,
-            Viewport{ marginX + windowWidth/2 - widgetW, marginY,
-                      2*widgetW, widgetH });
+    m_processWidget.init(&m_fontManager, &_proc);
 
-    m_graphWidget.init(&m_fontManager, &_cpu, &_ram, &_net, &_gpu,
-            Viewport{ marginX, windowHeight/2 - windowHeight/4,
-                      widgetW, windowHeight/2 });
+    m_graphWidget.init(&m_fontManager, &_cpu, &_ram, &_net, &_gpu);
 
-    m_systemStatsWidget.init(&m_fontManager, &_sys, &_cpu, &_net,
-            Viewport{ marginX, marginY, widgetW, widgetH });
+    m_systemStatsWidget.init(&m_fontManager, &_sys, &_cpu, &_net);
 
-    m_mainWidget.init(&m_fontManager,
-            Viewport{ marginX + windowWidth/2 - widgetW, windowHeight/2 - windowHeight/4,
-                      2 * widgetW, sideWidgetH });
+    m_mainWidget.init(&m_fontManager);
 
-    m_musicWidget.init(&m_fontManager, &_music,
-            Viewport{ windowWidth - widgetW - marginX, marginY, 
-                      widgetW, widgetH} );
+    m_musicWidget.init(&m_fontManager, &_music);
+
+    setViewports(windowWidth, windowHeight);
+}
+
+void Renderer::setViewports(int32_t windowWidth, int32_t windowHeight) {
+    const auto widgetW{ windowWidth/5 };
+    const auto widgetH{ windowHeight/6 };
+    const auto sideWidgetH{ windowHeight/2 };
+
+    m_timeWidget.setViewport(Viewport{ marginX, windowHeight - marginY -
+            widgetH, widgetW, widgetH});
+
+    m_hddWidget.setViewport(Viewport{windowWidth - widgetW - marginX,
+            windowHeight - marginY - widgetH, widgetW, widgetH});
+
+    m_cpuStatsWidget.setViewport(Viewport{windowWidth - widgetW - marginX,
+            windowHeight/2 - windowHeight/4, widgetW, sideWidgetH});
+
+    m_processWidget.setViewport(Viewport{ marginX + windowWidth/2 - widgetW,
+            marginY, 2*widgetW, widgetH });
+
+    m_graphWidget.setViewport(Viewport{ marginX, windowHeight/2 -
+            windowHeight/4, widgetW, windowHeight/2 });
+
+    m_systemStatsWidget.setViewport(Viewport{ marginX, marginY, widgetW,
+            widgetH });
+
+    m_mainWidget.setViewport(Viewport{ marginX + windowWidth/2 - widgetW,
+            windowHeight/2 - windowHeight/4, 2 * widgetW, sideWidgetH });
+
+    m_musicWidget.setViewport(Viewport{ windowWidth - widgetW - marginX,
+            marginY, widgetW, widgetH});
 }
 
 void Renderer::initVBOs() {

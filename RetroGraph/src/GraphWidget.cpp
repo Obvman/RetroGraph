@@ -23,34 +23,36 @@ GraphWidget::~GraphWidget() {
 
 void GraphWidget::init(const FontManager* fontManager, const CPUMeasure* cpuMeasure,
                        const RAMMeasure* ramMeasure, const NetMeasure* netMeasure,
-                       const GPUMeasure* gpuMeasure, Viewport viewport) {
+                       const GPUMeasure* gpuMeasure) {
 
     m_fontManager = fontManager;
     m_cpuMeasure = cpuMeasure;
     m_ramMeasure = ramMeasure;
     m_netMeasure = netMeasure;
     m_gpuMeasure = gpuMeasure;
+}
 
+void GraphWidget::setViewport(Viewport vp) { 
     m_cpuGraphVP = Viewport{
-                     viewport.x,
-                     viewport.y + 3*viewport.height/4,
-                     viewport.width,
-                     viewport.height/4 };
+                     vp.x,
+                     vp.y + 3*vp.height/4,
+                     vp.width,
+                     vp.height/4 };
     m_ramGraphVP = Viewport{
-                     viewport.x,
-                     viewport.y + 0*viewport.height/4,
-                     viewport.width,
-                     viewport.height/4 };
+                     vp.x,
+                     vp.y + 0*vp.height/4,
+                     vp.width,
+                     vp.height/4 };
     m_netGraphVP = Viewport{
-                     viewport.x,
-                     viewport.y + 1*viewport.height/4,
-                     viewport.width,
-                     viewport.height/4 };
+                     vp.x,
+                     vp.y + 1*vp.height/4,
+                     vp.width,
+                     vp.height/4 };
     m_gpuGraphVP = Viewport{
-                     viewport.x,
-                     viewport.y + 2*viewport.height/4,
-                     viewport.width,
-                     viewport.height/4 };
+                     vp.x,
+                     vp.y + 2*vp.height/4,
+                     vp.width,
+                     vp.height/4 };
 }
 
 void GraphWidget::draw() const {

@@ -17,8 +17,9 @@ public:
 
     virtual void draw() const override;
 
-    void init(const FontManager* fontManager, const CPUMeasure* cpuMeasure,
-              Viewport viewport);
+    void init(const FontManager* fontManager, const CPUMeasure* cpuMeasure);
+
+    void setViewport(Viewport vp);
 
 private:
     void drawCoreGraphs() const;

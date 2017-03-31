@@ -20,18 +20,20 @@ CPUStatsWidget::~CPUStatsWidget() {
 }
 
 void CPUStatsWidget::init(const FontManager* fontManager,
-                         const CPUMeasure* cpuMeasure,
-                         Viewport viewport) {
+                         const CPUMeasure* cpuMeasure) {
 
     m_fontManager = fontManager;
     m_cpuMeasure = cpuMeasure;
-    m_viewport = viewport;
-    m_coreGraphViewport = Viewport{ m_viewport.x, m_viewport.y, 
-                                    m_viewport.width, m_viewport.height/2 - 5 };
-    m_statsViewport = Viewport{ m_viewport.x, m_viewport.y + m_viewport.height/2+5,
-                                m_viewport.width, m_viewport.height/2 };
     // TODO what is that 5 for?
 }
+
+void CPUStatsWidget::setViewport(Viewport vp) { 
+    m_viewport = vp; 
+    m_coreGraphViewport = Viewport{ m_viewport.x, m_viewport.y, 
+        m_viewport.width, m_viewport.height/2 - 5 };
+    m_statsViewport = Viewport{ m_viewport.x, m_viewport.y + m_viewport.height/2+5,
+        m_viewport.width, m_viewport.height/2 };
+};
 
 void CPUStatsWidget::draw() const {
     glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);

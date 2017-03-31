@@ -21,13 +21,11 @@ TimeWidget::~TimeWidget() {
 
 void TimeWidget::init(const FontManager* fontManager,
                       const CPUMeasure* cpuMeasure,
-                      const NetMeasure* netMeasure,
-                      Viewport viewport) {
+                      const NetMeasure* netMeasure) {
 
     m_fontManager = fontManager;
     m_cpuMeasure = cpuMeasure;
     m_netMeasure = netMeasure;
-    m_viewport = viewport;
 }
 
 void TimeWidget::draw() const {
