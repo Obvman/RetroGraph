@@ -157,6 +157,7 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
         }
         case WM_QUIT:
         case WM_CLOSE:
+            Shell_NotifyIcon(NIM_DELETE, &m_tray);
             PostQuitMessage(0);
             releaseOpenGL();
             exit(0);
@@ -375,7 +376,11 @@ void Window::createTrayIcon() {
     m_tray.hIcon = LoadIcon(m_hInstance, MAKEINTRESOURCE(IDI_ICON1));
     m_tray.hWnd = m_hWndMain;
     m_tray.uVersion = NOTIFYICON_VERSION_4;
+#if _DEBUG
+    strcpy_s(m_tray.szTip, 128, "RetroGraph (Debug)");
+#else
     strcpy_s(m_tray.szTip, 128, "RetroGraph");
+#endif
     m_tray.uCallbackMessage = WM_NOTIFY_RG_TRAY;
     m_tray.uFlags = NIF_ICON | NIF_TIP | NIF_MESSAGE;
     m_tray.uID = 101;
@@ -431,6 +436,11 @@ bool Window::createHGLRC() {
                 WS_VISIBLE | WS_POPUP,
                 m_startPosX, m_startPosY, m_width, m_height,
                 nullptr, nullptr, m_hInstance, nullptr);
+
+                /* RECT wndRect; */
+                /* GetWindowRect(m_hWndMain, &wndRect); */
+                /* SetWindowPos(m_hWndMain, HWND_BOTTOM, wndRect.left, wndRect.top, */
+                /*              m_width, m_height, 0); */
     } else {
         // Create test window that doesn't appear in taskbar to query
         // anti-aliasing capabilities
