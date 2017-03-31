@@ -3,6 +3,8 @@
 #include <stdint.h>
 #include <string>
 #include <vector>
+#include <thread>
+#include <atomic>
 
 #include "UserSettings.h"
 #include "Measure.h"
@@ -29,9 +31,11 @@ public:
     const std::string& getHostname() const { return m_hostname; }
     const std::string& getAdapterMAC() const { return m_mainAdapterMAC; }
     const std::string& getAdapterIP() const { return m_mainAdapterIP; }
-    bool isConnected() const { return m_isConnected; }
+    bool isConnected() const;
+    void setIsConnected(bool b);
 private:
-    void getNetStats();
+    void getDNSAndHostname();
+    void getMACAndLocalIP();
 
     _MIB_IF_ROW2* m_adapterEntry;
     std::string m_mainAdapter;
@@ -42,7 +46,9 @@ private:
     std::string m_mainAdapterIP;
 
     std::string m_pingServer;
-    bool m_isConnected;
+    std::atomic<bool> m_isConnected;
+    std::thread m_netConnectionThread;
+    uint32_t m_pingFreqMs;
 
     uint64_t m_downMaxVal;
     uint64_t m_upMaxVal;

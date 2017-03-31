@@ -32,6 +32,8 @@ NetMeasure::NetMeasure(const UserSettings& settings) :
     m_mainAdapterIP{ "0.0.0.0" },
     m_pingServer{ settings.getPingServer() },
     m_isConnected{ false },
+    m_netConnectionThread{ },
+    m_pingFreqMs{ 1000 * 5 },
     m_downMaxVal{ 10U * GB },
     m_upMaxVal{ 10U * GB },
     dataSize{ 40U } {
@@ -62,83 +64,93 @@ void NetMeasure::init() {
         fatalMessageBox("Failed to find adapter");
     }
 
-    getNetStats();
+    getDNSAndHostname();
+    getMACAndLocalIP();
+
+    // Start thread that periodically checks connection to internet.
+    m_netConnectionThread = std::thread{ [this]() {
+        while (true) {
+            setIsConnected(!!InternetCheckConnectionA(
+                m_pingServer.c_str(), FLAG_ICC_FORCE_CONNECTION, 0));
+            Sleep(m_pingFreqMs);
+        }
+    }};
 }
 
-void NetMeasure::getNetStats() {
-    { // Get DNS and Hostname
-        auto pFixedInfo{ (FIXED_INFO*)malloc(sizeof(FIXED_INFO)) };
+void NetMeasure::getMACAndLocalIP() {
+    auto pAdapterInfo{ (IP_ADAPTER_INFO*)malloc(sizeof(IP_ADAPTER_INFO)) };
+    auto ulOutBufLen = ULONG{ sizeof(IP_ADAPTER_INFO) };
+
+    // Make initial call to find the required buffer size, then reallocate
+    // buffer and make second call to fill buffer
+    if (GetAdaptersInfo(pAdapterInfo, &ulOutBufLen) == ERROR_BUFFER_OVERFLOW) {
+        free(pAdapterInfo);
+        pAdapterInfo = (IP_ADAPTER_INFO*)malloc(ulOutBufLen);
+    }
+    if (GetAdaptersInfo(pAdapterInfo, &ulOutBufLen) != NO_ERROR) {
+        fatalMessageBox("Failed to get adapters info");
+    }
+
+    // Get the MAC address and LAN IP address of the main adapter
+    if (GetAdaptersInfo(pAdapterInfo, &ulOutBufLen) == NO_ERROR) {
+        auto currAdapter{ pAdapterInfo };
+        while (currAdapter) {
+            if (m_mainAdapter == currAdapter->Description) {
+                std::stringstream macStream;
+                macStream << std::hex << std::uppercase << std::setfill('0');
+                for (auto i = size_t{ 0U }; i < currAdapter->AddressLength; i++) {
+                    if (i == (currAdapter->AddressLength - 1)) {
+                        macStream << std::setw(2)
+                            << static_cast<int>(currAdapter->Address[i]);
+                    } else {
+                        macStream << std::setw(2)
+                            << static_cast<int>(currAdapter->Address[i])
+                            << '-';
+                    }
+                }
+
+                m_mainAdapterMAC = macStream.str();
+                m_mainAdapterIP = std::string{
+                    currAdapter->IpAddressList.IpAddress.String
+                };
+                break;
+            }
+            currAdapter = currAdapter->Next;
+        }
+    } else {
+        fatalMessageBox("GetAdaptersInfo failed");
+    }
+    free(pAdapterInfo);
+}
+
+void NetMeasure::getDNSAndHostname() {
+    // Get DNS and Hostname
+    auto pFixedInfo{ (FIXED_INFO*)malloc(sizeof(FIXED_INFO)) };
+    if (!pFixedInfo) {
+        printf("Error allocating memory needed to call GetNetworkParams\n");
+    }
+    auto ulOutBufLen = ULONG{ sizeof(FIXED_INFO) };
+
+    // Make an initial call to GetNetworkParams to get
+    // the necessary size into the ulOutBufLen variable
+    if (GetNetworkParams(pFixedInfo, &ulOutBufLen) == ERROR_BUFFER_OVERFLOW) {
+        free(pFixedInfo);
+        pFixedInfo = (FIXED_INFO*)malloc(ulOutBufLen);
         if (!pFixedInfo) {
             printf("Error allocating memory needed to call GetNetworkParams\n");
         }
-        auto ulOutBufLen = ULONG{ sizeof(FIXED_INFO) };
-
-        // Make an initial call to GetNetworkParams to get
-        // the necessary size into the ulOutBufLen variable
-        if (GetNetworkParams(pFixedInfo, &ulOutBufLen) == ERROR_BUFFER_OVERFLOW) {
-            free(pFixedInfo);
-            pFixedInfo = (FIXED_INFO*)malloc(ulOutBufLen);
-            if (!pFixedInfo) {
-                printf("Error allocating memory needed to call GetNetworkParams\n");
-            }
-        } else {
-            std::cout << "Failed to get FIXED_INFO buffer size\n";
-        }
-
-        if (GetNetworkParams(pFixedInfo, &ulOutBufLen) != NO_ERROR) {
-            fatalMessageBox("Failed to get network parameters");
-        }
-
-        m_DNSIP = std::string{ pFixedInfo->DnsServerList.IpAddress.String };
-        m_hostname = std::string{ pFixedInfo->HostName };
-
-        free(pFixedInfo);
+    } else {
+        std::cout << "Failed to get FIXED_INFO buffer size\n";
     }
 
-    { // Get MAC and LAN IP for main adapter
-        auto pAdapterInfo{ (IP_ADAPTER_INFO*)malloc(sizeof(IP_ADAPTER_INFO)) };
-        auto ulOutBufLen = ULONG{ sizeof(IP_ADAPTER_INFO) };
-
-        if (GetAdaptersInfo(pAdapterInfo, &ulOutBufLen) == ERROR_BUFFER_OVERFLOW) {
-            free(pAdapterInfo);
-            pAdapterInfo = (IP_ADAPTER_INFO*)malloc(ulOutBufLen);
-        }
-
-        if (GetAdaptersInfo(pAdapterInfo, &ulOutBufLen) != NO_ERROR) {
-            fatalMessageBox("Failed to get adapters info");
-        }
-
-        // Get the MAC address and LAN IP address of the main adapter
-        if (GetAdaptersInfo(pAdapterInfo, &ulOutBufLen) == NO_ERROR) {
-            auto currAdapter{ pAdapterInfo };
-            while (currAdapter) {
-                if (m_mainAdapter == currAdapter->Description) {
-                    std::stringstream macStream;
-                    macStream << std::hex << std::uppercase << std::setfill('0');
-                    for (auto i = size_t{ 0U }; i < currAdapter->AddressLength; i++) {
-                        if (i == (currAdapter->AddressLength - 1)) {
-                            macStream << std::setw(2)
-                                      << static_cast<int>(currAdapter->Address[i]);
-                        } else {
-                            macStream << std::setw(2)
-                                      << static_cast<int>(currAdapter->Address[i])
-                                      << '-';
-                        }
-                    }
-
-                    m_mainAdapterMAC = macStream.str();
-                    m_mainAdapterIP = std::string{
-                        currAdapter->IpAddressList.IpAddress.String
-                    };
-                    break;
-                }
-                currAdapter = currAdapter->Next;
-            }
-        } else {
-            fatalMessageBox("GetAdaptersInfo failed");
-        }
-        free(pAdapterInfo);
+    if (GetNetworkParams(pFixedInfo, &ulOutBufLen) != NO_ERROR) {
+        fatalMessageBox("Failed to get network parameters");
     }
+
+    m_DNSIP = std::string{ pFixedInfo->DnsServerList.IpAddress.String };
+    m_hostname = std::string{ pFixedInfo->HostName };
+
+    free(pFixedInfo);
 }
 
 void NetMeasure::update(uint32_t ticks) {
@@ -157,15 +169,15 @@ void NetMeasure::update(uint32_t ticks) {
         m_upBytes[0] = m_adapterEntry->OutOctets - oldUp;
         std::rotate(m_upBytes.begin(), m_upBytes.begin() + 1, m_upBytes.end());
         m_upMaxVal = *std::max_element(m_upBytes.cbegin(), m_upBytes.cend());
-
-        // TODO multithread this since it blocks the app whenever a ping takes too long
-        if ((ticks % (ticksPerSecond * 10)) == 0) {
-            // !! to convert Windows' BOOL to bool without compiler warning
-            // gross, I know...
-            m_isConnected = !!InternetCheckConnectionA(
-                m_pingServer.c_str(), FLAG_ICC_FORCE_CONNECTION, 0);
-        }
     }
+}
+
+bool NetMeasure::isConnected() const {
+    return m_isConnected.load();
+}
+
+void NetMeasure::setIsConnected(bool b) {
+    m_isConnected.store(b);
 }
 
 }

@@ -61,7 +61,7 @@ void DriveMeasure::update(uint32_t ticks) {
            since these are fixed drives and the program shouldn't be running in
            those events */
         for (const auto& pdi : m_drives) {
-            char path[4] = { pdi->getDriveLetter(), ':', '\\', '\0' };
+            char path[4] = { pdi->driveLetter, ':', '\\', '\0' };
 
             // Only update drive capacity every 15 seconds
             if ((ticks % (ticksPerSecond * 15)) == 0) {
@@ -74,18 +74,18 @@ void DriveMeasure::update(uint32_t ticks) {
 
                 // We don't expect the max capacity of a fixed drive to change,
                 // so only update the DriveInfo with the freeBytes
-                pdi->setTotalFreeBytes(totalFreeBytes.QuadPart);
+                pdi->totalFreeBytes = totalFreeBytes.QuadPart;
             }
 
             // Only check for drive name updates every 20 minutes
-            if ((ticks % (ticksPerSecond * 20)) == 0) {
+            if ((ticks % (ticksPerSecond * 60 * 20)) == 0) {
                 char volumeNameBuff[maxVolumeNameSize];
                 GetVolumeInformation(path, volumeNameBuff, maxVolumeNameSize,
                                      nullptr, nullptr, nullptr, nullptr, 0);
 
                 // If the volume name has been changed, update the drive info object
-                if (pdi->getVolumeName() != volumeNameBuff) {
-                    pdi->setVolumeName(std::string{ volumeNameBuff });
+                if (pdi->volumeName != volumeNameBuff) {
+                    pdi->volumeName = std::string{ volumeNameBuff };
                 }
             }
         }

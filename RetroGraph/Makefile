@@ -5,7 +5,6 @@ SOLNDIR=../
 SOLN=$(SOLNDIR)RetroGraph.sln
 
 # This just delegates building to the Visual Studio build system
-
 all: debug
 
 both: release debug 
@@ -29,3 +28,4 @@ runr: FORCE
 	cygstart --action=runas ../Release/RetroGraph.exe
 
 FORCE:
+

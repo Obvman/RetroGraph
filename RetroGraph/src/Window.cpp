@@ -357,26 +357,27 @@ bool Window::createHGLRC() {
 
     if (m_arbMultisampleSupported) {
         m_hWndMain = CreateWindowEx(WS_EX_APPWINDOW | WS_EX_TRANSPARENT,
-                                    "RetroGraph", windowName,
-                                    WS_VISIBLE | WS_POPUP,
-                                    m_startPosX, m_startPosY, m_width, m_height,
-                                    nullptr, nullptr, m_hInstance, nullptr);
+                "RetroGraph", windowName,
+                WS_VISIBLE | WS_POPUP,
+                m_startPosX, m_startPosY, m_width, m_height,
+                nullptr, nullptr, m_hInstance, nullptr);
     } else {
         // Create test window that doesn't appear in taskbar to query
         // anti-aliasing capabilities
         m_hWndMain = CreateWindowEx(WS_EX_TOOLWINDOW | WS_EX_TRANSPARENT,
-                                    "RetroGraph", "Dummy",
-                                    WS_VISIBLE | WS_POPUP,
-                                    m_startPosX, m_startPosY, m_width, m_height,
-                                    nullptr, nullptr, m_hInstance, nullptr);
+                "RetroGraph", "Dummy",
+                WS_VISIBLE | WS_POPUP,
+                m_startPosX, m_startPosY, m_width, m_height,
+                nullptr, nullptr, m_hInstance, nullptr);
     }
 
-    // Store a pointer to this Window object that we can later recover in WndProc
+    // Store a pointer to this Window object so we can reference members in WndProc
     SetWindowLong(m_hWndMain, GWLP_USERDATA, (LONG)this);
 
     #if (!_DEBUG)
     // Display window at the desktop layer on startup
-    SetWindowPos(m_hWndMain, HWND_BOTTOM, m_startPosX, m_startPosY, m_width, m_height, 0);
+    SetWindowPos(m_hWndMain, HWND_BOTTOM, 
+            m_startPosX, m_startPosY, m_width, m_height, 0);
     #endif
 
     if(!m_hWndMain) {
@@ -401,14 +402,14 @@ bool Window::createHGLRC() {
     PIXELFORMATDESCRIPTOR pfd = {
         sizeof(PIXELFORMATDESCRIPTOR),
         1,                                // Version Number
-        PFD_DRAW_TO_WINDOW      |         // Format Must Support Window
-        PFD_SUPPORT_OPENGL      |         // Format Must Support OpenGL
-        PFD_SUPPORT_COMPOSITION |         // Format Must Support Composition
-        PFD_DOUBLEBUFFER,                 // Must Support Double Buffering
-        PFD_TYPE_RGBA,                    // Request An RGBA Format
-        32,                               // Select Our Color Depth
+        PFD_DRAW_TO_WINDOW      |
+        PFD_SUPPORT_OPENGL      |
+        PFD_SUPPORT_COMPOSITION |         // For transparency
+        PFD_DOUBLEBUFFER,
+        PFD_TYPE_RGBA,
+        32,                               // Color Depth
         0, 0, 0, 0, 0, 0,                 // Color Bits Ignored
-        8,                                // An Alpha Buffer
+        8,                                // Alpha Buffer
         0,                                // Shift Bit Ignored
         0,                                // No Accumulation Buffer
         0, 0, 0, 0,                       // Accumulation Bits Ignored
@@ -525,7 +526,9 @@ bool Window::initMultisample() {
 
     // Get Our Pixel Format
     PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB =
-        reinterpret_cast<PFNWGLCHOOSEPIXELFORMATARBPROC>(wglGetProcAddress("wglChoosePixelFormatARB"));
+        reinterpret_cast<PFNWGLCHOOSEPIXELFORMATARBPROC>(
+                wglGetProcAddress("wglChoosePixelFormatARB")
+        );
     if (!wglChoosePixelFormatARB) {
         m_arbMultisampleSupported = false;
         return false;
