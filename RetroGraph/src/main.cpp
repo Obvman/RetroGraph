@@ -49,7 +49,7 @@ void mainLoop(rg::Window& mainWindow) {
 
     // Enter main update/draw loop
     MSG msg;
-    while(true) {
+    while(mainWindow.isRunning()) {
         const auto currTime{ duration_cast<milliseconds>(
                                   system_clock::now().time_since_epoch()
                              ).count() };

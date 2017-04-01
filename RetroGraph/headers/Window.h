@@ -23,7 +23,7 @@ namespace rg {
 class Window {
 public:
     Window(HINSTANCE hInstance);
-    ~Window() noexcept = default;
+    ~Window() noexcept;
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
 
@@ -52,6 +52,8 @@ public:
 
     int32_t getWidth() const { return m_width; }
     int32_t getHeight() const { return m_height; }
+
+    bool isRunning() const { return m_running; }
 private:
     /* Creates the window and the OpenGL context */
     void createWindow();
@@ -66,9 +68,6 @@ private:
 
     /* Initialises OpenGL settings and renderer */
     void initOpenGL();
-
-    /* Releases the OpenGL context from the window */
-    void releaseOpenGL();
 
     /* Creates a dummy window to test if multisampling is supported. If so,
        the dummy is destroyed and a new anti-aliased window is created */
@@ -93,6 +92,7 @@ private:
      */
     void handleTrayMessage(HWND hWnd, WPARAM wParam, LPARAM lParam);
 
+    bool m_running{ true };
 
     WNDCLASSEX m_wc{ };
     HWND m_hWndMain{ nullptr };
@@ -115,7 +115,6 @@ private:
     int32_t m_aaSamples{ 8 };
     HINSTANCE m_hInstance{ nullptr };
 
-    //std::vector<std::unique_ptr<Measure>> m_measures;
     CPUMeasure m_cpuMeasure;
     GPUMeasure m_gpuMeasure;
     RAMMeasure m_ramMeasure;

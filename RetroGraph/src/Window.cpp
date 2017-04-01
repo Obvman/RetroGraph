@@ -61,6 +61,16 @@ Window::Window(HINSTANCE hInstance) :
     draw(0);
 }
 
+Window::~Window() {
+    std::cout << "Window releasing\n";
+
+    wglMakeCurrent(nullptr, nullptr);
+    wglDeleteContext(m_hrc);
+
+    Shell_NotifyIcon(NIM_DELETE, &m_tray);
+    PostQuitMessage(0);
+}
+
 LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
                                   WPARAM wParam, LPARAM lParam) {
     static int clickX;
@@ -153,10 +163,7 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
         }
         case WM_QUIT:
         case WM_CLOSE:
-            Shell_NotifyIcon(NIM_DELETE, &m_tray);
-            PostQuitMessage(0);
-            releaseOpenGL();
-            exit(0);
+            m_running = false;
             break;
         case WM_DESTROY:
             break;
@@ -357,19 +364,11 @@ void Window::initOpenGL() {
     glutInit(&gargc, gargv);
 
     glEnable(GL_ALPHA_TEST);
-    //glEnable(GL_DEPTH_TEST); // 3D depth testing
     glEnable(GL_MULTISAMPLE_ARB);
     glEnable(GL_BLEND); // Alpha blending needed for transparency
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
 
-}
-
-void Window::releaseOpenGL() {
-    std::cout << "Window releasing\n";
-
-    wglMakeCurrent(nullptr, nullptr);
-    wglDeleteContext(m_hrc);
 }
 
 bool Window::createHGLRC() {
