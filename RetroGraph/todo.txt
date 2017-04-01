@@ -1,9 +1,3 @@
-use a global bool for the mainloop to exit rather than calling exit(0).
-This will allow for Window RAII to properly cleanup instead of calling release()
-before the exit(0)
-
-separate Window into RetroGraph class and a true Window class
-
 network: show how many MB have been downloaded since retrograph started
 
 change font colour
@@ -13,8 +7,6 @@ Music widget:
     make song name 2 lines if it's too long
 
 display information (resolution)
-
-g++ compilation!
 
 retrograph performance stats (clocks per frame, RAM, etc)
 

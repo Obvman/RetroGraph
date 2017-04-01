@@ -12,10 +12,12 @@
 
 namespace rg {
 
+class UserSettings;
+
 /* Tracks system processes and their CPU/RAM usage */
 class ProcessMeasure {
 public:
-    ProcessMeasure();
+    ProcessMeasure(const UserSettings& settings);
     virtual ~ProcessMeasure() noexcept = default;
     ProcessMeasure(const ProcessMeasure&) = delete;
     ProcessMeasure& operator=(const ProcessMeasure&) = delete;
@@ -60,7 +62,6 @@ private:
     uint32_t m_numProcessesToDisplay{ 10 };
     std::vector<std::pair<std::string, double>> m_procCPUListData{ m_numProcessesToDisplay };
     std::vector<std::pair<std::string, size_t>> m_procRAMListData{ m_numProcessesToDisplay };
-
 };
 
 }

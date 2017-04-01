@@ -15,6 +15,7 @@
 
 #include "../headers/colors.h"
 #include "../headers/ProcessData.h"
+#include "../headers/UserSettings.h"
 #include "../headers/utils.h"
 
 namespace rg {
@@ -32,7 +33,9 @@ typedef struct _SYSTEM_PROCESS_INFO {
     HANDLE                  InheritedFromProcessId;
 } SYSTEM_PROCESS_INFO, *PSYSTEM_PROCESS_INFO;
 
-ProcessMeasure::ProcessMeasure() {
+ProcessMeasure::ProcessMeasure(const UserSettings& settings) :
+    m_numProcessesToDisplay{ settings.getNumProcessesDisplayed() } {
+
 #if !_DEBUG
     // Set the debug privilege in order to gain access to system processes
     HANDLE hToken;

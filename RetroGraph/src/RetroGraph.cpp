@@ -9,7 +9,7 @@ RetroGraph::RetroGraph(HINSTANCE hInstance) :
     m_gpuMeasure{ },
     m_ramMeasure{ },
     m_netMeasure{ m_userSettings },
-    m_processMeasure{ },
+    m_processMeasure{ m_userSettings },
     m_driveMeasure{ },
     m_musicMeasure{ &m_processMeasure },
     m_systemMeasure{ },

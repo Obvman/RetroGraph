@@ -26,6 +26,7 @@ public:
     const std::string& getPingServer() const { return m_pingServer; }
     uint32_t getPingFreq() const { return m_pingFreq; }
 
+    uint32_t getNumProcessesDisplayed() const { return m_numProcessesDisplayed; }
     float getHighCPUUsageThreshold() const { return m_processCPUUsageThreshold; }
     uint32_t getHighRAMUsageThresholdMB() const { return m_processRAMUsageThresholdMB; }
 
@@ -44,6 +45,7 @@ private:
     uint32_t m_pingFreq{ 10U };
 
     // Appearance options
+    uint32_t m_numProcessesDisplayed{ 8U };
     float m_processCPUUsageThreshold{ 0.2f };
     uint32_t m_processRAMUsageThresholdMB{ 1024U };
 };

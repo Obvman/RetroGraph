@@ -24,6 +24,8 @@ UserSettings::UserSettings() {
             m_pingServer = propTree.get<std::string>("Network.PingServer");
             m_pingFreq = propTree.get<uint32_t>("Network.PingFrequency");
 
+            m_numProcessesDisplayed = propTree.get<uint32_t>(
+                    "Processes.NumProcessesDisplayed");
             m_processCPUUsageThreshold = propTree.get<float>(
                     "Processes.HighCPUUsageThreshold");
             m_processRAMUsageThresholdMB = propTree.get<uint32_t>(
@@ -51,6 +53,7 @@ void UserSettings::generateDefaultFile(pt::ptree& propTree) {
     propTree.put("Network.PingServer", m_pingServer);
     propTree.put("Network.PingFrequency", m_pingServer);
 
+    propTree.put("Processes.NumProcessesDisplayed", m_numProcessesDisplayed);
     propTree.put("Processes.HighCPUUsageThreshold", m_processCPUUsageThreshold);
     propTree.put("Processes.HighRAMUsageThresholdMB", m_processRAMUsageThresholdMB);
 
