@@ -10,10 +10,16 @@
 #include "../headers/drawUtils.h"
 
 namespace rg {
+FontManager::FontManager(HWND hWnd, uint32_t windowHeight) :
+    m_hWnd{ hWnd } {
 
-void FontManager::init(HWND hWnd, uint32_t windowHeight) {
-    m_hWnd = hWnd;
     initFonts(windowHeight);
+}
+
+FontManager::~FontManager() {
+    for (const auto base : m_fontBases) {
+        glDeleteLists(base, RG_NUM_CHARS_IN_FONT);
+    }
 }
 
 void FontManager::release() {

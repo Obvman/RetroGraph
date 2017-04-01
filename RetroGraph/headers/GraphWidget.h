@@ -13,16 +13,18 @@ class GPUMeasure;
 
 class GraphWidget : public Widget {
 public:
-    GraphWidget() = default;
+    GraphWidget(const FontManager* fontManager, const CPUMeasure* cpuMeasure,
+                const RAMMeasure* ramMeasure, const NetMeasure* netMeasure,
+                const GPUMeasure* gpuMeasure) :
+        m_fontManager{ fontManager }, m_cpuMeasure{ cpuMeasure },
+        m_ramMeasure{ ramMeasure }, m_netMeasure{ netMeasure },
+        m_gpuMeasure{ gpuMeasure } {}
+
     virtual ~GraphWidget() noexcept = default;
     GraphWidget(const GraphWidget&) = delete;
     GraphWidget& operator=(const GraphWidget&) = delete;
 
     void draw() const override;
-
-    void init(const FontManager* fontManager, const CPUMeasure* cpuMeasure,
-              const RAMMeasure* ramMeasure, const NetMeasure* netMeasure,
-              const GPUMeasure* gpuMeasure);
 
     void setViewport(Viewport vp);
 

@@ -11,16 +11,18 @@ class NetMeasure;
 
 class TimeWidget : public Widget {
 public:
-    TimeWidget() = default;
+    TimeWidget(const FontManager* fontManager,
+               const CPUMeasure* cpuMeasure,
+               const NetMeasure* netMeasure) :
+        m_fontManager{ fontManager },
+        m_cpuMeasure{ cpuMeasure },
+        m_netMeasure{ netMeasure } { }
+
     virtual ~TimeWidget() noexcept = default;
     TimeWidget(const TimeWidget&) = delete;
     TimeWidget& operator=(const TimeWidget&) = delete;
 
     void draw() const override;
-
-    void init(const FontManager* fontManager,
-              const CPUMeasure* cpuMeasure,
-              const NetMeasure* netMeasure);
 
     void setViewport(Viewport vp) { m_viewport = vp; };
 private:

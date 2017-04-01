@@ -9,11 +9,6 @@
 
 namespace rg {
 
-void MainWidget::init(const FontManager* fontManager) {
-
-    m_fontManager = fontManager;
-}
-
 void MainWidget::draw() const {
     glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
 

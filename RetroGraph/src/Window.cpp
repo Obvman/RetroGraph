@@ -14,13 +14,6 @@
 #include "../headers/resource.h"
 #include "../headers/utils.h"
 #include "../headers/colors.h"
-#include "../headers/CPUMeasure.h"
-#include "../headers/GPUMeasure.h"
-#include "../headers/RAMMeasure.h"
-#include "../headers/ProcessMeasure.h"
-#include "../headers/NetMeasure.h"
-#include "../headers/DriveMeasure.h"
-#include "../headers/MusicMeasure.h"
 
 namespace rg {
 
@@ -43,37 +36,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-Window::Window(HINSTANCE hInstance) : m_hInstance{ hInstance } {
-    const auto& currMonitorData{ m_monitors.getMonitorData()[m_currMonitor] };
-    m_width = currMonitorData.width;
-    m_height = currMonitorData.height;
-    m_startPosX = currMonitorData.x;
-    m_startPosY = currMonitorData.y;
-
-    createWindow();
-
-    // Create all measures
-    m_measures.push_back(std::move(std::make_unique<CPUMeasure>()));
-    m_measures.push_back(std::move(std::make_unique<GPUMeasure>()));
-    m_measures.push_back(std::move(std::make_unique<RAMMeasure>()));
-    m_measures.push_back(std::move(std::make_unique<NetMeasure>(m_userSettings)));
-    m_measures.push_back(std::move(std::make_unique<ProcessMeasure>()));
-    m_measures.push_back(std::move(std::make_unique<DriveMeasure>()));
-    // Music measure initialises with pointer to ProcessMeasure
-    m_measures.push_back(std::move(std::make_unique<MusicMeasure>(
-                    dynamic_cast<ProcessMeasure*>(m_measures[4].get()))));
-    m_measures.push_back(std::move(std::make_unique<SystemMeasure>()));
-
-    m_renderer.init(m_hWndMain, m_width, m_height,
-                    dynamic_cast<CPUMeasure&>(*m_measures[0]),
-                    dynamic_cast<GPUMeasure&>(*m_measures[1]),
-                    dynamic_cast<RAMMeasure&>(*m_measures[2]),
-                    dynamic_cast<NetMeasure&>(*m_measures[3]),
-                    dynamic_cast<ProcessMeasure&>(*m_measures[4]),
-                    dynamic_cast<DriveMeasure&>(*m_measures[5]),
-                    dynamic_cast<MusicMeasure&>(*m_measures[6]),
-                    dynamic_cast<SystemMeasure&>(*m_measures[7]),
-                    m_userSettings);
+Window::Window(HINSTANCE hInstance) : 
+    m_monitors{ },
+    m_userSettings{ },
+    m_currMonitor{ m_userSettings.getStartupMonitor() },
+    m_width{ m_monitors.getWidth(m_currMonitor) },
+    m_height{ m_monitors.getHeight(m_currMonitor) },
+    m_startPosX{ m_monitors.getX(m_currMonitor) },
+    m_startPosY{ m_monitors.getY(m_currMonitor) },
+    m_hInstance{ (createWindow(), hInstance) },
+    m_cpuMeasure{ },
+    m_gpuMeasure{ },
+    m_ramMeasure{ },
+    m_netMeasure{ m_userSettings },
+    m_processMeasure{ },
+    m_driveMeasure{ },
+    m_musicMeasure{ &m_processMeasure },
+    m_systemMeasure{ },
+    m_renderer{ m_hWndMain, *this }
+{
+    createTrayIcon();
 
     update(0);
     draw(0);
@@ -276,11 +258,20 @@ void Window::handleTrayMessage(HWND hWnd, WPARAM wParam, LPARAM lParam) {
 void Window::update(uint32_t ticks) {
     // Update with a tick offset so all measures don't update in the same
     // cycle
-    auto i = uint32_t{ 0U };
-    for (const auto& pMeasure : m_measures) {
-        pMeasure->update(ticks + i);
-        ++i;
-    }
+    /* auto i = uint32_t{ 0U }; */
+    /* for (const auto& pMeasure : m_measures) { */
+    /*     pMeasure->update(ticks + i); */
+    /*     ++i; */
+    /* } */
+
+    m_cpuMeasure.update(ticks);
+    m_gpuMeasure.update(ticks);
+    m_ramMeasure.update(ticks);
+    m_netMeasure.update(ticks);
+    m_processMeasure.update(ticks);
+    m_driveMeasure.update(ticks);
+    m_musicMeasure.update(ticks);
+    m_systemMeasure.update(ticks);
 }
 
 void Window::draw(uint32_t ticks) const {
@@ -331,8 +322,6 @@ void Window::createWindow() {
         fatalMessageBox("Failed to create OpenGL Window");
     }
 
-    createTrayIcon();
-
     initOpenGL();
 
     updateSize(m_width, m_height);
@@ -378,7 +367,6 @@ void Window::initOpenGL() {
 
 void Window::releaseOpenGL() {
     std::cout << "Window releasing\n";
-    m_renderer.release();
 
     wglMakeCurrent(nullptr, nullptr);
     wglDeleteContext(m_hrc);

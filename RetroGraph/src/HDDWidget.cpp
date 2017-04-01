@@ -10,13 +10,6 @@
 
 namespace rg {
 
-void HDDWidget::init(const FontManager* fontManager,
-                     const DriveMeasure* driveMeasure) {
-
-    m_fontManager = fontManager;
-    m_driveMeasure = driveMeasure;
-}
-
 void HDDWidget::draw() const {
     glViewport(m_viewport.x, m_viewport.y,
                m_viewport.width, m_viewport.height);

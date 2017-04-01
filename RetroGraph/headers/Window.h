@@ -8,7 +8,15 @@
 #include "UserSettings.h"
 #include "SystemMeasure.h"
 #include "Monitors.h"
+
 #include "Measure.h"
+#include "CPUMeasure.h"
+#include "GPUMeasure.h"
+#include "RAMMeasure.h"
+#include "ProcessMeasure.h"
+#include "NetMeasure.h"
+#include "DriveMeasure.h"
+#include "MusicMeasure.h"
 
 namespace rg {
 
@@ -32,6 +40,18 @@ public:
     /* Window Proc that has access to this window class's members via lParam */
     LRESULT CALLBACK WndProc2(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
+    const CPUMeasure& getCPUMeasure() const { return m_cpuMeasure; }
+    const GPUMeasure& getGPUMeasure() const { return m_gpuMeasure; }
+    const RAMMeasure& getRAMMeasure() const { return m_ramMeasure; }
+    const NetMeasure& getNetMeasure() const { return m_netMeasure; }
+    const ProcessMeasure& getProcessMeasure() const { return m_processMeasure; }
+    const DriveMeasure& getDriveMeasure() const { return m_driveMeasure; }
+    const MusicMeasure& getMusicMeasure() const { return m_musicMeasure; }
+    const SystemMeasure& getSystemMeasure() const { return m_systemMeasure; }
+    const UserSettings& getUserSettings() const { return m_userSettings; }
+
+    int32_t getWidth() const { return m_width; }
+    int32_t getHeight() const { return m_height; }
 private:
     /* Creates the window and the OpenGL context */
     void createWindow();
@@ -73,31 +93,40 @@ private:
      */
     void handleTrayMessage(HWND hWnd, WPARAM wParam, LPARAM lParam);
 
-    Monitors m_monitors{ };
-    UserSettings m_userSettings{ };
-
-    HINSTANCE m_hInstance{ nullptr };
-    NOTIFYICONDATA m_tray{ };
-    bool m_dragging{ false };
-    int32_t m_currMonitor{ m_userSettings.getStartupMonitor() };
-    uint32_t m_width{ 1920 };
-    uint32_t m_height{ 1080 };
-    int32_t m_startPosX{ 0 };
-    int32_t m_startPosY{ 0 };
-    bool m_arbMultisampleSupported{ false };
-    int32_t m_arbMultisampleFormat{ 0 };
-    int32_t m_aaSamples{ 8 };
-
-    std::vector<std::unique_ptr<Measure>> m_measures;
-
-    Renderer m_renderer{ }; // Must be intialised after the measures
-
 
     WNDCLASSEX m_wc{ };
     HWND m_hWndMain{ nullptr };
     HDC m_hdc{ };
     HGLRC m_hrc{ };
     MSG m_msg{ };
+
+    Monitors m_monitors{ };
+    UserSettings m_userSettings{ };
+
+    NOTIFYICONDATA m_tray{ };
+    bool m_dragging{ false };
+    int32_t m_currMonitor{ 0 };
+    int32_t m_width{ 0 };
+    int32_t m_height{ 0 };
+    int32_t m_startPosX{ 0 };
+    int32_t m_startPosY{ 0 };
+    bool m_arbMultisampleSupported{ false };
+    int32_t m_arbMultisampleFormat{ 0 };
+    int32_t m_aaSamples{ 8 };
+    HINSTANCE m_hInstance{ nullptr };
+
+    //std::vector<std::unique_ptr<Measure>> m_measures;
+    CPUMeasure m_cpuMeasure;
+    GPUMeasure m_gpuMeasure;
+    RAMMeasure m_ramMeasure;
+    NetMeasure m_netMeasure;
+    ProcessMeasure m_processMeasure;
+    DriveMeasure m_driveMeasure;
+    MusicMeasure m_musicMeasure;
+    SystemMeasure m_systemMeasure;
+
+    Renderer m_renderer;
+
 };
 
 }

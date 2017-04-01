@@ -22,8 +22,6 @@ unsigned long long FileTimeToInt64(const FILETIME & ft) {
 namespace rg {
 
 CPUMeasure::CPUMeasure() {
-    m_coreTempPlugin.init();
-
     // Fill CPU name if CoreTemp interfacing was successful
     if (m_cpuName.size() == 0 && m_coreTempPlugin.getCoreTempInfoSuccess()) {
         m_cpuName = "CPU: ";

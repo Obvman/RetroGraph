@@ -32,6 +32,10 @@ public:
     const std::vector<MonitorData>& getMonitorData() const { return m_monitors; }
     size_t getNumMonitors() const { return m_monitors.size(); }
 
+    int32_t getWidth(size_t i) const { return m_monitors[i].width; }
+    int32_t getHeight(size_t i) const { return m_monitors[i].height; }
+    int32_t getX(size_t i) const { return m_monitors[i].x; }
+    int32_t getY(size_t i) const { return m_monitors[i].y; }
 private:
     void fillMonitorData();
 

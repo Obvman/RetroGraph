@@ -43,15 +43,10 @@ constexpr size_t RG_NUM_FONTS{ 6U };
 
 class FontManager {
 public:
-    FontManager() = default;
-    ~FontManager() noexcept = default;
+    FontManager(HWND hWnd, uint32_t windowHeight);
+    ~FontManager() noexcept;
     FontManager(const FontManager&) = delete;
     FontManager& operator=(const FontManager&) = delete;
-
-    void init(HWND hWnd, uint32_t windowHeight);
-
-    /* Releases font resources */
-    void release();
 
     /* Release current font data and reinitialises to match new window size */
     void refreshFonts(uint32_t newWindowHeight);
@@ -106,6 +101,10 @@ public:
 
 private:
     void initFonts(uint32_t windowHeight);
+
+    /* Releases font resources */
+    void release();
+
 
     /* Creates a new font entry into the fontBases list and retrieves
        character width/pixel information */

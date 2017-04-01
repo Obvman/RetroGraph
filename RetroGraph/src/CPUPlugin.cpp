@@ -7,12 +7,7 @@ namespace rg {
 typedef bool (WINAPI *myGetCoreTempInfo)(CORE_TEMP_SHARED_DATA* pData);
 myGetCoreTempInfo GetCoreTempInfo;
 
-
-CPUPlugin::~CPUPlugin() {
-    FreeLibrary(m_libHandle);
-}
-
-void CPUPlugin::init() {
+CPUPlugin::CPUPlugin() {
     m_libHandle = LoadLibrary("GetCoreTempInfo.dll");
 
     if (!m_libHandle) {
@@ -30,6 +25,10 @@ void CPUPlugin::init() {
     // Fill the CORE_TEMP_SHARED_DATA struct with CPU stats from CoreTemp's
     // shared memory
     m_getCoreTempInfoSuccess = GetCoreTempInfo(&m_ctData);
+}
+
+CPUPlugin::~CPUPlugin() {
+    FreeLibrary(m_libHandle);
 }
 
 void CPUPlugin::update() {

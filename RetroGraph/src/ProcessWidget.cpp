@@ -10,11 +10,6 @@
 
 namespace rg {
 
-void ProcessWidget::init(const FontManager* fontManager, const ProcessMeasure* procMeasure) {
-    m_fontManager = fontManager;
-    m_procMeasure = procMeasure;
-}
-
 void ProcessWidget::draw() const {
     glViewport(m_viewport.x, m_viewport.y,
                m_viewport.width, m_viewport.height);

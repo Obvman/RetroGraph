@@ -10,12 +10,10 @@ namespace rg {
    individual core temperatures and loads */
 class CPUPlugin {
 public:
-    CPUPlugin() = default;
+    CPUPlugin();
     ~CPUPlugin() noexcept;
     CPUPlugin(const CPUPlugin&) = delete;
     CPUPlugin& operator=(const CPUPlugin&) = delete;
-
-    void init();
 
     /* Gets latest information from CoreTemp */
     void update();

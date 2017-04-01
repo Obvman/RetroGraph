@@ -11,15 +11,6 @@
 
 namespace rg {
 
-void TimeWidget::init(const FontManager* fontManager,
-                      const CPUMeasure* cpuMeasure,
-                      const NetMeasure* netMeasure) {
-
-    m_fontManager = fontManager;
-    m_cpuMeasure = cpuMeasure;
-    m_netMeasure = netMeasure;
-}
-
 void TimeWidget::draw() const {
     glViewport(m_viewport.x, m_viewport.y,
                m_viewport.width, m_viewport.height);

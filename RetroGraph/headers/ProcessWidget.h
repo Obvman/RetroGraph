@@ -10,14 +10,14 @@ class ProcessMeasure;
 
 class ProcessWidget : public Widget {
 public:
-    ProcessWidget() = default;
+    ProcessWidget(const FontManager* fontManager, const ProcessMeasure* procMeasure) :
+        m_fontManager{ fontManager }, m_procMeasure{ procMeasure } {}
+    
     virtual ~ProcessWidget() noexcept = default;
     ProcessWidget(const ProcessWidget&) = delete;
     ProcessWidget& operator=(const ProcessWidget&) = delete;
 
     void draw() const override;
-
-    void init(const FontManager* fontManager, const ProcessMeasure* procMeasure);
 
     void setViewport(Viewport vp) { m_viewport = vp; };
 private:

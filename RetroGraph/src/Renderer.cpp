@@ -3,6 +3,7 @@
 #include <sstream>
 #include <iostream>
 
+#include "../headers/Window.h"
 #include "../headers/CPUMeasure.h"
 #include "../headers/GPUMeasure.h"
 #include "../headers/RAMMeasure.h"
@@ -17,21 +18,30 @@
 
 namespace rg {
 
-void Renderer::init(HWND hWnd, uint32_t windowWidth, uint32_t windowHeight,
-                    const CPUMeasure& _cpu, const GPUMeasure& _gpu,
-                    const RAMMeasure& _ram, const NetMeasure& _net,
-                    const ProcessMeasure& _proc, const DriveMeasure& _drive,
-                    const MusicMeasure& _music, const SystemMeasure& _sys,
-                    const UserSettings& settings) {
-    m_renderTargetHandle = hWnd;
+Renderer::Renderer(HWND hWnd, const Window& w) :
+        m_renderTargetHandle{ hWnd },
+        m_fontManager{ hWnd, w.getHeight() },
+        m_timeWidget{ &m_fontManager, &w.getCPUMeasure(), &w.getNetMeasure() },
+        m_hddWidget{ &m_fontManager, &w.getDriveMeasure() },
+        m_cpuStatsWidget{ &m_fontManager, &w.getCPUMeasure() },
+        m_processWidget{ &m_fontManager, &w.getProcessMeasure() },
+        m_graphWidget{ &m_fontManager, &w.getCPUMeasure(), &w.getRAMMeasure(),
+                       &w.getNetMeasure(), &w.getGPUMeasure() },
+        m_systemStatsWidget{ &m_fontManager, &w.getSystemMeasure(),
+                             &w.getCPUMeasure(), &w.getNetMeasure() },
+        m_mainWidget{ &m_fontManager },
+        m_musicWidget{ &m_fontManager, &w.getMusicMeasure() } {
 
-    m_fontManager.init(hWnd, windowHeight);
-
-    initWidgets(settings, windowWidth, windowHeight,
-            _cpu, _gpu, _ram, _net, _proc, _drive, _music, _sys);
+    setViewports(w.getWidth(), w.getHeight());
 
     initVBOs();
     initShaders();
+}
+
+Renderer::~Renderer() {
+    // Free VBO memory
+    glDeleteBuffers(1, &m_graphGridVertsID);
+    glDeleteBuffers(1, &m_graphGridIndicesID);
 }
 
 void Renderer::draw(uint32_t) const {
@@ -49,49 +59,12 @@ void Renderer::draw(uint32_t) const {
 
 }
 
-void Renderer::release() {
-    // Free VBO memory
-    glDeleteBuffers(1, &m_graphGridVertsID);
-    glDeleteBuffers(1, &m_graphGridIndicesID);
-
-    m_fontManager.release();
-}
-
 void Renderer::updateWindowSize(int32_t newWidth, int32_t newHeight) {
     setViewports(newWidth, newHeight);
     m_fontManager.refreshFonts(newHeight);
 }
 
 /********************* Private Functions ********************/
-
-void Renderer::initWidgets(const UserSettings&,
-                           int32_t windowWidth, int32_t windowHeight,
-                           const CPUMeasure& _cpu, const GPUMeasure& _gpu,
-                           const RAMMeasure& _ram, const NetMeasure& _net,
-                           const ProcessMeasure& _proc, const DriveMeasure& _drive,
-                           const MusicMeasure& _music, const SystemMeasure& _sys) {
-    const auto widgetW{ windowWidth/5 };
-    const auto widgetH{ windowHeight/6 };
-    const auto sideWidgetH{ windowHeight/2 };
-
-    m_timeWidget.init(&m_fontManager, &_cpu, &_net);
-
-    m_hddWidget.init(&m_fontManager, &_drive);
-
-    m_cpuStatsWidget.init(&m_fontManager, &_cpu);
-
-    m_processWidget.init(&m_fontManager, &_proc);
-
-    m_graphWidget.init(&m_fontManager, &_cpu, &_ram, &_net, &_gpu);
-
-    m_systemStatsWidget.init(&m_fontManager, &_sys, &_cpu, &_net);
-
-    m_mainWidget.init(&m_fontManager);
-
-    m_musicWidget.init(&m_fontManager, &_music);
-
-    setViewports(windowWidth, windowHeight);
-}
 
 void Renderer::setViewports(int32_t windowWidth, int32_t windowHeight) {
     const auto widgetW{ windowWidth/5 };

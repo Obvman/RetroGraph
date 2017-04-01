@@ -11,10 +11,11 @@
 #include "../headers/NetMeasure.h"
 
 namespace rg {
-
-void SystemStatsWidget::init(const FontManager* fontManager, const SystemMeasure* sysInfo,
-                             const CPUMeasure* cpuMeasure, const NetMeasure* netMeasure) {
-    m_fontManager = fontManager;
+SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
+                                     const SystemMeasure* sysInfo,
+                                     const CPUMeasure* cpuMeasure,
+                                     const NetMeasure* netMeasure) :
+    m_fontManager{ fontManager } {
 
     // Just create stats string here since we expect it not to change during
     // the lifetime of the program

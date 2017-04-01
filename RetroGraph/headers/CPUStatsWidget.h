@@ -10,14 +10,14 @@ class CPUMeasure;
 
 class CPUStatsWidget : public Widget {
 public:
-    CPUStatsWidget() = default;
+    CPUStatsWidget(const FontManager* fontManager, const CPUMeasure* cpuMeasure) :
+        m_fontManager{ fontManager }, m_cpuMeasure{ cpuMeasure } {}
+
     virtual ~CPUStatsWidget() noexcept = default;
     CPUStatsWidget(const CPUStatsWidget&) = delete;
     CPUStatsWidget& operator=(const CPUStatsWidget&) = delete;
 
     void draw() const override;
-
-    void init(const FontManager* fontManager, const CPUMeasure* cpuMeasure);
 
     void setViewport(Viewport vp);
 

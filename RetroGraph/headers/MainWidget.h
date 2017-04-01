@@ -9,14 +9,13 @@ class FontManager;
 
 class MainWidget : public Widget {
 public:
-    MainWidget() = default;
+    MainWidget(const FontManager* fontManager) :
+        m_fontManager{ fontManager } {}
     virtual ~MainWidget() noexcept = default;
     MainWidget(const MainWidget&) = delete;
     MainWidget& operator=(const MainWidget&) = delete;
 
     void draw() const override;
-
-    void init(const FontManager* fontManager);
 
     void setViewport(Viewport vp) { m_viewport = vp; };
 private:

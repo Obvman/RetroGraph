@@ -15,15 +15,13 @@ class NetMeasure;
 
 class SystemStatsWidget : public Widget {
 public:
-    SystemStatsWidget() = default;
+    SystemStatsWidget(const FontManager* fontManager, const SystemMeasure* sysInfo,
+                      const CPUMeasure* cpuMeasure, const NetMeasure* netMeasure);
     virtual ~SystemStatsWidget() noexcept = default;
     SystemStatsWidget(const SystemStatsWidget&) = delete;
     SystemStatsWidget& operator=(const SystemStatsWidget&) = delete;
 
     void draw() const override;
-
-    void init(const FontManager* fontManager, const SystemMeasure* sysInfo,
-              const CPUMeasure* cpuMeasure, const NetMeasure* netMeasure);
 
     void setViewport(Viewport vp) { m_viewport = vp; };
 

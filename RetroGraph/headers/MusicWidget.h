@@ -10,14 +10,14 @@ class MusicMeasure;
 
 class MusicWidget : public Widget {
 public:
-    MusicWidget() = default;
+    MusicWidget(const FontManager* fontManager, const MusicMeasure* musicMeasure) :
+        m_fontManager{ fontManager }, m_musicMeasure{ musicMeasure } {}
+
     virtual ~MusicWidget() noexcept = default;
     MusicWidget(const MusicWidget&) = delete;
     MusicWidget& operator=(const MusicWidget&) = delete;
 
     void draw() const override;
-
-    void init(const FontManager* fontManager, const MusicMeasure* musicMeasure);
 
     void setViewport(Viewport vp) { m_viewport = vp; };
 private:

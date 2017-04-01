@@ -13,17 +13,6 @@
 
 namespace rg {
 
-void GraphWidget::init(const FontManager* fontManager, const CPUMeasure* cpuMeasure,
-                       const RAMMeasure* ramMeasure, const NetMeasure* netMeasure,
-                       const GPUMeasure* gpuMeasure) {
-
-    m_fontManager = fontManager;
-    m_cpuMeasure = cpuMeasure;
-    m_ramMeasure = ramMeasure;
-    m_netMeasure = netMeasure;
-    m_gpuMeasure = gpuMeasure;
-}
-
 void GraphWidget::setViewport(Viewport vp) { 
     m_cpuGraphVP = Viewport{
                      vp.x,

@@ -11,13 +11,6 @@
 
 namespace rg {
 
-void CPUStatsWidget::init(const FontManager* fontManager,
-                         const CPUMeasure* cpuMeasure) {
-
-    m_fontManager = fontManager;
-    m_cpuMeasure = cpuMeasure;
-}
-
 void CPUStatsWidget::setViewport(Viewport vp) { 
     m_viewport = vp; 
     m_coreGraphViewport = Viewport{ m_viewport.x, m_viewport.y, 
