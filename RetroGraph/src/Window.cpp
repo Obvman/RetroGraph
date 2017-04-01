@@ -11,6 +11,7 @@
 #include <iostream>
 #include <thread>
 
+#include "../headers/RetroGraph.h"
 #include "../headers/resource.h"
 #include "../headers/utils.h"
 #include "../headers/colors.h"
@@ -36,29 +37,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-Window::Window(HINSTANCE hInstance) : 
+Window::Window(RetroGraph* rg_, HINSTANCE hInstance, int32_t startupMonitor) : 
+    m_retroGraph{ rg_ },
     m_monitors{ },
-    m_userSettings{ },
-    m_currMonitor{ m_userSettings.getStartupMonitor() },
+    m_currMonitor{ startupMonitor },
     m_width{ m_monitors.getWidth(m_currMonitor) },
     m_height{ m_monitors.getHeight(m_currMonitor) },
     m_startPosX{ m_monitors.getX(m_currMonitor) },
     m_startPosY{ m_monitors.getY(m_currMonitor) },
-    m_hInstance{ (createWindow(), hInstance) },
-    m_cpuMeasure{ },
-    m_gpuMeasure{ },
-    m_ramMeasure{ },
-    m_netMeasure{ m_userSettings },
-    m_processMeasure{ },
-    m_driveMeasure{ },
-    m_musicMeasure{ &m_processMeasure },
-    m_systemMeasure{ },
-    m_renderer{ *this }
-{
-    createTrayIcon();
+    m_hInstance{ (createWindow(), hInstance) } {
 
-    update(0);
-    draw(0);
+    createTrayIcon();
 }
 
 Window::~Window() {
@@ -262,40 +251,10 @@ void Window::handleTrayMessage(HWND hWnd, WPARAM wParam, LPARAM lParam) {
     }
 }
 
-void Window::update(uint32_t ticks) {
-    // Update with a tick offset so all measures don't update in the same
-    // cycle
-    /* auto i = uint32_t{ 0U }; */
-    /* for (const auto& pMeasure : m_measures) { */
-    /*     pMeasure->update(ticks + i); */
-    /*     ++i; */
-    /* } */
-
-    m_cpuMeasure.update(ticks);
-    m_gpuMeasure.update(ticks);
-    m_ramMeasure.update(ticks);
-    m_netMeasure.update(ticks);
-    m_processMeasure.update(ticks);
-    m_driveMeasure.update(ticks);
-    m_musicMeasure.update(ticks);
-    m_systemMeasure.update(ticks);
-}
-
-void Window::draw(uint32_t ticks) const {
-    HDC hdc = GetDC(m_hWndMain);
-    wglMakeCurrent(hdc, m_hrc);
-
-    glViewport(0, 0, m_width, m_height);
-    m_renderer.draw(ticks);
-
-    SwapBuffers(hdc);
-    ReleaseDC(m_hWndMain, hdc);
-}
-
 void Window::updateSize(int32_t width, int32_t height) {
     m_width = width;
     m_height = height;
-    m_renderer.updateWindowSize(width, height);
+    m_retroGraph->updateWindowSize(width, height);
 
     glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
@@ -303,6 +262,18 @@ void Window::updateSize(int32_t width, int32_t height) {
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+}
+
+HDC Window::startDraw() const {
+    HDC hdc = GetDC(m_hWndMain);
+    wglMakeCurrent(hdc, m_hrc);
+    glViewport(0, 0, m_width, m_height);
+    return hdc;
+}
+
+void Window::endDraw(HDC hdc) const {
+    SwapBuffers(hdc);
+    ReleaseDC(m_hWndMain, hdc);
 }
 
 void Window::createWindow() {

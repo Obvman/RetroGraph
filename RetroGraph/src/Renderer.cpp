@@ -3,6 +3,7 @@
 #include <sstream>
 #include <iostream>
 
+#include "../headers/RetroGraph.h"
 #include "../headers/Window.h"
 #include "../headers/CPUMeasure.h"
 #include "../headers/GPUMeasure.h"
@@ -18,19 +19,19 @@
 
 namespace rg {
 
-Renderer::Renderer(const Window& w) :
+Renderer::Renderer(const Window& w, const RetroGraph& _rg) :
         m_renderTargetHandle{ w.getHwnd() },
         m_fontManager{ w.getHwnd(), w.getHeight() },
-        m_timeWidget{ &m_fontManager, &w.getCPUMeasure(), &w.getNetMeasure() },
-        m_hddWidget{ &m_fontManager, &w.getDriveMeasure() },
-        m_cpuStatsWidget{ &m_fontManager, &w.getCPUMeasure() },
-        m_processWidget{ &m_fontManager, &w.getProcessMeasure() },
-        m_graphWidget{ &m_fontManager, &w.getCPUMeasure(), &w.getRAMMeasure(),
-                       &w.getNetMeasure(), &w.getGPUMeasure() },
-        m_systemStatsWidget{ &m_fontManager, &w.getSystemMeasure(),
-                             &w.getCPUMeasure(), &w.getNetMeasure() },
+        m_timeWidget{ &m_fontManager, &_rg.getCPUMeasure(), &_rg.getNetMeasure() },
+        m_hddWidget{ &m_fontManager, &_rg.getDriveMeasure() },
+        m_cpuStatsWidget{ &m_fontManager, &_rg.getCPUMeasure() },
+        m_processWidget{ &m_fontManager, &_rg.getProcessMeasure() },
+        m_graphWidget{ &m_fontManager, &_rg.getCPUMeasure(), &_rg.getRAMMeasure(),
+                       &_rg.getNetMeasure(), &_rg.getGPUMeasure() },
+        m_systemStatsWidget{ &m_fontManager, &_rg.getSystemMeasure(),
+                             &_rg.getCPUMeasure(), &_rg.getNetMeasure() },
         m_mainWidget{ &m_fontManager },
-        m_musicWidget{ &m_fontManager, &w.getMusicMeasure() } {
+        m_musicWidget{ &m_fontManager, &_rg.getMusicMeasure() } {
 
     setViewports(w.getWidth(), w.getHeight());
 

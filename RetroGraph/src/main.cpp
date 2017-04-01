@@ -14,10 +14,9 @@
 #include <GL/gl.h>
 
 #include "../headers/utils.h"
-#include "../headers/CPUMeasure.h"
-#include "../headers/Window.h"
+#include "../headers/RetroGraph.h"
 
-void mainLoop(rg::Window& mainWindow);
+void mainLoop(rg::RetroGraph& retroGraph);
 
 #if _DEBUG
 int main() {
@@ -27,9 +26,9 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
     hInstance = GetModuleHandle(nullptr);
 #endif
     try {
-        rg::Window mainWindow{ hInstance };
+        rg::RetroGraph retroGraph{ hInstance };
 
-        mainLoop(mainWindow);
+        mainLoop(retroGraph);
     } catch (const std::runtime_error& e) {
         std::cout << e.what() << '\n';
     }
@@ -37,7 +36,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
     return 0;
 }
 
-void mainLoop(rg::Window& mainWindow) {
+void mainLoop(rg::RetroGraph& retroGraph) {
     using namespace std::chrono;
 
     auto frameStartTime{ duration_cast<milliseconds>(
@@ -49,7 +48,7 @@ void mainLoop(rg::Window& mainWindow) {
 
     // Enter main update/draw loop
     MSG msg;
-    while(mainWindow.isRunning()) {
+    while(retroGraph.isRunning()) {
         const auto currTime{ duration_cast<milliseconds>(
                                   system_clock::now().time_since_epoch()
                              ).count() };
@@ -63,7 +62,7 @@ void mainLoop(rg::Window& mainWindow) {
         // Execute timed actions when the tick rolls over
         if (lastTick != ticks) {
             /* rg::printTimeToExecuteHighRes("Update", [&]() { */
-            mainWindow.update(ticks);
+            retroGraph.update(ticks);
             /* }); */
 
             // Draw according to the framerate
@@ -71,7 +70,7 @@ void mainLoop(rg::Window& mainWindow) {
                 static_cast<float>(rg::ticksPerSecond)/framesPerSecond)) == 0) {
 
                 /* rg::printTimeToExecuteHighRes("Draw", [&]() { */
-                mainWindow.draw(ticks);
+                retroGraph.draw(ticks);
                 /* }); */
             }
 
