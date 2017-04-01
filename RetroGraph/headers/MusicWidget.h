@@ -15,16 +15,16 @@ public:
     MusicWidget(const MusicWidget&) = delete;
     MusicWidget& operator=(const MusicWidget&) = delete;
 
-    virtual void draw() const override;
+    void draw() const override;
 
     void init(const FontManager* fontManager, const MusicMeasure* musicMeasure);
 
     void setViewport(Viewport vp) { m_viewport = vp; };
 private:
-    const FontManager* m_fontManager;
-    Viewport m_viewport;
+    const FontManager* m_fontManager{ nullptr };
+    Viewport m_viewport{ };
 
-    const MusicMeasure* m_musicMeasure;
+    const MusicMeasure* m_musicMeasure{ nullptr };
 };
 
 }

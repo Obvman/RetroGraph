@@ -19,10 +19,10 @@ public:
     RAMMeasure(const RAMMeasure&) = delete;
     RAMMeasure& operator=(const RAMMeasure&) = delete;
 
-    virtual void init() override;
+    void init() override;
 
     /* Updates the system memory status values */
-    virtual void update(uint32_t ticks) override;
+    void update(uint32_t ticks) override;
 
     /* Draws the components of this object */
     void draw() const;
@@ -57,9 +57,9 @@ private:
     /* Returns more accurate load percentage as a float from 0.0 - 1.0 */
     float getLoadPercentagef() const;
 
-    MEMORYSTATUSEX m_memStatus;
+    MEMORYSTATUSEX m_memStatus{ };
     size_t dataSize{ 40U }; // max number of usage percentages to store
-    std::vector<float> m_usageData;
+    std::vector<float> m_usageData{ };
 
 };
 

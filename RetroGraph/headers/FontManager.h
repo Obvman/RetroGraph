@@ -117,13 +117,13 @@ private:
     float getRasterXAlignment(int32_t alignFlags, uint32_t strWidthPx, 
                               uint32_t areaWidth, uint32_t alignMargin) const;
 
-    HWND m_hWnd;
-    std::array<GLuint, RG_NUM_FONTS> m_fontBases;
-    std::array<std::array<int32_t, RG_NUM_CHARS_IN_FONT>, RG_NUM_FONTS> m_fontCharWidths;
-    std::array<int32_t, RG_NUM_FONTS> m_fontCharHeights;
-    std::array<int32_t, RG_NUM_FONTS> m_fontCharAscents;
-    std::array<int32_t, RG_NUM_FONTS> m_fontCharDescents;
-    std::array<int32_t, RG_NUM_FONTS> m_fontCharInternalLeadings;
+    HWND m_hWnd{ nullptr };
+    std::array<GLuint, RG_NUM_FONTS> m_fontBases{ };
+    std::array<std::array<int32_t, RG_NUM_CHARS_IN_FONT>, RG_NUM_FONTS> m_fontCharWidths{ };
+    std::array<int32_t, RG_NUM_FONTS> m_fontCharHeights{ };
+    std::array<int32_t, RG_NUM_FONTS> m_fontCharAscents{ };
+    std::array<int32_t, RG_NUM_FONTS> m_fontCharDescents{ };
+    std::array<int32_t, RG_NUM_FONTS> m_fontCharInternalLeadings{ };
 };
 
 }

@@ -20,7 +20,7 @@ public:
     SystemStatsWidget(const SystemStatsWidget&) = delete;
     SystemStatsWidget& operator=(const SystemStatsWidget&) = delete;
 
-    virtual void draw() const override;
+    void draw() const override;
 
     void init(const FontManager* fontManager, const SystemMeasure* sysInfo,
               const CPUMeasure* cpuMeasure, const NetMeasure* netMeasure);
@@ -29,9 +29,9 @@ public:
 
 private:
 
-    const FontManager* m_fontManager;
-    Viewport m_viewport;
-    std::vector<std::string> m_statsStrings;
+    const FontManager* m_fontManager{ nullptr };
+    Viewport m_viewport{ };
+    std::vector<std::string> m_statsStrings{ };
 
 };
 

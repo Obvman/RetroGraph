@@ -21,10 +21,10 @@ public:
     CPUMeasure(const CPUMeasure&) = delete;
     CPUMeasure& operator=(const CPUMeasure&) = delete;
 
-    virtual void init() override;
+    void init() override;
 
     /* Updates the total system's CPU usage statistics */
-    virtual void update(uint32_t ticks) override;
+    void update(uint32_t ticks) override;
 
     /* Returns the current system CPU load as a percentage */
     float getCPULoad();
@@ -69,16 +69,16 @@ private:
     /* Resets core usage data vector */
     void resetData();
 
-    CPUPlugin m_coreTempPlugin;
+    CPUPlugin m_coreTempPlugin{};
 
     const size_t dataSize{ 40U };
-    std::vector<float> m_usageData;
+    std::vector<float> m_usageData{};
 
     const size_t perCoreDataSize{ 20U };
-    std::vector<std::vector<float>> m_perCoreData;
+    std::vector<std::vector<float>> m_perCoreData{};
 
-    std::chrono::milliseconds m_uptime;
-    std::string m_cpuName;
+    std::chrono::milliseconds m_uptime{ 0 };
+    std::string m_cpuName{ "" };
 };
 
 }

@@ -18,7 +18,7 @@ public:
     GraphWidget(const GraphWidget&) = delete;
     GraphWidget& operator=(const GraphWidget&) = delete;
 
-    virtual void draw() const override;
+    void draw() const override;
 
     void init(const FontManager* fontManager, const CPUMeasure* cpuMeasure,
               const RAMMeasure* ramMeasure, const NetMeasure* netMeasure,
@@ -32,16 +32,16 @@ private:
     void drawNetGraph() const;
     void drawGpuGraph() const;
 
-    const FontManager* m_fontManager;
-    Viewport m_cpuGraphVP;
-    Viewport m_ramGraphVP;
-    Viewport m_netGraphVP;
-    Viewport m_gpuGraphVP;
+    const FontManager* m_fontManager{ nullptr };
+    Viewport m_cpuGraphVP{ };
+    Viewport m_ramGraphVP{ };
+    Viewport m_netGraphVP{ };
+    Viewport m_gpuGraphVP{ };
 
-    const CPUMeasure* m_cpuMeasure;
-    const RAMMeasure* m_ramMeasure;
-    const NetMeasure* m_netMeasure;
-    const GPUMeasure* m_gpuMeasure;
+    const CPUMeasure* m_cpuMeasure{ nullptr };
+    const RAMMeasure* m_ramMeasure{ nullptr };
+    const NetMeasure* m_netMeasure{ nullptr };
+    const GPUMeasure* m_gpuMeasure{ nullptr };
 };
 
 }

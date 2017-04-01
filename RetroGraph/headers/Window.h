@@ -77,31 +77,30 @@ private:
      */
     void handleTrayMessage(HWND hWnd, WPARAM wParam, LPARAM lParam);
 
-    Monitors m_monitors;
-    UserSettings m_userSettings;
+    Monitors m_monitors{ };
+    UserSettings m_userSettings{ };
 
-    HINSTANCE m_hInstance;
-    NOTIFYICONDATA m_tray;
+    HINSTANCE m_hInstance{ nullptr };
+    NOTIFYICONDATA m_tray{ };
     bool m_dragging{ false };
     int32_t m_currMonitor{ 0 };
     uint32_t m_width{ 1920 };
     uint32_t m_height{ 1080 };
-    int32_t m_startPosX;
-    int32_t m_startPosY;
+    int32_t m_startPosX{ 0 };
+    int32_t m_startPosY{ 0 };
     bool m_arbMultisampleSupported{ false };
-    int32_t m_arbMultisampleFormat;
+    int32_t m_arbMultisampleFormat{ 0 };
     int32_t m_aaSamples{ 8 };
 
     std::vector<std::unique_ptr<Measure>> m_measures;
-    SystemMeasure m_systemInfo;
 
-    Renderer m_renderer;
+    Renderer m_renderer{ };
 
-    WNDCLASSEX m_wc;
+    WNDCLASSEX m_wc{ };
     HWND m_hWndMain{ nullptr };
-    HDC m_hdc;
-    HGLRC m_hrc;
-    MSG m_msg;
+    HDC m_hdc{ };
+    HGLRC m_hrc{ };
+    MSG m_msg{ };
 };
 
 }

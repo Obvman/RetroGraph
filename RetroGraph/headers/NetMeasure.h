@@ -24,8 +24,8 @@ public:
     NetMeasure(const NetMeasure&) = delete;
     NetMeasure& operator=(const NetMeasure&) = delete;
 
-    virtual void init() override;
-    virtual void update(uint32_t ticks) override;
+    void init() override;
+    void update(uint32_t ticks) override;
 
     uint64_t getMaxDownValue() const { return m_downMaxVal; }
     uint64_t getMaxUpValue() const { return m_upMaxVal; }
@@ -45,20 +45,20 @@ private:
     _MIB_IF_ROW2* m_adapterEntry{ nullptr };
 
     std::string m_DNSIP{ "0.0.0.0" };
-    std::string m_hostname;
+    std::string m_hostname{ "" };
     std::string m_mainAdapterMAC{ "00-00-00-00-00-00" };
     std::string m_mainAdapterIP{ "0.0.0.0" };
 
-    std::string m_pingServer;
+    std::string m_pingServer{ "" };
     std::atomic<bool> m_isConnected{ false };
-    std::thread m_netConnectionThread;
-    uint32_t m_pingFreqMs;
+    std::thread m_netConnectionThread{ };
+    uint32_t m_pingFreqMs{ 0U };
 
     uint64_t m_downMaxVal{ 10U * GB };
     uint64_t m_upMaxVal{ 10U * GB };
     size_t dataSize{ 40U };
-    std::vector<uint64_t> m_downBytes;
-    std::vector<uint64_t> m_upBytes;
+    std::vector<uint64_t> m_downBytes{ };
+    std::vector<uint64_t> m_upBytes{ };
 };
 
 }

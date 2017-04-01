@@ -16,9 +16,9 @@ public:
     SystemMeasure(const SystemMeasure&) = delete;
     SystemMeasure& operator=(const SystemMeasure&) = delete;
 
-    virtual void init() override;
+    void init() override;
 
-    virtual void update(uint32_t ticks) override;
+    void update(uint32_t ticks) override;
 
     /* Returns string of current operating system version/build number */
     const std::string& getOSInfoStr() const { return m_osInfoStr; }
@@ -55,12 +55,12 @@ private:
     /* Sets the contents of m_ramDescription. Only needs to be called once */
     void getRAMInfo();
 
-    std::string m_osInfoStr;
-    std::string m_gpuDescription;
-    std::string m_cpuDescription;
-    std::string m_ramDescription;
-    std::string m_userName;
-    std::string m_computerName;
+    std::string m_osInfoStr{ "" };
+    std::string m_gpuDescription{ "" };
+    std::string m_cpuDescription{ "" };
+    std::string m_ramDescription{ "" };
+    std::string m_userName{ "" };
+    std::string m_computerName{ "" };
 };
 
 }

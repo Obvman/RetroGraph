@@ -383,11 +383,9 @@ void Window::initOpenGL() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
 
-    m_systemInfo.getGPUDescription();
 }
 
 void Window::releaseOpenGL() {
-    std::cout << "Releasing OpenGL\n";
     m_renderer.release();
 
     wglMakeCurrent(nullptr, nullptr);

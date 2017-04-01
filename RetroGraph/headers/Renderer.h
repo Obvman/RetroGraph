@@ -70,16 +70,16 @@ private:
 
     HWND m_renderTargetHandle{ nullptr };
 
-    FontManager m_fontManager;
+    FontManager m_fontManager{ };
 
-    TimeWidget m_timeWidget;
-    HDDWidget m_hddWidget;
-    CPUStatsWidget m_cpuStatsWidget;
-    ProcessWidget m_processWidget;
-    GraphWidget m_graphWidget;
-    SystemStatsWidget m_systemStatsWidget;
-    MainWidget m_mainWidget;
-    MusicWidget m_musicWidget;
+    TimeWidget m_timeWidget{ };
+    HDDWidget m_hddWidget{ };
+    CPUStatsWidget m_cpuStatsWidget{ };
+    ProcessWidget m_processWidget{ };
+    GraphWidget m_graphWidget{ };
+    SystemStatsWidget m_systemStatsWidget{ };
+    MainWidget m_mainWidget{ };
+    MusicWidget m_musicWidget{ };
 
     // VBO members
     GLuint m_graphGridVertsID{ 0U };

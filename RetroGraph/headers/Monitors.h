@@ -41,7 +41,7 @@ private:
             HDC, LPRECT, LPARAM dwData);
 
 
-    std::vector<MonitorData> m_monitors;
+    std::vector<MonitorData> m_monitors{ };
 };
 
 }

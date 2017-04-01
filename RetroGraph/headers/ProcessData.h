@@ -61,17 +61,17 @@ public:
     //int64_t getLastSystemTime() const { return m_lastSystemTime; }
 
 private:
-    HANDLE m_pHandle;
-    DWORD m_processID;
-    std::string m_procName;
-    PROCESS_MEMORY_COUNTERS m_memCounters;
+    HANDLE m_pHandle{ nullptr };
+    DWORD m_processID{ 0 };
+    std::string m_procName{ "" };
+    PROCESS_MEMORY_COUNTERS m_memCounters{ };
 
-    FILETIME m_creationTime;
-    FILETIME m_exitTime;
-    FILETIME m_kernelTime;
-    FILETIME m_userTime;
-    FILETIME m_lastSystemKernelTime;
-    FILETIME m_lastSystemUserTime;
+    FILETIME m_creationTime{ };
+    FILETIME m_exitTime{ };
+    FILETIME m_kernelTime{ };
+    FILETIME m_userTime{ };
+    FILETIME m_lastSystemKernelTime{ };
+    FILETIME m_lastSystemUserTime{ };
 
     //int64_t m_lastSystemTime;
 

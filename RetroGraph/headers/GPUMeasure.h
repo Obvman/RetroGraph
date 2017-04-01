@@ -19,10 +19,10 @@ public:
     GPUMeasure(const GPUMeasure&) = delete;
     GPUMeasure& operator=(const GPUMeasure&) = delete;
 
-    virtual void init() override;
+    void init() override;
 
     /* Get latest GPU stats from OpenGL or nvapi and updates dynamic members */
-    virtual void update(uint32_t ticks) override;
+    void update(uint32_t ticks) override;
 
     uint32_t getFrameBufferSizeKB() const { return m_frameBufferSize; }
     uint32_t getCoreCount() const { return m_gpuCoreCount; }
@@ -43,15 +43,15 @@ private:
     void getMemInformation();
     void getGpuUsage();
 
-    std::string m_driverVersion;
-    std::string m_gpuName;
+    std::string m_driverVersion{ "" };
+    std::string m_gpuName{ "" };
 
     // NvAPI members
-    NvPhysicalGpuHandle m_gpuHandle;
-    NV_GPU_THERMAL_SETTINGS_V2 m_thermalSettings;
-    NV_GPU_CLOCK_FREQUENCIES m_clockFreqs;
-    NV_DISPLAY_DRIVER_MEMORY_INFO m_memInfo;
-    NV_GPU_DYNAMIC_PSTATES_INFO_EX m_pStateInfo;
+    NvPhysicalGpuHandle m_gpuHandle{ nullptr };
+    NV_GPU_THERMAL_SETTINGS_V2 m_thermalSettings{ };
+    NV_GPU_CLOCK_FREQUENCIES m_clockFreqs{ };
+    NV_DISPLAY_DRIVER_MEMORY_INFO m_memInfo{ };
+    NV_GPU_DYNAMIC_PSTATES_INFO_EX m_pStateInfo{ };
     NvS32 m_currentTemp{ 0 };
     NvU32 m_graphicsClock{ 0U };
     NvU32 m_memoryClock{ 0U };
@@ -62,7 +62,7 @@ private:
     NvU32 m_gpuUsage{ 0U };
 
     const size_t dataSize{ 40U };
-    std::vector<float> m_usageData;
+    std::vector<float> m_usageData{ };
 };
 
 }

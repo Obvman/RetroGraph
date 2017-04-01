@@ -14,15 +14,15 @@ public:
     MainWidget(const MainWidget&) = delete;
     MainWidget& operator=(const MainWidget&) = delete;
 
-    virtual void draw() const override;
+    void draw() const override;
 
     void init(const FontManager* fontManager);
 
     void setViewport(Viewport vp) { m_viewport = vp; };
 private:
 
-    const FontManager* m_fontManager;
-    Viewport m_viewport;
+    const FontManager* m_fontManager{ nullptr };
+    Viewport m_viewport{ };
 };
 
 }

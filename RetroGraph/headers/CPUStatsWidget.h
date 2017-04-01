@@ -15,7 +15,7 @@ public:
     CPUStatsWidget(const CPUStatsWidget&) = delete;
     CPUStatsWidget& operator=(const CPUStatsWidget&) = delete;
 
-    virtual void draw() const override;
+    void draw() const override;
 
     void init(const FontManager* fontManager, const CPUMeasure* cpuMeasure);
 
@@ -26,12 +26,12 @@ private:
     void drawStats() const;
     void drawNoInfoState() const;
 
-    const FontManager* m_fontManager;
-    Viewport m_viewport;
-    Viewport m_coreGraphViewport;
-    Viewport m_statsViewport;
+    const FontManager* m_fontManager{ nullptr };
+    Viewport m_viewport{ };
+    Viewport m_coreGraphViewport{ };
+    Viewport m_statsViewport{ };
 
-    const CPUMeasure* m_cpuMeasure;
+    const CPUMeasure* m_cpuMeasure{ nullptr };
 };
 
 }

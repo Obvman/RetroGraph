@@ -15,17 +15,17 @@ public:
     HDDWidget(const HDDWidget&) = delete;
     HDDWidget& operator=(const HDDWidget&) = delete;
 
-    virtual void draw() const override;
+    void draw() const override;
 
     void init(const FontManager* fontManager, const DriveMeasure* driveMeasure);
 
     void setViewport(Viewport vp) { m_viewport = vp; };
 
 private:
-    const FontManager* m_fontManager;
-    Viewport m_viewport;
+    const FontManager* m_fontManager{ nullptr };
+    Viewport m_viewport{ };
 
-    const DriveMeasure* m_driveMeasure;
+    const DriveMeasure* m_driveMeasure{ nullptr };
 };
 
 }

@@ -40,11 +40,11 @@ public:
     DriveInfo& operator=(const DriveInfo&) = delete;
 
 
-    char driveLetter;
-    uint64_t totalFreeBytes;
-    uint64_t totalBytes;
-    std::string volumeName;
-    std::string capacityStr;
+    char driveLetter{ 'A' };
+    uint64_t totalFreeBytes{ 0U };
+    uint64_t totalBytes{ 0U };
+    std::string volumeName{ "" };
+    std::string capacityStr{ "" };
 };
 
 /* Stores paths and statistics about all the system's fixed drives */
@@ -56,10 +56,10 @@ public:
     DriveMeasure& operator=(const DriveMeasure&) = delete;
 
     /* Enumerates the available system drives and stores initial state of each drive */
-    virtual void init() override;
+    void init() override;
 
     /* Updates each drive with new values */
-    virtual void update(uint32_t ticks) override;
+    void update(uint32_t ticks) override;
 
     /* Returns the number of fixed drives active in the system */
     size_t getNumDrives() const { return m_drives.size(); }
@@ -68,8 +68,8 @@ public:
     const std::vector<std::unique_ptr<DriveInfo>>& getDrives() const { return m_drives; }
 
 private:
-    std::vector<std::string> m_drivePaths;
-    std::vector<std::unique_ptr<DriveInfo>> m_drives;
+    std::vector<std::string> m_drivePaths{ };
+    std::vector<std::unique_ptr<DriveInfo>> m_drives{ };
 };
 
 }

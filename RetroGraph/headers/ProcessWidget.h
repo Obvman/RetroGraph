@@ -15,7 +15,7 @@ public:
     ProcessWidget(const ProcessWidget&) = delete;
     ProcessWidget& operator=(const ProcessWidget&) = delete;
 
-    virtual void draw() const override;
+    void draw() const override;
 
     void init(const FontManager* fontManager, const ProcessMeasure* procMeasure);
 
@@ -24,10 +24,10 @@ private:
     void drawCpuUsageList() const;
     void drawRamUsageList() const;
 
-    const FontManager* m_fontManager;
-    Viewport m_viewport;
+    const FontManager* m_fontManager{ nullptr };
+    Viewport m_viewport{ };
 
-    const ProcessMeasure* m_procMeasure;
+    const ProcessMeasure* m_procMeasure{ nullptr };
 };
 
 }
