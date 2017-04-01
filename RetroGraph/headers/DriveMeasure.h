@@ -7,7 +7,6 @@
 #include <GL/glew.h>
 
 #include "utils.h"
-#include "Measure.h"
 
 namespace rg {
 
@@ -48,7 +47,7 @@ public:
 };
 
 /* Stores paths and statistics about all the system's fixed drives */
-class DriveMeasure : public Measure {
+class DriveMeasure {
 public:
     DriveMeasure();
     virtual ~DriveMeasure() noexcept = default;
@@ -56,7 +55,7 @@ public:
     DriveMeasure& operator=(const DriveMeasure&) = delete;
 
     /* Updates each drive with new values */
-    void update(uint32_t ticks) override;
+    void update(uint32_t ticks);
 
     /* Returns the number of fixed drives active in the system */
     size_t getNumDrives() const { return m_drives.size(); }

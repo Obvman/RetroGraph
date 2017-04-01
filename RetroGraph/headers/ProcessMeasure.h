@@ -8,13 +8,12 @@
 #include <Psapi.h>
 #include <GL/glew.h>
 
-#include "Measure.h"
 #include "ProcessData.h"
 
 namespace rg {
 
 /* Tracks system processes and their CPU/RAM usage */
-class ProcessMeasure : public Measure {
+class ProcessMeasure {
 public:
     ProcessMeasure();
     virtual ~ProcessMeasure() noexcept = default;
@@ -23,7 +22,7 @@ public:
 
     /* Updates the currently tracked processes and their CPU usage.
        Stops tracking any processes that have exited */
-    void update(uint32_t ticks) override;
+    void update(uint32_t ticks);
 
     uint32_t getNumProcessesRunning() const { return m_allProcessData.size(); }
 

@@ -5,14 +5,13 @@
 #include <NVAPI/nvapi.h>
 #include <vector>
 
-#include "Measure.h"
 #include "utils.h"
 
 namespace rg {
 
 /* Stores statistics about the system's GPU Assumes the system is running
    a single, NVIDIA GPU */
-class GPUMeasure : public Measure {
+class GPUMeasure {
 public:
     GPUMeasure();
     virtual ~GPUMeasure() noexcept;
@@ -20,7 +19,7 @@ public:
     GPUMeasure& operator=(const GPUMeasure&) = delete;
 
     /* Get latest GPU stats from OpenGL or nvapi and updates dynamic members */
-    void update(uint32_t ticks) override;
+    void update(uint32_t ticks);
 
     uint32_t getFrameBufferSizeKB() const { return m_frameBufferSize; }
     uint32_t getCoreCount() const { return m_gpuCoreCount; }

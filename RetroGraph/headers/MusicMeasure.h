@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <Windows.h>
 
-#include "Measure.h"
 #include "drawUtils.h"
 
 namespace rg {
@@ -14,7 +13,7 @@ class ProcessMeasure;
 /* Monitors current music player status. Is dependent on ProcessMeasure, so must
  * be created after ProcessMeasure is created
  */
-class MusicMeasure : public Measure {
+class MusicMeasure {
 public:
     MusicMeasure(const ProcessMeasure* procMeasure);
     virtual ~MusicMeasure() noexcept = default;
@@ -25,7 +24,7 @@ public:
      * to find it. If the class name is set, then searches windows with the
      * class name as a key to determine if the window is still open or not
      */
-    void update(uint32_t ticks) override;
+    void update(uint32_t ticks);
 
     /* Returns true if the music player window is currently running */
     bool isPlayerRunning() const { return m_playerRunning; }

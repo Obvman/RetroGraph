@@ -6,7 +6,6 @@
 #include <stdint.h>
 #include <GL/glew.h>
 
-#include "Measure.h"
 #include "CPUPlugin.h"
 
 namespace rg {
@@ -14,7 +13,7 @@ namespace rg {
 class Window;
 
 /* Measures statistics about the system CPU: Model name, total CPU load*/
-class CPUMeasure : public Measure {
+class CPUMeasure {
 public:
     CPUMeasure();
     virtual ~CPUMeasure() noexcept = default;
@@ -22,7 +21,7 @@ public:
     CPUMeasure& operator=(const CPUMeasure&) = delete;
 
     /* Updates the total system's CPU usage statistics */
-    void update(uint32_t ticks) override;
+    void update(uint32_t ticks);
 
     /* Returns the current system CPU load as a percentage */
     float getCPULoad();

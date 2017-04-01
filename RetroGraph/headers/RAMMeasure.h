@@ -6,13 +6,12 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
-#include "Measure.h"
 #include "utils.h"
 
 namespace rg {
 
 /* Stores capacity totals and availability for system RAM */
-class RAMMeasure : public Measure {
+class RAMMeasure {
 public:
     RAMMeasure();
     ~RAMMeasure() noexcept = default;
@@ -20,7 +19,7 @@ public:
     RAMMeasure& operator=(const RAMMeasure&) = delete;
 
     /* Updates the system memory status values */
-    void update(uint32_t ticks) override;
+    void update(uint32_t ticks);
 
     /* Draws the components of this object */
     void draw() const;

@@ -4,19 +4,17 @@
 #include <GL/glew.h>
 #include <Windows.h>
 
-#include "Measure.h"
-
 namespace rg {
 
 /* Contains static information about the computer so no need to update */
-class SystemMeasure : public Measure {
+class SystemMeasure {
 public:
     SystemMeasure();
     virtual ~SystemMeasure() noexcept = default;
     SystemMeasure(const SystemMeasure&) = delete;
     SystemMeasure& operator=(const SystemMeasure&) = delete;
 
-    void update(uint32_t ticks) override;
+    void update(uint32_t ticks);
 
     /* Returns string of current operating system version/build number */
     const std::string& getOSInfoStr() const { return m_osInfoStr; }
