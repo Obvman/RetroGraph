@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "../headers/UserSettings.h"
+
 namespace rg {
 
 constexpr uint32_t NVAPI_MAX_USAGES_PER_GPU{ 34 };
@@ -13,7 +15,9 @@ typedef int (*NvAPI_GPU_GetUsages_t)(NvPhysicalGpuHandle handle, NvU32* usages);
 NvAPI_QueryInterface_t NvAPI_QueryInterface{ nullptr };
 NvAPI_GPU_GetUsages_t NvAPI_GPU_GetUsages{ nullptr };
 
-GPUMeasure::GPUMeasure() {
+GPUMeasure::GPUMeasure(const UserSettings& settings) :
+    dataSize{ settings.getGPUUsageSamples() } {
+
     m_usageData.assign(dataSize, 0.0f);
 
     auto result{ NvAPI_Initialize() };

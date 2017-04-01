@@ -7,10 +7,13 @@
 #include <GL/freeglut.h>
 
 #include "../headers/colors.h"
+#include "../headers/UserSettings.h"
 
 namespace rg {
 
-RAMMeasure::RAMMeasure() {
+RAMMeasure::RAMMeasure(const UserSettings& settings) :
+    dataSize{ settings.getRAMUsageSamples() } {
+
     // Fill the memory stat struct with system information
     m_memStatus.dwLength = sizeof(m_memStatus);
     GlobalMemoryStatusEx(&m_memStatus);

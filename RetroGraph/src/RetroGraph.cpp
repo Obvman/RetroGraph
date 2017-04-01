@@ -4,10 +4,11 @@ namespace rg {
 
 RetroGraph::RetroGraph(HINSTANCE hInstance) :
     m_userSettings{ },
-    m_window{ this, hInstance, m_userSettings.getStartupMonitor() },
-    m_cpuMeasure{ },
-    m_gpuMeasure{ },
-    m_ramMeasure{ },
+    m_window{ this, hInstance, m_userSettings.getStartupMonitor(), 
+               m_userSettings.getClickthrough() },
+    m_cpuMeasure{ m_userSettings },
+    m_gpuMeasure{ m_userSettings },
+    m_ramMeasure{ m_userSettings },
     m_netMeasure{ m_userSettings },
     m_processMeasure{ m_userSettings },
     m_driveMeasure{ },

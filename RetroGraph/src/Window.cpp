@@ -22,7 +22,8 @@ constexpr int32_t WM_NOTIFY_RG_TRAY{ 3141 };
 
 constexpr int32_t ID_EXIT{ 1 };
 constexpr int32_t ID_SEND_TO_BACK{ 2 };
-constexpr int32_t ID_CHANGE_DISPLAY_MONITOR{ 3 };
+constexpr int32_t ID_RESET_POSITION{ 3 };
+constexpr int32_t ID_CHANGE_DISPLAY_MONITOR{ 4 };
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -37,9 +38,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-Window::Window(RetroGraph* rg_, HINSTANCE hInstance, int32_t startupMonitor) : 
-    m_retroGraph{ rg_ },
+Window::Window(RetroGraph* rg_, HINSTANCE hInstance, int32_t startupMonitor,
+               bool clickthrough) : 
+    m_clickthrough{ clickthrough },
     m_monitors{ },
+    m_retroGraph{ rg_ },
     m_currMonitor{ startupMonitor },
     m_width{ m_monitors.getWidth(m_currMonitor) },
     m_height{ m_monitors.getHeight(m_currMonitor) },
@@ -78,7 +81,30 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
         case WM_NOTIFY_RG_TRAY:
             handleTrayMessage(hWnd, wParam, lParam);
             break;
-        /*case WM_CONTEXTMENU: {
+        case WM_COMMAND:
+            switch (LOWORD(wParam)) {
+                case ID_EXIT:
+                    SendMessage(hWnd, WM_QUIT, wParam, lParam);
+                    break;
+                case ID_SEND_TO_BACK: {
+                    RECT wndRect;
+                    GetWindowRect(hWnd, &wndRect);
+                    SetWindowPos(hWnd, HWND_BOTTOM, wndRect.left, wndRect.top,
+                                 m_width, m_height, 0);
+                    break;
+                }
+                case ID_RESET_POSITION: {
+                    const auto& md{ m_monitors.getMonitorData()[m_currMonitor] };
+                    SetWindowPos(hWnd, HWND_TOPMOST, md.x, md.y,
+                                 md.width, md.height, 0);
+                    break;
+                }
+                default:
+                    // Default case handles monitor selection list
+                     changeMonitor(hWnd, LOWORD(wParam) - ID_CHANGE_DISPLAY_MONITOR);
+                     break;
+            }
+        case WM_CONTEXTMENU: {
             int32_t contextSpawnX{ LOWORD(lParam) };
             int32_t contextSpawnY{ HIWORD(lParam) };
             // The lParam we receive is an unsigned int, but we can open
@@ -95,7 +121,7 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
             createRClickMenu(reinterpret_cast<HWND>(wParam),
                              contextSpawnX, contextSpawnY);
             return 0;
-        }*/
+        }
         case WM_NCHITTEST: {
             /*if (!m_dragging) {
                 POINT p;
@@ -161,6 +187,30 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
     }
 
     return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
+void Window::createRClickMenu(HWND hWnd, int32_t spawnX, int32_t spawnY) {
+    auto hPopupMenu{ CreatePopupMenu() };
+    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_EXIT, "Exit");
+    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_SEND_TO_BACK, 
+            "Send to back");
+    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_RESET_POSITION,
+            "Reset Position");
+
+    // Create an option for each monitor for multi-monitor systems
+    const auto& md{ m_monitors.getMonitorData() };
+    if (m_monitors.getNumMonitors() > 1) {
+        for (auto i = size_t{ 0U }; i < md.size(); ++i) {
+            char optionName[] = "Move to display 0";
+            optionName[16] = '0' + static_cast<char>(i);
+            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
+                    ID_CHANGE_DISPLAY_MONITOR + i, optionName);
+        }
+    }
+
+    // Display menu and wait for user's selection
+    TrackPopupMenuEx(hPopupMenu, TPM_TOPALIGN | TPM_LEFTALIGN |
+            TPM_RIGHTBUTTON, spawnX, spawnY, hWnd, nullptr);
 }
 
 void Window::handleClick(DWORD clickX, DWORD clickY) {
@@ -354,11 +404,13 @@ bool Window::createHGLRC() {
 #endif
 
     if (m_arbMultisampleSupported) {
+        const DWORD exStyles = (m_clickthrough) ? 
+            WS_EX_TOOLWINDOW | WS_EX_COMPOSITED | WS_EX_TRANSPARENT | WS_EX_LAYERED :
+            WS_EX_TRANSPARENT | WS_EX_COMPOSITED;
+
         // Create main window with clicking through to windows underneath, 
         // no taskbar display, and transparency
-        m_hWndMain = CreateWindowEx(
-                WS_EX_TOOLWINDOW | WS_EX_COMPOSITED | WS_EX_TRANSPARENT | WS_EX_LAYERED,
-                "RetroGraph", windowName,
+        m_hWndMain = CreateWindowEx( exStyles, "RetroGraph", windowName,
                 WS_VISIBLE | WS_POPUP,
                 m_startPosX, m_startPosY, m_width, m_height,
                 nullptr, nullptr, m_hInstance, nullptr);

@@ -24,8 +24,9 @@ namespace rg {
 
 NetMeasure::NetMeasure(const UserSettings& settings) :
     m_pingServer{ settings.getPingServer() },
-    m_pingFreqMs{ settings.getPingFreq() } {
-        
+    m_pingFreqMs{ settings.getPingFreq() },
+    dataSize{ settings.getNetUsageSamples() } {
+
     // Fill data vectors with default values
     m_downBytes.assign(dataSize, 0U);
     m_upBytes.assign(dataSize, 0U);
@@ -64,7 +65,7 @@ NetMeasure::NetMeasure(const UserSettings& settings) :
             // !! is to convert Win32 BOOL to bool without compiler warning :/
             setIsConnected(!!InternetCheckConnectionA(
                 m_pingServer.c_str(), FLAG_ICC_FORCE_CONNECTION, 0));
-            Sleep(m_pingFreqMs);
+            Sleep(1000 * m_pingFreqMs);
         }
     }};
     m_netConnectionThread.detach();

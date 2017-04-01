@@ -12,10 +12,12 @@ namespace rg {
 
 class Window;
 
+class UserSettings;
+
 /* Measures statistics about the system CPU: Model name, total CPU load*/
 class CPUMeasure {
 public:
-    CPUMeasure();
+    CPUMeasure(const UserSettings& settings);
     virtual ~CPUMeasure() noexcept = default;
     CPUMeasure(const CPUMeasure&) = delete;
     CPUMeasure& operator=(const CPUMeasure&) = delete;

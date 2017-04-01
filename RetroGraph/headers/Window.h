@@ -5,17 +5,7 @@
 #include <vector>
 
 #include "Renderer.h"
-#include "UserSettings.h"
-#include "SystemMeasure.h"
 #include "Monitors.h"
-
-#include "CPUMeasure.h"
-#include "GPUMeasure.h"
-#include "RAMMeasure.h"
-#include "ProcessMeasure.h"
-#include "NetMeasure.h"
-#include "DriveMeasure.h"
-#include "MusicMeasure.h"
 
 namespace rg {
 
@@ -23,7 +13,8 @@ class RetroGraph;
 
 class Window {
 public:
-    Window(RetroGraph* rg_, HINSTANCE hInstance, int32_t startupMonitor);
+    Window(RetroGraph* rg_, HINSTANCE hInstance, int32_t startupMonitor,
+           bool clickthrough);
     ~Window() noexcept;
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
@@ -48,6 +39,8 @@ private:
 
     /* Creates and displays program icon in the system tray */
     void createTrayIcon();
+
+    void createRClickMenu(HWND hWnd, int32_t spawnX, int32_t spawnY);
 
     /* Moves the window to the specified monitor and resizes elements to fit
      * the monitor
@@ -81,6 +74,7 @@ private:
     void handleTrayMessage(HWND hWnd, WPARAM wParam, LPARAM lParam);
 
     bool m_running{ true };
+    bool m_clickthrough{ true };
 
     Monitors m_monitors;
     RetroGraph* m_retroGraph;
@@ -102,7 +96,6 @@ private:
     int32_t m_arbMultisampleFormat{ 0 };
     int32_t m_aaSamples{ 8 };
     HINSTANCE m_hInstance{ nullptr };
-
 };
 
 }

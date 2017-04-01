@@ -11,6 +11,7 @@
 #include "NetMeasure.h"
 #include "DriveMeasure.h"
 #include "MusicMeasure.h"
+#include "SystemMeasure.h"
 
 #include "Renderer.h"
 

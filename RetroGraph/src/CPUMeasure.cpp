@@ -12,6 +12,7 @@
 #define GLUT_DISABLE_ATEXIT_HACK
 #include <GL/freeglut.h>
 
+#include "../headers/UserSettings.h"
 #include "../headers/colors.h"
 #include "../headers/utils.h"
 
@@ -21,7 +22,9 @@ unsigned long long FileTimeToInt64(const FILETIME & ft) {
 
 namespace rg {
 
-CPUMeasure::CPUMeasure() {
+CPUMeasure::CPUMeasure(const UserSettings& settings) :
+    dataSize{ settings.getCPUUsageSamples() } {
+
     // Fill CPU name if CoreTemp interfacing was successful
     if (m_cpuName.size() == 0 && m_coreTempPlugin.getCoreTempInfoSuccess()) {
         m_cpuName = "CPU: ";

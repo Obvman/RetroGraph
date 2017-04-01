@@ -21,6 +21,8 @@ UserSettings::UserSettings() {
             m_windowWidth = propTree.get<uint32_t>("Window.WindowWidth");
             m_windowHeight = propTree.get<uint32_t>("Window.WindowHeight");
             m_startupMonitor = propTree.get<uint32_t>("Window.Monitor");
+            m_clickthrough = propTree.get<bool>("Window.ClickThrough");
+
             m_pingServer = propTree.get<std::string>("Network.PingServer");
             m_pingFreq = propTree.get<uint32_t>("Network.PingFrequency");
 
@@ -30,6 +32,15 @@ UserSettings::UserSettings() {
                     "Processes.HighCPUUsageThreshold");
             m_processRAMUsageThresholdMB = propTree.get<uint32_t>(
                     "Processes.HighRAMUsageThresholdMB");
+
+            m_netUsageSamples = propTree.get<uint32_t>(
+                    "Widgets-Network.NumUsageSamples");
+            m_cpuUsageSamples = propTree.get<uint32_t>(
+                    "Widgets-CPU.NumUsageSamples");
+            m_gpuUsageSamples = propTree.get<uint32_t>(
+                    "Widgets-GPU.NumUsageSamples");
+            m_ramUsageSamples = propTree.get<uint32_t>(
+                    "Widgets-RAM.NumUsageSamples");
         }
 
 
@@ -49,13 +60,22 @@ void UserSettings::generateDefaultFile(pt::ptree& propTree) {
     propTree.put("Window.WindowWidth", m_windowWidth);
     propTree.put("Window.WindowHeight", m_windowHeight);
     propTree.put("Window.Monitor", m_startupMonitor);
+    propTree.put("Window.ClickThrough", m_clickthrough);
 
     propTree.put("Network.PingServer", m_pingServer);
     propTree.put("Network.PingFrequency", m_pingServer);
 
-    propTree.put("Processes.NumProcessesDisplayed", m_numProcessesDisplayed);
-    propTree.put("Processes.HighCPUUsageThreshold", m_processCPUUsageThreshold);
-    propTree.put("Processes.HighRAMUsageThresholdMB", m_processRAMUsageThresholdMB);
+    propTree.put("Processes.NumProcessesDisplayed",
+            m_numProcessesDisplayed);
+    propTree.put("Processes.HighCPUUsageThreshold",
+            m_processCPUUsageThreshold);
+    propTree.put("Processes.HighRAMUsageThresholdMB",
+            m_processRAMUsageThresholdMB);
+
+    propTree.put("Widgets-Network.NetUsageSamples", m_pingServer);
+    propTree.put("Widgets-CPU.CPUUsageSamples", m_pingServer);
+    propTree.put("Widgets-GPU.GPUUsageSamples", m_pingServer);
+    propTree.put("Widgets-RAM.RAMUsageSamples", m_pingServer);
 
     pt::ini_parser::write_ini(iniPath, propTree);
 }

@@ -9,11 +9,13 @@
 
 namespace rg {
 
+class UserSettings;
+
 /* Stores statistics about the system's GPU Assumes the system is running
    a single, NVIDIA GPU */
 class GPUMeasure {
 public:
-    GPUMeasure();
+    GPUMeasure(const UserSettings& settings);
     virtual ~GPUMeasure() noexcept;
     GPUMeasure(const GPUMeasure&) = delete;
     GPUMeasure& operator=(const GPUMeasure&) = delete;

@@ -22,6 +22,7 @@ public:
     int32_t getWindowX() const { return m_createWindowX; }
     int32_t getWindowY() const { return m_createWindowY; }
     int32_t getStartupMonitor() const { return m_startupMonitor; }
+    bool getClickthrough() const { return m_clickthrough; }
 
     const std::string& getPingServer() const { return m_pingServer; }
     uint32_t getPingFreq() const { return m_pingFreq; }
@@ -29,6 +30,11 @@ public:
     uint32_t getNumProcessesDisplayed() const { return m_numProcessesDisplayed; }
     float getHighCPUUsageThreshold() const { return m_processCPUUsageThreshold; }
     uint32_t getHighRAMUsageThresholdMB() const { return m_processRAMUsageThresholdMB; }
+
+    uint32_t getNetUsageSamples() const { return m_netUsageSamples; }
+    uint32_t getCPUUsageSamples() const { return m_cpuUsageSamples; }
+    uint32_t getGPUUsageSamples() const { return m_gpuUsageSamples; }
+    uint32_t getRAMUsageSamples() const { return m_ramUsageSamples; }
 
 private:
     void generateDefaultFile(pt::ptree& propTree);
@@ -39,6 +45,7 @@ private:
     int32_t m_createWindowX{ 0 };
     int32_t m_createWindowY{ 0 };
     int32_t m_startupMonitor{ 0 };
+    bool m_clickthrough{ true };
 
     // Network options
     std::string m_pingServer{ "http://www.google.com/" };
@@ -48,6 +55,12 @@ private:
     uint32_t m_numProcessesDisplayed{ 8U };
     float m_processCPUUsageThreshold{ 0.2f };
     uint32_t m_processRAMUsageThresholdMB{ 1024U };
+
+    // Widget options
+    uint32_t m_netUsageSamples;
+    uint32_t m_cpuUsageSamples;
+    uint32_t m_gpuUsageSamples;
+    uint32_t m_ramUsageSamples;
 };
 
 }

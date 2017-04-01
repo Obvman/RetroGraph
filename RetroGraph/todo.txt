@@ -1,3 +1,7 @@
+left click tray brings window to front
+
+enable switching clickthrough modes at runtime
+
 network: show how many MB have been downloaded since retrograph started
 
 change font colour

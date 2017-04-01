@@ -10,10 +10,12 @@
 
 namespace rg {
 
+class UserSettings;
+
 /* Stores capacity totals and availability for system RAM */
 class RAMMeasure {
 public:
-    RAMMeasure();
+    RAMMeasure(const UserSettings& settings);
     ~RAMMeasure() noexcept = default;
     RAMMeasure(const RAMMeasure&) = delete;
     RAMMeasure& operator=(const RAMMeasure&) = delete;
