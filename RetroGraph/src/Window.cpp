@@ -207,8 +207,6 @@ void Window::changeMonitor(HWND hWnd, uint32_t monIndex) {
 
         updateSize(md.width, md.height);
         SetWindowPos(hWnd, HWND_TOP, md.x, md.y, md.width, md.height, 0);
-        m_renderer.m_fontManager.refreshFonts(md.height);
-        m_renderer.updateWindowSize(md.width, md.height);
     }
 }
 
@@ -334,6 +332,7 @@ void Window::draw(uint32_t ticks) const {
 void Window::updateSize(int32_t width, int32_t height) {
     m_width = width;
     m_height = height;
+    m_renderer.updateWindowSize(width, height);
 
     glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);

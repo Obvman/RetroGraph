@@ -22,9 +22,6 @@ Renderer::Renderer() :
     m_fontManager{}
 {}
 
-Renderer::~Renderer() {
-}
-
 void Renderer::init(HWND hWnd, uint32_t windowWidth, uint32_t windowHeight,
                     const CPUMeasure& _cpu, const GPUMeasure& _gpu,
                     const RAMMeasure& _ram, const NetMeasure& _net,
@@ -67,7 +64,7 @@ void Renderer::release() {
 
 void Renderer::updateWindowSize(int32_t newWidth, int32_t newHeight) {
     setViewports(newWidth, newHeight);
-
+    m_fontManager.refreshFonts(newHeight);
 }
 
 /********************* Private Functions ********************/

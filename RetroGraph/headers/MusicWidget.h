@@ -10,8 +10,8 @@ class MusicMeasure;
 
 class MusicWidget : public Widget {
 public:
-    MusicWidget();
-    virtual ~MusicWidget();
+    MusicWidget() = default;
+    virtual ~MusicWidget() = default;
     MusicWidget(const MusicWidget&) = delete;
     MusicWidget& operator=(const MusicWidget&) = delete;
 

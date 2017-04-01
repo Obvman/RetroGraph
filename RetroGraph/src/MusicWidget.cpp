@@ -13,14 +13,6 @@ namespace rg {
 void createFormattedTimeStr(char* buffer, size_t buffSize, uint32_t seconds);
 BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam);
 
-MusicWidget::MusicWidget() {
-
-}
-
-MusicWidget::~MusicWidget() {
-
-}
-
 void MusicWidget::init(const FontManager* fontManager, 
                        const MusicMeasure* musicMeasure) {
 

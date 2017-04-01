@@ -35,7 +35,7 @@ class UserSettings;
 class Renderer {
 public:
     Renderer();
-    ~Renderer();
+    ~Renderer() = default;
     Renderer(const Renderer&) = delete;
     Renderer& operator=(const Renderer&) = delete;
 
@@ -70,9 +70,7 @@ private:
 
     HWND m_renderTargetHandle;
 
-public:
     FontManager m_fontManager;
-private:
 
     // TODO refactor these into vector of Widget ptrs
     TimeWidget m_timeWidget;

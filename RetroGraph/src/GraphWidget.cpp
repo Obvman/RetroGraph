@@ -13,14 +13,6 @@
 
 namespace rg {
 
-GraphWidget::GraphWidget() {
-
-}
-
-GraphWidget::~GraphWidget() {
-
-}
-
 void GraphWidget::init(const FontManager* fontManager, const CPUMeasure* cpuMeasure,
                        const RAMMeasure* ramMeasure, const NetMeasure* netMeasure,
                        const GPUMeasure* gpuMeasure) {

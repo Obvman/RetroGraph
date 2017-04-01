@@ -32,9 +32,6 @@ CPUMeasure::CPUMeasure() :
 
 }
 
-CPUMeasure::~CPUMeasure() {
-}
-
 void CPUMeasure::init() {
     m_coreTempPlugin.init();
 

@@ -11,15 +11,6 @@
 
 namespace rg {
 
-FontManager::FontManager() :
-    m_hWnd{ nullptr }
-{
-
-}
-
-FontManager::~FontManager() {
-}
-
 void FontManager::init(HWND hWnd, uint32_t windowHeight) {
     m_hWnd = hWnd;
     initFonts(windowHeight);

@@ -13,8 +13,8 @@ class GPUMeasure;
 
 class GraphWidget : public Widget {
 public:
-    GraphWidget();
-    virtual ~GraphWidget();
+    GraphWidget() = default;
+    virtual ~GraphWidget() = default;
     GraphWidget(const GraphWidget&) = delete;
     GraphWidget& operator=(const GraphWidget&) = delete;
 

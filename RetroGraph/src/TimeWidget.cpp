@@ -11,14 +11,6 @@
 
 namespace rg {
 
-TimeWidget::TimeWidget() {
-
-}
-
-TimeWidget::~TimeWidget() {
-
-}
-
 void TimeWidget::init(const FontManager* fontManager,
                       const CPUMeasure* cpuMeasure,
                       const NetMeasure* netMeasure) {

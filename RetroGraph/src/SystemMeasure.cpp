@@ -21,10 +21,6 @@ SystemMeasure::SystemMeasure() :
     m_computerName{ } {
 }
 
-
-SystemMeasure::~SystemMeasure() {
-}
-
 void SystemMeasure::init() {
     getOSVersionInfo();
     getCPUInfo();

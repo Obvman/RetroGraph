@@ -10,8 +10,8 @@ class CPUMeasure;
 
 class CPUStatsWidget : public Widget {
 public:
-    CPUStatsWidget();
-    virtual ~CPUStatsWidget();
+    CPUStatsWidget() = default;
+    virtual ~CPUStatsWidget() = default;
     CPUStatsWidget(const CPUStatsWidget&) = delete;
     CPUStatsWidget& operator=(const CPUStatsWidget&) = delete;
 

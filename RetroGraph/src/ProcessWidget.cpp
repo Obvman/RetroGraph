@@ -10,14 +10,6 @@
 
 namespace rg {
 
-ProcessWidget::ProcessWidget() {
-
-}
-
-ProcessWidget::~ProcessWidget() {
-
-}
-
 void ProcessWidget::init(const FontManager* fontManager, const ProcessMeasure* procMeasure) {
     m_fontManager = fontManager;
     m_procMeasure = procMeasure;

@@ -12,14 +12,6 @@
 
 namespace rg {
 
-SystemStatsWidget::SystemStatsWidget() {
-
-}
-
-SystemStatsWidget::~SystemStatsWidget() {
-
-}
-
 void SystemStatsWidget::init(const FontManager* fontManager, const SystemMeasure* sysInfo,
                              const CPUMeasure* cpuMeasure, const NetMeasure* netMeasure) {
     m_fontManager = fontManager;

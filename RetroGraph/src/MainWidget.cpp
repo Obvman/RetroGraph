@@ -9,14 +9,6 @@
 
 namespace rg {
 
-MainWidget::MainWidget() {
-
-}
-
-MainWidget::~MainWidget() {
-
-}
-
 void MainWidget::init(const FontManager* fontManager) {
 
     m_fontManager = fontManager;

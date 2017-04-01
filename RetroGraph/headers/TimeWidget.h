@@ -11,8 +11,8 @@ class NetMeasure;
 
 class TimeWidget : public Widget {
 public:
-    TimeWidget();
-    virtual ~TimeWidget();
+    TimeWidget() = default;
+    virtual ~TimeWidget() = default;
     TimeWidget(const TimeWidget&) = delete;
     TimeWidget& operator=(const TimeWidget&) = delete;
 

@@ -12,7 +12,7 @@ namespace rg {
 class SystemMeasure : public Measure {
 public:
     SystemMeasure();
-    virtual ~SystemMeasure();
+    virtual ~SystemMeasure() = default;
     SystemMeasure(const SystemMeasure&) = delete;
     SystemMeasure& operator=(const SystemMeasure&) = delete;
 

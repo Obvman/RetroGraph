@@ -15,8 +15,8 @@ class NetMeasure;
 
 class SystemStatsWidget : public Widget {
 public:
-    SystemStatsWidget();
-    virtual ~SystemStatsWidget();
+    SystemStatsWidget() = default;
+    virtual ~SystemStatsWidget() = default;
     SystemStatsWidget(const SystemStatsWidget&) = delete;
     SystemStatsWidget& operator=(const SystemStatsWidget&) = delete;
 

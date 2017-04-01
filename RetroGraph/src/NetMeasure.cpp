@@ -39,9 +39,6 @@ NetMeasure::NetMeasure(const UserSettings& settings) :
     dataSize{ 40U } {
 }
 
-NetMeasure::~NetMeasure() {
-}
-
 void NetMeasure::init() {
     // Fill data vectors with default values
     m_downBytes.assign(dataSize, 0U);

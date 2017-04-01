@@ -17,7 +17,7 @@ namespace rg {
 class NetMeasure : public Measure {
 public:
     NetMeasure(const UserSettings& settings);
-    virtual ~NetMeasure();
+    virtual ~NetMeasure() = default;
     NetMeasure(const NetMeasure&) = delete;
     NetMeasure& operator=(const NetMeasure&) = delete;
 

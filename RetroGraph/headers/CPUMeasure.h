@@ -18,7 +18,7 @@ class Window;
 class CPUMeasure : public Measure {
 public:
     CPUMeasure();
-    virtual ~CPUMeasure();
+    virtual ~CPUMeasure() = default;
     CPUMeasure(const CPUMeasure&) = delete;
     CPUMeasure& operator=(const CPUMeasure&) = delete;
 

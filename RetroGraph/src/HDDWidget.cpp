@@ -10,14 +10,6 @@
 
 namespace rg {
 
-HDDWidget::HDDWidget() {
-
-}
-
-HDDWidget::~HDDWidget() {
-
-}
-
 void HDDWidget::init(const FontManager* fontManager,
                      const DriveMeasure* driveMeasure) {
 

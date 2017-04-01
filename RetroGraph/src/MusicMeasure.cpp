@@ -29,10 +29,6 @@ MusicMeasure::MusicMeasure(const ProcessMeasure* procMeasure) :
 
 }
 
-MusicMeasure::~MusicMeasure() {
-
-}
-
 void MusicMeasure::init() {
     update(0);
 }

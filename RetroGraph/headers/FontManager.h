@@ -43,8 +43,8 @@ constexpr size_t RG_NUM_FONTS{ 6U };
 
 class FontManager {
 public:
-    FontManager();
-    ~FontManager();
+    FontManager() = default;
+    ~FontManager() = default;
     FontManager(const FontManager&) = delete;
     FontManager& operator=(const FontManager&) = delete;
 
@@ -124,8 +124,6 @@ private:
     std::array<int32_t, RG_NUM_FONTS> m_fontCharAscents;
     std::array<int32_t, RG_NUM_FONTS> m_fontCharDescents;
     std::array<int32_t, RG_NUM_FONTS> m_fontCharInternalLeadings;
-
-    std::array<int32_t, RG_NUM_CHARS_IN_FONT> m_timeFontCharWidths;
 };
 
 }

@@ -11,14 +11,6 @@
 
 namespace rg {
 
-CPUStatsWidget::CPUStatsWidget() {
-
-}
-
-CPUStatsWidget::~CPUStatsWidget() {
-
-}
-
 void CPUStatsWidget::init(const FontManager* fontManager,
                          const CPUMeasure* cpuMeasure) {
 
