@@ -8,7 +8,6 @@
 
 #include "Measure.h"
 #include "CPUPlugin.h"
-#include "GraphData.h"
 
 namespace rg {
 
@@ -17,8 +16,8 @@ class Window;
 /* Measures statistics about the system CPU: Model name, total CPU load*/
 class CPUMeasure : public Measure {
 public:
-    CPUMeasure();
-    virtual ~CPUMeasure() = default;
+    CPUMeasure() = default;
+    virtual ~CPUMeasure() noexcept = default;
     CPUMeasure(const CPUMeasure&) = delete;
     CPUMeasure& operator=(const CPUMeasure&) = delete;
 
@@ -72,10 +71,10 @@ private:
 
     CPUPlugin m_coreTempPlugin;
 
-    const size_t dataSize; // max number of usage percentages to store
+    const size_t dataSize{ 40U };
     std::vector<float> m_usageData;
 
-    const size_t perCoreDataSize;
+    const size_t perCoreDataSize{ 20U };
     std::vector<std::vector<float>> m_perCoreData;
 
     std::chrono::milliseconds m_uptime;

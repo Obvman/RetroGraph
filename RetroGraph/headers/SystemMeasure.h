@@ -11,8 +11,8 @@ namespace rg {
 /* Contains static information about the computer so no need to update */
 class SystemMeasure : public Measure {
 public:
-    SystemMeasure();
-    virtual ~SystemMeasure() = default;
+    SystemMeasure() = default;
+    virtual ~SystemMeasure() noexcept = default;
     SystemMeasure(const SystemMeasure&) = delete;
     SystemMeasure& operator=(const SystemMeasure&) = delete;
 

@@ -23,14 +23,12 @@ extern GLuint graphGridIndicesID;
 extern GLsizei graphIndicesSize;
 
 struct Viewport {
-    GLint x;
-    GLint y;
-    GLint width;
-    GLint height;
+    GLint x{ 0 };
+    GLint y{ 0 };
+    GLint width{ 0 };
+    GLint height{ 0 };
 
-    Viewport() {}
-    Viewport(GLint* vals) : x{ vals[0] }, y{ vals[1] },
-                            width{vals[2]}, height{ vals[3] } {}
+    Viewport() = default;
     Viewport(GLint _x, GLint _y, GLint _width, GLint _height) :
         x{ _x }, y{ _y }, width{ _width }, height{ _height } {}
     void set(GLint _x, GLint _y, GLint _width, GLint _height) {

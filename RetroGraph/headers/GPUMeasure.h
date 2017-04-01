@@ -14,8 +14,8 @@ namespace rg {
    a single, NVIDIA GPU */
 class GPUMeasure : public Measure {
 public:
-    GPUMeasure();
-    virtual ~GPUMeasure();
+    GPUMeasure() = default;
+    virtual ~GPUMeasure() noexcept;
     GPUMeasure(const GPUMeasure&) = delete;
     GPUMeasure& operator=(const GPUMeasure&) = delete;
 
@@ -52,16 +52,16 @@ private:
     NV_GPU_CLOCK_FREQUENCIES m_clockFreqs;
     NV_DISPLAY_DRIVER_MEMORY_INFO m_memInfo;
     NV_GPU_DYNAMIC_PSTATES_INFO_EX m_pStateInfo;
-    NvS32 m_currentTemp;
-    NvU32 m_graphicsClock;
-    NvU32 m_memoryClock;
-    NvU32 m_gpuCoreCount;
-    NvU32 m_frameBufferSize;
-    NvU32 m_currAvailableMemory;
-    NvU32 m_totalMemory;
-    NvU32 m_gpuUsage;
+    NvS32 m_currentTemp{ 0 };
+    NvU32 m_graphicsClock{ 0U };
+    NvU32 m_memoryClock{ 0U };
+    NvU32 m_gpuCoreCount{ 0U };
+    NvU32 m_frameBufferSize{ 0U };
+    NvU32 m_currAvailableMemory{ 0U };
+    NvU32 m_totalMemory{ 0U };
+    NvU32 m_gpuUsage{ 0U };
 
-    const size_t dataSize;
+    const size_t dataSize{ 40U };
     std::vector<float> m_usageData;
 };
 

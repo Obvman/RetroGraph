@@ -8,6 +8,7 @@
 
 #include "UserSettings.h"
 #include "Measure.h"
+#include "utils.h"
 
 struct _MIB_IF_ROW2;
 struct _MIB_IF_TABLE2;
@@ -16,8 +17,10 @@ namespace rg {
 
 class NetMeasure : public Measure {
 public:
-    NetMeasure(const UserSettings& settings);
-    virtual ~NetMeasure() = default;
+    NetMeasure(const UserSettings& settings) :
+        m_pingServer{ settings.getPingServer() },
+        m_pingFreqMs{ settings.getPingFreq() } {}
+    virtual ~NetMeasure() noexcept = default;
     NetMeasure(const NetMeasure&) = delete;
     NetMeasure& operator=(const NetMeasure&) = delete;
 
@@ -38,22 +41,22 @@ private:
     void getDNSAndHostname();
     void getMACAndLocalIP();
 
-    _MIB_IF_TABLE2* m_table;
-    _MIB_IF_ROW2* m_adapterEntry;
+    _MIB_IF_TABLE2* m_table{ nullptr };
+    _MIB_IF_ROW2* m_adapterEntry{ nullptr };
 
-    std::string m_DNSIP;
+    std::string m_DNSIP{ "0.0.0.0" };
     std::string m_hostname;
-    std::string m_mainAdapterMAC;
-    std::string m_mainAdapterIP;
+    std::string m_mainAdapterMAC{ "00-00-00-00-00-00" };
+    std::string m_mainAdapterIP{ "0.0.0.0" };
 
     std::string m_pingServer;
-    std::atomic<bool> m_isConnected;
+    std::atomic<bool> m_isConnected{ false };
     std::thread m_netConnectionThread;
     uint32_t m_pingFreqMs;
 
-    uint64_t m_downMaxVal;
-    uint64_t m_upMaxVal;
-    size_t dataSize;
+    uint64_t m_downMaxVal{ 10U * GB };
+    uint64_t m_upMaxVal{ 10U * GB };
+    size_t dataSize{ 40U };
     std::vector<uint64_t> m_downBytes;
     std::vector<uint64_t> m_upBytes;
 };

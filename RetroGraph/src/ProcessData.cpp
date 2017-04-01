@@ -8,13 +8,7 @@ namespace rg {
 ProcessData::ProcessData(HANDLE pHandle, DWORD pID, const char* name) :
     m_pHandle{ pHandle },
     m_processID{ pID },
-    m_procName{ name },
-    m_memCounters{},
-    m_creationTime{},
-    m_exitTime{},
-    m_kernelTime{},
-    m_userTime{},
-    m_cpuUsage{ 0.0 } {
+    m_procName{ name } {
 
     // Remove the ".exe" extension from the process name
     const auto p{ m_procName.find(".exe") };
@@ -39,10 +33,6 @@ ProcessData::ProcessData(HANDLE pHandle, DWORD pID, const char* name) :
         fatalMessageBox("Failed to get process times.");
     }
 
-    /*SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION sppi;
-    ULONG len;
-    NtQuerySystemInformation(SystemProcessorPerformanceInformation, &sppi, sizeof(sppi), &len);
-    m_lastSystemTime = sppi.KernelTime.QuadPart + sppi.UserTime.QuadPart;*/
 }
 
 ProcessData::~ProcessData() {
@@ -58,11 +48,6 @@ void ProcessData::setTimes(const FILETIME& cTime, const FILETIME& eTime,
 
     FILETIME sysIdle; // dummy
     GetSystemTimes(&sysIdle, &m_lastSystemKernelTime, &m_lastSystemUserTime);
-
-    /*SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION sppi;
-    ULONG len;
-    NtQuerySystemInformation(SystemProcessorPerformanceInformation, &sppi, sizeof(sppi), &len);
-    m_lastSystemTime = sppi.KernelTime.QuadPart + sppi.UserTime.QuadPart;*/
 }
 
 void ProcessData::updateMemCounters() {

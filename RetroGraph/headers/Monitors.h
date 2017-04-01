@@ -12,7 +12,7 @@ struct MonitorData {
         index{ _index }, handle{ _handle },
         width{ _width }, height{ _height }, x{ _x }, y{ _y } { /* Empty */ }
 
-    ~MonitorData() = default;
+    ~MonitorData() noexcept = default;
 
     int32_t index;
     int32_t width;
@@ -25,7 +25,7 @@ struct MonitorData {
 class Monitors {
 public:
     Monitors() = default;
-    ~Monitors() = default;
+    ~Monitors() noexcept = default;
     Monitors(const Monitors&) = delete;
     Monitors& operator=(const Monitors&) = delete;
 

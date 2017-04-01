@@ -14,8 +14,8 @@ namespace rg {
 
 class Window {
 public:
-    Window(HINSTANCE hInstance);
-    ~Window() = default;
+    Window(HINSTANCE hInstance) : m_hInstance{ hInstance } {}
+    ~Window() noexcept = default;
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
 
@@ -82,15 +82,15 @@ private:
 
     HINSTANCE m_hInstance;
     NOTIFYICONDATA m_tray;
-    bool m_dragging;
-    int32_t m_currMonitor;
-    uint32_t m_width;
-    uint32_t m_height;
+    bool m_dragging{ false };
+    int32_t m_currMonitor{ 0 };
+    uint32_t m_width{ 1920 };
+    uint32_t m_height{ 1080 };
     int32_t m_startPosX;
     int32_t m_startPosY;
-    bool m_arbMultisampleSupported;
+    bool m_arbMultisampleSupported{ false };
     int32_t m_arbMultisampleFormat;
-    int32_t m_aaSamples;
+    int32_t m_aaSamples{ 8 };
 
     std::vector<std::unique_ptr<Measure>> m_measures;
     SystemMeasure m_systemInfo;
@@ -98,7 +98,7 @@ private:
     Renderer m_renderer;
 
     WNDCLASSEX m_wc;
-    HWND m_hWndMain;
+    HWND m_hWndMain{ nullptr };
     HDC m_hdc;
     HGLRC m_hrc;
     MSG m_msg;

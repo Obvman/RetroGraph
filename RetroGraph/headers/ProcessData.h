@@ -12,7 +12,7 @@ namespace rg {
 class ProcessData {
 public:
     ProcessData(HANDLE pHandle, DWORD pID, const char* name);
-    ~ProcessData();
+    ~ProcessData() noexcept;
     ProcessData(const ProcessData&) = delete;
     ProcessData& operator=(const ProcessData&) = delete;
 
@@ -75,7 +75,7 @@ private:
 
     //int64_t m_lastSystemTime;
 
-    double m_cpuUsage;
+    double m_cpuUsage{ 0.0 };
 };
 
 }

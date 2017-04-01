@@ -11,7 +11,7 @@ class MusicMeasure;
 class MusicWidget : public Widget {
 public:
     MusicWidget() = default;
-    virtual ~MusicWidget() = default;
+    virtual ~MusicWidget() noexcept = default;
     MusicWidget(const MusicWidget&) = delete;
     MusicWidget& operator=(const MusicWidget&) = delete;
 

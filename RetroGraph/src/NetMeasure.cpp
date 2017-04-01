@@ -1,5 +1,3 @@
-#include "../headers/NetMeasure.h"
-
 #define WIN32_LEAN_AND_MEAN
 #define _WIN32_WINNT 0x601
 
@@ -15,29 +13,14 @@
 #include <icmpapi.h>
 #include <Ws2tcpip.h>
 
-#include "../headers/utils.h"
-
 #pragma comment(lib, "Iphlpapi.lib")
 #pragma comment(lib, "Wininet.lib")
 #pragma comment(lib, "Ws2_32.lib")
 
-namespace rg {
+// Placing here avoids some nasty header conflicts
+#include "../headers/NetMeasure.h"
 
-NetMeasure::NetMeasure(const UserSettings& settings) :
-    m_adapterEntry{ nullptr },
-    m_table{ nullptr },
-    m_DNSIP{ "0.0.0.0" },
-    m_hostname{ "" },
-    m_mainAdapterMAC{ "00-00-00-00-00-00" },
-    m_mainAdapterIP{ "0.0.0.0" },
-    m_pingServer{ settings.getPingServer() },
-    m_isConnected{ false },
-    m_netConnectionThread{ },
-    m_pingFreqMs{ 1000 * settings.getPingFreq() },
-    m_downMaxVal{ 10U * GB },
-    m_upMaxVal{ 10U * GB },
-    dataSize{ 40U } {
-}
+namespace rg {
 
 void NetMeasure::init() {
     // Fill data vectors with default values

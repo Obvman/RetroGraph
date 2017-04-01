@@ -14,8 +14,8 @@ namespace rg {
 /* Stores capacity totals and availability for system RAM */
 class RAMMeasure : public Measure {
 public:
-    RAMMeasure();
-    ~RAMMeasure() = default;
+    RAMMeasure() = default;
+    ~RAMMeasure() noexcept = default;
     RAMMeasure(const RAMMeasure&) = delete;
     RAMMeasure& operator=(const RAMMeasure&) = delete;
 
@@ -58,7 +58,7 @@ private:
     float getLoadPercentagef() const;
 
     MEMORYSTATUSEX m_memStatus;
-    size_t dataSize; // max number of usage percentages to store
+    size_t dataSize{ 40U }; // max number of usage percentages to store
     std::vector<float> m_usageData;
 
 };

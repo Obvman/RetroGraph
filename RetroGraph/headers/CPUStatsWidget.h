@@ -11,7 +11,7 @@ class CPUMeasure;
 class CPUStatsWidget : public Widget {
 public:
     CPUStatsWidget() = default;
-    virtual ~CPUStatsWidget() = default;
+    virtual ~CPUStatsWidget() noexcept = default;
     CPUStatsWidget(const CPUStatsWidget&) = delete;
     CPUStatsWidget& operator=(const CPUStatsWidget&) = delete;
 

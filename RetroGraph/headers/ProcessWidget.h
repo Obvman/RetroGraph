@@ -11,7 +11,7 @@ class ProcessMeasure;
 class ProcessWidget : public Widget {
 public:
     ProcessWidget() = default;
-    virtual ~ProcessWidget() = default;
+    virtual ~ProcessWidget() noexcept = default;
     ProcessWidget(const ProcessWidget&) = delete;
     ProcessWidget& operator=(const ProcessWidget&) = delete;
 

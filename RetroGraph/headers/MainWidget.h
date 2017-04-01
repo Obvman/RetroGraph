@@ -10,7 +10,7 @@ class FontManager;
 class MainWidget : public Widget {
 public:
     MainWidget() = default;
-    virtual ~MainWidget() = default;
+    virtual ~MainWidget() noexcept = default;
     MainWidget(const MainWidget&) = delete;
     MainWidget& operator=(const MainWidget&) = delete;
 

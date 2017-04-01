@@ -11,7 +11,7 @@ class DriveMeasure;
 class HDDWidget : public Widget {
 public:
     HDDWidget() = default;
-    virtual ~HDDWidget() = default;
+    virtual ~HDDWidget() noexcept = default;
     HDDWidget(const HDDWidget&) = delete;
     HDDWidget& operator=(const HDDWidget&) = delete;
 

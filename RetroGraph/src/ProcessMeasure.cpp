@@ -32,14 +32,6 @@ typedef struct _SYSTEM_PROCESS_INFO {
     HANDLE                  InheritedFromProcessId;
 } SYSTEM_PROCESS_INFO, *PSYSTEM_PROCESS_INFO;
 
-ProcessMeasure::ProcessMeasure() :
-    m_allProcessData{},
-    m_numProcessesToDisplay{ 10 },
-    m_procCPUListData{ m_numProcessesToDisplay },
-    m_procRAMListData{ m_numProcessesToDisplay }
-{
-}
-
 void ProcessMeasure::init() {
 #if !_DEBUG
     // Set the debug privilege in order to gain access to system processes

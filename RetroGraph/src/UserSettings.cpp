@@ -11,17 +11,6 @@ namespace rg {
 
 const std::string iniPath{ ((IsDebuggerPresent()) ? "resources\\config.ini" : "..\\RetroGraph\\resources\\config.ini") };
 
-
-UserSettings::UserSettings() :
-    m_windowWidth{ 1920U },
-    m_windowHeight{ 1170U },
-    m_startupMonitor{ 0U },
-    m_pingServer{ "http://www.google.com/" },
-    m_pingFreq{ 10U },
-    m_processCPUUsageThreshold{ 0.2f },
-    m_processRAMUsageThresholdMB{ 1024U } {
-}
-
 void UserSettings::init() {
     pt::ptree propTree;
     try {

@@ -12,15 +12,6 @@
 
 namespace rg {
 
-SystemMeasure::SystemMeasure() :
-    m_osInfoStr{},
-    m_gpuDescription{},
-    m_cpuDescription{},
-    m_ramDescription{},
-    m_userName{ },
-    m_computerName{ } {
-}
-
 void SystemMeasure::init() {
     getOSVersionInfo();
     getCPUInfo();

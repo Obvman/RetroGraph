@@ -12,8 +12,8 @@ namespace pt = boost::property_tree;
 
 class UserSettings {
 public:
-    UserSettings();
-    ~UserSettings() = default;
+    UserSettings() = default;
+    ~UserSettings() noexcept = default;
     UserSettings(const UserSettings&) = delete;
     UserSettings& operator=(const UserSettings&) = delete;
 
@@ -35,19 +35,19 @@ private:
     void generateDefaultFile(pt::ptree& propTree);
 
     // Window options
-    uint32_t m_windowHeight;
-    uint32_t m_windowWidth;
-    int32_t m_createWindowX;
-    int32_t m_createWindowY;
-    int32_t m_startupMonitor;
+    uint32_t m_windowHeight{ 1920U };
+    uint32_t m_windowWidth{ 1170U };
+    int32_t m_createWindowX{ 0 };
+    int32_t m_createWindowY{ 0 };
+    int32_t m_startupMonitor{ 0 };
 
     // Network options
-    std::string m_pingServer;
-    uint32_t m_pingFreq;
+    std::string m_pingServer{ "http://www.google.com/" };
+    uint32_t m_pingFreq{ 10U };
 
     // Appearance options
-    float m_processCPUUsageThreshold;
-    uint32_t m_processRAMUsageThresholdMB;
+    float m_processCPUUsageThreshold{ 0.2f };
+    uint32_t m_processRAMUsageThresholdMB{ 1024U };
 };
 
 }

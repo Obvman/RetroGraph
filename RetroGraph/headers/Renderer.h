@@ -34,8 +34,8 @@ class UserSettings;
 /* In charge of rendering each component's data to the window */
 class Renderer {
 public:
-    Renderer();
-    ~Renderer() = default;
+    Renderer() = default;
+    ~Renderer() noexcept = default;
     Renderer(const Renderer&) = delete;
     Renderer& operator=(const Renderer&) = delete;
 
@@ -68,11 +68,10 @@ private:
                      const ProcessMeasure& _proc, const DriveMeasure& _drive,
                      const MusicMeasure& _music, const SystemMeasure& _sys);
 
-    HWND m_renderTargetHandle;
+    HWND m_renderTargetHandle{ nullptr };
 
     FontManager m_fontManager;
 
-    // TODO refactor these into vector of Widget ptrs
     TimeWidget m_timeWidget;
     HDDWidget m_hddWidget;
     CPUStatsWidget m_cpuStatsWidget;
@@ -83,15 +82,15 @@ private:
     MusicWidget m_musicWidget;
 
     // VBO members
-    GLuint m_graphGridVertsID;
-    GLuint m_graphGridIndicesID;
-    GLsizei m_graphIndicesSize;
+    GLuint m_graphGridVertsID{ 0U };
+    GLuint m_graphGridIndicesID{ 0U };
+    GLsizei m_graphIndicesSize{ 0U };
 
     // Shaders
-    GLuint m_cpuGraphShader;
+    GLuint m_cpuGraphShader{ 0U };
 
     // Uniform location (UL) variables
-    GLint m_graphAlphaLoc;
+    GLint m_graphAlphaLoc{ -1 };
 };
 
 }

@@ -13,22 +13,6 @@
 
 namespace rg {
 
-MusicMeasure::MusicMeasure(const ProcessMeasure* procMeasure) :
-    m_playerTitlePattern{ "foobar2000 v1.3." },
-    m_processMeasure{ procMeasure },
-    m_playerRunning{ false },
-    m_playerHandle{ nullptr },
-    m_playerWindowClassName{ "" },
-    m_playerWindowTitle{ "" },
-    m_isPlaying{ false },
-    m_trackName{ "" },
-    m_artist{ "" },
-    m_album{ "" },
-    m_elapsedTime{ 0U },
-    m_totalTime{ 0U } {
-
-}
-
 void MusicMeasure::init() {
     update(0);
 }

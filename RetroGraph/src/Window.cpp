@@ -21,7 +21,6 @@
 #include "../headers/NetMeasure.h"
 #include "../headers/DriveMeasure.h"
 #include "../headers/MusicMeasure.h"
-#include "../headers/SystemLogMeasure.h"
 
 namespace rg {
 
@@ -32,30 +31,6 @@ constexpr int32_t ID_SEND_TO_BACK{ 2 };
 constexpr int32_t ID_CHANGE_DISPLAY_MONITOR{ 3 };
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
-Window::Window(HINSTANCE hInstance) :
-    m_monitors{ },
-    m_userSettings{ },
-    m_hInstance{ hInstance },
-    m_tray{ },
-    m_dragging{ false },
-    m_width{ 0 },
-    m_height{ 0 },
-    m_startPosX{ 0 },
-    m_startPosY{ 0 },
-    m_arbMultisampleSupported{ false },
-    m_arbMultisampleFormat{ 0 },
-    m_aaSamples{ 8 },
-    m_measures{ },
-    m_systemInfo{ },
-    m_renderer{},
-    m_wc{ },
-    m_hWndMain{ nullptr },
-    m_hdc{ },
-    m_hrc{ },
-    m_msg{ }
-{
-}
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
@@ -286,7 +261,6 @@ void Window::init() {
     // Music measure initialises with pointer to ProcessMeasure
     m_measures.push_back(std::move(std::make_unique<MusicMeasure>(
                     dynamic_cast<ProcessMeasure*>(m_measures[4].get()))));
-    m_measures.push_back(std::move(std::make_unique<SystemLogMeasure>()));
     m_measures.push_back(std::move(std::make_unique<SystemMeasure>()));
 
     for (const auto& pMeasure : m_measures)
@@ -301,7 +275,7 @@ void Window::init() {
                     dynamic_cast<ProcessMeasure&>(*m_measures[4]),
                     dynamic_cast<DriveMeasure&>(*m_measures[5]),
                     dynamic_cast<MusicMeasure&>(*m_measures[6]),
-                    dynamic_cast<SystemMeasure&>(*m_measures[8]),
+                    dynamic_cast<SystemMeasure&>(*m_measures[7]),
                     m_userSettings);
 
     update(0);

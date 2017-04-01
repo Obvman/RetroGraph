@@ -35,7 +35,7 @@ public:
 
     }
 
-    ~DriveInfo() = default;
+    ~DriveInfo() noexcept = default;
     DriveInfo(const DriveInfo&) = delete;
     DriveInfo& operator=(const DriveInfo&) = delete;
 
@@ -51,7 +51,7 @@ public:
 class DriveMeasure : public Measure {
 public:
     DriveMeasure() = default;
-    virtual ~DriveMeasure() = default;
+    virtual ~DriveMeasure() noexcept = default;
     DriveMeasure(const DriveMeasure&) = delete;
     DriveMeasure& operator=(const DriveMeasure&) = delete;
 

@@ -44,7 +44,7 @@ constexpr size_t RG_NUM_FONTS{ 6U };
 class FontManager {
 public:
     FontManager() = default;
-    ~FontManager() = default;
+    ~FontManager() noexcept = default;
     FontManager(const FontManager&) = delete;
     FontManager& operator=(const FontManager&) = delete;
 

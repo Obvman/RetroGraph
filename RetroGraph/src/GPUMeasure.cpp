@@ -13,12 +13,6 @@ typedef int (*NvAPI_GPU_GetUsages_t)(NvPhysicalGpuHandle handle, NvU32* usages);
 NvAPI_QueryInterface_t NvAPI_QueryInterface{ nullptr };
 NvAPI_GPU_GetUsages_t NvAPI_GPU_GetUsages{ nullptr };
 
-GPUMeasure::GPUMeasure() :
-    dataSize{ 40U },
-    m_usageData{} {
-}
-
-
 GPUMeasure::~GPUMeasure() {
     NvAPI_Unload();
 }

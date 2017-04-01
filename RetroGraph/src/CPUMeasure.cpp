@@ -21,17 +21,6 @@ unsigned long long FileTimeToInt64(const FILETIME & ft) {
 
 namespace rg {
 
-CPUMeasure::CPUMeasure() :
-    m_coreTempPlugin{},
-    dataSize{ 40U },
-    m_usageData{ },
-    m_uptime{ std::chrono::milliseconds{GetTickCount64()} },
-    perCoreDataSize{ 20U },
-    m_perCoreData{ },
-    m_cpuName{ } {
-
-}
-
 void CPUMeasure::init() {
     m_coreTempPlugin.init();
 

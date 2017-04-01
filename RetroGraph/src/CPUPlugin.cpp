@@ -7,13 +7,6 @@ namespace rg {
 typedef bool (WINAPI *myGetCoreTempInfo)(CORE_TEMP_SHARED_DATA* pData);
 myGetCoreTempInfo GetCoreTempInfo;
 
-CPUPlugin::CPUPlugin() :
-    m_libHandle{ nullptr },
-    m_ctData{ 0 },
-    m_getCoreTempInfoSuccess{ false },
-    m_coreTempWasStarted{ false } {
-}
-
 
 CPUPlugin::~CPUPlugin() {
     FreeLibrary(m_libHandle);

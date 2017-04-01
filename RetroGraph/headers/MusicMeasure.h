@@ -16,8 +16,9 @@ class ProcessMeasure;
  */
 class MusicMeasure : public Measure {
 public:
-    MusicMeasure(const ProcessMeasure* procMeasure);
-    virtual ~MusicMeasure() = default;
+    MusicMeasure(const ProcessMeasure* procMeasure) : 
+        m_processMeasure{ procMeasure } {}
+    virtual ~MusicMeasure() noexcept = default;
     MusicMeasure(const MusicMeasure&) = delete;
     MusicMeasure& operator=(const MusicMeasure&) = delete;
 
@@ -50,22 +51,21 @@ private:
 
     void scrapeInfoFromTitle();
 
-    const char* m_playerTitlePattern;
+    const char* m_playerTitlePattern{ "foobar2000 v1.3." };
 
     const ProcessMeasure* m_processMeasure;
 
-    bool m_playerRunning;
-    HWND m_playerHandle;
+    bool m_playerRunning{ false };
+    HWND m_playerHandle{ nullptr };
     std::string m_playerWindowClassName;
     std::string m_playerWindowTitle;
 
     // Current music status
-    bool m_isPlaying;
+    bool m_isPlaying{ false };
     std::string m_trackName;
     std::string m_artist;
     std::string m_album;
-    // TODO timestamp/runtime
-    uint32_t m_elapsedTime;
-    uint32_t m_totalTime;
+    uint32_t m_elapsedTime{ 0U };
+    uint32_t m_totalTime{ 0U };
 };
 }

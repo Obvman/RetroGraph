@@ -10,8 +10,8 @@ namespace rg {
    individual core temperatures and loads */
 class CPUPlugin {
 public:
-    CPUPlugin();
-    ~CPUPlugin();
+    CPUPlugin() = default;
+    ~CPUPlugin() noexcept;
     CPUPlugin(const CPUPlugin&) = delete;
     CPUPlugin& operator=(const CPUPlugin&) = delete;
 
@@ -48,10 +48,10 @@ public:
     bool coreTempWasStarted() const { return m_coreTempWasStarted; }
 
 private:
-    HMODULE m_libHandle;
-    CORE_TEMP_SHARED_DATA m_ctData;
-    mutable bool m_getCoreTempInfoSuccess;
-    bool m_coreTempWasStarted;
+    HMODULE m_libHandle{ nullptr };
+    CORE_TEMP_SHARED_DATA m_ctData{ 0 };
+    mutable bool m_getCoreTempInfoSuccess{ false };
+    bool m_coreTempWasStarted{ false };
 };
 
 }
