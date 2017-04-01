@@ -9,7 +9,6 @@
 #include "SystemMeasure.h"
 #include "Monitors.h"
 
-#include "Measure.h"
 #include "CPUMeasure.h"
 #include "GPUMeasure.h"
 #include "RAMMeasure.h"
@@ -52,6 +51,7 @@ public:
 
     int32_t getWidth() const { return m_width; }
     int32_t getHeight() const { return m_height; }
+    HWND getHwnd() const { return m_hWndMain; }
 
     bool isRunning() const { return m_running; }
 private:
@@ -125,7 +125,6 @@ private:
     SystemMeasure m_systemMeasure;
 
     Renderer m_renderer;
-
 };
 
 }

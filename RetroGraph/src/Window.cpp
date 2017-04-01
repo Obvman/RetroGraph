@@ -53,7 +53,7 @@ Window::Window(HINSTANCE hInstance) :
     m_driveMeasure{ },
     m_musicMeasure{ &m_processMeasure },
     m_systemMeasure{ },
-    m_renderer{ m_hWndMain, *this }
+    m_renderer{ *this }
 {
     createTrayIcon();
 

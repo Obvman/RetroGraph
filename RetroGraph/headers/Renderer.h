@@ -35,7 +35,7 @@ class UserSettings;
 /* In charge of rendering each component's data to the window */
 class Renderer {
 public:
-    Renderer(HWND hWnd, const Window& w);
+    Renderer(const Window& w);
     ~Renderer() noexcept;
     Renderer(const Renderer&) = delete;
     Renderer& operator=(const Renderer&) = delete;

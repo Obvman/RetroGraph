@@ -18,9 +18,9 @@
 
 namespace rg {
 
-Renderer::Renderer(HWND hWnd, const Window& w) :
-        m_renderTargetHandle{ hWnd },
-        m_fontManager{ hWnd, w.getHeight() },
+Renderer::Renderer(const Window& w) :
+        m_renderTargetHandle{ w.getHwnd() },
+        m_fontManager{ w.getHwnd(), w.getHeight() },
         m_timeWidget{ &m_fontManager, &w.getCPUMeasure(), &w.getNetMeasure() },
         m_hddWidget{ &m_fontManager, &w.getDriveMeasure() },
         m_cpuStatsWidget{ &m_fontManager, &w.getCPUMeasure() },
