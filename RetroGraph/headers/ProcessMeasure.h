@@ -16,13 +16,10 @@ namespace rg {
 /* Tracks system processes and their CPU/RAM usage */
 class ProcessMeasure : public Measure {
 public:
-    ProcessMeasure() = default;
+    ProcessMeasure();
     virtual ~ProcessMeasure() noexcept = default;
     ProcessMeasure(const ProcessMeasure&) = delete;
     ProcessMeasure& operator=(const ProcessMeasure&) = delete;
-
-    /* Initialises the measure with system processes information */
-    void init() override;
 
     /* Updates the currently tracked processes and their CPU usage.
        Stops tracking any processes that have exited */

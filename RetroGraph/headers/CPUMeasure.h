@@ -16,12 +16,10 @@ class Window;
 /* Measures statistics about the system CPU: Model name, total CPU load*/
 class CPUMeasure : public Measure {
 public:
-    CPUMeasure() = default;
+    CPUMeasure();
     virtual ~CPUMeasure() noexcept = default;
     CPUMeasure(const CPUMeasure&) = delete;
     CPUMeasure& operator=(const CPUMeasure&) = delete;
-
-    void init() override;
 
     /* Updates the total system's CPU usage statistics */
     void update(uint32_t ticks) override;

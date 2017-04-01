@@ -17,14 +17,11 @@ namespace rg {
 
 class NetMeasure : public Measure {
 public:
-    NetMeasure(const UserSettings& settings) :
-        m_pingServer{ settings.getPingServer() },
-        m_pingFreqMs{ settings.getPingFreq() } {}
+    NetMeasure(const UserSettings& settings);
     virtual ~NetMeasure() noexcept = default;
     NetMeasure(const NetMeasure&) = delete;
     NetMeasure& operator=(const NetMeasure&) = delete;
 
-    void init() override;
     void update(uint32_t ticks) override;
 
     uint64_t getMaxDownValue() const { return m_downMaxVal; }

@@ -29,3 +29,11 @@ runr: FORCE
 
 FORCE:
 
+rebuildd:
+	$(DEVENVBOU) $(SOLN) -rebuild Debug
+
+rebuildr:
+	$(DEVENVBOU) $(SOLN) -rebuild Release
+
+clean:
+	$(DEVENVBOU) $(SOLN) -clean

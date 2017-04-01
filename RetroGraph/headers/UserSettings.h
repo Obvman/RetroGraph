@@ -12,12 +12,10 @@ namespace pt = boost::property_tree;
 
 class UserSettings {
 public:
-    UserSettings() = default;
+    UserSettings();
     ~UserSettings() noexcept = default;
     UserSettings(const UserSettings&) = delete;
     UserSettings& operator=(const UserSettings&) = delete;
-
-    void init();
 
     uint32_t getWindowWidth() const { return m_windowWidth; }
     uint32_t getWindowHeight() const { return m_windowHeight; }

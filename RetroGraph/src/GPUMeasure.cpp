@@ -13,11 +13,7 @@ typedef int (*NvAPI_GPU_GetUsages_t)(NvPhysicalGpuHandle handle, NvU32* usages);
 NvAPI_QueryInterface_t NvAPI_QueryInterface{ nullptr };
 NvAPI_GPU_GetUsages_t NvAPI_GPU_GetUsages{ nullptr };
 
-GPUMeasure::~GPUMeasure() {
-    NvAPI_Unload();
-}
-
-void GPUMeasure::init() {
+GPUMeasure::GPUMeasure() {
     m_usageData.assign(dataSize, 0.0f);
 
     auto result{ NvAPI_Initialize() };
@@ -54,6 +50,10 @@ void GPUMeasure::init() {
     m_memInfo.version = NV_DISPLAY_DRIVER_MEMORY_INFO_VER;
 
     m_pStateInfo.version = NV_GPU_DYNAMIC_PSTATES_INFO_EX_VER;
+}
+
+GPUMeasure::~GPUMeasure() {
+    NvAPI_Unload();
 }
 
 void GPUMeasure::update(uint32_t ticks) {

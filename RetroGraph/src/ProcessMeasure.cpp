@@ -32,7 +32,7 @@ typedef struct _SYSTEM_PROCESS_INFO {
     HANDLE                  InheritedFromProcessId;
 } SYSTEM_PROCESS_INFO, *PSYSTEM_PROCESS_INFO;
 
-void ProcessMeasure::init() {
+ProcessMeasure::ProcessMeasure() {
 #if !_DEBUG
     // Set the debug privilege in order to gain access to system processes
     HANDLE hToken;

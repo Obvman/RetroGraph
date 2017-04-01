@@ -22,7 +22,10 @@
 
 namespace rg {
 
-void NetMeasure::init() {
+NetMeasure::NetMeasure(const UserSettings& settings) :
+    m_pingServer{ settings.getPingServer() },
+    m_pingFreqMs{ settings.getPingFreq() } {
+        
     // Fill data vectors with default values
     m_downBytes.assign(dataSize, 0U);
     m_upBytes.assign(dataSize, 0U);
@@ -64,6 +67,7 @@ void NetMeasure::init() {
             Sleep(m_pingFreqMs);
         }
     }};
+    m_netConnectionThread.detach();
 }
 
 void NetMeasure::getMACAndLocalIP() {

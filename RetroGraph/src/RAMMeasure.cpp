@@ -10,8 +10,7 @@
 
 namespace rg {
 
-
-void RAMMeasure::init() {
+RAMMeasure::RAMMeasure() {
     // Fill the memory stat struct with system information
     m_memStatus.dwLength = sizeof(m_memStatus);
     GlobalMemoryStatusEx(&m_memStatus);

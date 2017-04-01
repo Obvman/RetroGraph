@@ -6,9 +6,11 @@ namespace rg {
 
 class Measure {
 public:
+    Measure() = default;
     virtual ~Measure() = default;
+    Measure(const Measure&) = delete;
+    Measure& operator=(const Measure&) = delete;
 
-    virtual void init() = 0;
     virtual void update(uint32_t ticks) = 0;
 };
 

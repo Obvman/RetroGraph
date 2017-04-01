@@ -16,14 +16,10 @@ class ProcessMeasure;
  */
 class MusicMeasure : public Measure {
 public:
-    MusicMeasure(const ProcessMeasure* procMeasure) : 
-        m_processMeasure{ procMeasure } {}
+    MusicMeasure(const ProcessMeasure* procMeasure);
     virtual ~MusicMeasure() noexcept = default;
     MusicMeasure(const MusicMeasure&) = delete;
     MusicMeasure& operator=(const MusicMeasure&) = delete;
-
-    /* Searches all running windows for the music player. */
-    void init() override;
 
     /* If the player class name isn't yet set, enumerates all running windows
      * to find it. If the class name is set, then searches windows with the

@@ -12,7 +12,7 @@
 
 namespace rg {
 
-void SystemMeasure::init() {
+SystemMeasure::SystemMeasure() {
     getOSVersionInfo();
     getCPUInfo();
     getRAMInfo();

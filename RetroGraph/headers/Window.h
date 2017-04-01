@@ -14,14 +14,10 @@ namespace rg {
 
 class Window {
 public:
-    Window(HINSTANCE hInstance) : m_hInstance{ hInstance } {}
+    Window(HINSTANCE hInstance);
     ~Window() noexcept = default;
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
-
-    /* Initialises the window's measurement components. Use before entering
-       the update/draw loop */
-    void init();
 
     /* Updates the window's components and passes tick information onto the
        components that have alternate timings */
@@ -83,7 +79,7 @@ private:
     HINSTANCE m_hInstance{ nullptr };
     NOTIFYICONDATA m_tray{ };
     bool m_dragging{ false };
-    int32_t m_currMonitor{ 0 };
+    int32_t m_currMonitor{ m_userSettings.getStartupMonitor() };
     uint32_t m_width{ 1920 };
     uint32_t m_height{ 1080 };
     int32_t m_startPosX{ 0 };
@@ -94,7 +90,8 @@ private:
 
     std::vector<std::unique_ptr<Measure>> m_measures;
 
-    Renderer m_renderer{ };
+    Renderer m_renderer{ }; // Must be intialised after the measures
+
 
     WNDCLASSEX m_wc{ };
     HWND m_hWndMain{ nullptr };

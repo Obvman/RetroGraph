@@ -50,13 +50,10 @@ public:
 /* Stores paths and statistics about all the system's fixed drives */
 class DriveMeasure : public Measure {
 public:
-    DriveMeasure() = default;
+    DriveMeasure();
     virtual ~DriveMeasure() noexcept = default;
     DriveMeasure(const DriveMeasure&) = delete;
     DriveMeasure& operator=(const DriveMeasure&) = delete;
-
-    /* Enumerates the available system drives and stores initial state of each drive */
-    void init() override;
 
     /* Updates each drive with new values */
     void update(uint32_t ticks) override;

@@ -14,12 +14,10 @@ namespace rg {
 /* Stores capacity totals and availability for system RAM */
 class RAMMeasure : public Measure {
 public:
-    RAMMeasure() = default;
+    RAMMeasure();
     ~RAMMeasure() noexcept = default;
     RAMMeasure(const RAMMeasure&) = delete;
     RAMMeasure& operator=(const RAMMeasure&) = delete;
-
-    void init() override;
 
     /* Updates the system memory status values */
     void update(uint32_t ticks) override;

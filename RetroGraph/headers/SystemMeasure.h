@@ -11,12 +11,10 @@ namespace rg {
 /* Contains static information about the computer so no need to update */
 class SystemMeasure : public Measure {
 public:
-    SystemMeasure() = default;
+    SystemMeasure();
     virtual ~SystemMeasure() noexcept = default;
     SystemMeasure(const SystemMeasure&) = delete;
     SystemMeasure& operator=(const SystemMeasure&) = delete;
-
-    void init() override;
 
     void update(uint32_t ticks) override;
 

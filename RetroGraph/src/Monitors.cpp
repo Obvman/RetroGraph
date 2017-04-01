@@ -4,7 +4,7 @@
 
 namespace rg {
 
-void Monitors::init() {
+Monitors::Monitors() {
     fillMonitorData();
 }
 
@@ -12,8 +12,6 @@ void Monitors::fillMonitorData() {
     if (!EnumDisplayMonitors(nullptr, nullptr, MonitorCallback2, (LPARAM)this)) {
         fatalMessageBox("Failed to enumerate monitors");
     }
-
-
 }
 
 BOOL CALLBACK Monitors::MonitorCallback2(HMONITOR hMonitor, HDC, LPRECT, LPARAM dwData) {

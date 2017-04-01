@@ -1,3 +1,7 @@
+use a global bool for the mainloop to exit rather than calling exit(0).
+This will allow for Window RAII to properly cleanup instead of calling release()
+before the exit(0)
+
 network: show how many MB have been downloaded since retrograph started
 
 change font colour

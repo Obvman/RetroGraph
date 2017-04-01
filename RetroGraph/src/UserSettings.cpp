@@ -11,7 +11,7 @@ namespace rg {
 
 const std::string iniPath{ ((IsDebuggerPresent()) ? "resources\\config.ini" : "..\\RetroGraph\\resources\\config.ini") };
 
-void UserSettings::init() {
+UserSettings::UserSettings() {
     pt::ptree propTree;
     try {
         pt::ini_parser::read_ini(iniPath, propTree);

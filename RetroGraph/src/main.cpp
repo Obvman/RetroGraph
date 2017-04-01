@@ -28,10 +28,9 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 #endif
     try {
         rg::Window mainWindow{ hInstance };
-        mainWindow.init();
 
         mainLoop(mainWindow);
-    } catch(const std::runtime_error& e) {
+    } catch (const std::runtime_error& e) {
         std::cout << e.what() << '\n';
     }
 

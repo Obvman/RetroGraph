@@ -24,12 +24,10 @@ struct MonitorData {
 
 class Monitors {
 public:
-    Monitors() = default;
+    Monitors();
     ~Monitors() noexcept = default;
     Monitors(const Monitors&) = delete;
     Monitors& operator=(const Monitors&) = delete;
-
-    void init();
 
     const std::vector<MonitorData>& getMonitorData() const { return m_monitors; }
     size_t getNumMonitors() const { return m_monitors.size(); }

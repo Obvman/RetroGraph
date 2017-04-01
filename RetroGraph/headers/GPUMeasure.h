@@ -14,12 +14,10 @@ namespace rg {
    a single, NVIDIA GPU */
 class GPUMeasure : public Measure {
 public:
-    GPUMeasure() = default;
+    GPUMeasure();
     virtual ~GPUMeasure() noexcept;
     GPUMeasure(const GPUMeasure&) = delete;
     GPUMeasure& operator=(const GPUMeasure&) = delete;
-
-    void init() override;
 
     /* Get latest GPU stats from OpenGL or nvapi and updates dynamic members */
     void update(uint32_t ticks) override;

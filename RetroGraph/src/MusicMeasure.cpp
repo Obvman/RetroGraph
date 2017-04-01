@@ -13,7 +13,9 @@
 
 namespace rg {
 
-void MusicMeasure::init() {
+MusicMeasure::MusicMeasure(const ProcessMeasure* procMeasure) :
+    m_processMeasure{ procMeasure } {
+
     update(0);
 }
 
