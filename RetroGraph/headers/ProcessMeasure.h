@@ -17,7 +17,7 @@ namespace rg {
 class ProcessMeasure : public Measure {
 public:
     ProcessMeasure();
-    virtual ~ProcessMeasure();
+    virtual ~ProcessMeasure() = default;
     ProcessMeasure(const ProcessMeasure&) = delete;
     ProcessMeasure& operator=(const ProcessMeasure&) = delete;
 

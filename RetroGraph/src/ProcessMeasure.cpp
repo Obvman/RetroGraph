@@ -40,9 +40,6 @@ ProcessMeasure::ProcessMeasure() :
 {
 }
 
-ProcessMeasure::~ProcessMeasure() {
-}
-
 void ProcessMeasure::init() {
 #if !_DEBUG
     // Set the debug privilege in order to gain access to system processes

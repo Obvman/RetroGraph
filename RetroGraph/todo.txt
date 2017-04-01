@@ -1,5 +1,7 @@
 network: show how many MB have been downloaded since retrograph started
 
+change font colour
+
 Music widget:
     Play/paused indication
     make song name 2 lines if it's too long

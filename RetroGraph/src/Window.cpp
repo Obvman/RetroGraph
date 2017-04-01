@@ -37,6 +37,7 @@ Window::Window(HINSTANCE hInstance) :
     m_monitors{ },
     m_userSettings{ },
     m_hInstance{ hInstance },
+    m_tray{ },
     m_dragging{ false },
     m_width{ 0 },
     m_height{ 0 },
@@ -47,11 +48,13 @@ Window::Window(HINSTANCE hInstance) :
     m_aaSamples{ 8 },
     m_measures{ },
     m_systemInfo{ },
-    m_renderer{}
+    m_renderer{},
+    m_wc{ },
+    m_hWndMain{ nullptr },
+    m_hdc{ },
+    m_hrc{ },
+    m_msg{ }
 {
-}
-
-Window::~Window() {
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
@@ -222,13 +225,15 @@ void Window::handleTrayMessage(HWND hWnd, WPARAM wParam, LPARAM lParam) {
             InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_EXIT, "Exit");
             InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_SEND_TO_BACK, "Send to back");
 
-            // Create an option for each monitor
+            // Create an option for each monitor for multi-monitor systems
             const auto& md{ m_monitors.getMonitorData() };
-            for (auto i = size_t{ 0U }; i < md.size(); ++i) {
-                char optionName[] = "Move to display 0";
-                optionName[16] = '0' + static_cast<char>(i);
-                InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
-                        ID_CHANGE_DISPLAY_MONITOR + i, optionName);
+            if (m_monitors.getNumMonitors() > 1) {
+                for (auto i = size_t{ 0U }; i < md.size(); ++i) {
+                    char optionName[] = "Move to display 0";
+                    optionName[16] = '0' + static_cast<char>(i);
+                    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
+                            ID_CHANGE_DISPLAY_MONITOR + i, optionName);
+                }
             }
 
             // Display menu and wait for user's selection
@@ -436,11 +441,6 @@ bool Window::createHGLRC() {
                 WS_VISIBLE | WS_POPUP,
                 m_startPosX, m_startPosY, m_width, m_height,
                 nullptr, nullptr, m_hInstance, nullptr);
-
-                /* RECT wndRect; */
-                /* GetWindowRect(m_hWndMain, &wndRect); */
-                /* SetWindowPos(m_hWndMain, HWND_BOTTOM, wndRect.left, wndRect.top, */
-                /*              m_width, m_height, 0); */
     } else {
         // Create test window that doesn't appear in taskbar to query
         // anti-aliasing capabilities

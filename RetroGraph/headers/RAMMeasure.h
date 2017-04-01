@@ -15,7 +15,7 @@ namespace rg {
 class RAMMeasure : public Measure {
 public:
     RAMMeasure();
-    ~RAMMeasure();
+    ~RAMMeasure() = default;
     RAMMeasure(const RAMMeasure&) = delete;
     RAMMeasure& operator=(const RAMMeasure&) = delete;
 
@@ -54,15 +54,6 @@ public:
     const std::vector<float> getUsageData() const { return m_usageData; }
 
 private:
-    /* Draws the RAM usage bar */
-    void drawBar() const;
-
-    /* Draws the RAM usage text */
-    void drawText() const;
-
-    /* Draws the RAM usage line graph */
-    void drawGraph() const;
-
     /* Returns more accurate load percentage as a float from 0.0 - 1.0 */
     float getLoadPercentagef() const;
 

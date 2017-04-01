@@ -8,7 +8,7 @@ namespace rg {
 class GraphData {
 public:
     GraphData(size_t dataSize);
-    ~GraphData();
+    ~GraphData() = default;
     GraphData(const GraphData&) = delete;
     GraphData& operator=(const GraphData&) = delete;
 
