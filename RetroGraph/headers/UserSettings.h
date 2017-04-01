@@ -13,7 +13,7 @@ namespace pt = boost::property_tree;
 class UserSettings {
 public:
     UserSettings();
-    ~UserSettings();
+    ~UserSettings() = default;
     UserSettings(const UserSettings&) = delete;
     UserSettings& operator=(const UserSettings&) = delete;
 

@@ -22,9 +22,6 @@ UserSettings::UserSettings() :
     m_processRAMUsageThresholdMB{ 1024U } {
 }
 
-UserSettings::~UserSettings() {
-}
-
 void UserSettings::init() {
     pt::ptree propTree;
     try {
