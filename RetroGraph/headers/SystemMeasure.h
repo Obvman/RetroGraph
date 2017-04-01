@@ -20,7 +20,8 @@ public:
     const std::string& getOSInfoStr() const { return m_osInfoStr; }
 
     /* Sets the  string of GPU manufacturer and model information
-     * Must be called after OpenGL context has been created */
+     * Must be called after OpenGL context has been created
+     */
     void updateGPUDescription();
 
     /* Gets the string containing GPU model */
@@ -36,7 +37,6 @@ public:
     /* Returns the windows user name of current user */
     const std::string& getUserName() const { return m_userName; }
 
-    /* Returns the computer's name */
     const std::string& getComputerName() const { return m_computerName; }
 
 private:
