@@ -40,11 +40,16 @@ void RetroGraph::update(uint32_t ticks) {
 }
 
 void RetroGraph::draw(uint32_t ticks) const {
-    const auto hdc{ m_window.startDraw() };
+    constexpr auto framesPerSecond = uint32_t{ 2U };
+    if ((ticks % std::lround(
+        static_cast<float>(rg::ticksPerSecond)/framesPerSecond)) == 0) {
 
-    m_renderer.draw(ticks);
+        const auto hdc{ m_window.startDraw() };
 
-    m_window.endDraw(hdc);
+        m_renderer.draw(ticks);
+
+        m_window.endDraw(hdc);
+    }
 }
 
 void RetroGraph::updateWindowSize(int32_t width, int32_t height) {

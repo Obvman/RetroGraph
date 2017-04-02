@@ -44,7 +44,6 @@ void mainLoop(rg::RetroGraph& retroGraph) {
     };
     auto ticks = uint32_t{ 1 };
     auto lastTick{ ticks };
-    constexpr auto framesPerSecond = uint32_t{ 2U };
 
     // Enter main update/draw loop
     MSG msg;
@@ -61,18 +60,9 @@ void mainLoop(rg::RetroGraph& retroGraph) {
         }
         // Execute timed actions when the tick rolls over
         if (lastTick != ticks) {
-            /* rg::printTimeToExecuteHighRes("Update", [&]() { */
             retroGraph.update(ticks);
-            /* }); */
 
-            // Draw according to the framerate
-            if ((lastTick % std::lround(
-                static_cast<float>(rg::ticksPerSecond)/framesPerSecond)) == 0) {
-
-                /* rg::printTimeToExecuteHighRes("Draw", [&]() { */
-                retroGraph.draw(ticks);
-                /* }); */
-            }
+            retroGraph.draw(ticks);
 
             lastTick = ticks;
         }

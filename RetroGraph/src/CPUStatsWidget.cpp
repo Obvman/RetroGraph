@@ -43,6 +43,8 @@ void CPUStatsWidget::drawNoInfoState() const {
 void CPUStatsWidget::drawStats() const {
     glViewport(m_statsViewport.x, m_statsViewport.y,
                m_statsViewport.width, m_statsViewport.height);
+    scissorClear(m_statsViewport.x, m_statsViewport.y,
+                   m_statsViewport.width, m_statsViewport.height);
     drawWidgetBackground();
 
     glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
@@ -93,6 +95,9 @@ void CPUStatsWidget::drawStats() const {
 void CPUStatsWidget::drawCoreGraphs() const {
     glViewport(m_coreGraphViewport.x, m_coreGraphViewport.y,
                m_coreGraphViewport.width, m_coreGraphViewport.height);
+    scissorClear(m_coreGraphViewport.x, m_coreGraphViewport.y,
+               m_coreGraphViewport.width, m_coreGraphViewport.height);
+
     drawWidgetBackground();
 
     // Draw x rows of core graphs, with 2 graphs per row until all graphs

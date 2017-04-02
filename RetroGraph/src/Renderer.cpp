@@ -45,24 +45,30 @@ Renderer::~Renderer() {
     glDeleteBuffers(1, &m_graphGridIndicesID);
 }
 
-void Renderer::draw(uint32_t) const {
-    glClear(GL_COLOR_BUFFER_BIT);
-    glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
+void Renderer::draw(uint32_t ticks) const {
+    constexpr auto framesPerSecond = uint32_t{ 2U };
+    if ((ticks % std::lround(
+        static_cast<float>(rg::ticksPerSecond)/framesPerSecond)) == 0) {
 
-    m_timeWidget.draw();
-    m_hddWidget.draw();
-    m_cpuStatsWidget.draw();
-    m_processWidget.draw();
-    m_graphWidget.draw();
-    m_systemStatsWidget.draw();
-    m_mainWidget.draw();
-    m_musicWidget.draw();
+        //glClear(GL_COLOR_BUFFER_BIT);
+        glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
 
+        m_timeWidget.draw();
+        m_hddWidget.draw();
+        m_cpuStatsWidget.draw();
+        m_processWidget.draw();
+        m_graphWidget.draw();
+        m_systemStatsWidget.draw();
+        m_mainWidget.draw();
+        m_musicWidget.draw();
+    }
 }
 
 void Renderer::updateWindowSize(int32_t newWidth, int32_t newHeight) {
     setViewports(newWidth, newHeight);
     m_fontManager.refreshFonts(newHeight);
+
+    m_systemStatsWidget.needsRedraw();
 }
 
 /********************* Private Functions ********************/

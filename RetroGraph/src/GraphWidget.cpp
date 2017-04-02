@@ -40,6 +40,8 @@ void GraphWidget::setViewport(Viewport vp) {
 
 void GraphWidget::draw() const {
     glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
+    scissorClear(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
+
     drawWidgetBackground();
 
     drawCpuGraph();

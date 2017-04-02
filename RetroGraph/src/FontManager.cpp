@@ -232,6 +232,7 @@ void FontManager::createFont(uint32_t fontHeight, int32_t weight,
     wglUseFontBitmaps(hdc, 0, RG_NUM_CHARS_IN_FONT, m_fontBases[code]);
 
     setFontCharacteristics(code, hdc);
+    ReleaseDC(m_hWnd, hdc);
 
     DeleteObject(hFont);
 }

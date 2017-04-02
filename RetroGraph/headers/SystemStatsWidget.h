@@ -25,12 +25,13 @@ public:
 
     void setViewport(Viewport vp) { m_viewport = vp; };
 
+    void needsRedraw() const { m_needsRedraw = true; }
 private:
-
     const FontManager* m_fontManager{ nullptr };
     Viewport m_viewport{ };
     std::vector<std::string> m_statsStrings{ };
 
+    mutable bool m_needsRedraw{ true };
 };
 
 }

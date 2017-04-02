@@ -28,6 +28,13 @@ void vboDrawScope(GLuint vertID, GLuint indexID, F f) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
+void scissorClear(GLint x, GLint y, GLint w, GLint h) {
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(x, y, w, h);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDisable(GL_SCISSOR_TEST);
+}
+
 void drawFilledGraph(const std::vector<float>& data) {
     glBegin(GL_QUADS); {
         glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.7f);

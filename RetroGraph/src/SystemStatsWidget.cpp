@@ -37,7 +37,12 @@ SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
 }
 
 void SystemStatsWidget::draw() const {
+    if (!m_needsRedraw) return;
+
     glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
+    scissorClear(m_viewport.x, m_viewport.y,
+                 m_viewport.width, m_viewport.height);
+
     drawWidgetBackground();
 
     glColor4f(DIVIDER_R, DIVIDER_G, DIVIDER_B, DIVIDER_A);
@@ -49,6 +54,8 @@ void SystemStatsWidget::draw() const {
     m_fontManager->renderLines(RG_FONT_STANDARD, m_statsStrings, 0, 0,
                               m_viewport.width, m_viewport.height,
                               RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL, 15, 10);
+
+    m_needsRedraw = false;
 }
 
 }
