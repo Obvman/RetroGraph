@@ -1,5 +1,7 @@
 #include "../headers/RetroGraph.h"
 
+#include "../headers/drawUtils.h"
+
 namespace rg {
 
 RetroGraph::RetroGraph(HINSTANCE hInstance) :
@@ -15,6 +17,8 @@ RetroGraph::RetroGraph(HINSTANCE hInstance) :
     m_musicMeasure{ &m_processMeasure },
     m_systemMeasure{ },
     m_renderer{ m_window, *this } {
+
+    g_widgetBGVisible = m_userSettings.getWidgetBackground();
 
     update(0);
     draw(0);

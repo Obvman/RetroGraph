@@ -14,6 +14,9 @@ namespace rg {
 void TimeWidget::draw() const {
     glViewport(m_viewport.x, m_viewport.y,
                m_viewport.width, m_viewport.height);
+
+    drawWidgetBackground();
+
     glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
     glLineWidth(0.5f);
 

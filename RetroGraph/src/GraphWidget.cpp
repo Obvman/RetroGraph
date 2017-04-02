@@ -14,6 +14,8 @@
 namespace rg {
 
 void GraphWidget::setViewport(Viewport vp) { 
+    m_viewport = vp;
+
     m_cpuGraphVP = Viewport{
                      vp.x,
                      vp.y + 3*vp.height/4,
@@ -37,6 +39,9 @@ void GraphWidget::setViewport(Viewport vp) {
 }
 
 void GraphWidget::draw() const {
+    glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
+    drawWidgetBackground();
+
     drawCpuGraph();
     drawRamGraph();
     drawNetGraph();

@@ -7,6 +7,8 @@
 
 namespace rg {
 
+bool g_widgetBGVisible{ false };
+
 GLuint graphGridVertsID;
 GLuint graphGridIndicesID;
 GLsizei graphIndicesSize;
@@ -77,6 +79,18 @@ void drawBorder() {
         glVertex2f(-1.0f, -1.0f);
         glVertex2f(-1.0f, 1.0f);
     } glEnd();
+}
+
+void drawWidgetBackground() {
+    if (g_widgetBGVisible) {
+        glColor4f(WBG_R, WBG_G, WBG_B, WBG_A);
+        glBegin(GL_QUADS); {
+            glVertex2f(-1.0f,  1.0f);
+            glVertex2f( 1.0f,  1.0f);
+            glVertex2f( 1.0f, -1.0f);
+            glVertex2f(-1.0f, -1.0f);
+        } glEnd();
+    }
 }
 
 void drawViewportBorder() {

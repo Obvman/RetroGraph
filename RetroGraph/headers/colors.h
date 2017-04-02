@@ -48,6 +48,11 @@ constexpr float WARNING_TEXT_G{ RED_G };
 constexpr float WARNING_TEXT_B{ RED_B };
 constexpr float WARNING_TEXT_A{ 0.7f };
 
+constexpr float WBG_R{ 0.1f };
+constexpr float WBG_G{ 0.1f };
+constexpr float WBG_B{ 0.1f };
+constexpr float WBG_A{ 0.5f };
+
 constexpr float DEBUG_BORDER_R{ 0.2f };
 constexpr float DEBUG_BORDER_G{ 0.8f };
 constexpr float DEBUG_BORDER_B{ 0.2f };
@@ -83,4 +88,5 @@ constexpr float BARFILLED_B{ WHITE_B };
 constexpr float BARFREE_R{ GREY_R };
 constexpr float BARFREE_G{ GREY_G };
 constexpr float BARFREE_B{ GREY_B };
+
 }

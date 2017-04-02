@@ -23,7 +23,8 @@ constexpr int32_t WM_NOTIFY_RG_TRAY{ 3141 };
 constexpr int32_t ID_EXIT{ 1 };
 constexpr int32_t ID_SEND_TO_BACK{ 2 };
 constexpr int32_t ID_RESET_POSITION{ 3 };
-constexpr int32_t ID_CHANGE_DISPLAY_MONITOR{ 4 };
+constexpr int32_t ID_SET_WIDGET_BG{ 4 };
+constexpr int32_t ID_CHANGE_DISPLAY_MONITOR{ 5 };
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -97,6 +98,10 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
                     const auto& md{ m_monitors.getMonitorData()[m_currMonitor] };
                     SetWindowPos(hWnd, HWND_TOPMOST, md.x, md.y,
                                  md.width, md.height, 0);
+                    break;
+                }
+                case ID_SET_WIDGET_BG: {
+                    g_widgetBGVisible = !g_widgetBGVisible;
                     break;
                 }
                 default:
@@ -196,6 +201,8 @@ void Window::createRClickMenu(HWND hWnd, int32_t spawnX, int32_t spawnY) {
             "Send to back");
     InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_RESET_POSITION,
             "Reset Position");
+    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_SET_WIDGET_BG,
+            "Toggle Widget Background");
 
     // Create an option for each monitor for multi-monitor systems
     const auto& md{ m_monitors.getMonitorData() };
@@ -261,8 +268,12 @@ void Window::handleTrayMessage(HWND hWnd, WPARAM wParam, LPARAM lParam) {
 
             // Create options for popup menu
             auto hPopupMenu{ CreatePopupMenu() };
-            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_EXIT, "Exit");
-            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_SEND_TO_BACK, "Send to back");
+            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_EXIT,
+                    "Exit");
+            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
+                    ID_SEND_TO_BACK, "Send to back");
+            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
+                    ID_SET_WIDGET_BG, "Toggle Widget Background");
 
             // Create an option for each monitor for multi-monitor systems
             const auto& md{ m_monitors.getMonitorData() };
@@ -289,6 +300,9 @@ void Window::handleTrayMessage(HWND hWnd, WPARAM wParam, LPARAM lParam) {
                     GetWindowRect(hWnd, &wndRect);
                     SetWindowPos(hWnd, HWND_BOTTOM, wndRect.left, wndRect.top,
                                  m_width, m_height, 0);
+                    break;
+                case ID_SET_WIDGET_BG:
+                    g_widgetBGVisible = !g_widgetBGVisible;
                     break;
                 default:
                     // Default case handles monitor selection list

@@ -18,10 +18,9 @@ UserSettings::UserSettings() {
         if (propTree.empty()) {
             generateDefaultFile(propTree);
         } else {
-            m_windowWidth = propTree.get<uint32_t>("Window.WindowWidth");
-            m_windowHeight = propTree.get<uint32_t>("Window.WindowHeight");
             m_startupMonitor = propTree.get<uint32_t>("Window.Monitor");
             m_clickthrough = propTree.get<bool>("Window.ClickThrough");
+            m_widgetBackground = propTree.get<bool>("Window.WidgetBackground");
 
             m_pingServer = propTree.get<std::string>("Network.PingServer");
             m_pingFreq = propTree.get<uint32_t>("Network.PingFrequency");
@@ -57,10 +56,9 @@ void UserSettings::generateDefaultFile(pt::ptree& propTree) {
     std::cout << "Generating new config file\n";
 
     // Use default values for each property
-    propTree.put("Window.WindowWidth", m_windowWidth);
-    propTree.put("Window.WindowHeight", m_windowHeight);
     propTree.put("Window.Monitor", m_startupMonitor);
     propTree.put("Window.ClickThrough", m_clickthrough);
+    propTree.put("Window.WidgetBackground", m_widgetBackground);
 
     propTree.put("Network.PingServer", m_pingServer);
     propTree.put("Network.PingFrequency", m_pingServer);

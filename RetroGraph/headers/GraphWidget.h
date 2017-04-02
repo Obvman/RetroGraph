@@ -35,6 +35,7 @@ private:
     void drawGpuGraph() const;
 
     const FontManager* m_fontManager{ nullptr };
+    Viewport m_viewport{ };
     Viewport m_cpuGraphVP{ };
     Viewport m_ramGraphVP{ };
     Viewport m_netGraphVP{ };

@@ -38,6 +38,7 @@ SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
 
 void SystemStatsWidget::draw() const {
     glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
+    drawWidgetBackground();
 
     glColor4f(DIVIDER_R, DIVIDER_G, DIVIDER_B, DIVIDER_A);
     glLineWidth(0.5f);

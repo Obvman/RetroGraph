@@ -21,7 +21,6 @@ public:
     void draw() const override;
 
     void setViewport(Viewport vp) { m_viewport = vp; };
-
 private:
     const FontManager* m_fontManager{ nullptr };
     Viewport m_viewport{ };

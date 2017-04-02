@@ -11,6 +11,9 @@ typedef int GLint;
 #endif
 
 namespace rg {
+
+extern bool g_widgetBGVisible;
+
 constexpr float serifLen{ 0.05f };
 
 /* Minimum distance from the edge of the screen to draw each object (in pixels) */
@@ -40,6 +43,7 @@ void drawFilledGraph(const std::vector<float>& data);
 void drawLineGraph(const std::vector<float>& data);
 void drawGraphGrid();
 void drawBorder();
+void drawWidgetBackground();
 void drawViewportBorder();
 
 /* Draws a vertical bar that is centerred horizontally in the current viewport */
