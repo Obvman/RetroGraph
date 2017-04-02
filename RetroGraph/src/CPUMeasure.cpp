@@ -16,11 +16,11 @@
 #include "../headers/colors.h"
 #include "../headers/utils.h"
 
+namespace rg {
+
 unsigned long long FileTimeToInt64(const FILETIME & ft) {
     return (((unsigned long long)(ft.dwHighDateTime))<<32)|((unsigned long long)ft.dwLowDateTime);
 }
-
-namespace rg {
 
 CPUMeasure::CPUMeasure(const UserSettings& settings) :
     dataSize{ settings.getCPUUsageSamples() } {
@@ -86,6 +86,7 @@ float CPUMeasure::getCPULoad() {
     return calculateCPULoad(FileTimeToInt64(idleTime),
         FileTimeToInt64(kernelTime) + FileTimeToInt64(userTime));
 }
+
 std::string CPUMeasure::getUptimeStr() const {
     const auto uptimeS{ (m_uptime / 1000) % 60 };
     const auto uptimeM{ (m_uptime / (60 * 1000)) % 60 };

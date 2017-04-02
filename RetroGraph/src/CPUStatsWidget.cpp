@@ -104,10 +104,11 @@ void CPUStatsWidget::drawCoreGraphs() const {
         // Set the viewport for the current graph. The y position
         // of each graph changes as we draw more
         glViewport(m_coreGraphViewport.x,
-                   (m_coreGraphViewport.y + (numCores-1)*m_coreGraphViewport.height/numCores)
-                   - i*m_coreGraphViewport.height/(numCores),
-                   m_coreGraphViewport.width,
-                   m_coreGraphViewport.height/numCores);
+                (m_coreGraphViewport.y + 
+                    (numCores-1)*m_coreGraphViewport.height/numCores)
+                - i*m_coreGraphViewport.height/(numCores),
+                m_coreGraphViewport.width,
+                m_coreGraphViewport.height/numCores);
 
         drawLineGraph(m_cpuMeasure->getPerCoreUsageData()[i]);
 

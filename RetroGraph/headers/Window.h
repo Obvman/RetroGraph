@@ -22,7 +22,10 @@ public:
     /* Updates the OpenGL viewport when the window size changes */
     void updateSize(int32_t width, int32_t height);
 
+    /* Sets up device context for OpenGL drawing */
     HDC startDraw() const;
+
+    /* Releases device context after drawing */
     void endDraw(HDC hdc) const;
 
     /* Window Proc that has access to this window class's members via lParam */
@@ -51,13 +54,15 @@ private:
     void initOpenGL();
 
     /* Creates a dummy window to test if multisampling is supported. If so,
-       the dummy is destroyed and a new anti-aliased window is created */
+     * the dummy is destroyed and a new anti-aliased window is created 
+     */
     bool createHGLRC();
 
     bool initMultisample();
 
     /* Queries wgl to see if the given extension is supported on this device.
-       Must be called with an OpenGL context active */
+     * Must be called with an OpenGL context active
+     */
     bool wglIisExtensionSupported(const char *extension);
 
     /* Destroys the win32 window and releases resources */
@@ -69,8 +74,7 @@ private:
      */
     void handleClick(DWORD clickX, DWORD clickY);
 
-    /* Creates menu on interaction with notification tray icon
-     */
+    /* Creates menu on interaction with notification tray icon */
     void handleTrayMessage(HWND hWnd, WPARAM wParam, LPARAM lParam);
 
     bool m_running{ true };
