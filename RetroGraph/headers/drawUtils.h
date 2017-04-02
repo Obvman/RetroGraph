@@ -41,6 +41,7 @@ struct Viewport {
 
 void scissorClear(GLint x, GLint y, GLint w, GLint h);
 
+void drawCircle(GLfloat x, GLfloat y, GLfloat radius);
 void drawFilledGraph(const std::vector<float>& data);
 void drawLineGraph(const std::vector<float>& data);
 void drawGraphGrid();

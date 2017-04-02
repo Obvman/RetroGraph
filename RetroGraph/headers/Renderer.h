@@ -1,12 +1,9 @@
 #pragma once
 
 #include <stdint.h>
-#include <string>
-#include <vector>
 #include <Windows.h>
 #include <GL/glew.h>
 
-// TODO just forward declare the widgets
 #include "FontManager.h"
 #include "TimeWidget.h"
 #include "HDDWidget.h"
@@ -16,7 +13,6 @@
 #include "SystemStatsWidget.h"
 #include "MainWidget.h"
 #include "MusicWidget.h"
-#include "drawUtils.h"
 
 namespace rg {
 
@@ -45,6 +41,8 @@ public:
     void draw(uint32_t ticks) const;
 
     void updateWindowSize(int32_t newWidth, int32_t newHeight);
+
+    void needsRedraw() const { m_systemStatsWidget.needsRedraw(); }
 private:
     void setViewports(int32_t windowWidth, int32_t windowHeight);
 

@@ -1,8 +1,5 @@
 #include "../headers/CPUMeasure.h"
 
-#include <iostream>
-#include <sstream>
-#include <iomanip>
 #include <algorithm>
 #include <ctime>
 #include <time.h>
@@ -14,7 +11,7 @@
 
 #include "../headers/UserSettings.h"
 #include "../headers/colors.h"
-#include "../headers/utils.h"
+#include "../headers/units.h"
 
 namespace rg {
 

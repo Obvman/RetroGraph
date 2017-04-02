@@ -1,9 +1,6 @@
 #include "../headers/DriveMeasure.h"
 
 #include <Windows.h>
-#include <sstream>
-#include <iostream>
-#include <iomanip>
 
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -11,7 +8,6 @@
 #include <GL/freeglut.h>
 
 #include "../headers/colors.h"
-#include "../headers/utils.h"
 
 namespace rg {
 

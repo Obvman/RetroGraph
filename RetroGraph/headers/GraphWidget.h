@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Widget.h"
 #include "drawUtils.h"
 
 namespace rg {
@@ -11,7 +10,7 @@ class RAMMeasure;
 class NetMeasure;
 class GPUMeasure;
 
-class GraphWidget : public Widget {
+class GraphWidget {
 public:
     GraphWidget(const FontManager* fontManager, const CPUMeasure* cpuMeasure,
                 const RAMMeasure* ramMeasure, const NetMeasure* netMeasure,
@@ -20,11 +19,11 @@ public:
         m_ramMeasure{ ramMeasure }, m_netMeasure{ netMeasure },
         m_gpuMeasure{ gpuMeasure } {}
 
-    virtual ~GraphWidget() noexcept = default;
+    ~GraphWidget() noexcept = default;
     GraphWidget(const GraphWidget&) = delete;
     GraphWidget& operator=(const GraphWidget&) = delete;
 
-    void draw() const override;
+    void draw() const;
 
     void setViewport(Viewport vp);
 

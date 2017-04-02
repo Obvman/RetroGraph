@@ -2,18 +2,10 @@
 
 #include <stdint.h>
 #include <string>
-#include <iostream>
 #include <Windows.h>
 
 namespace rg {
 
-constexpr uint64_t KB{ 1024 };
-constexpr uint64_t MB{ KB * 1024 };
-constexpr uint64_t GB{ MB * 1024 };
-
-constexpr uint32_t maxTicks{ 100000U };
-constexpr uint32_t tickDuration{ 100U }; // tick length in milliseconds
-constexpr uint32_t ticksPerSecond{ 1000U / tickDuration };
 
 /* Lines drawn too close to the edge of the window will clip so this value
    is used to separate drawing bounds from the very edge */

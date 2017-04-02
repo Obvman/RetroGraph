@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 
-#include "Widget.h"
 #include "drawUtils.h"
 
 namespace rg {
@@ -13,15 +12,15 @@ class SystemMeasure;
 class CPUMeasure;
 class NetMeasure;
 
-class SystemStatsWidget : public Widget {
+class SystemStatsWidget {
 public:
     SystemStatsWidget(const FontManager* fontManager, const SystemMeasure* sysInfo,
                       const CPUMeasure* cpuMeasure, const NetMeasure* netMeasure);
-    virtual ~SystemStatsWidget() noexcept = default;
+    ~SystemStatsWidget() noexcept = default;
     SystemStatsWidget(const SystemStatsWidget&) = delete;
     SystemStatsWidget& operator=(const SystemStatsWidget&) = delete;
 
-    void draw() const override;
+    void draw() const;
 
     void setViewport(Viewport vp) { m_viewport = vp; };
 

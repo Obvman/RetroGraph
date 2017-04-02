@@ -102,6 +102,7 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
                 }
                 case ID_SET_WIDGET_BG: {
                     g_widgetBGVisible = !g_widgetBGVisible;
+                    m_retroGraph->needsRedraw();
                     break;
                 }
                 default:
@@ -303,6 +304,7 @@ void Window::handleTrayMessage(HWND hWnd, WPARAM wParam, LPARAM lParam) {
                     break;
                 case ID_SET_WIDGET_BG:
                     g_widgetBGVisible = !g_widgetBGVisible;
+                    m_retroGraph->needsRedraw();
                     break;
                 default:
                     // Default case handles monitor selection list

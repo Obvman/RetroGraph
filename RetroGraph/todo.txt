@@ -1,3 +1,5 @@
+speed up compile times
+
 left click tray brings window to front
 
 enable switching clickthrough modes at runtime

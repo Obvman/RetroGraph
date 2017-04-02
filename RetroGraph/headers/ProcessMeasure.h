@@ -18,7 +18,7 @@ class UserSettings;
 class ProcessMeasure {
 public:
     ProcessMeasure(const UserSettings& settings);
-    virtual ~ProcessMeasure() noexcept = default;
+    ~ProcessMeasure() noexcept = default;
     ProcessMeasure(const ProcessMeasure&) = delete;
     ProcessMeasure& operator=(const ProcessMeasure&) = delete;
 

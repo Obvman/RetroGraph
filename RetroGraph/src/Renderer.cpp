@@ -1,8 +1,5 @@
 #include "../headers/Renderer.h"
 
-#include <sstream>
-#include <iostream>
-
 #include "../headers/RetroGraph.h"
 #include "../headers/Window.h"
 #include "../headers/CPUMeasure.h"

@@ -87,7 +87,6 @@ private:
     HWND m_hWndMain{ nullptr };
     HDC m_hdc{ };
     HGLRC m_hrc{ };
-    MSG m_msg{ };
 
     NOTIFYICONDATA m_tray{ };
     bool m_dragging{ false };

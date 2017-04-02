@@ -6,18 +6,19 @@
 #include <thread>
 #include <atomic>
 
-#include "UserSettings.h"
-#include "utils.h"
+#include "units.h"
 
 struct _MIB_IF_ROW2;
 struct _MIB_IF_TABLE2;
 
 namespace rg {
 
+class UserSettings;
+
 class NetMeasure {
 public:
     NetMeasure(const UserSettings& settings);
-    virtual ~NetMeasure() noexcept = default;
+    ~NetMeasure() noexcept = default;
     NetMeasure(const NetMeasure&) = delete;
     NetMeasure& operator=(const NetMeasure&) = delete;
 

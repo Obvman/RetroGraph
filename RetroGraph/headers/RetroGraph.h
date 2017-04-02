@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 #include "Window.h"
+#include "Renderer.h"
 
 #include "CPUMeasure.h"
 #include "GPUMeasure.h"
@@ -12,8 +13,7 @@
 #include "DriveMeasure.h"
 #include "MusicMeasure.h"
 #include "SystemMeasure.h"
-
-#include "Renderer.h"
+#include "UserSettings.h"
 
 namespace rg {
 
@@ -28,6 +28,8 @@ public:
     void draw(uint32_t ticks) const;
 
     void updateWindowSize(int32_t width, int32_t height);
+
+    void needsRedraw() const { m_renderer.needsRedraw(); }
 
     const CPUMeasure& getCPUMeasure() const { return m_cpuMeasure; }
     const GPUMeasure& getGPUMeasure() const { return m_gpuMeasure; }

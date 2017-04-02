@@ -1,7 +1,8 @@
 #include "../headers/GPUMeasure.h"
 
-#include <iostream>
+#include <stdio.h>
 
+#include "../headers/units.h"
 #include "../headers/UserSettings.h"
 
 namespace rg {
@@ -80,7 +81,7 @@ float GPUMeasure::getMemUsagePercent() const {
 void GPUMeasure::updateGpuTemp() {
     auto result{ NvAPI_GPU_GetThermalSettings(m_gpuHandle, NVAPI_THERMAL_TARGET_NONE, &m_thermalSettings) };
     if (result != NVAPI_OK) {
-        std::cout << "Failed to get thermal information from NVAPI: " << result << '\n';
+        printf("Failed to get thermal information from NVAPI: %d\n", result);
         return;
     }
     m_currentTemp = m_thermalSettings.sensor[0].currentTemp;
@@ -102,7 +103,7 @@ NvPhysicalGpuHandle GPUMeasure::getGpuHandle() const {
 void GPUMeasure::getClockFrequencies() {
     const auto result{ NvAPI_GPU_GetAllClockFrequencies(m_gpuHandle, &m_clockFreqs) };
     if (result != NVAPI_OK) {
-        std::cout << "Failed to get GPU clock frequencies" << result << '\n';
+        printf("Failed to get GPU clock frequencies %d\n", result);
         return;
     }
 
@@ -112,7 +113,7 @@ void GPUMeasure::getClockFrequencies() {
 
 void GPUMeasure::getMemInformation() {
     if (NvAPI_GPU_GetMemoryInfo(m_gpuHandle, &m_memInfo) != NVAPI_OK) {
-        std::cout << "Failed to get GPU memory information\n";
+        printf("Failed to get GPU memory information\n");
         return;
     }
 
@@ -122,7 +123,7 @@ void GPUMeasure::getMemInformation() {
 
 void GPUMeasure::getGpuUsage() {
     if (NvAPI_GPU_GetDynamicPstatesInfoEx(m_gpuHandle, &m_pStateInfo) != NVAPI_OK) {
-        std::cout << "Failed to get GPU usage percentage\n";
+        printf("Failed to get GPU usage percentage\n");
         return;
     }
     m_gpuUsage = m_pStateInfo.utilization[NVAPI_GPU_UTILIZATION_DOMAIN_GPU].percentage;

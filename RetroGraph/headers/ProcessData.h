@@ -1,10 +1,11 @@
 #pragma once
+
 #include <Windows.h>
 #include <Psapi.h>
 #include <stdint.h>
 #include <string>
 
-#include "utils.h"
+#include "units.h"
 
 namespace rg {
 
@@ -72,8 +73,6 @@ private:
     FILETIME m_userTime{ };
     FILETIME m_lastSystemKernelTime{ };
     FILETIME m_lastSystemUserTime{ };
-
-    //int64_t m_lastSystemTime;
 
     double m_cpuUsage{ 0.0 };
 };

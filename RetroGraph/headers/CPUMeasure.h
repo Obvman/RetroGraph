@@ -4,7 +4,6 @@
 #include <string>
 #include <chrono>
 #include <stdint.h>
-#include <GL/glew.h>
 
 #include "CPUPlugin.h"
 
@@ -18,7 +17,7 @@ class UserSettings;
 class CPUMeasure {
 public:
     CPUMeasure(const UserSettings& settings);
-    virtual ~CPUMeasure() noexcept = default;
+    ~CPUMeasure() noexcept = default;
     CPUMeasure(const CPUMeasure&) = delete;
     CPUMeasure& operator=(const CPUMeasure&) = delete;
 

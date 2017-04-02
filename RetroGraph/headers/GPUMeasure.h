@@ -16,7 +16,7 @@ class UserSettings;
 class GPUMeasure {
 public:
     GPUMeasure(const UserSettings& settings);
-    virtual ~GPUMeasure() noexcept;
+    ~GPUMeasure() noexcept;
     GPUMeasure(const GPUMeasure&) = delete;
     GPUMeasure& operator=(const GPUMeasure&) = delete;
 

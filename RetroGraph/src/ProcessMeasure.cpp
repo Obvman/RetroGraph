@@ -326,7 +326,7 @@ void ProcessMeasure::detectNewProcesses() {
                 if (error != ERROR_ACCESS_DENIED &&
                     procID != 0) {
 
-                    fatalMessageBox("Failed to open process. Code: " + std::to_string(error));
+                    fatalMessageBox("Failed to open process. Code: " + std::to_string(error) + ". ProcessID: " + std::to_string(procID));
                 }
             } else {
                 // Convert the ImageName buffer from wchar* to char*

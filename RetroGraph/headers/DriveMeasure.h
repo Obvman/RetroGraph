@@ -4,9 +4,7 @@
 #include <string>
 #include <memory>
 
-#include <GL/glew.h>
-
-#include "utils.h"
+#include "units.h"
 
 namespace rg {
 
@@ -50,7 +48,7 @@ public:
 class DriveMeasure {
 public:
     DriveMeasure();
-    virtual ~DriveMeasure() noexcept = default;
+    ~DriveMeasure() noexcept = default;
     DriveMeasure(const DriveMeasure&) = delete;
     DriveMeasure& operator=(const DriveMeasure&) = delete;
 

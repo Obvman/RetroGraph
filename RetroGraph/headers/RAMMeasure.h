@@ -3,10 +3,8 @@
 #include <stdint.h>
 #include <vector>
 #include <Windows.h>
-#include <GL/glew.h>
-#include <GL/gl.h>
 
-#include "utils.h"
+#include "units.h"
 
 namespace rg {
 
@@ -59,7 +57,6 @@ private:
     MEMORYSTATUSEX m_memStatus{ };
     size_t dataSize{ 40U }; // max number of usage percentages to store
     std::vector<float> m_usageData{ };
-
 };
 
 }

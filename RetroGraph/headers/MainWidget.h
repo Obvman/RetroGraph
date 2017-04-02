@@ -1,21 +1,20 @@
 #pragma once
 
-#include "Widget.h"
 #include "drawUtils.h"
 
 namespace rg {
 
 class FontManager;
 
-class MainWidget : public Widget {
+class MainWidget {
 public:
     MainWidget(const FontManager* fontManager) :
         m_fontManager{ fontManager } {}
-    virtual ~MainWidget() noexcept = default;
+    ~MainWidget() noexcept = default;
     MainWidget(const MainWidget&) = delete;
     MainWidget& operator=(const MainWidget&) = delete;
 
-    void draw() const override;
+    void draw() const;
 
     void setViewport(Viewport vp) { m_viewport = vp; };
 private:

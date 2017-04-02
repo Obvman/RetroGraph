@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Widget.h"
 #include "drawUtils.h"
 
 namespace rg {
@@ -8,16 +7,16 @@ namespace rg {
 class FontManager;
 class CPUMeasure;
 
-class CPUStatsWidget : public Widget {
+class CPUStatsWidget {
 public:
     CPUStatsWidget(const FontManager* fontManager, const CPUMeasure* cpuMeasure) :
         m_fontManager{ fontManager }, m_cpuMeasure{ cpuMeasure } {}
 
-    virtual ~CPUStatsWidget() noexcept = default;
+    ~CPUStatsWidget() noexcept = default;
     CPUStatsWidget(const CPUStatsWidget&) = delete;
     CPUStatsWidget& operator=(const CPUStatsWidget&) = delete;
 
-    void draw() const override;
+    void draw() const;
 
     void setViewport(Viewport vp);
 

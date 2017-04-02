@@ -1,12 +1,9 @@
 #include "../headers/MusicMeasure.h"
 
 #include <cstring>
-#include <iterator>
-#include <algorithm>
-#include <sstream>
-#include <vector>
 #include <stdio.h>
 
+#include "../headers/utils.h"
 #include "../headers/ProcessMeasure.h"
 
 #pragma warning(disable : 4996)
@@ -23,6 +20,7 @@ void MusicMeasure::update(uint32_t ticks) {
     if ((ticks % (ticksPerSecond * 1)) == 0) {
         // Get the window class name for the player if it hasn't yet been set
         // Encode the this pointer into lParam so the proc can access members
+
         if ((ticks % (ticksPerSecond * 5)) == 0 &&
             (m_playerWindowClassName.size() == 0)) {
             EnumWindows(MusicMeasure::EnumWindowsProc, reinterpret_cast<LPARAM>(this));

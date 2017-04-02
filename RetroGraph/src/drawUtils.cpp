@@ -2,6 +2,7 @@
 
 #include <GL/glew.h>
 #include <GL/gl.h>
+#include <cmath>
 
 #include "../headers/colors.h"
 
@@ -33,6 +34,18 @@ void scissorClear(GLint x, GLint y, GLint w, GLint h) {
     glScissor(x, y, w, h);
     glClear(GL_COLOR_BUFFER_BIT);
     glDisable(GL_SCISSOR_TEST);
+}
+
+void drawCircle(GLfloat x, GLfloat y, GLfloat radius) {
+    constexpr float dToR{ 3.151592f / 180.0f };
+
+    glBegin(GL_LINE_LOOP); {
+        for (auto i = size_t{ 0U }; i < 20; ++i) {
+            const auto degreesR = float{ i * dToR };
+            glVertex2f(x + std::cos(degreesR) * radius,
+                       y + std::sin(degreesR) * radius);
+        }
+    } glEnd();
 }
 
 void drawFilledGraph(const std::vector<float>& data) {

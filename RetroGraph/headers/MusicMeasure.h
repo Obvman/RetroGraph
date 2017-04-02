@@ -16,7 +16,7 @@ class ProcessMeasure;
 class MusicMeasure {
 public:
     MusicMeasure(const ProcessMeasure* procMeasure);
-    virtual ~MusicMeasure() noexcept = default;
+    ~MusicMeasure() noexcept = default;
     MusicMeasure(const MusicMeasure&) = delete;
     MusicMeasure& operator=(const MusicMeasure&) = delete;
 

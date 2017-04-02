@@ -13,12 +13,16 @@
 #include <icmpapi.h>
 #include <Ws2tcpip.h>
 
+#include "../headers/UserSettings.h"
+#include "../headers/utils.h"
+
+// Placing here avoids some nasty header conflicts
+#include "../headers/NetMeasure.h"
+
 #pragma comment(lib, "Iphlpapi.lib")
 #pragma comment(lib, "Wininet.lib")
 #pragma comment(lib, "Ws2_32.lib")
 
-// Placing here avoids some nasty header conflicts
-#include "../headers/NetMeasure.h"
 
 namespace rg {
 

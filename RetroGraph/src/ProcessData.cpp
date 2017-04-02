@@ -1,6 +1,9 @@
 #include "../headers/ProcessData.h"
 
 #include <Winternl.h>
+
+#include "../headers/utils.h"
+
 #pragma comment(lib, "Ntdll.lib")
 
 namespace rg {

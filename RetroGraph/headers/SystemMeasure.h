@@ -10,7 +10,7 @@ namespace rg {
 class SystemMeasure {
 public:
     SystemMeasure();
-    virtual ~SystemMeasure() noexcept = default;
+    ~SystemMeasure() noexcept = default;
     SystemMeasure(const SystemMeasure&) = delete;
     SystemMeasure& operator=(const SystemMeasure&) = delete;
 
