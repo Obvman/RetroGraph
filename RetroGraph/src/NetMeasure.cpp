@@ -50,7 +50,8 @@ NetMeasure::NetMeasure(const UserSettings& settings) :
     // Get the adapter struct that corresponds to the hard-coded adapter name
     for (auto i = size_t{ 0U }; i < m_table->NumEntries; ++i) {
         if (m_table->Table[i].InterfaceIndex == bestIfaceIndex) {
-            std::wcout << L"Using interface " << m_table->Table[i].Description << '\n';
+            std::wcout << L"Using interface " << m_table->Table[i].Description
+                << '\n';
             m_adapterEntry = &m_table->Table[i];
             break;
         }
@@ -182,8 +183,10 @@ void NetMeasure::update(uint32_t ticks) {
         }
 
         m_downBytes[0] = m_adapterEntry->InOctets - oldDown;
-        std::rotate(m_downBytes.begin(), m_downBytes.begin() + 1, m_downBytes.end());
-        m_downMaxVal = *std::max_element(m_downBytes.cbegin(), m_downBytes.cend());
+        std::rotate(m_downBytes.begin(), m_downBytes.begin() + 1,
+                    m_downBytes.end());
+        m_downMaxVal = *std::max_element(m_downBytes.cbegin(),
+                                         m_downBytes.cend());
 
         m_upBytes[0] = m_adapterEntry->OutOctets - oldUp;
         std::rotate(m_upBytes.begin(), m_upBytes.begin() + 1, m_upBytes.end());

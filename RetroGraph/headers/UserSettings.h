@@ -24,9 +24,15 @@ public:
     const std::string& getPingServer() const { return m_pingServer; }
     uint32_t getPingFreq() const { return m_pingFreq; }
 
-    uint32_t getNumProcessesDisplayed() const { return m_numProcessesDisplayed; }
-    float getHighCPUUsageThreshold() const { return m_processCPUUsageThreshold; }
-    uint32_t getHighRAMUsageThresholdMB() const { return m_processRAMUsageThresholdMB; }
+    uint32_t getNumProcessesDisplayed() const {
+        return m_numProcessesDisplayed;
+    }
+    float getHighCPUUsageThreshold() const {
+        return m_processCPUUsageThreshold;
+    }
+    uint32_t getHighRAMUsageThresholdMB() const {
+        return m_processRAMUsageThresholdMB;
+    }
 
     uint32_t getNetUsageSamples() const { return m_netUsageSamples; }
     uint32_t getCPUUsageSamples() const { return m_cpuUsageSamples; }

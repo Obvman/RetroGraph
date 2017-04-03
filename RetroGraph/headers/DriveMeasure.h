@@ -36,7 +36,6 @@ public:
     DriveInfo(const DriveInfo&) = delete;
     DriveInfo& operator=(const DriveInfo&) = delete;
 
-
     char driveLetter{ 'A' };
     uint64_t totalFreeBytes{ 0U };
     uint64_t totalBytes{ 0U };
@@ -59,7 +58,9 @@ public:
     size_t getNumDrives() const { return m_drives.size(); }
 
     /* Returns the drive list */
-    const std::vector<std::unique_ptr<DriveInfo>>& getDrives() const { return m_drives; }
+    const std::vector<std::unique_ptr<DriveInfo>>& getDrives() const {
+        return m_drives;
+    }
 
 private:
     std::vector<std::string> m_drivePaths{ };

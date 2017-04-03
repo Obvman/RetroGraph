@@ -9,7 +9,8 @@ class MusicMeasure;
 
 class MusicWidget {
 public:
-    MusicWidget(const FontManager* fontManager, const MusicMeasure* musicMeasure) :
+    MusicWidget(const FontManager* fontManager,
+                const MusicMeasure* musicMeasure) :
         m_fontManager{ fontManager }, m_musicMeasure{ musicMeasure } {}
 
     ~MusicWidget() noexcept = default;

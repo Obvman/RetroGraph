@@ -66,13 +66,16 @@ void ProcessMeasure::update(uint32_t ticks) {
             auto& pd{ **it }; // get reference to ProcessData for convenience
 
             // Get the process relating to the ProcessData object
-            const auto pHandle{ OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
-                                            false, pd.getPID()) };
+            const auto pHandle{ OpenProcess(PROCESS_QUERY_INFORMATION |
+                                            PROCESS_VM_READ, false,
+                                            pd.getPID()) };
             if (!pHandle) {
                 const auto error{ GetLastError() };
-                // If access is denied or the process is the system idle process, just silently skip the process
+                // If access is denied or the process is the system idle 
+                // process, just silently skip the process
                 if (error != ERROR_ACCESS_DENIED && pd.getPID() != 0) {
-                    fatalMessageBox("Failed to open process. Code: " + std::to_string(error));
+                    fatalMessageBox("Failed to open process. Code: " +
+                                    std::to_string(error));
                 }
                 continue;
             }
@@ -101,7 +104,8 @@ void ProcessMeasure::update(uint32_t ticks) {
 }
 
 int32_t ProcessMeasure::getPIDFromName(const std::string& name) const {
-    const auto it{ std::find_if(m_allProcessData.cbegin(), m_allProcessData.cend(),
+    const auto it{ std::find_if(m_allProcessData.cbegin(),
+                                m_allProcessData.cend(),
             [&name](const auto& sp) {
                 return sp->getName() == name;
             }) };
@@ -114,20 +118,19 @@ int32_t ProcessMeasure::getPIDFromName(const std::string& name) const {
 
 bool ProcessMeasure::setDebugPrivileges(HANDLE hToken, LPCTSTR Privilege,
                                         bool enablePrivilege) {
-    TOKEN_PRIVILEGES tp;
     LUID luid;
     TOKEN_PRIVILEGES tpPrevious;
-    DWORD cbPrevious=sizeof(TOKEN_PRIVILEGES);
 
-    if(!LookupPrivilegeValue( NULL, Privilege, &luid )) return false;
+    if(!LookupPrivilegeValue( NULL, Privilege, &luid )) 
+        return false;
 
-    // 
     // first pass.  get current privilege setting
-    // 
+    TOKEN_PRIVILEGES tp;
     tp.PrivilegeCount           = 1;
     tp.Privileges[0].Luid       = luid;
     tp.Privileges[0].Attributes = 0;
 
+    DWORD cbPrevious{ sizeof(TOKEN_PRIVILEGES) };
     AdjustTokenPrivileges(
         hToken,
         FALSE,
@@ -137,11 +140,10 @@ bool ProcessMeasure::setDebugPrivileges(HANDLE hToken, LPCTSTR Privilege,
         &cbPrevious
     );
 
-    if (GetLastError() != ERROR_SUCCESS) return false;
+    if (GetLastError() != ERROR_SUCCESS) 
+        return false;
 
-    // 
     // second pass.  set privilege based on previous setting
-    // 
     tpPrevious.PrivilegeCount       = 1;
     tpPrevious.Privileges[0].Luid   = luid;
 
@@ -155,14 +157,16 @@ bool ProcessMeasure::setDebugPrivileges(HANDLE hToken, LPCTSTR Privilege,
 
     AdjustTokenPrivileges(hToken, FALSE, &tpPrevious, cbPrevious, NULL, NULL);
 
-    if (GetLastError() != ERROR_SUCCESS) return false;
+    if (GetLastError() != ERROR_SUCCESS) 
+        return false;
 
     return true;
 }
 
 
 void ProcessMeasure::fillCPUData() {
-    // Sort the vector based on the current CPU usage of processes in descending order
+    // Sort the vector based on the current CPU usage of processes in 
+    // descending order
     std::sort(m_allProcessData.begin(), m_allProcessData.end(),
     [](const auto& ppd1, const auto& ppd2) {
         return ppd1->getCpuUsage() > ppd2->getCpuUsage();
@@ -189,7 +193,8 @@ void ProcessMeasure::fillRAMData() {
 
     m_procRAMListData.clear();
     for (const auto& ppd : m_allProcessData) {
-        m_procRAMListData.emplace_back(ppd->getName(), ppd->getWorkingSetSizeMB());
+        m_procRAMListData.emplace_back(ppd->getName(),
+                                       ppd->getWorkingSetSizeMB());
 
         if (m_procRAMListData.size() >= m_numProcessesToDisplay) {
             break;
@@ -225,20 +230,19 @@ double ProcessMeasure::calculateCPUUsage(HANDLE pHandle, ProcessData& oldData) {
 
 void ProcessMeasure::populateList() {
     // Allocate buffer for the process list to fill
-    NTSTATUS status;
-    PVOID buffer;
-    PSYSTEM_PROCESS_INFO spi;
-    buffer = VirtualAlloc(nullptr, 1024*1024,
-                          MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE); // We need to allocate a large buffer because the process list can be large.
+    // We need to allocate a large buffer because the process list can be large.
+    PVOID buffer{ VirtualAlloc(nullptr, 1024*1024,
+                          MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE) }; 
 
     if(!buffer) {
         fatalMessageBox("Error: Unable to allocate memory for process list " +
                         std::to_string(GetLastError()) + '\n');
     }
 
-    spi = static_cast<PSYSTEM_PROCESS_INFO>(buffer);
+    PSYSTEM_PROCESS_INFO spi{ static_cast<PSYSTEM_PROCESS_INFO>(buffer) };
 
     // Fill the buffer with process information structs
+    NTSTATUS status;
     if(!NT_SUCCESS(status = NtQuerySystemInformation(SystemProcessInformation,
                                                      spi, 1024*1024, nullptr))) {
         VirtualFree(buffer, 0, MEM_RELEASE);
@@ -250,26 +254,32 @@ void ProcessMeasure::populateList() {
     // object for each process
     for ( ;
           spi->NextEntryOffset;
-          spi = reinterpret_cast<PSYSTEM_PROCESS_INFO>(reinterpret_cast<LPBYTE>(spi) + spi->NextEntryOffset)) {
+          spi = reinterpret_cast<PSYSTEM_PROCESS_INFO>(reinterpret_cast<LPBYTE>(spi) 
+                                                       + spi->NextEntryOffset)) {
 
         const auto procID{ reinterpret_cast<DWORD>(spi->ProcessId) };
 
-        const auto pHandle{ OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
-                                        false, procID) };
+        const auto pHandle{ OpenProcess(PROCESS_QUERY_INFORMATION |
+                                        PROCESS_VM_READ, false, procID) };
         if (!pHandle) {
             const auto error{ GetLastError() };
             // If access is denied or the process is the system idle process, just silently skip the process
             if (error != ERROR_ACCESS_DENIED && procID != 0) {
-                fatalMessageBox("Failed to open process. Code: " + std::to_string(error));
+                fatalMessageBox("Failed to open process. Code: " +
+                                std::to_string(error));
             }
         } else {
             // Convert the process name from wchar* to char*
             size_t charsConverted{ 0U };
             char* nameBuff = new char[spi->ImageName.Length];
-            wcstombs_s(&charsConverted, nameBuff, spi->ImageName.Length, spi->ImageName.Buffer, spi->ImageName.Length);
+            wcstombs_s(&charsConverted, nameBuff, spi->ImageName.Length,
+                       spi->ImageName.Buffer, spi->ImageName.Length);
 
-            m_allProcessData.emplace_back(std::make_shared<ProcessData>(pHandle,
-                procID, nameBuff));
+            m_allProcessData.emplace_back(std::make_shared<ProcessData>(
+                pHandle,
+                procID,
+                nameBuff)
+            );
 
             delete[] nameBuff;
         }
@@ -279,12 +289,9 @@ void ProcessMeasure::populateList() {
 }
 
 void ProcessMeasure::detectNewProcesses() {
-    // Allocate buffer for the process list to fill
-    NTSTATUS status;
-    PVOID buffer;
-    PSYSTEM_PROCESS_INFO spi;
-    buffer=VirtualAlloc(nullptr, 1024*1024,
-                        MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE); // We need to allocate a large buffer because the process list can be large.
+    // We need to allocate a large buffer because the process list can be large.
+    PVOID buffer{ VirtualAlloc(nullptr, 1024*1024,
+                        MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE) };
 
     if(!buffer) {
         std::cout << "Error: Unable to allocate memory for process list "
@@ -292,9 +299,10 @@ void ProcessMeasure::detectNewProcesses() {
         return;
     }
 
-    spi = static_cast<PSYSTEM_PROCESS_INFO>(buffer);
+    PSYSTEM_PROCESS_INFO spi{ static_cast<PSYSTEM_PROCESS_INFO>(buffer) };
 
     // Fill the buffer with process information structs
+    NTSTATUS status;
     if(!NT_SUCCESS(status = NtQuerySystemInformation(SystemProcessInformation,
                                                      spi, 1024*1024, nullptr))) {
         std::cout << "Error: Unable to query process list " << status << '\n';
@@ -314,28 +322,35 @@ void ProcessMeasure::detectNewProcesses() {
                                     m_allProcessData.cend(),
             [procID](const auto& ppd) {
                 return procID == ppd->getPID();
-        })};
+            })};
 
         // If it doesn't exist, create a new ProcessData object in the list
         if (it == m_allProcessData.cend()) {
-            auto pHandle{ OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
-                                       false, procID) };
+            auto pHandle{ OpenProcess(PROCESS_QUERY_INFORMATION |
+                                      PROCESS_VM_READ, false, procID) };
             if (!pHandle) {
                 const auto error{ GetLastError() };
-                // If access is denied or the process is the system idle process, just silently skip the process
+                // If access is denied or the process is the system idle
+                // process, just silently skip the process
                 if (error != ERROR_ACCESS_DENIED &&
                     procID != 0) {
 
-                    fatalMessageBox("Failed to open process. Code: " + std::to_string(error) + ". ProcessID: " + std::to_string(procID));
+                    fatalMessageBox("Failed to open process. Code: " +
+                                    std::to_string(error) + ". ProcessID: " +
+                                    std::to_string(procID));
                 }
             } else {
                 // Convert the ImageName buffer from wchar* to char*
                 auto charsConverted = size_t{ 0U };
                 auto nameBuff{ new char[spi->ImageName.Length] };
-                wcstombs_s(&charsConverted, nameBuff, spi->ImageName.Length, spi->ImageName.Buffer, spi->ImageName.Length);
+                wcstombs_s(&charsConverted, nameBuff, spi->ImageName.Length,
+                           spi->ImageName.Buffer, spi->ImageName.Length);
 
-                m_allProcessData.emplace_back(std::make_shared<ProcessData>(pHandle,
-                    procID, nameBuff));
+                m_allProcessData.emplace_back(std::make_shared<ProcessData>(
+                    pHandle,
+                    procID,
+                    nameBuff)
+                );
 
                 delete[] nameBuff;
             }

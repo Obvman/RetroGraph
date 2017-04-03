@@ -23,7 +23,8 @@ void MusicMeasure::update(uint32_t ticks) {
 
         if ((ticks % (ticksPerSecond * 5)) == 0 &&
             (m_playerWindowClassName.size() == 0)) {
-            EnumWindows(MusicMeasure::EnumWindowsProc, reinterpret_cast<LPARAM>(this));
+            EnumWindows(MusicMeasure::EnumWindowsProc,
+                        reinterpret_cast<LPARAM>(this));
         }
 
         // Check if the player window is currently open by matching the class name
@@ -94,7 +95,7 @@ void MusicMeasure::scrapeInfoFromTitle() {
         return;
     }
 
-    // Assume token ordering of: track name, artist, album+track number, playstate
+    // token ordering of: track name, artist, album+track number, playstate
     m_trackName = tokens[0];
 
     // Handle non-existing cases for album/artist

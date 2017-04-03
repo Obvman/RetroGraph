@@ -41,7 +41,9 @@ public:
     float getVoltage() const { return m_coreTempPlugin.getVoltage(); }
 
     /* Returns the temperature of the specified core */
-    float getTemp(uint32_t coreNum) const { return m_coreTempPlugin.getTemp(coreNum); }
+    float getTemp(uint32_t coreNum) const {
+        return m_coreTempPlugin.getTemp(coreNum);
+    }
 
     /* Returns the maximum allowable CPU temperature in degrees celsius */
     uint32_t getTjMax() const { return m_coreTempPlugin.getTjMax(); }
@@ -53,12 +55,16 @@ public:
     const std::vector<float>& getUsageData() const { return m_usageData; }
 
     /* Returns list of each core's load history */
-    const std::vector<std::vector<float>>& getPerCoreUsageData() const { return m_perCoreData; }
+    const std::vector<std::vector<float>>& getPerCoreUsageData() const {
+        return m_perCoreData;
+    }
 
     /* Returns the maximum number of CPU usage samples stored */
     size_t getDataSize() const { return dataSize; }
 
-    bool getCoreTempInfoSuccess() const { return m_coreTempPlugin.getCoreTempInfoSuccess(); }
+    bool getCoreTempInfoSuccess() const {
+        return m_coreTempPlugin.getCoreTempInfoSuccess();
+    }
 
 private:
     /* Calculates the total CPU load with the given tick information */

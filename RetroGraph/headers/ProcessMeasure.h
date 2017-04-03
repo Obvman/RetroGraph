@@ -31,14 +31,19 @@ public:
     int32_t getPIDFromName(const std::string& name) const;
 
     /* Gets vector containing top CPU using processes and their CPU usage */
-    const std::vector<std::pair<std::string, double>>& getProcCPUData() const { return m_procCPUListData; }
+    const std::vector<std::pair<std::string, double>>& getProcCPUData() const {
+        return m_procCPUListData;
+    }
 
     /* Gets vector containing top RAM using processes and their RAM usage */
-    const std::vector<std::pair<std::string, size_t>>& getProcRAMData() const { return m_procRAMListData; }
+    const std::vector<std::pair<std::string, size_t>>& getProcRAMData() const {
+        return m_procRAMListData;
+    }
 private:
     /* Sets the debug privileges of the programs to allow reading of system
      * processes */
-    bool setDebugPrivileges(HANDLE hToken, LPCTSTR Privilege, bool enablePrivilege);
+    bool setDebugPrivileges(HANDLE hToken, LPCTSTR Privilege,
+                            bool enablePrivilege);
 
     /* Fills the CPU usage process vector with top CPU using processes */
     void fillCPUData();

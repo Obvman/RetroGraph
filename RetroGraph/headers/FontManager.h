@@ -51,8 +51,6 @@ public:
     /* Release current font data and reinitialises to match new window size */
     void refreshFonts(uint32_t newWindowHeight);
 
-    /* Gets the width of the given font's characters in pixels */
-    //int32_t getFontCharWidth(RGFONTCODE c) const { return m_fontCharWidths[c]; }
     /* Gets the height of the given font's characters in pixels */
     int32_t getFontCharHeight(RGFONTCODE c) const { return m_fontCharHeights[c]; }
 

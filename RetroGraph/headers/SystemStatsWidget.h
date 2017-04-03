@@ -14,8 +14,10 @@ class NetMeasure;
 
 class SystemStatsWidget {
 public:
-    SystemStatsWidget(const FontManager* fontManager, const SystemMeasure* sysInfo,
-                      const CPUMeasure* cpuMeasure, const NetMeasure* netMeasure);
+    SystemStatsWidget(const FontManager* fontManager,
+                      const SystemMeasure* sysInfo,
+                      const CPUMeasure* cpuMeasure,
+                      const NetMeasure* netMeasure);
     ~SystemStatsWidget() noexcept = default;
     SystemStatsWidget(const SystemStatsWidget&) = delete;
     SystemStatsWidget& operator=(const SystemStatsWidget&) = delete;

@@ -80,7 +80,8 @@ void FontManager::renderLine(RGFONTCODE fontCode,
         rasterY = pixelsToVPCoords(alignMarginY + m_fontCharDescents[fontCode],
                                    areaHeight);
     } else if (alignFlags & RG_ALIGN_TOP) {
-        rasterY = pixelsToVPCoords(areaHeight - m_fontCharAscents[fontCode] - alignMarginY,
+        rasterY = pixelsToVPCoords(areaHeight - m_fontCharAscents[fontCode] -
+                                   alignMarginY,
                                    areaHeight);
     }
 
@@ -150,7 +151,8 @@ void FontManager::renderLines(RGFONTCODE fontCode,
     GLint vp[4];
     glGetIntegerv(GL_VIEWPORT, vp);
 
-    /* If width and height are given default values, use the current viewport as area*/
+    /* If width and height are given default values, use the current viewport 
+       as area */
     if (areaWidth == 0 && areaHeight == 0 && areaX == 0 && areaY == 0) {
         areaWidth = vp[2];
         areaHeight = vp[3];
@@ -166,12 +168,9 @@ void FontManager::renderLines(RGFONTCODE fontCode,
     // Start at top, render downwards
     auto rasterYPx = uint32_t{ areaHeight - alignMarginY - fontHeight };
     if (alignFlags & RG_ALIGN_CENTERED_VERTICAL) {
-        //rasterY = float{ 1.0f -
-            //1.0f*static_cast<float>(deltaFromTop + descent + 
-            //m_fontCharHeights[fontCode])/areaHeight };
+        // Default behaviour
     } else if (alignFlags & RG_ALIGN_TOP) {
-        /*rasterY = float{ 1.0f -
-            static_cast<float>(alignMargin - descent)/areaHeight };*/
+        // TODO
     } else if (alignFlags & RG_ALIGN_BOTTOM) {
         // TODO
     }
@@ -181,8 +180,8 @@ void FontManager::renderLines(RGFONTCODE fontCode,
         const auto strWidthPx{ calculateStringWidth(str.c_str(), str.size(),
                                                     fontCode) };
 
-        const auto rasterX{ getRasterXAlignment(alignFlags, strWidthPx, 
-                areaWidth, alignMarginX) };
+        const auto rasterX{ getRasterXAlignment(alignFlags, strWidthPx,
+                                                areaWidth, alignMarginX) };
         const auto rasterY{ pixelsToVPCoords(rasterYPx, areaHeight) };
 
         // Draw the string
@@ -213,10 +212,17 @@ void FontManager::initFonts(uint32_t windowHeight) {
     const auto standardFontHeight{ std::lround(windowHeight / 70.0f) };
 
     createFont(standardFontHeight, FW_DONTCARE, typefaces[0], RG_FONT_STANDARD);
-    createFont(standardFontHeight, FW_BOLD, typefaces[0], RG_FONT_STANDARD_BOLD);
+
+    createFont(standardFontHeight, FW_BOLD, typefaces[0],
+               RG_FONT_STANDARD_BOLD);
+
     createFont(72, FW_NORMAL, typefaces[7], RG_FONT_TIME);
+
     createFont(7*standardFontHeight/8, FW_NORMAL, typefaces[1], RG_FONT_SMALL);
-    createFont(3*standardFontHeight/2, FW_BOLD, typefaces[0], RG_FONT_MUSIC_LARGE);
+
+    createFont(3*standardFontHeight/2, FW_BOLD, typefaces[0],
+               RG_FONT_MUSIC_LARGE);
+
     createFont(standardFontHeight, FW_BOLD, typefaces[7], RG_FONT_MUSIC);
 
     // Set default font
@@ -268,8 +274,9 @@ uint32_t FontManager::calculateStringWidth(const char* text, size_t textLen,
     return strWidthPx;
 }
 
-float FontManager::getRasterXAlignment(int32_t alignFlags, uint32_t strWidthPx, 
-                                       uint32_t areaWidth, uint32_t alignMargin) const {
+float FontManager::getRasterXAlignment(int32_t alignFlags, uint32_t strWidthPx,
+                                       uint32_t areaWidth,
+                                       uint32_t alignMargin) const {
     if (alignFlags & RG_ALIGN_CENTERED_HORIZONTAL) {
         const auto drawXPx{ (areaWidth - strWidthPx) / 2};
         return pixelsToVPCoords(drawXPx, areaWidth);

@@ -14,7 +14,8 @@ void Monitors::fillMonitorData() {
     }
 }
 
-BOOL CALLBACK Monitors::MonitorCallback2(HMONITOR hMonitor, HDC, LPRECT, LPARAM dwData) {
+BOOL CALLBACK Monitors::MonitorCallback2(HMONITOR hMonitor, HDC, LPRECT, 
+                                         LPARAM dwData) {
     const auto This{ (Monitors*)dwData };
     static int32_t monitorCount{ 0 };
 

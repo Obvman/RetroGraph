@@ -28,19 +28,20 @@ void MusicWidget::draw() const {
                    m_viewport.width, 3*m_viewport.height/4);
         glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
-        m_fontManager->renderLine(RG_FONT_MUSIC_LARGE, 
-                m_musicMeasure->getTrackName().c_str(),
-                0, 0, 0, 0, RG_ALIGN_TOP | RG_ALIGN_CENTERED_HORIZONTAL,
-                10, 30);
+        m_fontManager->renderLine(RG_FONT_MUSIC_LARGE,
+                                  m_musicMeasure->getTrackName().c_str(), 0, 0,
+                                  0, 0, RG_ALIGN_TOP |
+                                  RG_ALIGN_CENTERED_HORIZONTAL, 10, 30);
 
         m_fontManager->renderLine(RG_FONT_STANDARD,
-                m_musicMeasure->getArtist().c_str(),
-                0, 0, 0, 0, RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_CENTERED_HORIZONTAL);
+                                  m_musicMeasure->getArtist().c_str(), 0, 0, 0,
+                                  0, RG_ALIGN_CENTERED_VERTICAL |
+                                  RG_ALIGN_CENTERED_HORIZONTAL);
 
         m_fontManager->renderLine(RG_FONT_STANDARD_BOLD,
-                m_musicMeasure->getAlbum().c_str(),
-                0, 0, 0, 0, RG_ALIGN_BOTTOM | RG_ALIGN_CENTERED_HORIZONTAL,
-                10, 30);
+                                  m_musicMeasure->getAlbum().c_str(), 0, 0, 0,
+                                  0, RG_ALIGN_BOTTOM |
+                                  RG_ALIGN_CENTERED_HORIZONTAL, 10, 30);
 
         const auto elapsed{ m_musicMeasure->getElapsedTime() };
         const auto total{ m_musicMeasure->getTotalTime() };
@@ -55,15 +56,16 @@ void MusicWidget::draw() const {
         strcat_s(elapsedBuff, sizeof(elapsedBuff), totalBuff);
 
         glViewport(m_viewport.x, m_viewport.y,
-                m_viewport.width, m_viewport.height/4);
+                   m_viewport.width, m_viewport.height/4);
         m_fontManager->renderLine(-0.9f, 0.5f, RG_FONT_STANDARD, elapsedBuff, 
-                strlen(elapsedBuff));
-        drawHorizontalProgressBar(0.3f, -0.9f, 0.9f, 
-                static_cast<float>(elapsed), 
-                static_cast<float>(total));
+                                  strlen(elapsedBuff));
+        drawHorizontalProgressBar(0.3f, -0.9f, 0.9f,
+                                  static_cast<float>(elapsed),
+                                  static_cast<float>(total));
     } else {
         m_fontManager->renderLine(RG_FONT_TIME, "No Media", 0, 0, 0, 0,
-                RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_CENTERED_HORIZONTAL, 10, 10);
+                                  RG_ALIGN_CENTERED_VERTICAL |
+                                  RG_ALIGN_CENTERED_HORIZONTAL, 10, 10);
     }
 }
 

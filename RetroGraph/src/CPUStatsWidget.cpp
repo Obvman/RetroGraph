@@ -13,14 +13,16 @@ namespace rg {
 
 void CPUStatsWidget::setViewport(Viewport vp) { 
     m_viewport = vp; 
-    m_coreGraphViewport = Viewport{ m_viewport.x, m_viewport.y, 
-        m_viewport.width, m_viewport.height/2 - 5 };
-    m_statsViewport = Viewport{ m_viewport.x, m_viewport.y + m_viewport.height/2+5,
+    m_coreGraphViewport = Viewport{ m_viewport.x, m_viewport.y,
+        m_viewport.width, m_viewport.height/2 };
+    m_statsViewport = Viewport{ m_viewport.x, m_viewport.y + m_viewport.height/2,
         m_viewport.width, m_viewport.height/2 };
 };
 
 void CPUStatsWidget::draw() const {
     glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
+    scissorClear(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
+    drawWidgetBackground();
 
     if (m_cpuMeasure->getCoreTempInfoSuccess()) {
         drawCoreGraphs();
@@ -43,9 +45,6 @@ void CPUStatsWidget::drawNoInfoState() const {
 void CPUStatsWidget::drawStats() const {
     glViewport(m_statsViewport.x, m_statsViewport.y,
                m_statsViewport.width, m_statsViewport.height);
-    scissorClear(m_statsViewport.x, m_statsViewport.y,
-                   m_statsViewport.width, m_statsViewport.height);
-    drawWidgetBackground();
 
     glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
     drawTopSerifLine(-1.0f, 1.0f);
@@ -58,12 +57,15 @@ void CPUStatsWidget::drawStats() const {
     char voltBuff[7];
     char clockBuff[12];
     snprintf(voltBuff, sizeof(voltBuff), "%.3fv", m_cpuMeasure->getVoltage());
-    snprintf(clockBuff, sizeof(clockBuff), "%7.3fMHz", m_cpuMeasure->getClockSpeed());
+    snprintf(clockBuff, sizeof(clockBuff), "%7.3fMHz",
+             m_cpuMeasure->getClockSpeed());
 
     m_fontManager->renderLine(RG_FONT_STANDARD, voltBuff, 0, 0, 0, 0,
-            RG_ALIGN_LEFT | RG_ALIGN_BOTTOM, bottomTextMargin, bottomTextMargin);
+                              RG_ALIGN_LEFT | RG_ALIGN_BOTTOM,
+                              bottomTextMargin, bottomTextMargin);
     m_fontManager->renderLine(RG_FONT_STANDARD, clockBuff, 0, 0, 0, 0,
-            RG_ALIGN_RIGHT | RG_ALIGN_BOTTOM, bottomTextMargin, bottomTextMargin);
+                              RG_ALIGN_RIGHT | RG_ALIGN_BOTTOM,
+                              bottomTextMargin, bottomTextMargin);
 
     // Draw the temperature bar for each CPU core
     const auto numCores{ m_cpuMeasure->getNumCores() };
@@ -82,23 +84,19 @@ void CPUStatsWidget::drawStats() const {
         glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
         char coreBuff[3] = { 'C', '0' + static_cast<char>(i), '\0' };
         m_fontManager->renderLine(RG_FONT_STANDARD, coreBuff, 0, 0, 0, 0,
-                                 RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_BOTTOM,
-                                 10, 10);
+                                  RG_ALIGN_CENTERED_HORIZONTAL |
+                                  RG_ALIGN_BOTTOM, 10, 10);
         char tempBuff[6];
         snprintf(tempBuff, sizeof(tempBuff), "%.0fC", m_cpuMeasure->getTemp(i));
         m_fontManager->renderLine(RG_FONT_STANDARD, tempBuff, 0, 0, 0, 0,
-                                 RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_TOP,
-                                 10, 10);
+                                  RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_TOP,
+                                  10, 10);
     }
 }
 
 void CPUStatsWidget::drawCoreGraphs() const {
     glViewport(m_coreGraphViewport.x, m_coreGraphViewport.y,
                m_coreGraphViewport.width, m_coreGraphViewport.height);
-    scissorClear(m_coreGraphViewport.x, m_coreGraphViewport.y,
-               m_coreGraphViewport.width, m_coreGraphViewport.height);
-
-    drawWidgetBackground();
 
     // Draw x rows of core graphs, with 2 graphs per row until all graphs
     // are drawn
@@ -110,12 +108,12 @@ void CPUStatsWidget::drawCoreGraphs() const {
     for (auto i = size_t{ 0U }; i < numCores; ++i) {
         // Set the viewport for the current graph. The y position
         // of each graph changes as we draw more
-        glViewport(m_coreGraphViewport.x,
-                (m_coreGraphViewport.y + 
-                    (numCores-1)*m_coreGraphViewport.height/numCores)
-                - i*m_coreGraphViewport.height/(numCores),
-                m_coreGraphViewport.width,
-                m_coreGraphViewport.height/numCores);
+        const auto yOffset{ (numCores - 1) * m_coreGraphViewport.height/numCores - 
+            i*m_coreGraphViewport.height/numCores };
+        glViewport(m_coreGraphViewport.x, 
+                   m_coreGraphViewport.y + yOffset,
+                   m_coreGraphViewport.width,
+                   m_coreGraphViewport.height/numCores);
 
         drawLineGraph(m_cpuMeasure->getPerCoreUsageData()[i]);
 

@@ -48,7 +48,6 @@ uint64_t subtractTimes(const FILETIME& ftA, const FILETIME& ftB) {
 
 
 constexpr float lerp(float x1, float x2, float t) {
-    //return x1 + (x2 - x1) * t;
     return (1 - t) * x1 + t * x2;
 }
 

@@ -1,5 +1,6 @@
 #include "../headers/Window.h"
 
+
 #define GLUT_DISABLE_ATEXIT_HACK
 
 #include <GL/freeglut.h>
@@ -118,10 +119,12 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
             // so check if the value is greater than a signed short, if so
             // it should be a negative number
             if (LOWORD(lParam) > std::numeric_limits<int16_t>::max()) {
-                contextSpawnX = LOWORD(lParam) - std::numeric_limits<uint16_t>::max();
+                contextSpawnX = LOWORD(lParam) -
+                    std::numeric_limits<uint16_t>::max();
             }
             if (HIWORD(lParam) > std::numeric_limits<int16_t>::max()) {
-                contextSpawnY = HIWORD(lParam) - std::numeric_limits<uint16_t>::max();
+                contextSpawnY = HIWORD(lParam) -
+                    std::numeric_limits<uint16_t>::max();
             }
 
             createRClickMenu(reinterpret_cast<HWND>(wParam),
@@ -288,9 +291,11 @@ void Window::handleTrayMessage(HWND hWnd, WPARAM wParam, LPARAM lParam) {
             }
 
             // Display menu and wait for user's selection
-            const int32_t selection{ TrackPopupMenuEx(hPopupMenu,
-                    TPM_TOPALIGN | TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD,
-                    p.x, p.y, hWnd, nullptr) };
+            const int32_t selection{ TrackPopupMenuEx(hPopupMenu, TPM_TOPALIGN
+                                                      | TPM_LEFTALIGN |
+                                                      TPM_RIGHTBUTTON |
+                                                      TPM_RETURNCMD, p.x, p.y,
+                                                      hWnd, nullptr) };
 
             switch (selection) {
                 case ID_EXIT:
@@ -422,7 +427,7 @@ bool Window::createHGLRC() {
 #endif
 
     if (m_arbMultisampleSupported) {
-        const DWORD exStyles = (m_clickthrough) ? 
+        const DWORD exStyles = (m_clickthrough) ?
             WS_EX_TOOLWINDOW | WS_EX_COMPOSITED | WS_EX_TRANSPARENT | WS_EX_LAYERED :
             WS_EX_TRANSPARENT | WS_EX_COMPOSITED;
 
@@ -547,6 +552,7 @@ bool Window::createHGLRC() {
             return createHGLRC();
         }
     }
+
 
     return true;
 }

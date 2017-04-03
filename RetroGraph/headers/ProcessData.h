@@ -38,14 +38,20 @@ public:
 
     /* Returns FILETIME struct containing the total system kernel cpu time at
        the point this object was last updated */
-    const FILETIME& getLastSystemKernelTime() const { return m_lastSystemKernelTime; }
+    const FILETIME& getLastSystemKernelTime() const {
+        return m_lastSystemKernelTime;
+    }
 
     /* Returns FILETIME struct containing the total system user cpu time at
        the point this object was last updated */
-    const FILETIME& getLastSystemUserTime() const { return m_lastSystemUserTime; }
+    const FILETIME& getLastSystemUserTime() const {
+        return m_lastSystemUserTime;
+    }
 
     /* Returns the current memory usage of the process */
-    SIZE_T getWorkingSetSizeMB() const { return m_memCounters.WorkingSetSize / MB; }
+    SIZE_T getWorkingSetSizeMB() const {
+        return m_memCounters.WorkingSetSize / MB;
+    }
 
     /* Returns the CPU usage as a percentage of this processes over the
        period between the previous and latest update of this object */

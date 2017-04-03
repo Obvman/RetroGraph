@@ -142,12 +142,18 @@ void GraphWidget::drawNetGraph() const {
         glBegin(GL_LINE_STRIP); {
             glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.7f);
             for (auto i = size_t{ 0U }; i < downData.size() - 1; ++i) {
-                const auto percent1 = float{ (downData[i] / static_cast<float>(MB)) / maxValMB };
-                const auto percent2 = float{ (downData[i+1] / static_cast<float>(MB)) / maxValMB };
+                const auto percent1 = float{ (downData[i] /
+                                              static_cast<float>(MB)) /
+                                              maxValMB };
+                const auto percent2 = float{ (downData[i+1] /
+                                              static_cast<float>(MB)) /
+                                              maxValMB };
 
-                const auto x1 = float{ (static_cast<float>(i) / (downData.size() - 1)) * 2.0f - 1.0f };
+                const auto x1 = float{ (static_cast<float>(i) /
+                                        (downData.size() - 1)) * 2.0f - 1.0f };
                 const auto y1 = float{ percent1 * 2.0f - 1.0f };
-                const auto x2 = float{ (static_cast<float>(i+1) / (downData.size() - 1)) * 2.0f - 1.0f };
+                const auto x2 = float{ (static_cast<float>(i+1) /
+                                        (downData.size() - 1)) * 2.0f - 1.0f };
                 const auto y2 = float{ percent2 * 2.0f - 1.0f };
 
                 glVertex2f(x1, y1);    // Top-left
@@ -159,12 +165,17 @@ void GraphWidget::drawNetGraph() const {
         glBegin(GL_LINE_STRIP); {
             glColor4f(PINK1_R, PINK1_G, PINK1_B, 0.7f);
             for (auto i = size_t{ 0U }; i < upData.size() - 1; ++i) {
-                const auto percent1 = float{ (upData[i] / static_cast<float>(MB)) / maxValMB };
-                const auto percent2 = float{ (upData[i+1] / static_cast<float>(MB)) / maxValMB };
+                const auto percent1 = float{ (upData[i] /
+                        static_cast<float>(MB)) / maxValMB }; 
+                const auto percent2 = float{ (upData[i+1] /
+                        static_cast<float>(MB)) / maxValMB };
 
-                const auto x1 = float{ (static_cast<float>(i) / (upData.size() - 1)) * 2.0f - 1.0f };
+                const auto x1 = float{ (static_cast<float>(i) / (upData.size()
+                            - 1)) * 2.0f - 1.0f };
                 const auto y1 = float{ percent1 * 2.0f - 1.0f };
-                const auto x2 = float{ (static_cast<float>(i+1) / (upData.size() - 1)) * 2.0f - 1.0f };
+
+                const auto x2 = float{ (static_cast<float>(i+1) /
+                        (upData.size() - 1)) * 2.0f - 1.0f };
                 const auto y2 = float{ percent2 * 2.0f - 1.0f };
 
                 glVertex2f(x1, y1); // Top-left
@@ -189,13 +200,15 @@ void GraphWidget::drawNetGraph() const {
         /* Print the maximum throughput as the scale at the top of the graph */
         if (suffix == "MB") {
             char buff[8];
-            snprintf(buff, sizeof(buff), "%5.1fMB", maxVal/static_cast<float>(MB));
+            snprintf(buff, sizeof(buff), "%5.1fMB",
+                     maxVal/static_cast<float>(MB));
             m_fontManager->renderLine(RG_FONT_SMALL, buff, 0, 0,
                                      m_gpuGraphVP.width/5, m_gpuGraphVP.height,
                                      RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
         } else if (suffix == "KB") {
             char buff[8];
-            snprintf(buff, sizeof(buff), "%5.1fKB", maxVal/static_cast<float>(KB));
+            snprintf(buff, sizeof(buff), "%5.1fKB",
+                     maxVal/static_cast<float>(KB));
             m_fontManager->renderLine(RG_FONT_SMALL, buff, 0, 0,
                                      m_gpuGraphVP.width/5, m_gpuGraphVP.height,
                                      RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
@@ -213,8 +226,9 @@ void GraphWidget::drawNetGraph() const {
                                  m_gpuGraphVP.width/5, m_gpuGraphVP.height,
                                  RG_ALIGN_BOTTOM | RG_ALIGN_LEFT, 10);
         m_fontManager->renderLine(RG_FONT_SMALL, "Down / Up", 0, 0,
-                                 m_gpuGraphVP.width/5, m_gpuGraphVP.height,
-                                 RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT, 10);
+                                  m_gpuGraphVP.width/5, m_gpuGraphVP.height,
+                                  RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT,
+                                  10);
     }
 }
 

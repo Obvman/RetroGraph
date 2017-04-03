@@ -9,7 +9,8 @@ class ProcessMeasure;
 
 class ProcessWidget {
 public:
-    ProcessWidget(const FontManager* fontManager, const ProcessMeasure* procMeasure) :
+    ProcessWidget(const FontManager* fontManager,
+                  const ProcessMeasure* procMeasure) :
         m_fontManager{ fontManager }, m_procMeasure{ procMeasure } {}
 
     ~ProcessWidget() noexcept = default;

@@ -46,11 +46,14 @@ void ProcessWidget::drawCpuUsageList() const {
     }
 
     m_fontManager->renderLines(RG_FONT_STANDARD, procNames, 0, 0,
-                              m_viewport.width/2, m_viewport.height,
-                              RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL, 15, 5);
+                               m_viewport.width/2, m_viewport.height,
+                               RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL,
+                               15,
+                               5);
     m_fontManager->renderLines(RG_FONT_STANDARD, procPercentages, 0, 0,
-                              m_viewport.width/2, m_viewport.height,
-                              RG_ALIGN_RIGHT | RG_ALIGN_CENTERED_VERTICAL, 15, 5);
+                               m_viewport.width/2, m_viewport.height,
+                               RG_ALIGN_RIGHT | RG_ALIGN_CENTERED_VERTICAL,
+                               15, 5);
 }
 
 void ProcessWidget::drawRamUsageList() const {
@@ -75,12 +78,14 @@ void ProcessWidget::drawRamUsageList() const {
         procRamUsages.emplace_back(buff);
     }
 
-    m_fontManager->renderLines(RG_FONT_STANDARD, procNames, m_viewport.width/2, 0,
-                              m_viewport.width/2, m_viewport.height,
-                              RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL, 15, 5);
-    m_fontManager->renderLines(RG_FONT_STANDARD, procRamUsages, m_viewport.width/2, 0,
-                              m_viewport.width/2, m_viewport.height,
-                              RG_ALIGN_RIGHT | RG_ALIGN_CENTERED_VERTICAL, 15, 5);
+    m_fontManager->renderLines(RG_FONT_STANDARD, procNames, m_viewport.width/2,
+                               0, m_viewport.width/2, m_viewport.height,
+                               RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL,
+                               15, 5);
+    m_fontManager->renderLines(RG_FONT_STANDARD, procRamUsages,
+                               m_viewport.width/2, 0, m_viewport.width/2,
+                               m_viewport.height, RG_ALIGN_RIGHT |
+                               RG_ALIGN_CENTERED_VERTICAL, 15, 5);
 
 
 }

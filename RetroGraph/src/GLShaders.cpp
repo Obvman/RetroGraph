@@ -10,7 +10,8 @@ namespace rg {
 
 // The executable path is different whether we start the program from the
 // visual studio or debugger, so this handles the two cases
-const std::string shaderPath{ (IsDebuggerPresent()) ? "shaders\\" : "..\\RetroGraph\\shaders\\" };
+const std::string shaderPath{ (IsDebuggerPresent()) ? 
+                              "shaders\\" : "..\\RetroGraph\\shaders\\" };
 
 std::string readShaderFile(const std::string& filePath);
 

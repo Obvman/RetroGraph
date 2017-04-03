@@ -1,6 +1,7 @@
 #include "../headers/SystemMeasure.h"
 
 #include <Winver.h>
+#include <intrin.h>
 #include <sstream>
 #include <GL/gl.h>
 
@@ -48,7 +49,10 @@ void SystemMeasure::getOSVersionInfo() {
 
     UINT uLen;
     VS_FIXEDFILEINFO* lpFfi;
-    const auto bVer{ VerQueryValue(lpVersionInfo, "\\", (LPVOID*)&lpFfi, &uLen) };
+    const auto bVer{ VerQueryValue(lpVersionInfo,
+                                   "\\",
+                                   (LPVOID*)&lpFfi,
+                                   &uLen) };
     if (!bVer || uLen == 0) {
         fatalMessageBox("Failed to query OS value\n");
     }
@@ -63,13 +67,15 @@ void SystemMeasure::getOSVersionInfo() {
     const DWORD dwRightMost = LOWORD(osVersionLS);
 
     m_osInfoStr = std::string{ "Windows Version: " + std::to_string(dwLeftMost)
-        + "." + std::to_string(dwSecondLeft)+ "." +
-        std::to_string(dwSecondRight)+ "." + std::to_string(dwRightMost)};
+                               + "." + std::to_string(dwSecondLeft)+ "." +
+                               std::to_string(dwSecondRight)+ "." +
+                               std::to_string(dwRightMost) };
 }
 
 void SystemMeasure::getCPUInfo() {
 
-    // Credit to bsruth - http://stackoverflow.com/questions/850774/how-to-determine-the-hardware-cpu-and-ram-on-a-machine
+    // Credit to bsruth -
+    // http://stackoverflow.com/questions/850774/how-to-determine-the-hardware-cpu-and-ram-on-a-machine
     int32_t CPUInfo[4] = {-1};
     // Get the information associated with each extended ID.
     __cpuid(CPUInfo, 0x80000000);
@@ -95,14 +101,14 @@ void SystemMeasure::getRAMInfo() {
     GlobalMemoryStatusEx(&memStatus);
 
     char buff[12];
-    snprintf(buff, sizeof(buff), "RAM: %2.1fGB", memStatus.ullTotalPhys/static_cast<float>(GB));
+    snprintf(buff, sizeof(buff), "RAM: %2.1fGB",
+             memStatus.ullTotalPhys/static_cast<float>(GB));
     m_ramDescription = buff;
 }
 
 void SystemMeasure::updateGPUDescription() {
     // Use a stringstream because glGetString() returns GLubyte* which is messy
     // to deal with otherwise
-    //const auto gpuVendor{ glGetString(GL_VENDOR) };
     const auto gpuRenderer{ glGetString(GL_RENDERER) };
 
     if (!gpuRenderer) {

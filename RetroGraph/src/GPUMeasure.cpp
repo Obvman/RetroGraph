@@ -17,12 +17,11 @@ NvAPI_QueryInterface_t NvAPI_QueryInterface{ nullptr };
 NvAPI_GPU_GetUsages_t NvAPI_GPU_GetUsages{ nullptr };
 
 GPUMeasure::GPUMeasure(const UserSettings& settings) :
-    dataSize{ settings.getGPUUsageSamples() } {
+        dataSize{ settings.getGPUUsageSamples() } {
 
     m_usageData.assign(dataSize, 0.0f);
 
-    auto result{ NvAPI_Initialize() };
-    if (result != NVAPI_OK) {
+    if (NvAPI_Initialize() != NVAPI_OK) {
         fatalMessageBox("Failed to initialize NvAPI\n");
     }
 
@@ -34,8 +33,8 @@ GPUMeasure::GPUMeasure(const UserSettings& settings) :
     // Insert a period after 3rd digit since NVIDIA drivers are formatted as xxx.xx
     m_driverVersion.insert(3, ".");
 
-    // Just handle the first GPU in the system, I don't expect to be using multiple
-    // any time soon
+    // Just handle the first GPU in the system, I don't expect to be using 
+    // multiple any time soon
     m_gpuHandle = getGpuHandle();
 
     // Initialise static members
@@ -69,7 +68,8 @@ void GPUMeasure::update(uint32_t ticks) {
         getGpuUsage();
 
         m_usageData[0] = m_gpuUsage / 100.0f;
-        std::rotate(m_usageData.begin(), m_usageData.begin() + 1, m_usageData.end());
+        std::rotate(m_usageData.begin(), m_usageData.begin() + 1,
+                    m_usageData.end());
     }
 }
 
@@ -79,7 +79,9 @@ float GPUMeasure::getMemUsagePercent() const {
 }
 
 void GPUMeasure::updateGpuTemp() {
-    auto result{ NvAPI_GPU_GetThermalSettings(m_gpuHandle, NVAPI_THERMAL_TARGET_NONE, &m_thermalSettings) };
+    const auto result{ NvAPI_GPU_GetThermalSettings(m_gpuHandle,
+                                                    NVAPI_THERMAL_TARGET_NONE,
+                                                    &m_thermalSettings) };
     if (result != NVAPI_OK) {
         printf("Failed to get thermal information from NVAPI: %d\n", result);
         return;
@@ -101,7 +103,8 @@ NvPhysicalGpuHandle GPUMeasure::getGpuHandle() const {
 }
 
 void GPUMeasure::getClockFrequencies() {
-    const auto result{ NvAPI_GPU_GetAllClockFrequencies(m_gpuHandle, &m_clockFreqs) };
+    const auto result{ NvAPI_GPU_GetAllClockFrequencies(m_gpuHandle,
+                                                        &m_clockFreqs) };
     if (result != NVAPI_OK) {
         printf("Failed to get GPU clock frequencies %d\n", result);
         return;
@@ -122,7 +125,9 @@ void GPUMeasure::getMemInformation() {
 }
 
 void GPUMeasure::getGpuUsage() {
-    if (NvAPI_GPU_GetDynamicPstatesInfoEx(m_gpuHandle, &m_pStateInfo) != NVAPI_OK) {
+    if (NvAPI_GPU_GetDynamicPstatesInfoEx(m_gpuHandle, &m_pStateInfo) !=
+        NVAPI_OK) {
+
         printf("Failed to get GPU usage percentage\n");
         return;
     }

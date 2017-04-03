@@ -17,18 +17,18 @@
 namespace rg {
 
 Renderer::Renderer(const Window& w, const RetroGraph& _rg) :
-        m_renderTargetHandle{ w.getHwnd() },
-        m_fontManager{ w.getHwnd(), w.getHeight() },
-        m_timeWidget{ &m_fontManager, &_rg.getCPUMeasure(), &_rg.getNetMeasure() },
-        m_hddWidget{ &m_fontManager, &_rg.getDriveMeasure() },
-        m_cpuStatsWidget{ &m_fontManager, &_rg.getCPUMeasure() },
-        m_processWidget{ &m_fontManager, &_rg.getProcessMeasure() },
-        m_graphWidget{ &m_fontManager, &_rg.getCPUMeasure(), &_rg.getRAMMeasure(),
-                       &_rg.getNetMeasure(), &_rg.getGPUMeasure() },
-        m_systemStatsWidget{ &m_fontManager, &_rg.getSystemMeasure(),
-                             &_rg.getCPUMeasure(), &_rg.getNetMeasure() },
-        m_mainWidget{ &m_fontManager },
-        m_musicWidget{ &m_fontManager, &_rg.getMusicMeasure() } {
+    m_renderTargetHandle{ w.getHwnd() },
+    m_fontManager{ w.getHwnd(), w.getHeight() },
+    m_timeWidget{ &m_fontManager, &_rg.getCPUMeasure(), &_rg.getNetMeasure() },
+    m_hddWidget{ &m_fontManager, &_rg.getDriveMeasure() },
+    m_cpuStatsWidget{ &m_fontManager, &_rg.getCPUMeasure() },
+    m_processWidget{ &m_fontManager, &_rg.getProcessMeasure() },
+    m_graphWidget{ &m_fontManager, &_rg.getCPUMeasure(), &_rg.getRAMMeasure(),
+        &_rg.getNetMeasure(), &_rg.getGPUMeasure() },
+    m_systemStatsWidget{ &m_fontManager, &_rg.getSystemMeasure(),
+        &_rg.getCPUMeasure(), &_rg.getNetMeasure() },
+    m_mainWidget{ &m_fontManager },
+    m_musicWidget{ &m_fontManager, &_rg.getMusicMeasure() } {
 
     setViewports(w.getWidth(), w.getHeight());
 
@@ -37,7 +37,6 @@ Renderer::Renderer(const Window& w, const RetroGraph& _rg) :
 }
 
 Renderer::~Renderer() {
-    // Free VBO memory
     glDeleteBuffers(1, &m_graphGridVertsID);
     glDeleteBuffers(1, &m_graphGridIndicesID);
 }
@@ -47,7 +46,6 @@ void Renderer::draw(uint32_t ticks) const {
     if ((ticks % std::lround(
         static_cast<float>(rg::ticksPerSecond)/framesPerSecond)) == 0) {
 
-        //glClear(GL_COLOR_BUFFER_BIT);
         glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
 
         m_timeWidget.draw();

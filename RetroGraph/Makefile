@@ -1,6 +1,7 @@
 ABSOLUTESOLNDIRBOU=/mnt/c/PG/RetroGraph/
 DEVENVCYG=/cygdrive/d/ProgramFiles/Visual\ Studio\ 2015/Common7/IDE/devenv.com
 DEVENVBOU=wrun /mnt/d/ProgramFiles/Visual\ Studio\ 2015/Common7/IDE/devenv.com
+#DEVENVBOU=wrun /mnt/d/ProgramFiles/Visual\ Studio\ 2017/Enterprise/Common7/IDE/devenv.com
 SOLNDIR=../
 SOLN=$(SOLNDIR)RetroGraph.sln
 

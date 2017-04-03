@@ -52,9 +52,11 @@ void drawFilledGraph(const std::vector<float>& data) {
     glBegin(GL_QUADS); {
         glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.7f);
         for (auto i = size_t{ 0U }; i < data.size() - 1; ++i) {
-            const auto x1 = float{ (static_cast<float>(i) / (data.size() - 1)) * 2.0f - 1.0f };
+            const auto x1 = float{ (static_cast<float>(i) / (data.size() - 1)) *
+                                   2.0f - 1.0f };
             const auto y1 = float{ data[i] * 2.0f - 1.0f };
-            const auto x2 = float{ (static_cast<float>(i+1) / (data.size() - 1)) * 2.0f - 1.0f };
+            const auto x2 = float{ (static_cast<float>(i+1) / (data.size() - 1)) *
+                                   2.0f - 1.0f };
             const auto y2 = float{ data[i+1] * 2.0f - 1.0f };
 
             glVertex2f(x1, -1.0f); // Bottom-left

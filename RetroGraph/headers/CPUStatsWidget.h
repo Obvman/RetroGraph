@@ -9,7 +9,8 @@ class CPUMeasure;
 
 class CPUStatsWidget {
 public:
-    CPUStatsWidget(const FontManager* fontManager, const CPUMeasure* cpuMeasure) :
+    CPUStatsWidget(const FontManager* fontManager,
+                   const CPUMeasure* cpuMeasure) :
         m_fontManager{ fontManager }, m_cpuMeasure{ cpuMeasure } {}
 
     ~CPUStatsWidget() noexcept = default;

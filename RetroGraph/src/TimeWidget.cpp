@@ -51,33 +51,36 @@ void TimeWidget::draw() const {
 
         // Get font width in pixels for horizontal centering
         m_fontManager->renderLine(RG_FONT_TIME, timeBuff, 0, midDivYPx,
-                                 m_viewport.width, m_viewport.height - midDivYPx,
-                                 RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_CENTERED_HORIZONTAL);
+                                  m_viewport.width, m_viewport.height -
+                                  midDivYPx, RG_ALIGN_CENTERED_VERTICAL |
+                                  RG_ALIGN_CENTERED_HORIZONTAL);
 
         // Draw the year and month and day in bottom-middle
         char dateBuff[12];
         strftime(dateBuff, sizeof(dateBuff), "%d %B", &t);
         m_fontManager->renderLine(RG_FONT_STANDARD, dateBuff,
-                                 vpCoordsToPixels(leftDivX, m_viewport.width), 0,
-                                 m_viewport.width/3, midDivYPx,
-                                 RG_ALIGN_BOTTOM | RG_ALIGN_CENTERED_HORIZONTAL, 10, 15);
+                                  vpCoordsToPixels(leftDivX, m_viewport.width),
+                                  0, m_viewport.width/3, midDivYPx,
+                                  RG_ALIGN_BOTTOM |
+                                  RG_ALIGN_CENTERED_HORIZONTAL, 10, 15);
 
         char dayBuff[10];
         strftime(dayBuff, sizeof(dayBuff), "%A", &t);
         m_fontManager->renderLine(RG_FONT_STANDARD_BOLD, dayBuff,
-                                 vpCoordsToPixels(leftDivX, m_viewport.width), 0,
-                                 m_viewport.width/3, midDivYPx,
-                                 RG_ALIGN_TOP | RG_ALIGN_CENTERED_HORIZONTAL, 10, 15);
+                                  vpCoordsToPixels(leftDivX, m_viewport.width),
+                                  0, m_viewport.width/3, midDivYPx,
+                                  RG_ALIGN_TOP | RG_ALIGN_CENTERED_HORIZONTAL,
+                                  10, 15);
     }
 
     // Draw the uptime in bottom-left
     m_fontManager->renderLine(RG_FONT_STANDARD_BOLD, "Uptime", 0, 0,
-                             m_viewport.width/3, midDivYPx,
-                             RG_ALIGN_RIGHT | RG_ALIGN_TOP, 10, 15);
-    m_fontManager->renderLine(RG_FONT_STANDARD, m_cpuMeasure->getUptimeStr().c_str(),
-                             0, 0,
-                             m_viewport.width/3, midDivYPx,
-                             RG_ALIGN_RIGHT | RG_ALIGN_BOTTOM, 10, 15);
+                              m_viewport.width/3, midDivYPx, RG_ALIGN_RIGHT |
+                              RG_ALIGN_TOP, 10, 15);
+    m_fontManager->renderLine(RG_FONT_STANDARD,
+                              m_cpuMeasure->getUptimeStr().c_str(), 0, 0,
+                              m_viewport.width/3, midDivYPx, RG_ALIGN_RIGHT |
+                              RG_ALIGN_BOTTOM, 10, 15);
 
     // Draw network connection status in bottom-right
     {
@@ -95,7 +98,6 @@ void TimeWidget::draw() const {
             m_fontManager->renderLine(RG_FONT_STANDARD, "UP", renderX,
                                      renderY, renderWidth, renderHeight,
                                      RG_ALIGN_LEFT | RG_ALIGN_BOTTOM, 10, 15);
-            // TODO print ping in ms
         } else {
             m_fontManager->renderLine(RG_FONT_STANDARD, "DOWN", renderX,
                                      renderY, renderWidth, renderHeight,

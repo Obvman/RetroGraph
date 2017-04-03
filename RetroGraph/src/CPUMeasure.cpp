@@ -16,7 +16,8 @@
 namespace rg {
 
 unsigned long long FileTimeToInt64(const FILETIME & ft) {
-    return (((unsigned long long)(ft.dwHighDateTime))<<32)|((unsigned long long)ft.dwLowDateTime);
+    return (((unsigned long long)(ft.dwHighDateTime)) << 32) 
+        | ((unsigned long long)ft.dwLowDateTime);
 }
 
 CPUMeasure::CPUMeasure(const UserSettings& settings) :
@@ -51,7 +52,8 @@ void CPUMeasure::update(uint32_t ticks) {
 
         m_uptime = std::chrono::milliseconds(GetTickCount64());
 
-        // Fill CPU name if CoreTemp interfacing was successful // TODO code duplication
+        // Fill CPU name if CoreTemp interfacing was successful 
+        // TODO code duplication
         if (m_cpuName.size() == 0 && m_coreTempPlugin.getCoreTempInfoSuccess()) {
             m_cpuName = "CPU: ";
             m_cpuName.append(m_coreTempPlugin.getCPUName());
@@ -61,7 +63,8 @@ void CPUMeasure::update(uint32_t ticks) {
         // Add to the usageData vector by overwriting the oldest value and
         // shifting the elements in the vector
         m_usageData[0] = totalLoad;
-        std::rotate(m_usageData.begin(), m_usageData.begin() + 1, m_usageData.end());
+        std::rotate(m_usageData.begin(), m_usageData.begin() + 1,
+                    m_usageData.end());
 
         for (auto i = size_t{ 0U }; i < m_perCoreData.size(); ++i) {
             const auto coreUsage = float{ m_coreTempPlugin.getLoad(i) / 100.0f };
@@ -92,7 +95,8 @@ std::string CPUMeasure::getUptimeStr() const {
 
     char buff[12];
     snprintf(buff, sizeof(buff), "%02lld:%02lld:%02lld:%02lld",
-             uptimeD.count(), uptimeH.count(), uptimeM.count(), uptimeS.count());
+             uptimeD.count(), uptimeH.count(), uptimeM.count(),
+             uptimeS.count());
 
     return std::string{ buff };
 }
@@ -107,7 +111,8 @@ float CPUMeasure::calculateCPULoad(uint64_t idleTicks, uint64_t totalTicks) {
     const uint64_t idleTicksSinceLastTime{ idleTicks - prevIdleTicks };
 
     const float cpuLoad{ 1.0f - ((totalTicksSinceLastTime > 0) ?
-                     (static_cast<float>(idleTicksSinceLastTime)) / totalTicksSinceLastTime : 0) };
+                         (static_cast<float>(idleTicksSinceLastTime)) /
+                         totalTicksSinceLastTime : 0) };
 
     prevTotalTicks = totalTicks;
     prevIdleTicks = idleTicks;
