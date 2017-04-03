@@ -99,9 +99,14 @@ void FontManager::renderLine(RGFONTCODE fontCode,
             // If we've gone over, remove last character and replace chars before
             // with ellipses
             if (newStrWidthPx > areaWidth - alignMarginX) {
-                newText[i] = '\0';
-                newText[i-1] = '.';
-                newText[i-2] = '.';
+                // Ensure there are enough characters to put in ellipses
+                if (i > 2) {
+                    newText[i] = '\0';
+                    newText[i - 1] = '.';
+                    newText[i - 2] = '.';
+                } else {
+                    newText[i] = '\0';
+                }
                 break;
             }
         }

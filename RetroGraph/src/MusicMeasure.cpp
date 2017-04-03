@@ -62,7 +62,7 @@ void MusicMeasure::scrapeInfoFromTitle() {
     // Copy and null-terminate
     title[m_playerWindowTitle.copy(title, sizeof(title), 0)] = '\0';
     const char* delim{ "|" };
-    char* nextToken;
+    char* nextToken{ nullptr };
     char* whitespace{ "\n \t" };
 
     char* token{ strtok_s(title, delim, &nextToken) };
