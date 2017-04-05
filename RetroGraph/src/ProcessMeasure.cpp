@@ -34,7 +34,8 @@ typedef struct _SYSTEM_PROCESS_INFO {
 } SYSTEM_PROCESS_INFO, *PSYSTEM_PROCESS_INFO;
 
 ProcessMeasure::ProcessMeasure(const UserSettings& settings) :
-    m_numProcessesToDisplay{ settings.getNumProcessesDisplayed() } {
+    m_numCPUProcessesToDisplay{ settings.getNumCPUProcessesDisplayed() },
+    m_numRAMProcessesToDisplay{ settings.getNumRAMProcessesDisplayed() } {
 
 #if !_DEBUG
     // Set the debug privilege in order to gain access to system processes
@@ -179,7 +180,7 @@ void ProcessMeasure::fillCPUData() {
 
         m_procCPUListData.emplace_back(ppd->getName(), ppd->getCpuUsage());
 
-        if (m_procCPUListData.size() >= m_numProcessesToDisplay) {
+        if (m_procCPUListData.size() >= m_numCPUProcessesToDisplay) {
             break;
         }
     }
@@ -197,7 +198,7 @@ void ProcessMeasure::fillRAMData() {
         m_procRAMListData.emplace_back(ppd->getName(),
                                        ppd->getWorkingSetSizeMB());
 
-        if (m_procRAMListData.size() >= m_numProcessesToDisplay) {
+        if (m_procRAMListData.size() >= m_numRAMProcessesToDisplay) {
             break;
         }
     }

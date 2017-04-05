@@ -24,10 +24,6 @@ public:
     const std::string& getPingServer() const { return m_pingServer; }
     uint32_t getPingFreq() const { return m_pingFreq; }
 
-    // TODO change this so theres one for CPU and one for RAM!!
-    uint32_t getNumProcessesDisplayed() const {
-        return m_numCPUProcessesDisplayed; // TODO WRONG
-    }
     uint32_t getNumCPUProcessesDisplayed() const {
         return m_numCPUProcessesDisplayed;
     }

@@ -64,9 +64,10 @@ private:
 
     std::vector<std::shared_ptr<ProcessData>> m_allProcessData;
 
-    uint32_t m_numProcessesToDisplay{ 10U };
-    std::vector<std::pair<std::string, double>> m_procCPUListData{ m_numProcessesToDisplay };
-    std::vector<std::pair<std::string, size_t>> m_procRAMListData{ m_numProcessesToDisplay };
+    uint32_t m_numCPUProcessesToDisplay{ 10U };
+    uint32_t m_numRAMProcessesToDisplay{ 10U };
+    std::vector<std::pair<std::string, double>> m_procCPUListData{ m_numCPUProcessesToDisplay };
+    std::vector<std::pair<std::string, size_t>> m_procRAMListData{ m_numRAMProcessesToDisplay };
 };
 
 }
