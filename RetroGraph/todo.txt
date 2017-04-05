@@ -1,16 +1,11 @@
 use gl lists to draw things like graph grids
 
 store measures in smart pointers to control lifetime manually to start/stop measuring
-
 disable data gathering for non-visible widgets to save on CPU
-
-CPUStats widget: draw temp as just text (30C) next to corresponding core graph
 
 fix vertical text line centering
 
 When failing to open a process, fail silently instead of crashing
-
-split process measure into 2 pieces
 
 create a borderless terminal window to embed in a widget
 

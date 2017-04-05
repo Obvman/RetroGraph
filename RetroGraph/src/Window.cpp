@@ -375,13 +375,6 @@ void Window::updateSize(int32_t width, int32_t height) {
     m_width = width;
     m_height = height;
     m_retroGraph->updateWindowSize(width, height);
-
-    glViewport(0, 0, width, height);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
 }
 
 void Window::createWindow() {
@@ -411,8 +404,6 @@ void Window::createWindow() {
     }
 
     initOpenGL();
-
-    updateSize(m_width, m_height);
 
     ReleaseDC(m_hWndMain, m_hdc);
 }

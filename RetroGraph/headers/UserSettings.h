@@ -47,6 +47,7 @@ public:
     uint32_t getRAMUsageSamples() const { return m_ramUsageSamples; }
 
     bool isVisible(size_t w) const { return m_widgetVisibilities[w]; }
+    WidgetPosition getWidgetPosition(size_t w) const { return m_widgetPositions[w]; }
 
 private:
     void generateDefaultFile(boost::property_tree::ptree& propTree);

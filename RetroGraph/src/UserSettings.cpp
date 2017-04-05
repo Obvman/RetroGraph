@@ -28,7 +28,7 @@ UserSettings::UserSettings() {
         if (propTree.empty()) {
             generateDefaultFile(propTree);
         } else {
-            std::map<std::string, WidgetPosition> posMap = {
+            const std::map<std::string, WidgetPosition> posMap = {
                 {"top-left", WidgetPosition::TOP_LEFT},
                 {"top-middle", WidgetPosition::TOP_MID},
                 {"top-right", WidgetPosition::TOP_RIGHT},
@@ -86,23 +86,23 @@ UserSettings::UserSettings() {
                     "Widgets-Graphs.Visible");
 
             m_widgetPositions[RG_WIDGET_PROCESSES_CPU] = 
-                    posMap[propTree.get<std::string>("Widgets-ProcessesCPU.Position")];
+                    posMap.at(propTree.get<std::string>("Widgets-ProcessesCPU.Position"));
             m_widgetPositions[RG_WIDGET_PROCESSES_RAM] = 
-                    posMap[propTree.get<std::string>("Widgets-ProcessesRAM.Position")];
+                    posMap.at(propTree.get<std::string>("Widgets-ProcessesRAM.Position"));
             m_widgetPositions[RG_WIDGET_TIME] = 
-                    posMap[propTree.get<std::string>("Widgets-Time.Position")];
+                    posMap.at(propTree.get<std::string>("Widgets-Time.Position"));
             m_widgetPositions[RG_WIDGET_SYSTEM_STATS] = 
-                    posMap[propTree.get<std::string>("Widgets-SystemStats.Position")];
+                    posMap.at(propTree.get<std::string>("Widgets-SystemStats.Position"));
             m_widgetPositions[RG_WIDGET_MUSIC] = 
-                    posMap[propTree.get<std::string>("Widgets-Music.Position")];
+                    posMap.at(propTree.get<std::string>("Widgets-Music.Position"));
             m_widgetPositions[RG_WIDGET_CPU_STATS] = 
-                    posMap[propTree.get<std::string>("Widgets-CPUStats.Position")];
+                    posMap.at(propTree.get<std::string>("Widgets-CPUStats.Position"));
             m_widgetPositions[RG_WIDGET_DRIVES] = 
-                    posMap[propTree.get<std::string>("Widgets-Drives.Position")];
+                    posMap.at(propTree.get<std::string>("Widgets-Drives.Position"));
             m_widgetPositions[RG_WIDGET_MAIN] = 
-                    posMap[propTree.get<std::string>("Widgets-Main.Position")];
+                    posMap.at(propTree.get<std::string>("Widgets-Main.Position"));
             m_widgetPositions[RG_WIDGET_GRAPHS] = 
-                    posMap[propTree.get<std::string>("Widgets-Graphs.Position")];
+                    posMap.at(propTree.get<std::string>("Widgets-Graphs.Position"));
         }
 
     } catch (const pt::ptree_bad_path& e) {
@@ -154,6 +154,7 @@ void UserSettings::generateDefaultFile(pt::ptree& propTree) {
     propTree.put("Widgets-Time.Position", "top-left");
     propTree.put("Widgets-SystemStats.Position", "bottom-left");
     propTree.put("Widgets-CPUStats.Position", "middle-right");
+    // TODO change.
     propTree.put("Widgets-ProcessesCPU.Position", "bottom-middle");
     propTree.put("Widgets-ProcessesRAM.Position", "bottom-middle");
     propTree.put("Widgets-Music.Position", "bottom-right");

@@ -56,12 +56,12 @@ private:
 
     HWND m_renderTargetHandle{ nullptr };
 
+    const UserSettings* m_settings;
     FontManager m_fontManager;
 
     TimeWidget m_timeWidget;
     HDDWidget m_hddWidget;
     CPUStatsWidget m_cpuStatsWidget;
-    /* ProcessWidget m_processWidget; */
     ProcessRAMWidget m_processRAMWidget;
     ProcessCPUWidget m_processCPUWidget;
     GraphWidget m_graphWidget;
