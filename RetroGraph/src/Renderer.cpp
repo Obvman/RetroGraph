@@ -1,7 +1,5 @@
 #include "../headers/Renderer.h"
 
-#include <map>
-
 #include "../headers/RetroGraph.h"
 #include "../headers/Window.h"
 #include "../headers/CPUMeasure.h"
@@ -83,54 +81,105 @@ void Renderer::updateWindowSize(int32_t newWidth, int32_t newHeight) {
 /********************* Private Functions ********************/
 
 void Renderer::setViewports(int32_t windowWidth, int32_t windowHeight) {
+    // For positions that can contain multiple widgets, track how many widgets
+    // will fill that position. Currently on the horizontal center positions
+    // can contain multiple widgets
+    std::vector<int32_t> positionFills( 2, 0 );
+
+    m_timeWidget.setViewport(calcViewport(
+            m_settings->getWidgetPosition(RG_WIDGET_TIME),
+            windowWidth, windowHeight, positionFills));
+
+    m_hddWidget.setViewport(calcViewport(
+            m_settings->getWidgetPosition(RG_WIDGET_DRIVES),
+            windowWidth, windowHeight, positionFills));
+
+    m_cpuStatsWidget.setViewport(calcViewport(
+            m_settings->getWidgetPosition(RG_WIDGET_CPU_STATS),
+            windowWidth, windowHeight, positionFills));
+
+    m_graphWidget.setViewport(calcViewport(
+            m_settings->getWidgetPosition(RG_WIDGET_GRAPHS),
+            windowWidth, windowHeight, positionFills));
+
+    m_systemStatsWidget.setViewport(calcViewport(
+            m_settings->getWidgetPosition(RG_WIDGET_SYSTEM_STATS),
+            windowWidth, windowHeight, positionFills));
+
+    m_mainWidget.setViewport(calcViewport(
+            m_settings->getWidgetPosition(RG_WIDGET_MAIN),
+            windowWidth, windowHeight, positionFills));
+
+    m_musicWidget.setViewport(calcViewport(
+            m_settings->getWidgetPosition(RG_WIDGET_MUSIC),
+            windowWidth, windowHeight, positionFills));
+
+    m_processCPUWidget.setViewport(calcViewport(
+            m_settings->getWidgetPosition(RG_WIDGET_PROCESSES_CPU),
+            windowWidth, windowHeight, positionFills));
+
+    m_processRAMWidget.setViewport(calcViewport(
+            m_settings->getWidgetPosition(RG_WIDGET_PROCESSES_RAM),
+            windowWidth, windowHeight, positionFills));
+
+    if (positionFills[0] > 2) {
+        fatalMessageBox("You put too many widgets in the top-middle area!");
+    } else if (positionFills[1] > 2) {
+        fatalMessageBox("You put too many widgets in the bottom-middle area!");
+    }
+}
+
+Viewport Renderer::calcViewport(WidgetPosition pos,
+                                int32_t windowWidth, int32_t windowHeight,
+                                std::vector<int32_t>& positionFills) {
     const auto widgetW{ windowWidth/5 };
     const auto widgetH{ windowHeight/6 };
     const auto sideWidgetH{ windowHeight/2 };
 
-    const auto topLeftVP = Viewport{  marginX, windowHeight - marginY -
-        widgetH, widgetW, widgetH };
-    const auto topRightVP = Viewport{ windowWidth - widgetW - marginX,
-        windowHeight - marginY - widgetH, widgetW, widgetH }; 
-    const auto bottomLeftVP = Viewport{ marginX, marginY, widgetW, widgetH };
-    const auto bottomRightVP = Viewport{ windowWidth - widgetW - marginX,
-            marginY, widgetW, widgetH };
-    const auto centreVP = Viewport{ marginX + windowWidth/2 - widgetW,
-            windowHeight/2 - windowHeight/4, 2 * widgetW, sideWidgetH };
-    const auto middleLeftVP = Viewport{ marginX, windowHeight/2 -
-        windowHeight/4, widgetW, sideWidgetH };
-    const auto middleRightVP = Viewport{ windowWidth - widgetW - marginX,
-        windowHeight/2 - windowHeight/4, widgetW, sideWidgetH };
-
-    const std::map<WidgetPosition, Viewport> posMap = {
-        { WidgetPosition::TOP_LEFT, topLeftVP },
-        { WidgetPosition::TOP_MID, Viewport{} },
-        { WidgetPosition::TOP_RIGHT, topRightVP },
-        { WidgetPosition::MID_LEFT, middleLeftVP },
-        { WidgetPosition::MID_MID, centreVP },
-        { WidgetPosition::MID_RIGHT, middleRightVP },
-        { WidgetPosition::BOT_LEFT, bottomLeftVP },
-        { WidgetPosition::BOT_MID,  Viewport{} },
-        { WidgetPosition::BOT_RIGHT, bottomRightVP },
-    };
-
-    m_timeWidget.setViewport(posMap.at(m_settings->getWidgetPosition(RG_WIDGET_TIME)));
-
-    m_hddWidget.setViewport(posMap.at
-            (m_settings->getWidgetPosition(RG_WIDGET_DRIVES)));
-    m_cpuStatsWidget.setViewport(posMap.at
-            (m_settings->getWidgetPosition(RG_WIDGET_CPU_STATS)));
-    m_processCPUWidget.setViewport(Viewport{ marginX + windowWidth/2 - widgetW,
-            marginY, widgetW, widgetH });
-    m_processRAMWidget.setViewport(Viewport{ marginX + windowWidth/2,
-            marginY, widgetW, widgetH });
-    m_graphWidget.setViewport(posMap.at
-    (m_settings->getWidgetPosition(RG_WIDGET_GRAPHS)));
-    m_systemStatsWidget.setViewport(posMap.at(
-            m_settings->getWidgetPosition(RG_WIDGET_SYSTEM_STATS)));
-    m_mainWidget.setViewport(posMap.at(
-            m_settings->getWidgetPosition(RG_WIDGET_MAIN)));
-    m_musicWidget.setViewport(posMap.at
-            (m_settings->getWidgetPosition(RG_WIDGET_MUSIC)));
+    // For positions that fit multiple widgets, set the appropriate viewport
+    // and increment the number of widgets in that position
+    switch (pos) {
+        case WidgetPosition::TOP_MID:
+            ++positionFills[0];
+            return Viewport{ 
+                marginX + windowWidth/2 - widgetW + widgetW * (positionFills[0]-1),
+                windowHeight - marginY - widgetH,
+                widgetW,
+                widgetH };
+        case WidgetPosition::BOT_MID:
+            ++positionFills[1];
+            return Viewport{
+                marginX + windowWidth/2 - widgetW + widgetW * (positionFills[1]-1),
+                marginY,
+                widgetW,
+                widgetH };
+        case WidgetPosition::MID_MID:
+            return Viewport{ 
+                marginX + windowWidth/2 - widgetW,
+                windowHeight/2 - windowHeight/4,
+                2 * widgetW,
+                sideWidgetH };
+        // Positions that only take a single widget
+        case WidgetPosition::TOP_LEFT:
+            return Viewport{  marginX, windowHeight - marginY -
+                widgetH, widgetW, widgetH };
+        case WidgetPosition::TOP_RIGHT:
+            return Viewport{ windowWidth - widgetW - marginX,
+                windowHeight - marginY - widgetH, widgetW, widgetH }; 
+        case WidgetPosition::MID_LEFT:
+            return Viewport{ marginX, windowHeight/2 -
+                windowHeight/4, widgetW, sideWidgetH };
+        case WidgetPosition::MID_RIGHT:
+            return Viewport{ windowWidth - widgetW - marginX,
+                windowHeight/2 - windowHeight/4, widgetW, sideWidgetH };
+        case WidgetPosition::BOT_LEFT:
+            return Viewport{ marginX, marginY, widgetW, widgetH };
+        case WidgetPosition::BOT_RIGHT:
+            return Viewport{ windowWidth - widgetW - marginX,
+                    marginY, widgetW, widgetH };
+        default:
+            return Viewport{};
+    }
 }
 
 void Renderer::initVBOs() {

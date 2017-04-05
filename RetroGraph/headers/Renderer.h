@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <vector>
 #include <Windows.h>
 #include <GL/glew.h>
 
@@ -14,6 +15,7 @@
 #include "SystemStatsWidget.h"
 #include "MainWidget.h"
 #include "MusicWidget.h"
+#include "widgets.h"
 
 namespace rg {
 
@@ -48,6 +50,9 @@ public:
     void needsRedraw() const { m_systemStatsWidget.needsRedraw(); }
 private:
     void setViewports(int32_t windowWidth, int32_t windowHeight);
+    Viewport calcViewport(WidgetPosition pos,
+                          int32_t windowWidth, int32_t windowHeight,
+                          std::vector<int32_t>& positionFills);
 
     /* Fill VBOs with intial vertex data */
     void initVBOs();
