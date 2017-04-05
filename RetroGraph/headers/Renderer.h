@@ -8,7 +8,8 @@
 #include "TimeWidget.h"
 #include "HDDWidget.h"
 #include "CPUStatsWidget.h"
-#include "ProcessWidget.h"
+#include "ProcessCPUWidget.h"
+#include "ProcessRAMWidget.h"
 #include "GraphWidget.h"
 #include "SystemStatsWidget.h"
 #include "MainWidget.h"
@@ -22,7 +23,8 @@ class CPUMeasure;
 class GPUMeasure;
 class RAMMeasure;
 class NetMeasure;
-class ProcessMeasure;
+class ProcessCPUMeasure;
+class ProcessRAMMeasure;
 class DriveMeasure;
 class DriveInfo;
 class SystemMeasure;
@@ -59,7 +61,9 @@ private:
     TimeWidget m_timeWidget;
     HDDWidget m_hddWidget;
     CPUStatsWidget m_cpuStatsWidget;
-    ProcessWidget m_processWidget;
+    /* ProcessWidget m_processWidget; */
+    ProcessRAMWidget m_processRAMWidget;
+    ProcessCPUWidget m_processCPUWidget;
     GraphWidget m_graphWidget;
     SystemStatsWidget m_systemStatsWidget;
     MainWidget m_mainWidget;

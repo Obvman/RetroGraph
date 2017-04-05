@@ -1,6 +1,12 @@
+use gl lists to draw things like graph grids
+
+store measures in smart pointers to control lifetime manually to start/stop measuring
+
 disable data gathering for non-visible widgets to save on CPU
 
 CPUStats widget: draw temp as just text (30C) next to corresponding core graph
+
+fix vertical text line centering
 
 When failing to open a process, fail silently instead of crashing
 
@@ -30,8 +36,6 @@ colour code high usage processes
 
 hdd read/write usage
 
-volume, current sound output level bar - IAudioPeakMeter
-
 3D effects on graph
 
 rounded HDD/RAM bars
@@ -42,19 +46,10 @@ separate net traffic graphs
 
 have an average ping time display
 
-click through to windows behind
-
 net speed seems to max at 7.5MB when it really hits 13MB according to task mgr
 
 BUG: right click menu pauses drawing.
 
-Notification icon in system tray
-
 test suite
-
-specify widget position/size in config
-
-use glScissor so we don't unnecessarily redraw static parts of the window,
-and stutter draw times for different draw frequencies
 
 Foobar status format=%title% | [%album artist%] | [%album%[ CD%discnumber%][ #%tracknumber%]] | $if(%ispaused%,Paused,Playing) | [%_time_elapsed_seconds%, %_time_total_seconds%] | 

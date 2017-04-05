@@ -24,8 +24,15 @@ public:
     const std::string& getPingServer() const { return m_pingServer; }
     uint32_t getPingFreq() const { return m_pingFreq; }
 
+    // TODO change this so theres one for CPU and one for RAM!!
     uint32_t getNumProcessesDisplayed() const {
-        return m_numProcessesDisplayed;
+        return m_numCPUProcessesDisplayed; // TODO WRONG
+    }
+    uint32_t getNumCPUProcessesDisplayed() const {
+        return m_numCPUProcessesDisplayed;
+    }
+    uint32_t getNumRAMProcessesDisplayed() const {
+        return m_numRAMProcessesDisplayed;
     }
     float getHighCPUUsageThreshold() const {
         return m_processCPUUsageThreshold;
@@ -54,7 +61,8 @@ private:
     uint32_t m_pingFreq{ 10U };
 
     // Appearance options
-    uint32_t m_numProcessesDisplayed{ 8U };
+    uint32_t m_numCPUProcessesDisplayed{ 8U };
+    uint32_t m_numRAMProcessesDisplayed{ 8U };
     float m_processCPUUsageThreshold{ 0.2f };
     uint32_t m_processRAMUsageThresholdMB{ 1024U };
 

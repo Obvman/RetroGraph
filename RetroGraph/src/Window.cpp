@@ -300,6 +300,8 @@ void Window::changeMonitor(HWND hWnd, uint32_t monIndex) {
 
 void Window::handleTrayMessage(HWND hWnd, WPARAM wParam, LPARAM lParam) {
     switch (LOWORD(lParam)) {
+        case WM_MBUTTONUP:
+            m_running = false;
         case WM_LBUTTONUP:
             SetForegroundWindow(hWnd);
             break;

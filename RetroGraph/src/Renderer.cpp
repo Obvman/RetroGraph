@@ -26,8 +26,12 @@ Renderer::Renderer(const Window& w, const RetroGraph& _rg,
                  settings.isVisible(RG_WIDGET_DRIVES) },
     m_cpuStatsWidget{ &m_fontManager, &_rg.getCPUMeasure(),
                       settings.isVisible(RG_WIDGET_CPU_STATS) },
-    m_processWidget{ &m_fontManager, &_rg.getProcessMeasure(), 
-                     settings.isVisible(RG_WIDGET_PROCESSES) },
+    /* m_processWidget{ &m_fontManager, &_rg.getProcessMeasure(), */ 
+    /*                  settings.isVisible(RG_WIDGET_PROCESSES_CPU) }, */
+    m_processCPUWidget{ &m_fontManager, &_rg.getProcessMeasure(), 
+                        settings.isVisible(RG_WIDGET_PROCESSES_CPU) },
+    m_processRAMWidget{ &m_fontManager, &_rg.getProcessMeasure(), 
+                        settings.isVisible(RG_WIDGET_PROCESSES_RAM) },
     m_graphWidget{ &m_fontManager, &_rg.getCPUMeasure(), &_rg.getRAMMeasure(),
                    &_rg.getNetMeasure(), &_rg.getGPUMeasure(), 
                    settings.isVisible(RG_WIDGET_GRAPHS) },
@@ -59,7 +63,9 @@ void Renderer::draw(uint32_t ticks) const {
         m_timeWidget.draw();
         m_hddWidget.draw();
         m_cpuStatsWidget.draw();
-        m_processWidget.draw();
+        /* m_processWidget.draw(); */
+        m_processCPUWidget.draw();
+        m_processRAMWidget.draw();
         m_graphWidget.draw();
         m_systemStatsWidget.draw();
         m_mainWidget.draw();
@@ -90,8 +96,14 @@ void Renderer::setViewports(int32_t windowWidth, int32_t windowHeight) {
     m_cpuStatsWidget.setViewport(Viewport{windowWidth - widgetW - marginX,
             windowHeight/2 - windowHeight/4, widgetW, sideWidgetH});
 
-    m_processWidget.setViewport(Viewport{ marginX + windowWidth/2 - widgetW,
-            marginY, 2*widgetW, widgetH });
+    /* m_processWidget.setViewport(Viewport{ marginX + windowWidth/2 - widgetW, */
+    /*         marginY, 2*widgetW, widgetH }); */
+
+    m_processCPUWidget.setViewport(Viewport{ marginX + windowWidth/2 - widgetW,
+            marginY, widgetW, widgetH });
+
+    m_processRAMWidget.setViewport(Viewport{ marginX + windowWidth/2,
+            marginY, widgetW, widgetH });
 
     m_graphWidget.setViewport(Viewport{ marginX, windowHeight/2 -
             windowHeight/4, widgetW, windowHeight/2 });

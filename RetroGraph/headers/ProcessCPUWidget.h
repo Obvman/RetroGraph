@@ -7,26 +7,25 @@ namespace rg {
 class FontManager;
 class ProcessMeasure;
 
-class ProcessWidget {
+class ProcessCPUWidget {
 public:
-    ProcessWidget(const FontManager* fontManager,
-                  const ProcessMeasure* procMeasure,
-                  bool visible) :
+    ProcessCPUWidget(const FontManager* fontManager,
+                     const ProcessMeasure* procMeasure,
+                     bool visible) :
         m_fontManager{ fontManager }, m_procMeasure{ procMeasure },
         m_visible{ visible } {}
 
-    ~ProcessWidget() noexcept = default;
-    ProcessWidget(const ProcessWidget&) = delete;
-    ProcessWidget& operator=(const ProcessWidget&) = delete;
+    ~ProcessCPUWidget() noexcept = default;
+    ProcessCPUWidget(const ProcessCPUWidget&) = delete;
+    ProcessCPUWidget& operator=(const ProcessCPUWidget&) = delete;
 
     void draw() const;
 
     void setViewport(Viewport vp) { m_viewport = vp; };
 
     void setVisible(bool b) { m_visible = b; }
+
 private:
-    void drawCpuUsageList() const;
-    void drawRamUsageList() const;
 
     const FontManager* m_fontManager{ nullptr };
     Viewport m_viewport{ };

@@ -63,7 +63,9 @@ private:
      */
     bool wglIisExtensionSupported(const char *extension);
 
-    /* Destroys the win32 window and releases resources */
+    /* Destroys the win32 window and releases resources for the purpose of
+     * testing multisampling support
+     */
     void destroy();
 
     /* Decides whether a click sets the dragging state based on the colour

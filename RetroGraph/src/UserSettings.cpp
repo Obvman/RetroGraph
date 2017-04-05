@@ -47,12 +47,15 @@ UserSettings::UserSettings() {
             m_pingServer = propTree.get<std::string>("Network.PingServer");
             m_pingFreq = propTree.get<uint32_t>("Network.PingFrequency");
 
-            m_numProcessesDisplayed = propTree.get<uint32_t>(
-                    "Widgets-Processes.NumProcessesDisplayed");
+            m_numCPUProcessesDisplayed = propTree.get<uint32_t>(
+                    "Widgets-ProcessesCPU.NumProcessesDisplayed");
             m_processCPUUsageThreshold = propTree.get<float>(
-                    "Widgets-Processes.HighCPUUsageThreshold");
+                    "Widgets-ProcessesCPU.HighCPUUsageThreshold");
+
+            m_numRAMProcessesDisplayed = propTree.get<uint32_t>(
+                    "Widgets-ProcessesRAM.NumProcessesDisplayed");
             m_processRAMUsageThresholdMB = propTree.get<uint32_t>(
-                    "Widgets-Processes.HighRAMUsageThresholdMB");
+                    "Widgets-ProcessesRAM.HighRAMUsageThresholdMB");
 
             m_netUsageSamples = propTree.get<uint32_t>(
                     "Widgets-Graphs-Network.NumUsageSamples");
@@ -69,8 +72,10 @@ UserSettings::UserSettings() {
                     "Widgets-CPUStats.Visible");
             m_widgetVisibilities[RG_WIDGET_SYSTEM_STATS] = propTree.get<bool>(
                     "Widgets-SystemStats.Visible");
-            m_widgetVisibilities[RG_WIDGET_PROCESSES] = propTree.get<bool>(
-                    "Widgets-Processes.Visible");
+            m_widgetVisibilities[RG_WIDGET_PROCESSES_CPU] = propTree.get<bool>(
+                    "Widgets-ProcessesCPU.Visible");
+            m_widgetVisibilities[RG_WIDGET_PROCESSES_RAM] = propTree.get<bool>(
+                    "Widgets-ProcessesRAM.Visible");
             m_widgetVisibilities[RG_WIDGET_MUSIC] = propTree.get<bool>(
                     "Widgets-Music.Visible");
             m_widgetVisibilities[RG_WIDGET_MAIN] = propTree.get<bool>(
@@ -80,8 +85,10 @@ UserSettings::UserSettings() {
             m_widgetVisibilities[RG_WIDGET_GRAPHS] = propTree.get<bool>(
                     "Widgets-Graphs.Visible");
 
-            m_widgetPositions[RG_WIDGET_PROCESSES] = 
-                    posMap[propTree.get<std::string>("Widgets-Processes.Position")];
+            m_widgetPositions[RG_WIDGET_PROCESSES_CPU] = 
+                    posMap[propTree.get<std::string>("Widgets-ProcessesCPU.Position")];
+            m_widgetPositions[RG_WIDGET_PROCESSES_RAM] = 
+                    posMap[propTree.get<std::string>("Widgets-ProcessesRAM.Position")];
             m_widgetPositions[RG_WIDGET_TIME] = 
                     posMap[propTree.get<std::string>("Widgets-Time.Position")];
             m_widgetPositions[RG_WIDGET_SYSTEM_STATS] = 
@@ -118,11 +125,13 @@ void UserSettings::generateDefaultFile(pt::ptree& propTree) {
     propTree.put("Network.PingServer", m_pingServer);
     propTree.put("Network.PingFrequency", m_pingServer);
 
-    propTree.put("Widgets-Processes.NumProcessesDisplayed",
-            m_numProcessesDisplayed);
-    propTree.put("Widgets-Processes.HighCPUUsageThreshold",
+    propTree.put("Widgets-ProcessesCPU.NumProcessesDisplayed",
+            m_numCPUProcessesDisplayed);
+    propTree.put("Widgets-ProcessesRAM.NumProcessesDisplayed",
+            m_numRAMProcessesDisplayed);
+    propTree.put("Widgets-ProcessesCPU.HighCPUUsageThreshold",
             m_processCPUUsageThreshold);
-    propTree.put("Widgets-Processes.HighRAMUsageThresholdMB",
+    propTree.put("Widgets-ProcessesRAM.HighRAMUsageThresholdMB",
             m_processRAMUsageThresholdMB);
 
     propTree.put("Widgets-Graphs-Network.NetUsageSamples", m_pingServer);
@@ -134,7 +143,8 @@ void UserSettings::generateDefaultFile(pt::ptree& propTree) {
     propTree.put("Widgets-Time.Visible", isVisible(RG_WIDGET_TIME));
     propTree.put("Widgets-SystemStats.Visible", isVisible(RG_WIDGET_SYSTEM_STATS));
     propTree.put("Widgets-CPUStats.Visible", isVisible(RG_WIDGET_CPU_STATS));
-    propTree.put("Widgets-Processes.Visible", isVisible(RG_WIDGET_PROCESSES));
+    propTree.put("Widgets-ProcessesCPU.Visible", isVisible(RG_WIDGET_PROCESSES_CPU));
+    propTree.put("Widgets-ProcessesRAM.Visible", isVisible(RG_WIDGET_PROCESSES_RAM));
     propTree.put("Widgets-Music.Visible", isVisible(RG_WIDGET_MUSIC));
     propTree.put("Widgets-Main.Visible", isVisible(RG_WIDGET_MAIN));
     propTree.put("Widgets-Drives.Visible", isVisible(RG_WIDGET_DRIVES));
@@ -144,7 +154,8 @@ void UserSettings::generateDefaultFile(pt::ptree& propTree) {
     propTree.put("Widgets-Time.Position", "top-left");
     propTree.put("Widgets-SystemStats.Position", "bottom-left");
     propTree.put("Widgets-CPUStats.Position", "middle-right");
-    propTree.put("Widgets-Processes.Position", "bottom-middle");
+    propTree.put("Widgets-ProcessesCPU.Position", "bottom-middle");
+    propTree.put("Widgets-ProcessesRAM.Position", "bottom-middle");
     propTree.put("Widgets-Music.Position", "bottom-right");
     propTree.put("Widgets-Main.Position", "middle-middle");
     propTree.put("Widgets-Drives.Position", "top-right");

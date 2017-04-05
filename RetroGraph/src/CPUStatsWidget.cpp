@@ -68,32 +68,6 @@ void CPUStatsWidget::drawStats() const {
     m_fontManager->renderLine(RG_FONT_STANDARD, clockBuff, 0, 0, 0, 0,
                               RG_ALIGN_RIGHT | RG_ALIGN_BOTTOM,
                               bottomTextMargin, bottomTextMargin);
-
-    // Draw the temperature bar for each CPU core
-    const auto numCores{ m_cpuMeasure->getNumCores() };
-    for (auto i = size_t{ 0U }; i < numCores; ++i) {
-
-        glViewport(m_statsViewport.x + i * m_statsViewport.width/numCores,
-                   // Leave space for text below the bars
-                   m_statsViewport.y + fontHeight + bottomTextMargin,
-                   m_statsViewport.width / numCores,
-                   m_statsViewport.height - fontHeight - bottomTextMargin);
-
-        drawVerticalProgressBar(0.3f, -0.7f, 0.7f,
-                m_cpuMeasure->getTemp(i), 
-                static_cast<float>(m_cpuMeasure->getTjMax()) );
-
-        glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-        char coreBuff[3] = { 'C', '0' + static_cast<char>(i), '\0' };
-        m_fontManager->renderLine(RG_FONT_STANDARD, coreBuff, 0, 0, 0, 0,
-                                  RG_ALIGN_CENTERED_HORIZONTAL |
-                                  RG_ALIGN_BOTTOM, 10, 10);
-        char tempBuff[6];
-        snprintf(tempBuff, sizeof(tempBuff), "%.0fC", m_cpuMeasure->getTemp(i));
-        m_fontManager->renderLine(RG_FONT_STANDARD, tempBuff, 0, 0, 0, 0,
-                                  RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_TOP,
-                                  10, 10);
-    }
 }
 
 void CPUStatsWidget::drawCoreGraphs() const {
@@ -114,7 +88,7 @@ void CPUStatsWidget::drawCoreGraphs() const {
             i*m_coreGraphViewport.height/numCores };
         glViewport(m_coreGraphViewport.x, 
                    m_coreGraphViewport.y + yOffset,
-                   m_coreGraphViewport.width,
+                   3*m_coreGraphViewport.width/4,
                    m_coreGraphViewport.height/numCores);
 
         drawLineGraph(m_cpuMeasure->getPerCoreUsageData()[i]);
@@ -129,6 +103,17 @@ void CPUStatsWidget::drawCoreGraphs() const {
         snprintf(str, sizeof(str), "Core %d", i);
         m_fontManager->renderLine(RG_FONT_SMALL, str, 0, 0, 0, 0,
                                   RG_ALIGN_TOP | RG_ALIGN_LEFT, 10, 10);
+
+        // Draw the temperature next to the graph
+        glViewport(m_coreGraphViewport.x + 3*m_coreGraphViewport.width/4,
+                   m_coreGraphViewport.y + yOffset,
+                   m_coreGraphViewport.width/4,
+                   m_coreGraphViewport.height/numCores);
+        char tempBuff[6];
+        snprintf(tempBuff, sizeof(tempBuff), "%.0fC", m_cpuMeasure->getTemp(i));
+        m_fontManager->renderLine(RG_FONT_MUSIC_LARGE, tempBuff, 0, 0, 0, 0,
+                                  RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_CENTERED_VERTICAL,
+                                  0, 0);
     }
 }
 
