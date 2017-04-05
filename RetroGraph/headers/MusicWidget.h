@@ -10,8 +10,10 @@ class MusicMeasure;
 class MusicWidget {
 public:
     MusicWidget(const FontManager* fontManager,
-                const MusicMeasure* musicMeasure) :
-        m_fontManager{ fontManager }, m_musicMeasure{ musicMeasure } {}
+                const MusicMeasure* musicMeasure,
+                bool visible) :
+        m_fontManager{ fontManager }, m_visible{ visible }, 
+        m_musicMeasure{ musicMeasure } {}
 
     ~MusicWidget() noexcept = default;
     MusicWidget(const MusicWidget&) = delete;
@@ -23,6 +25,7 @@ public:
 private:
     const FontManager* m_fontManager{ nullptr };
     Viewport m_viewport{ };
+    bool m_visible{ true };
 
     const MusicMeasure* m_musicMeasure{ nullptr };
 };

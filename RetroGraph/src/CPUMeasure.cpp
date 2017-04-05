@@ -84,7 +84,8 @@ float CPUMeasure::getCPULoad() {
     }
 
     return calculateCPULoad(FileTimeToInt64(idleTime),
-        FileTimeToInt64(kernelTime) + FileTimeToInt64(userTime));
+                            FileTimeToInt64(kernelTime) +
+                                FileTimeToInt64(userTime));
 }
 
 std::string CPUMeasure::getUptimeStr() const {

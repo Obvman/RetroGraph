@@ -11,6 +11,9 @@
 namespace rg {
 
 void ProcessWidget::draw() const {
+    // TODO this won't work nicely when toggling visibility at runtime
+    if (!m_visible) return;
+
     glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
     scissorClear(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
 

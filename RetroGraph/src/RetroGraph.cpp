@@ -16,7 +16,7 @@ RetroGraph::RetroGraph(HINSTANCE hInstance) :
     m_driveMeasure{ },
     m_musicMeasure{ &m_processMeasure },
     m_systemMeasure{ },
-    m_renderer{ m_window, *this } {
+    m_renderer{ m_window, *this, m_userSettings } {
 
     g_widgetBGVisible = m_userSettings.getWidgetBackground();
 
@@ -44,11 +44,13 @@ void RetroGraph::draw(uint32_t ticks) const {
     if ((ticks % std::lround(
         static_cast<float>(rg::ticksPerSecond)/framesPerSecond)) == 0) {
 
-        const auto hdc{ m_window.startDraw() };
+        HDC hdc = GetDC(m_window.getHwnd());
+        wglMakeCurrent(hdc, m_window.getHGLRC());
 
         m_renderer.draw(ticks);
 
-        m_window.endDraw(hdc);
+        SwapBuffers(hdc);
+        ReleaseDC(m_window.getHwnd(), hdc);
     }
 }
 

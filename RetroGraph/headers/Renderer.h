@@ -32,7 +32,8 @@ class UserSettings;
 /* In charge of rendering each component's data to the window */
 class Renderer {
 public:
-    Renderer(const Window& w, const RetroGraph& _rg);
+    Renderer(const Window& w, const RetroGraph& _rg, 
+             const UserSettings& settings);
     ~Renderer() noexcept;
     Renderer(const Renderer&) = delete;
     Renderer& operator=(const Renderer&) = delete;

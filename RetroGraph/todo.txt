@@ -1,8 +1,16 @@
-speed up compile times
+disable data gathering for non-visible widgets to save on CPU
 
-left click tray brings window to front
+CPUStats widget: draw temp as just text (30C) next to corresponding core graph
+
+When failing to open a process, fail silently instead of crashing
+
+split process measure into 2 pieces
+
+create a borderless terminal window to embed in a widget
 
 enable switching clickthrough modes at runtime
+
+MainWidget animation
 
 network: show how many MB have been downloaded since retrograph started
 

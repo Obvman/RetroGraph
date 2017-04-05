@@ -8,6 +8,7 @@
 #include <GL/wglew.h>
 #include <GL/gl.h>
 #include <dwmapi.h>
+#include <tchar.h>
 #include <Windowsx.h>
 #include <iostream>
 #include <thread>
@@ -25,7 +26,8 @@ constexpr int32_t ID_EXIT{ 1 };
 constexpr int32_t ID_SEND_TO_BACK{ 2 };
 constexpr int32_t ID_RESET_POSITION{ 3 };
 constexpr int32_t ID_SET_WIDGET_BG{ 4 };
-constexpr int32_t ID_CHANGE_DISPLAY_MONITOR{ 5 };
+constexpr int32_t ID_TEST{ 5 };
+constexpr int32_t ID_CHANGE_DISPLAY_MONITOR{ 6 };
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -38,6 +40,42 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         return window->WndProc2(hWnd, msg, wParam, lParam);
     }
     return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
+void Window::runTest() {
+    /* const char* windowName{ "-bash" }; */
+    /* HWND windowHandle{ FindWindow(nullptr, windowName) }; */
+
+    /* if (!windowHandle) { */
+    /*     printf("Couldn't find window %s\n", windowName); */
+    /*     return; */
+    /* } */
+
+    /* //auto style{ GetWindowLong(windowHandle, GWL_STYLE) }; */
+
+    /* LONG style = WS_POPUP; */
+
+    /* if (!SetWindowLong(windowHandle, GWL_STYLE, style)) { */
+    /*     printf("failed to set window style\n"); */
+    /* } */
+
+    /* SetWindowPos(windowHandle, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE); */
+
+    /* Start a linux subsystem bash shell */
+    STARTUPINFO si;
+    PROCESS_INFORMATION pi;
+    ZeroMemory(&si, sizeof(si));
+    si.cb = sizeof(si);
+    ZeroMemory(&pi, sizeof(pi));
+
+    LPTSTR cmd = _tcsdup(TEXT("\"D:\\ProgramFiles\\Cygwin\\bin\\mintty.exe\""));
+    if (!CreateProcess(nullptr, 
+                       cmd,
+                       nullptr, nullptr, FALSE, 0, nullptr, 
+                       nullptr, &si, &pi)) {
+
+        printf("CreateProcess failed: %d\n", GetLastError());
+    }
 }
 
 Window::Window(RetroGraph* rg_, HINSTANCE hInstance, int32_t startupMonitor,
@@ -270,6 +308,8 @@ void Window::handleTrayMessage(HWND hWnd, WPARAM wParam, LPARAM lParam) {
             GetCursorPos(&p);
             SetForegroundWindow(hWnd);
 
+            // TODO merge this with createRClickMenu to reduce duplication
+
             // Create options for popup menu
             auto hPopupMenu{ CreatePopupMenu() };
             InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_EXIT,
@@ -278,6 +318,8 @@ void Window::handleTrayMessage(HWND hWnd, WPARAM wParam, LPARAM lParam) {
                     ID_SEND_TO_BACK, "Send to back");
             InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
                     ID_SET_WIDGET_BG, "Toggle Widget Background");
+            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
+                    ID_TEST, "Test");
 
             // Create an option for each monitor for multi-monitor systems
             const auto& md{ m_monitors.getMonitorData() };
@@ -311,6 +353,9 @@ void Window::handleTrayMessage(HWND hWnd, WPARAM wParam, LPARAM lParam) {
                     g_widgetBGVisible = !g_widgetBGVisible;
                     m_retroGraph->needsRedraw();
                     break;
+                case ID_TEST:
+                    runTest();
+                    break;
                 default:
                     // Default case handles monitor selection list
                      changeMonitor(hWnd, selection - ID_CHANGE_DISPLAY_MONITOR);
@@ -337,34 +382,24 @@ void Window::updateSize(int32_t width, int32_t height) {
     glLoadIdentity();
 }
 
-HDC Window::startDraw() const {
-    HDC hdc = GetDC(m_hWndMain);
-    wglMakeCurrent(hdc, m_hrc);
-    glViewport(0, 0, m_width, m_height);
-    return hdc;
-}
-
-void Window::endDraw(HDC hdc) const {
-    SwapBuffers(hdc);
-    ReleaseDC(m_hWndMain, hdc);
-}
-
 void Window::createWindow() {
     // Set and register the window class
-    memset(&m_wc, 0, sizeof(m_wc));
-    m_wc.cbSize = sizeof(WNDCLASSEX);
-    m_wc.hIconSm = LoadIcon(nullptr, IDI_APPLICATION);
-    m_wc.style = CS_HREDRAW | CS_VREDRAW;
-    m_wc.lpfnWndProc = WndProc;
-    m_wc.cbClsExtra = 0;
-    m_wc.cbWndExtra = 0;
-    m_wc.hInstance = m_hInstance;
-    m_wc.hIcon = LoadIcon(m_hInstance, MAKEINTRESOURCE(IDI_ICON1));
-    m_wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
-    m_wc.hbrBackground = static_cast<HBRUSH>(CreateSolidBrush(0x00000000));
-    m_wc.lpszClassName = "RetroGraph";
+    WNDCLASSEX wc;
+    memset(&wc, 0, sizeof(wc));
+    wc.cbSize = sizeof(WNDCLASSEX);
+    wc.hIconSm = LoadIcon(nullptr, IDI_APPLICATION);
+    wc.style = CS_HREDRAW | CS_VREDRAW;
+    wc.lpfnWndProc = WndProc;
+    wc.cbClsExtra = 0;
+    wc.cbWndExtra = 0;
+    wc.hInstance = m_hInstance;
+    wc.hIcon = LoadIcon(m_hInstance, MAKEINTRESOURCE(IDI_ICON1));
+    wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
+    wc.hbrBackground = static_cast<HBRUSH>(CreateSolidBrush(0x00000000));
+    wc.lpszClassName = "RetroGraph";
 
-    if (!RegisterClassEx(&m_wc)) {
+
+    if (!RegisterClassEx(&wc)) {
         fatalMessageBox("RegisterClassEx - failed");
     }
 

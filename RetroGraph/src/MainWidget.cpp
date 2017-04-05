@@ -1,5 +1,7 @@
 #include "../headers/MainWidget.h"
 
+#include <iostream>
+
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <Windows.h>
@@ -44,6 +46,8 @@ private:
 };
 
 void MainWidget::draw() const {
+    if (!m_visible) return;
+
     glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
     scissorClear(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
 

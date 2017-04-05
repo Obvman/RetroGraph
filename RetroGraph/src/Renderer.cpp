@@ -16,19 +16,27 @@
 
 namespace rg {
 
-Renderer::Renderer(const Window& w, const RetroGraph& _rg) :
+Renderer::Renderer(const Window& w, const RetroGraph& _rg,
+                   const UserSettings& settings) :
     m_renderTargetHandle{ w.getHwnd() },
     m_fontManager{ w.getHwnd(), w.getHeight() },
-    m_timeWidget{ &m_fontManager, &_rg.getCPUMeasure(), &_rg.getNetMeasure() },
-    m_hddWidget{ &m_fontManager, &_rg.getDriveMeasure() },
-    m_cpuStatsWidget{ &m_fontManager, &_rg.getCPUMeasure() },
-    m_processWidget{ &m_fontManager, &_rg.getProcessMeasure() },
+    m_timeWidget{ &m_fontManager, &_rg.getCPUMeasure(), &_rg.getNetMeasure(),
+                  settings.isVisible(RG_WIDGET_TIME) },
+    m_hddWidget{ &m_fontManager, &_rg.getDriveMeasure(), 
+                 settings.isVisible(RG_WIDGET_DRIVES) },
+    m_cpuStatsWidget{ &m_fontManager, &_rg.getCPUMeasure(),
+                      settings.isVisible(RG_WIDGET_CPU_STATS) },
+    m_processWidget{ &m_fontManager, &_rg.getProcessMeasure(), 
+                     settings.isVisible(RG_WIDGET_PROCESSES) },
     m_graphWidget{ &m_fontManager, &_rg.getCPUMeasure(), &_rg.getRAMMeasure(),
-        &_rg.getNetMeasure(), &_rg.getGPUMeasure() },
+                   &_rg.getNetMeasure(), &_rg.getGPUMeasure(), 
+                   settings.isVisible(RG_WIDGET_GRAPHS) },
     m_systemStatsWidget{ &m_fontManager, &_rg.getSystemMeasure(),
-        &_rg.getCPUMeasure(), &_rg.getNetMeasure() },
-    m_mainWidget{ &m_fontManager },
-    m_musicWidget{ &m_fontManager, &_rg.getMusicMeasure() } {
+                         &_rg.getCPUMeasure(), &_rg.getNetMeasure(),
+                         settings.isVisible(RG_WIDGET_SYSTEM_STATS) },
+    m_mainWidget{ &m_fontManager, settings.isVisible(RG_WIDGET_MAIN) },
+    m_musicWidget{ &m_fontManager, &_rg.getMusicMeasure(), 
+                   settings.isVisible(RG_WIDGET_MUSIC) } {
 
     setViewports(w.getWidth(), w.getHeight());
 

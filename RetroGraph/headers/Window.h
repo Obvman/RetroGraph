@@ -19,14 +19,11 @@ public:
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
 
+    /* Just runs some experimental code */
+    void runTest();
+
     /* Updates the OpenGL viewport when the window size changes */
     void updateSize(int32_t width, int32_t height);
-
-    /* Sets up device context for OpenGL drawing */
-    HDC startDraw() const;
-
-    /* Releases device context after drawing */
-    void endDraw(HDC hdc) const;
 
     /* Window Proc that has access to this window class's members via lParam */
     LRESULT CALLBACK WndProc2(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -34,6 +31,7 @@ public:
     int32_t getWidth() const { return m_width; }
     int32_t getHeight() const { return m_height; }
     HWND getHwnd() const { return m_hWndMain; }
+    HGLRC getHGLRC() const { return m_hrc; }
 
     bool isRunning() const { return m_running; }
 private:
@@ -83,7 +81,6 @@ private:
     Monitors m_monitors;
     RetroGraph* m_retroGraph;
 
-    WNDCLASSEX m_wc{ };
     HWND m_hWndMain{ nullptr };
     HDC m_hdc{ };
     HGLRC m_hrc{ };

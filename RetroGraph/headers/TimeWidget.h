@@ -12,8 +12,10 @@ class TimeWidget {
 public:
     TimeWidget(const FontManager* fontManager,
                const CPUMeasure* cpuMeasure,
-               const NetMeasure* netMeasure) :
+               const NetMeasure* netMeasure,
+               bool visible) :
         m_fontManager{ fontManager },
+        m_visible{ visible },
         m_cpuMeasure{ cpuMeasure },
         m_netMeasure{ netMeasure } { }
 
@@ -24,10 +26,13 @@ public:
     void draw() const;
 
     void setViewport(Viewport vp) { m_viewport = vp; };
+
+    void setVisible(bool b) { m_visible = b; }
 private:
     const FontManager* m_fontManager{ nullptr };
-
     Viewport m_viewport{ };
+    bool m_visible{ true };
+
     const CPUMeasure* m_cpuMeasure{ nullptr };
     const NetMeasure* m_netMeasure{ nullptr };
 };

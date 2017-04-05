@@ -12,6 +12,8 @@
 namespace rg {
 
 void TimeWidget::draw() const {
+    if (!m_visible) return;
+
     glViewport(m_viewport.x, m_viewport.y,
                m_viewport.width, m_viewport.height);
 

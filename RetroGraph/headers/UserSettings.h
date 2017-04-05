@@ -2,13 +2,13 @@
 
 #include <stdint.h>
 #include <string>
+#include <vector>
 #include <boost/program_options.hpp>
 #include <boost/property_tree/ptree.hpp>
 
-namespace rg {
+#include "widgets.h"
 
-namespace po = boost::program_options;
-namespace pt = boost::property_tree;
+namespace rg {
 
 class UserSettings {
 public:
@@ -39,8 +39,10 @@ public:
     uint32_t getGPUUsageSamples() const { return m_gpuUsageSamples; }
     uint32_t getRAMUsageSamples() const { return m_ramUsageSamples; }
 
+    bool isVisible(size_t w) const { return m_widgetVisibilities[w]; }
+
 private:
-    void generateDefaultFile(pt::ptree& propTree);
+    void generateDefaultFile(boost::property_tree::ptree& propTree);
 
     // Window options
     int32_t m_startupMonitor{ 0 };
@@ -61,6 +63,9 @@ private:
     uint32_t m_cpuUsageSamples{ 20U };
     uint32_t m_gpuUsageSamples{ 20U };
     uint32_t m_ramUsageSamples{ 20U };
+
+    std::vector<bool> m_widgetVisibilities;
+    std::vector<WidgetPosition> m_widgetPositions;
 };
 
 }

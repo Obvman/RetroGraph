@@ -14,8 +14,10 @@ namespace rg {
 SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
                                      const SystemMeasure* sysInfo,
                                      const CPUMeasure* cpuMeasure,
-                                     const NetMeasure* netMeasure) :
-    m_fontManager{ fontManager } {
+                                     const NetMeasure* netMeasure,
+                                     bool visible) :
+    m_fontManager{ fontManager },
+    m_visible{ visible } {
 
     // Just create stats string here since we expect it not to change during
     // the lifetime of the program
@@ -37,7 +39,7 @@ SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
 }
 
 void SystemStatsWidget::draw() const {
-    if (!m_needsRedraw) return;
+    if (!m_needsRedraw || !m_visible) return;
 
     glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
     scissorClear(m_viewport.x, m_viewport.y,

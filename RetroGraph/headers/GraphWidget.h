@@ -14,10 +14,10 @@ class GraphWidget {
 public:
     GraphWidget(const FontManager* fontManager, const CPUMeasure* cpuMeasure,
                 const RAMMeasure* ramMeasure, const NetMeasure* netMeasure,
-                const GPUMeasure* gpuMeasure) :
-        m_fontManager{ fontManager }, m_cpuMeasure{ cpuMeasure },
-        m_ramMeasure{ ramMeasure }, m_netMeasure{ netMeasure },
-        m_gpuMeasure{ gpuMeasure } {}
+                const GPUMeasure* gpuMeasure, bool visible) :
+        m_fontManager{ fontManager }, m_visible{ visible }, 
+        m_cpuMeasure{ cpuMeasure }, m_ramMeasure{ ramMeasure },
+        m_netMeasure{ netMeasure }, m_gpuMeasure{ gpuMeasure } {}
 
     ~GraphWidget() noexcept = default;
     GraphWidget(const GraphWidget&) = delete;
@@ -27,6 +27,7 @@ public:
 
     void setViewport(Viewport vp);
 
+    void setVisible(bool b) { m_visible = b; }
 private:
     void drawCpuGraph() const;
     void drawRamGraph() const;
@@ -39,6 +40,7 @@ private:
     Viewport m_ramGraphVP{ };
     Viewport m_netGraphVP{ };
     Viewport m_gpuGraphVP{ };
+    bool m_visible{ true };
 
     const CPUMeasure* m_cpuMeasure{ nullptr };
     const RAMMeasure* m_ramMeasure{ nullptr };

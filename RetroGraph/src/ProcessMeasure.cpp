@@ -74,8 +74,9 @@ void ProcessMeasure::update(uint32_t ticks) {
                 // If access is denied or the process is the system idle 
                 // process, just silently skip the process
                 if (error != ERROR_ACCESS_DENIED && pd.getPID() != 0) {
-                    fatalMessageBox("Failed to open process. Code: " +
-                                    std::to_string(error));
+                fatalMessageBox("Failed to open process. Code: " +
+                                std::to_string(error) + ". ProcessID: " +
+                                std::to_string(pd.getPID()));
                 }
                 continue;
             }
@@ -266,7 +267,8 @@ void ProcessMeasure::populateList() {
             // If access is denied or the process is the system idle process, just silently skip the process
             if (error != ERROR_ACCESS_DENIED && procID != 0) {
                 fatalMessageBox("Failed to open process. Code: " +
-                                std::to_string(error));
+                                std::to_string(error) + ". ProcessID: " +
+                                std::to_string(procID));
             }
         } else {
             // Convert the process name from wchar* to char*

@@ -1,4 +1,4 @@
-ABSOLUTESOLNDIRBOU=/mnt/c/PG/RetroGraph/
+ABSOLUTESOLNDIRBOU=/mnt/d/PG/RetroGraph/
 DEVENVCYG=/cygdrive/d/ProgramFiles/Visual\ Studio\ 2015/Common7/IDE/devenv.com
 DEVENVBOU=wrun /mnt/d/ProgramFiles/Visual\ Studio\ 2015/Common7/IDE/devenv.com
 #DEVENVBOU=wrun /mnt/d/ProgramFiles/Visual\ Studio\ 2017/Enterprise/Common7/IDE/devenv.com

@@ -17,7 +17,8 @@ public:
     SystemStatsWidget(const FontManager* fontManager,
                       const SystemMeasure* sysInfo,
                       const CPUMeasure* cpuMeasure,
-                      const NetMeasure* netMeasure);
+                      const NetMeasure* netMeasure,
+                      bool visible);
     ~SystemStatsWidget() noexcept = default;
     SystemStatsWidget(const SystemStatsWidget&) = delete;
     SystemStatsWidget& operator=(const SystemStatsWidget&) = delete;
@@ -26,10 +27,13 @@ public:
 
     void setViewport(Viewport vp) { m_viewport = vp; };
 
+    void setVisible(bool b) { m_visible = b; }
+
     void needsRedraw() const { m_needsRedraw = true; }
 private:
     const FontManager* m_fontManager{ nullptr };
     Viewport m_viewport{ };
+    bool m_visible{ true };
     std::vector<std::string> m_statsStrings{ };
 
     mutable bool m_needsRedraw{ true };

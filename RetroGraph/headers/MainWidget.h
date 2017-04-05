@@ -8,8 +8,8 @@ class FontManager;
 
 class MainWidget {
 public:
-    MainWidget(const FontManager* fontManager) :
-        m_fontManager{ fontManager } {}
+    MainWidget(const FontManager* fontManager, bool visible) :
+        m_fontManager{ fontManager }, m_visible{ visible } {}
     ~MainWidget() noexcept = default;
     MainWidget(const MainWidget&) = delete;
     MainWidget& operator=(const MainWidget&) = delete;
@@ -17,10 +17,13 @@ public:
     void draw() const;
 
     void setViewport(Viewport vp) { m_viewport = vp; };
+
+    void setVisible(bool b) { m_visible = b; }
 private:
 
     const FontManager* m_fontManager{ nullptr };
     Viewport m_viewport{ };
+    bool m_visible{ true };
 };
 
 }
