@@ -1,5 +1,10 @@
 use gl lists to draw things like graph grids
 
+Widgets: Allow free position (x, y coords), full alignment options 
+(centered, left, top eg.) and a mix of centering and coords (vertical center with x coords)
+
+Allow user-defined ordering of widgets in multi-widget positions
+
 store measures in smart pointers to control lifetime manually to start/stop measuring
 disable data gathering for non-visible widgets to save on CPU
 
