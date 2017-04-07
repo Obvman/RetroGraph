@@ -1,7 +1,7 @@
 ABSOLUTESOLNDIRBOU=/mnt/d/PG/RetroGraph/
 DEVENVCYG=/cygdrive/d/ProgramFiles/Visual\ Studio\ 2015/Common7/IDE/devenv.com
-DEVENVBOU=wrun /mnt/d/ProgramFiles/Visual\ Studio\ 2015/Common7/IDE/devenv.com
-#DEVENVBOU=wrun /mnt/d/ProgramFiles/Visual\ Studio\ 2017/Enterprise/Common7/IDE/devenv.com
+#DEVENVBOU=wrun /mnt/d/ProgramFiles/Visual\ Studio\ 2015/Common7/IDE/devenv.com
+DEVENVBOU=wrun /mnt/d/ProgramFiles/Visual\ Studio\ 2017/Common7/IDE/devenv.com
 SOLNDIR=../
 SOLN=$(SOLNDIR)RetroGraph.sln
 
@@ -38,3 +38,23 @@ rebuildr:
 
 clean:
 	$(DEVENVBOU) $(SOLN) -clean
+
+# gcc building
+# LINK_TARGET = gccRetroGraph.exe
+# INCLUDE = -I..\deps\include -IC:\Program\ Files\ \(x86\)\Windows\ Kits\10\Include\10.0.15063\um
+# OBJS = \
+# 	main.o
+
+# REBUILDABLES = $(OBJS) $(LINK_TARGET)
+
+# gall: $(LINK_TARGET)
+# 	echo done
+
+# $(LINK_TARGET) : $(OBJS)
+# 	g++ --std=c++14 -g -o $@ $^
+
+# %.o : src/%.cpp
+# 	g++ --std=c++14 $(INCLUDE) -g -o $@ -c $<
+
+# main.o : src/main.cpp
+

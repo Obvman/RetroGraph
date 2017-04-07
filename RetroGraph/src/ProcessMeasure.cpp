@@ -79,6 +79,7 @@ void ProcessMeasure::update(uint32_t ticks) {
                                 std::to_string(error) + ". ProcessID: " +
                                 std::to_string(pd.getPID()));
                 }
+                CloseHandle(pHandle);
                 continue;
             }
 
@@ -87,6 +88,7 @@ void ProcessMeasure::update(uint32_t ticks) {
             GetExitCodeProcess(pHandle, &exitCode);
             if (exitCode == 0 || exitCode == 1) {
                 it = m_allProcessData.erase(it);
+                CloseHandle(pHandle);
             } else {
                 // Get new timing information and calculate the CPU usage
                 const auto cpuUsage{ calculateCPUUsage(pHandle, pd) };
@@ -95,6 +97,7 @@ void ProcessMeasure::update(uint32_t ticks) {
 
                 ++it;
             }
+            CloseHandle(pHandle);
         }
 
         fillCPUData();
@@ -271,6 +274,7 @@ void ProcessMeasure::populateList() {
                                 std::to_string(error) + ". ProcessID: " +
                                 std::to_string(procID));
             }
+            CloseHandle(pHandle);
         } else {
             // Convert the process name from wchar* to char*
             size_t charsConverted{ 0U };
@@ -342,6 +346,7 @@ void ProcessMeasure::detectNewProcesses() {
                                     std::to_string(error) + ". ProcessID: " +
                                     std::to_string(procID));
                 }
+                CloseHandle(pHandle);
             } else {
                 // Convert the ImageName buffer from wchar* to char*
                 auto charsConverted = size_t{ 0U };

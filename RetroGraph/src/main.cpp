@@ -3,15 +3,16 @@
 #include <chrono>
 #include <memory>
 
-#include <Windows.h>
-#include <winternl.h>
-#include <comdef.h>
-#include <Wbemidl.h>
-#pragma comment(lib, "wbemuuid.lib")
-#pragma comment(lib, "Ntdll.lib")
-
 #include <GL/glew.h>
 #include <GL/gl.h>
+
+#include <Windows.h>
+//#include <winternl.h>
+//#include <comdef.h>
+//#include <Wbemidl.h>
+//#pragma comment(lib, "wbemuuid.lib")
+//#pragma comment(lib, "Ntdll.lib")
+
 
 #include "../headers/utils.h"
 #include "../headers/RetroGraph.h"
