@@ -75,9 +75,9 @@ void ProcessMeasure::update(uint32_t ticks) {
                 // If access is denied or the process is the system idle 
                 // process, just silently skip the process
                 if (error != ERROR_ACCESS_DENIED && pd.getPID() != 0) {
-                fatalMessageBox("Failed to open process. Code: " +
-                                std::to_string(error) + ". ProcessID: " +
-                                std::to_string(pd.getPID()));
+                    std::cout << "Failed to open process. Code: "
+                        << std::to_string(error) << ". ProcessID: "
+                        << std::to_string(pd.getPID()) << '\n';
                 }
                 CloseHandle(pHandle);
                 continue;
@@ -270,9 +270,9 @@ void ProcessMeasure::populateList() {
             const auto error{ GetLastError() };
             // If access is denied or the process is the system idle process, just silently skip the process
             if (error != ERROR_ACCESS_DENIED && procID != 0) {
-                fatalMessageBox("Failed to open process. Code: " +
-                                std::to_string(error) + ". ProcessID: " +
-                                std::to_string(procID));
+                    std::cout << "Failed to open process. Code: "
+                        << std::to_string(error) << ". ProcessID: "
+                        << std::to_string(procID) << '\n';
             }
             CloseHandle(pHandle);
         } else {
@@ -342,9 +342,9 @@ void ProcessMeasure::detectNewProcesses() {
                 if (error != ERROR_ACCESS_DENIED &&
                     procID != 0) {
 
-                    fatalMessageBox("Failed to open process. Code: " +
-                                    std::to_string(error) + ". ProcessID: " +
-                                    std::to_string(procID));
+                    std::cout << "Failed to open process. Code: "
+                        << std::to_string(error) << ". ProcessID: "
+                        << std::to_string(procID) << '\n';
                 }
                 CloseHandle(pHandle);
             } else {

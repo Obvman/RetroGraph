@@ -1,7 +1,6 @@
-ABSOLUTESOLNDIRBOU=/mnt/d/PG/RetroGraph/
-DEVENVCYG=/cygdrive/d/ProgramFiles/Visual\ Studio\ 2015/Common7/IDE/devenv.com
-#DEVENVBOU=wrun /mnt/d/ProgramFiles/Visual\ Studio\ 2015/Common7/IDE/devenv.com
-DEVENVBOU=wrun /mnt/d/ProgramFiles/Visual\ Studio\ 2017/Common7/IDE/devenv.com
+#ABSOLUTESOLNDIRBOU=/mnt/d/PG/RetroGraph/
+#DEVENVBOU=wrun /mnt/d/ProgramFiles/Visual\ Studio\ 2017/Common7/IDE/devenv.com
+DEVENVBOU=devenv.com
 SOLNDIR=../
 SOLN=$(SOLNDIR)RetroGraph.sln
 
@@ -17,16 +16,16 @@ release: FORCE
 	$(DEVENVBOU) $(SOLN) -build Release
 
 brd: debug
-	exec ../Debug/RetroGraph.exe
+	../Debug/RetroGraph.exe
 
 brr: debug
-	exec ../Release/RetroGraph.exe
+	../Release/RetroGraph.exe
 
 rund: FORCE
-	wrun $(ABSOLUTESOLNDIRBOU)Debug/RetroGraph.exe
+	$(SOLNDIR)Debug/RetroGraph.exe
 
 runr: FORCE
-	cygstart --action=runas ../Release/RetroGraph.exe
+	$(SOLNDIR)Release/RetroGraph.exe
 
 FORCE:
 
@@ -36,25 +35,11 @@ rebuildd:
 rebuildr:
 	$(DEVENVBOU) $(SOLN) -rebuild Release
 
-clean:
-	$(DEVENVBOU) $(SOLN) -clean
+clean: cleand cleanr
 
-# gcc building
-# LINK_TARGET = gccRetroGraph.exe
-# INCLUDE = -I..\deps\include -IC:\Program\ Files\ \(x86\)\Windows\ Kits\10\Include\10.0.15063\um
-# OBJS = \
-# 	main.o
+cleand:
+	$(DEVENVBOU) $(SOLN) -clean Debug
 
-# REBUILDABLES = $(OBJS) $(LINK_TARGET)
-
-# gall: $(LINK_TARGET)
-# 	echo done
-
-# $(LINK_TARGET) : $(OBJS)
-# 	g++ --std=c++14 -g -o $@ $^
-
-# %.o : src/%.cpp
-# 	g++ --std=c++14 $(INCLUDE) -g -o $@ -c $<
-
-# main.o : src/main.cpp
+cleanr:
+	$(DEVENVBOU) $(SOLN) -clean Release
 
