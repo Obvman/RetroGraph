@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <memory>
 
 #include "Window.h"
 #include "Renderer.h"
@@ -37,24 +38,50 @@ public:
     const NetMeasure& getNetMeasure() const { return m_netMeasure; }
     const ProcessMeasure& getProcessMeasure() const { return m_processMeasure; }
     const DriveMeasure& getDriveMeasure() const { return m_driveMeasure; }
-    const MusicMeasure& getMusicMeasure() const { return m_musicMeasure; }
+    const std::unique_ptr<MusicMeasure>& getMusicMeasure() const { return m_musicMeasure; }
     const SystemMeasure& getSystemMeasure() const { return m_systemMeasure; }
     const UserSettings& getUserSettings() const { return m_userSettings; }
 
     bool isRunning() const { return m_window.isRunning(); }
+
+    void toggleTimeWidget();
+    void toggleHDDWidget();
+    void toggleCPUStatsWidget();
+    void toggleCPUProcessWidget();
+    void toggleRAMProcessWidget();
+    void toggleGraphWidget();
+    void toggleMainWidget();
+    void toggleMusicWidget();
+    void toggleSystemStatsWidget();
 private:
     UserSettings m_userSettings;
 
     Window m_window;
 
+    /* Measure data acquisition/updating is managed by the lifetime of the
+     * object, so wrapping them in smart pointers let's us disable/enable
+     * measures by destroying/creating the objects
+     */
     CPUMeasure m_cpuMeasure;
     GPUMeasure m_gpuMeasure;
     RAMMeasure m_ramMeasure;
     NetMeasure m_netMeasure;
     ProcessMeasure m_processMeasure;
     DriveMeasure m_driveMeasure;
-    MusicMeasure m_musicMeasure;
+    std::unique_ptr<MusicMeasure> m_musicMeasure;
     SystemMeasure m_systemMeasure;
+
+    // Measures are shared among widgets so we need these so we know to disable
+    // a measure only when there are no widgets using it.
+    bool m_timeWidgetEnabled{ true };
+    bool m_HDDWidgetEnabled{ true };
+    bool m_cpuStatsWidgetEnabled{ true };
+    bool m_cpuProcessWidgetEnabled{ true };
+    bool m_ramProcesssWidgetEnabled{ true };
+    bool m_graphWidgetEnabled{ true };
+    bool m_mainWidgetEnabled{ true };
+    bool m_musicWidgetEnabled{ true };
+    bool m_systemStatsWidgetEnabled{ true };
 
     Renderer m_renderer;
 };

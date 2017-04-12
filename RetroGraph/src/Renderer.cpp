@@ -38,7 +38,7 @@ Renderer::Renderer(const Window& w, const RetroGraph& _rg,
                          &_rg.getCPUMeasure(), &_rg.getNetMeasure(),
                          m_settings->isVisible(RG_WIDGET_SYSTEM_STATS) },
     m_mainWidget{ &m_fontManager, m_settings->isVisible(RG_WIDGET_MAIN) },
-    m_musicWidget{ &m_fontManager, &_rg.getMusicMeasure(), 
+    m_musicWidget{ &m_fontManager, _rg.getMusicMeasure(), 
                    m_settings->isVisible(RG_WIDGET_MUSIC) } {
 
     setViewports(w.getWidth(), w.getHeight());

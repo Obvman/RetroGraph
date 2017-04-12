@@ -13,11 +13,15 @@ namespace rg {
 void createFormattedTimeStr(char* buffer, size_t buffSize, uint32_t seconds);
 BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam);
 
-void MusicWidget::draw() const {
-    if (!m_visible) return;
-
+void MusicWidget::clear() const {
     glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
     scissorClear(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
+}
+
+void MusicWidget::draw() const {
+    clear();
+
+    if (!m_visible || !m_musicMeasure) return;
 
     drawWidgetBackground();
 

@@ -27,7 +27,16 @@ constexpr int32_t ID_SEND_TO_BACK{ 2 };
 constexpr int32_t ID_RESET_POSITION{ 3 };
 constexpr int32_t ID_SET_WIDGET_BG{ 4 };
 constexpr int32_t ID_TEST{ 5 };
-constexpr int32_t ID_CHANGE_DISPLAY_MONITOR{ 6 };
+constexpr int32_t ID_TOGGLE_TIME_WIDGET{ 6 };
+constexpr int32_t ID_TOGGLE_HDD_WIDGET{ 7 };
+constexpr int32_t ID_TOGGLE_CPUSTATS_WIDGET{ 8 };
+constexpr int32_t ID_TOGGLE_PROCESS_CPU_WIDGET{ 9 };
+constexpr int32_t ID_TOGGLE_PROCESS_RAM_WIDGET{ 10 };
+constexpr int32_t ID_TOGGLE_GRAPH_WIDGET{ 11 };
+constexpr int32_t ID_TOGGLE_SYSTEMSTATS_WIDGET{ 12 };
+constexpr int32_t ID_TOGGLE_MAIN_WIDGET{ 13 };
+constexpr int32_t ID_TOGGLE_MUSIC_WIDGET{ 14 };
+constexpr int32_t ID_CHANGE_DISPLAY_MONITOR{ 15 };
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -322,6 +331,24 @@ void Window::handleTrayMessage(HWND hWnd, WPARAM wParam, LPARAM lParam) {
                     ID_SET_WIDGET_BG, "Toggle Widget Background");
             InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
                     ID_TEST, "Test");
+            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
+                    ID_TOGGLE_TIME_WIDGET, "Toggle Time Widget");
+            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
+                    ID_TOGGLE_HDD_WIDGET, "Toggle HDD Widget");
+            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
+                    ID_TOGGLE_CPUSTATS_WIDGET, "Toggle CPU Stats Widget");
+            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
+                    ID_TOGGLE_PROCESS_CPU_WIDGET, "Toggle Cpu Process Widget");
+            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
+                    ID_TOGGLE_PROCESS_RAM_WIDGET, "Toggle Ram Process Widget");
+            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
+                    ID_TOGGLE_GRAPH_WIDGET, "Toggle Graph Widget");
+            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
+                    ID_TOGGLE_SYSTEMSTATS_WIDGET, "Toggle System Stats Widget");
+            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
+                    ID_TOGGLE_MAIN_WIDGET, "Toggle Main Widget");
+            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
+                    ID_TOGGLE_MUSIC_WIDGET, "Toggle Music Widget");
 
             // Create an option for each monitor for multi-monitor systems
             const auto& md{ m_monitors.getMonitorData() };
@@ -357,6 +384,33 @@ void Window::handleTrayMessage(HWND hWnd, WPARAM wParam, LPARAM lParam) {
                     break;
                 case ID_TEST:
                     runTest();
+                    break;
+                case ID_TOGGLE_MUSIC_WIDGET:
+                    m_retroGraph->toggleMusicWidget();
+                    break;
+                case ID_TOGGLE_TIME_WIDGET:
+                    m_retroGraph->toggleTimeWidget();
+                    break;
+                case ID_TOGGLE_HDD_WIDGET:
+                    m_retroGraph->toggleHDDWidget();
+                    break;
+                case ID_TOGGLE_CPUSTATS_WIDGET:
+                    m_retroGraph->toggleCPUStatsWidget();
+                    break;
+                case ID_TOGGLE_PROCESS_CPU_WIDGET:
+                    m_retroGraph->toggleCPUProcessWidget();
+                    break;
+                case ID_TOGGLE_PROCESS_RAM_WIDGET:
+                    m_retroGraph->toggleRAMProcessWidget();
+                    break;
+                case ID_TOGGLE_GRAPH_WIDGET:
+                    m_retroGraph->toggleGraphWidget();
+                    break;
+                case ID_TOGGLE_SYSTEMSTATS_WIDGET:
+                    m_retroGraph->toggleSystemStatsWidget();
+                    break;
+                case ID_TOGGLE_MAIN_WIDGET:
+                    m_retroGraph->toggleMainWidget();
                     break;
                 default:
                     // Default case handles monitor selection list

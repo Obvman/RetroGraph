@@ -48,6 +48,7 @@ public:
     void updateWindowSize(int32_t newWidth, int32_t newHeight);
 
     void needsRedraw() const { m_systemStatsWidget.needsRedraw(); }
+
 private:
     void setViewports(int32_t windowWidth, int32_t windowHeight);
     Viewport calcViewport(WidgetPosition pos,

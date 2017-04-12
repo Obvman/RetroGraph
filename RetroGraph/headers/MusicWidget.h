@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "drawUtils.h"
 
 namespace rg {
@@ -10,7 +12,7 @@ class MusicMeasure;
 class MusicWidget {
 public:
     MusicWidget(const FontManager* fontManager,
-                const MusicMeasure* musicMeasure,
+                const std::unique_ptr<MusicMeasure>& musicMeasure,
                 bool visible) :
         m_fontManager{ fontManager }, m_visible{ visible }, 
         m_musicMeasure{ musicMeasure } {}
@@ -22,12 +24,14 @@ public:
     void draw() const;
 
     void setViewport(Viewport vp) { m_viewport = vp; };
+
+    void clear() const;
 private:
     const FontManager* m_fontManager{ nullptr };
     Viewport m_viewport{ };
     bool m_visible{ true };
 
-    const MusicMeasure* m_musicMeasure{ nullptr };
+    const std::unique_ptr<MusicMeasure>& m_musicMeasure{ nullptr };
 };
 
 }

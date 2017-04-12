@@ -1,5 +1,3 @@
-LEAKING HANDLES LIKE A MOTHERFUCKER
-
 use gl lists to draw things like graph grids
 
 Widgets: Allow free position (x, y coords), full alignment options 
