@@ -85,10 +85,14 @@ void ProcessMeasure::update(uint32_t ticks) {
 
             // Check for processes that have exited and remove them from the list
             auto exitCode = DWORD{ 1U };
-            GetExitCodeProcess(pHandle, &exitCode);
+            if (!GetExitCodeProcess(pHandle, &exitCode)) {
+                const auto error{ GetLastError() };
+                std::cout << "Failed to retreive exit code of process. Error: " << std::to_string(error) << '\n';
+                CloseHandle(pHandle);
+                continue;
+            }
             if (exitCode == 0 || exitCode == 1) {
                 it = m_allProcessData.erase(it);
-                CloseHandle(pHandle);
             } else {
                 // Get new timing information and calculate the CPU usage
                 const auto cpuUsage{ calculateCPUUsage(pHandle, pd) };
@@ -353,6 +357,10 @@ void ProcessMeasure::detectNewProcesses() {
                 auto nameBuff{ new char[spi->ImageName.Length] };
                 wcstombs_s(&charsConverted, nameBuff, spi->ImageName.Length,
                            spi->ImageName.Buffer, spi->ImageName.Length);
+                if (pHandle == (HANDLE)0xdddddddd) {
+                    std::cout << nameBuff << ": " << procID << ": " << pHandle << '\n';
+                }
+
 
                 m_allProcessData.emplace_back(std::make_shared<ProcessData>(
                     pHandle,

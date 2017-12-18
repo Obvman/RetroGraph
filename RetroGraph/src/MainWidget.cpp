@@ -45,11 +45,15 @@ public:
 private:
 };
 
+void MainWidget::clear() const {
+    glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
+    scissorClear(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
+}
+
 void MainWidget::draw() const {
     if (!m_visible) return;
 
-    glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
-    scissorClear(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
+    clear();
 
     glColor4f(DIVIDER_R, DIVIDER_G, DIVIDER_B, DIVIDER_A);
     drawTopSerifLine(-1.0f, 1.0f);
@@ -67,6 +71,15 @@ void MainWidget::draw() const {
 
     p2.x -= 0.01f;
     p2.y -= 0.01f;
+}
+
+void MainWidget::setVisibility(bool b) {
+    m_visible = b;
+    if (m_visible) {
+        draw();
+    } else {
+        clear();
+    }
 }
 
 }

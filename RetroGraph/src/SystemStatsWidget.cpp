@@ -38,12 +38,15 @@ SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
     m_statsStrings.emplace_back("LAN IP: " + netMeasure->getAdapterIP());
 }
 
-void SystemStatsWidget::draw() const {
-    if (!m_needsRedraw || !m_visible) return;
-
+void SystemStatsWidget::clear() const {
     glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
-    scissorClear(m_viewport.x, m_viewport.y,
-                 m_viewport.width, m_viewport.height);
+    scissorClear(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
+}
+
+void SystemStatsWidget::draw() const {
+    if (/*!m_needsRedraw ||*/ !m_visible) return;
+
+    clear();
 
     drawWidgetBackground();
 
@@ -59,6 +62,15 @@ void SystemStatsWidget::draw() const {
                                15, 10);
 
     m_needsRedraw = false;
+}
+
+void SystemStatsWidget::setVisibility(bool b) {
+    m_visible = b;
+    if (m_visible) {
+        draw();
+    } else {
+        clear();
+    }
 }
 
 }

@@ -37,7 +37,7 @@ public:
     const RAMMeasure& getRAMMeasure() const { return m_ramMeasure; }
     const NetMeasure& getNetMeasure() const { return m_netMeasure; }
     const ProcessMeasure& getProcessMeasure() const { return m_processMeasure; }
-    const DriveMeasure& getDriveMeasure() const { return m_driveMeasure; }
+    const std::unique_ptr<DriveMeasure>& getDriveMeasure() const { return m_driveMeasure; }
     const std::unique_ptr<MusicMeasure>& getMusicMeasure() const { return m_musicMeasure; }
     const SystemMeasure& getSystemMeasure() const { return m_systemMeasure; }
     const UserSettings& getUserSettings() const { return m_userSettings; }
@@ -67,7 +67,7 @@ private:
     RAMMeasure m_ramMeasure;
     NetMeasure m_netMeasure;
     ProcessMeasure m_processMeasure;
-    DriveMeasure m_driveMeasure;
+    std::unique_ptr<DriveMeasure> m_driveMeasure;
     std::unique_ptr<MusicMeasure> m_musicMeasure;
     SystemMeasure m_systemMeasure;
 
@@ -77,7 +77,7 @@ private:
     bool m_HDDWidgetEnabled{ true };
     bool m_cpuStatsWidgetEnabled{ true };
     bool m_cpuProcessWidgetEnabled{ true };
-    bool m_ramProcesssWidgetEnabled{ true };
+    bool m_ramProcessWidgetEnabled{ true };
     bool m_graphWidgetEnabled{ true };
     bool m_mainWidgetEnabled{ true };
     bool m_musicWidgetEnabled{ true };

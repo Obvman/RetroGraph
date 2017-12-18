@@ -19,11 +19,16 @@ void CPUStatsWidget::setViewport(Viewport vp) {
         m_viewport.width, m_viewport.height/2 };
 };
 
+void CPUStatsWidget::clear() const {
+    glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
+    scissorClear(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
+}
+
 void CPUStatsWidget::draw() const {
     if (!m_visible) return;
 
-    glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
-    scissorClear(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
+    clear();
+
     drawWidgetBackground();
 
     if (m_cpuMeasure->getCoreTempInfoSuccess()) {
@@ -114,6 +119,15 @@ void CPUStatsWidget::drawCoreGraphs() const {
         m_fontManager->renderLine(RG_FONT_MUSIC_LARGE, tempBuff, 0, 0, 0, 0,
                                   RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_CENTERED_VERTICAL,
                                   0, 0);
+    }
+}
+
+void CPUStatsWidget::setVisibility(bool b) {
+    m_visible = b;
+    if (m_visible) {
+        draw();
+    } else {
+        clear();
     }
 }
 

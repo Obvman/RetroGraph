@@ -24,10 +24,11 @@ public:
     GraphWidget& operator=(const GraphWidget&) = delete;
 
     void draw() const;
+    void clear() const;
 
     void setViewport(Viewport vp);
 
-    void setVisible(bool b) { m_visible = b; }
+    void setVisibility(bool b);
 private:
     void drawCpuGraph() const;
     void drawRamGraph() const;

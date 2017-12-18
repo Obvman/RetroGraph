@@ -44,7 +44,7 @@ private:
     /* Creates and displays program icon in the system tray */
     void createTrayIcon();
 
-    void createRClickMenu(HWND hWnd, int32_t spawnX, int32_t spawnY);
+    void createRClickMenu(HWND hWnd);
 
     /* Moves the window to the specified monitor and resizes elements to fit
      * the monitor

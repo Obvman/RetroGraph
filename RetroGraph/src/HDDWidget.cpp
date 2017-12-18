@@ -10,13 +10,15 @@
 
 namespace rg {
 
-void HDDWidget::draw() const {
-    if (!m_visible) return;
+void HDDWidget::clear() const {
+    glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
+    scissorClear(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
+}
 
-    glViewport(m_viewport.x, m_viewport.y,
-               m_viewport.width, m_viewport.height);
-    scissorClear(m_viewport.x, m_viewport.y,
-               m_viewport.width, m_viewport.height);
+void HDDWidget::draw() const {
+    if (!m_visible || !m_driveMeasure) return;
+
+    clear();
 
     drawWidgetBackground();
 
@@ -47,6 +49,15 @@ void HDDWidget::draw() const {
                 static_cast<float>(drives[i]->totalBytes -
                     drives[i]->totalFreeBytes),
                 static_cast<float>(drives[i]->totalBytes));
+    }
+}
+
+void HDDWidget::setVisibility(bool b) {
+    m_visible = b;
+    if (m_visible) {
+        draw();
+    } else {
+        clear();
     }
 }
 

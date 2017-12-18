@@ -38,8 +38,6 @@ constexpr int32_t ID_TOGGLE_MAIN_WIDGET{ 13 };
 constexpr int32_t ID_TOGGLE_MUSIC_WIDGET{ 14 };
 constexpr int32_t ID_CHANGE_DISPLAY_MONITOR{ 15 };
 
-LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
     // Get the Window pointer from the handle, and call the alternate WndProc
@@ -70,8 +68,8 @@ void Window::runTest() {
 
     /* SetWindowPos(windowHandle, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE); */
 
-    /* Start a linux subsystem bash shell */
-    STARTUPINFO si;
+    // Start a linux subsystem bash shell
+    /*STARTUPINFO si;
     PROCESS_INFORMATION pi;
     ZeroMemory(&si, sizeof(si));
     si.cb = sizeof(si);
@@ -84,7 +82,7 @@ void Window::runTest() {
                        nullptr, &si, &pi)) {
 
         printf("CreateProcess failed: %d\n", GetLastError());
-    }
+    }*/
 }
 
 Window::Window(RetroGraph* rg_, HINSTANCE hInstance, int32_t startupMonitor,
@@ -103,7 +101,7 @@ Window::Window(RetroGraph* rg_, HINSTANCE hInstance, int32_t startupMonitor,
 }
 
 Window::~Window() {
-    std::cout << "Window releasing\n";
+    printf("Window releasing\n");
 
     wglMakeCurrent(nullptr, nullptr);
     wglDeleteContext(m_hrc);
@@ -174,8 +172,7 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
                     std::numeric_limits<uint16_t>::max();
             }
 
-            createRClickMenu(reinterpret_cast<HWND>(wParam),
-                             contextSpawnX, contextSpawnY);
+            createRClickMenu(reinterpret_cast<HWND>(wParam));
             return 0;
         }
         case WM_NCHITTEST: {
@@ -245,15 +242,43 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-void Window::createRClickMenu(HWND hWnd, int32_t spawnX, int32_t spawnY) {
+void Window::createRClickMenu(HWND hWnd) {
+    POINT p;
+    GetCursorPos(&p);
+    SetForegroundWindow(hWnd);
+
+    // Create options for popup menu
     auto hPopupMenu{ CreatePopupMenu() };
-    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_EXIT, "Exit");
-    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_SEND_TO_BACK, 
-            "Send to back");
-    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_RESET_POSITION,
-            "Reset Position");
-    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_SET_WIDGET_BG,
-            "Toggle Widget Background");
+    auto widgetSubmenu{ CreatePopupMenu() };
+
+    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_EXIT,
+            "Exit");
+    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
+            ID_SEND_TO_BACK, "Send to back");
+    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
+            ID_SET_WIDGET_BG, "Toggle Widget Background");
+    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
+            ID_TEST, "Test");
+    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)widgetSubmenu, "Toggle Widgets");
+
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
+            ID_TOGGLE_TIME_WIDGET, "Time Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
+            ID_TOGGLE_HDD_WIDGET, "HDD Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
+            ID_TOGGLE_CPUSTATS_WIDGET, "CPU Stats Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
+            ID_TOGGLE_PROCESS_CPU_WIDGET, "Cpu Process Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
+            ID_TOGGLE_PROCESS_RAM_WIDGET, "Ram Process Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
+            ID_TOGGLE_GRAPH_WIDGET, "Graph Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
+            ID_TOGGLE_SYSTEMSTATS_WIDGET, "System Stats Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
+            ID_TOGGLE_MAIN_WIDGET, "Main Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
+            ID_TOGGLE_MUSIC_WIDGET, "Music Widget");
 
     // Create an option for each monitor for multi-monitor systems
     const auto& md{ m_monitors.getMonitorData() };
@@ -267,8 +292,63 @@ void Window::createRClickMenu(HWND hWnd, int32_t spawnX, int32_t spawnY) {
     }
 
     // Display menu and wait for user's selection
-    TrackPopupMenuEx(hPopupMenu, TPM_TOPALIGN | TPM_LEFTALIGN |
-            TPM_RIGHTBUTTON, spawnX, spawnY, hWnd, nullptr);
+    const int32_t selection{ TrackPopupMenuEx(hPopupMenu, TPM_TOPALIGN
+                                              | TPM_LEFTALIGN |
+                                              TPM_RIGHTBUTTON |
+                                              TPM_RETURNCMD, p.x, p.y,
+                                              hWnd, nullptr) };
+
+    switch (selection) {
+        case ID_EXIT:
+            // SendMessage(hWnd, WM_QUIT, wParam, lParam);
+            SendMessage(hWnd, WM_QUIT, 0, 0);
+            break;
+        case ID_SEND_TO_BACK: {
+            RECT wndRect;
+            GetWindowRect(hWnd, &wndRect);
+            SetWindowPos(hWnd, HWND_BOTTOM, wndRect.left, wndRect.top,
+                         m_width, m_height, 0);
+            break;
+        }
+        case ID_SET_WIDGET_BG:
+            g_widgetBGVisible = !g_widgetBGVisible;
+            m_retroGraph->needsRedraw();
+            break;
+        case ID_TEST:
+            runTest();
+            break;
+        case ID_TOGGLE_MUSIC_WIDGET:
+            m_retroGraph->toggleMusicWidget();
+            break;
+        case ID_TOGGLE_TIME_WIDGET:
+            m_retroGraph->toggleTimeWidget();
+            break;
+        case ID_TOGGLE_HDD_WIDGET:
+            m_retroGraph->toggleHDDWidget();
+            break;
+        case ID_TOGGLE_CPUSTATS_WIDGET:
+            m_retroGraph->toggleCPUStatsWidget();
+            break;
+        case ID_TOGGLE_PROCESS_CPU_WIDGET:
+            m_retroGraph->toggleCPUProcessWidget();
+            break;
+        case ID_TOGGLE_PROCESS_RAM_WIDGET:
+            m_retroGraph->toggleRAMProcessWidget();
+            break;
+        case ID_TOGGLE_GRAPH_WIDGET:
+            m_retroGraph->toggleGraphWidget();
+            break;
+        case ID_TOGGLE_SYSTEMSTATS_WIDGET:
+            m_retroGraph->toggleSystemStatsWidget();
+            break;
+        case ID_TOGGLE_MAIN_WIDGET:
+            m_retroGraph->toggleMainWidget();
+            break;
+        default:
+            // Default case handles monitor selection list
+            changeMonitor(hWnd, selection - ID_CHANGE_DISPLAY_MONITOR);
+            break;
+    }
 }
 
 void Window::handleClick(DWORD clickX, DWORD clickY) {
@@ -315,109 +395,7 @@ void Window::handleTrayMessage(HWND hWnd, WPARAM wParam, LPARAM lParam) {
             SetForegroundWindow(hWnd);
             break;
         case WM_RBUTTONUP: {
-            POINT p;
-            GetCursorPos(&p);
-            SetForegroundWindow(hWnd);
-
-            // TODO merge this with createRClickMenu to reduce duplication
-
-            // Create options for popup menu
-            auto hPopupMenu{ CreatePopupMenu() };
-            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_EXIT,
-                    "Exit");
-            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
-                    ID_SEND_TO_BACK, "Send to back");
-            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
-                    ID_SET_WIDGET_BG, "Toggle Widget Background");
-            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
-                    ID_TEST, "Test");
-            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
-                    ID_TOGGLE_TIME_WIDGET, "Toggle Time Widget");
-            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
-                    ID_TOGGLE_HDD_WIDGET, "Toggle HDD Widget");
-            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
-                    ID_TOGGLE_CPUSTATS_WIDGET, "Toggle CPU Stats Widget");
-            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
-                    ID_TOGGLE_PROCESS_CPU_WIDGET, "Toggle Cpu Process Widget");
-            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
-                    ID_TOGGLE_PROCESS_RAM_WIDGET, "Toggle Ram Process Widget");
-            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
-                    ID_TOGGLE_GRAPH_WIDGET, "Toggle Graph Widget");
-            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
-                    ID_TOGGLE_SYSTEMSTATS_WIDGET, "Toggle System Stats Widget");
-            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
-                    ID_TOGGLE_MAIN_WIDGET, "Toggle Main Widget");
-            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
-                    ID_TOGGLE_MUSIC_WIDGET, "Toggle Music Widget");
-
-            // Create an option for each monitor for multi-monitor systems
-            const auto& md{ m_monitors.getMonitorData() };
-            if (m_monitors.getNumMonitors() > 1) {
-                for (auto i = size_t{ 0U }; i < md.size(); ++i) {
-                    char optionName[] = "Move to display 0";
-                    optionName[16] = '0' + static_cast<char>(i);
-                    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
-                            ID_CHANGE_DISPLAY_MONITOR + i, optionName);
-                }
-            }
-
-            // Display menu and wait for user's selection
-            const int32_t selection{ TrackPopupMenuEx(hPopupMenu, TPM_TOPALIGN
-                                                      | TPM_LEFTALIGN |
-                                                      TPM_RIGHTBUTTON |
-                                                      TPM_RETURNCMD, p.x, p.y,
-                                                      hWnd, nullptr) };
-
-            switch (selection) {
-                case ID_EXIT:
-                    SendMessage(hWnd, WM_QUIT, wParam, lParam);
-                    break;
-                case ID_SEND_TO_BACK:
-                    RECT wndRect;
-                    GetWindowRect(hWnd, &wndRect);
-                    SetWindowPos(hWnd, HWND_BOTTOM, wndRect.left, wndRect.top,
-                                 m_width, m_height, 0);
-                    break;
-                case ID_SET_WIDGET_BG:
-                    g_widgetBGVisible = !g_widgetBGVisible;
-                    m_retroGraph->needsRedraw();
-                    break;
-                case ID_TEST:
-                    runTest();
-                    break;
-                case ID_TOGGLE_MUSIC_WIDGET:
-                    m_retroGraph->toggleMusicWidget();
-                    break;
-                case ID_TOGGLE_TIME_WIDGET:
-                    m_retroGraph->toggleTimeWidget();
-                    break;
-                case ID_TOGGLE_HDD_WIDGET:
-                    m_retroGraph->toggleHDDWidget();
-                    break;
-                case ID_TOGGLE_CPUSTATS_WIDGET:
-                    m_retroGraph->toggleCPUStatsWidget();
-                    break;
-                case ID_TOGGLE_PROCESS_CPU_WIDGET:
-                    m_retroGraph->toggleCPUProcessWidget();
-                    break;
-                case ID_TOGGLE_PROCESS_RAM_WIDGET:
-                    m_retroGraph->toggleRAMProcessWidget();
-                    break;
-                case ID_TOGGLE_GRAPH_WIDGET:
-                    m_retroGraph->toggleGraphWidget();
-                    break;
-                case ID_TOGGLE_SYSTEMSTATS_WIDGET:
-                    m_retroGraph->toggleSystemStatsWidget();
-                    break;
-                case ID_TOGGLE_MAIN_WIDGET:
-                    m_retroGraph->toggleMainWidget();
-                    break;
-                default:
-                    // Default case handles monitor selection list
-                     changeMonitor(hWnd, selection - ID_CHANGE_DISPLAY_MONITOR);
-                     break;
-            }
-
+            createRClickMenu(hWnd);
             break;
         }
         default:
@@ -495,6 +473,8 @@ void Window::initOpenGL() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
 
+    std::cout << "Opengl version: " << glGetString(GL_VERSION) << '\n';
+    std::cout << glGetString(GL_VENDOR) << ' ' << glGetString(GL_RENDERER) << '\n';
 }
 
 bool Window::createHGLRC() {
@@ -508,14 +488,34 @@ bool Window::createHGLRC() {
     const char* windowName{ "RetroGraph" };
 #endif
 
-    if (m_arbMultisampleSupported) {
+    // TODO This is the original setup
+    /*if (m_arbMultisampleSupported) {
         const DWORD exStyles = (m_clickthrough) ?
-            WS_EX_TOOLWINDOW | WS_EX_COMPOSITED | WS_EX_TRANSPARENT | WS_EX_LAYERED :
+            WS_EX_TRANSPARENT | WS_EX_COMPOSITED | WS_EX_TOOLWINDOW | WS_EX_LAYERED :
             WS_EX_TRANSPARENT | WS_EX_COMPOSITED;
 
         // Create main window with clicking through to windows underneath, 
         // no taskbar display, and transparency
-        m_hWndMain = CreateWindowEx( exStyles, "RetroGraph", windowName,
+        m_hWndMain = CreateWindowEx(exStyles, "RetroGraph", windowName,
+                WS_VISIBLE | WS_POPUP,
+                m_startPosX, m_startPosY, m_width, m_height,
+                nullptr, nullptr, m_hInstance, nullptr);
+    } else {
+        // Create test window that doesn't appear in taskbar to query
+        // anti-aliasing capabilities
+        m_hWndMain = CreateWindowEx(WS_EX_TOOLWINDOW | WS_EX_TRANSPARENT,
+                "RetroGraph", "Dummy",
+                WS_VISIBLE | WS_POPUP,
+                m_startPosX, m_startPosY, m_width, m_height,
+                nullptr, nullptr, m_hInstance, nullptr);
+    }*/
+
+    if (m_arbMultisampleSupported) {
+        const DWORD exStyles = WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW;
+
+        // Create main window with clicking through to windows underneath, 
+        // no taskbar display, and transparency
+        m_hWndMain = CreateWindowEx(exStyles, "RetroGraph", windowName,
                 WS_VISIBLE | WS_POPUP,
                 m_startPosX, m_startPosY, m_width, m_height,
                 nullptr, nullptr, m_hInstance, nullptr);
@@ -532,11 +532,9 @@ bool Window::createHGLRC() {
     // Store a pointer to this Window object so we can reference members in WndProc
     SetWindowLong(m_hWndMain, GWLP_USERDATA, (LONG)this);
 
-    #if (!_DEBUG)
     // Display window at the desktop layer on startup
     SetWindowPos(m_hWndMain, HWND_BOTTOM, 
             m_startPosX, m_startPosY, m_width, m_height, 0);
-    #endif
 
     if(!m_hWndMain) {
         fatalMessageBox("CreateWindowEx - failed");

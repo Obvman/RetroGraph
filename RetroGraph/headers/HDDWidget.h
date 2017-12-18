@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "drawUtils.h"
 
 namespace rg {
@@ -9,7 +11,7 @@ class DriveMeasure;
 
 class HDDWidget {
 public:
-    HDDWidget(const FontManager* fontManager, const DriveMeasure* driveMeasure,
+    HDDWidget(const FontManager* fontManager, const std::unique_ptr<DriveMeasure>& driveMeasure,
               bool visible) :
         m_fontManager{ fontManager }, m_visible{ visible },
         m_driveMeasure{ driveMeasure } {}
@@ -19,16 +21,16 @@ public:
     HDDWidget& operator=(const HDDWidget&) = delete;
 
     void draw() const;
+    void clear() const;
 
     void setViewport(Viewport vp) { m_viewport = vp; };
-
-    void setVisible(bool b) { m_visible = b; }
+    void setVisibility(bool b);
 private:
     const FontManager* m_fontManager{ nullptr };
     Viewport m_viewport{ };
     bool m_visible{ true };
 
-    const DriveMeasure* m_driveMeasure{ nullptr };
+    const std::unique_ptr<DriveMeasure>& m_driveMeasure{ nullptr };
 };
 
 }

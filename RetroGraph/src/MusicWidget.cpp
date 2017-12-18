@@ -19,9 +19,9 @@ void MusicWidget::clear() const {
 }
 
 void MusicWidget::draw() const {
-    clear();
-
     if (!m_visible || !m_musicMeasure) return;
+
+    clear();
 
     drawWidgetBackground();
 
@@ -89,6 +89,15 @@ void createFormattedTimeStr(char* buffer, size_t buffSize, uint32_t seconds) {
         snprintf(buffer, buffSize, "%02d:%02d", M, S);
     } else {
         snprintf(buffer, buffSize, "00:%02d", seconds);
+    }
+}
+
+void MusicWidget::setVisibility(bool b) {
+    m_visible = b;
+    if (m_visible) {
+        draw();
+    } else {
+        clear();
     }
 }
 

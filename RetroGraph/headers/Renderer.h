@@ -49,6 +49,8 @@ public:
 
     void needsRedraw() const { m_systemStatsWidget.needsRedraw(); }
 
+    void setWidgetVisibility(Widget w, bool v);
+
 private:
     void setViewports(int32_t windowWidth, int32_t windowHeight);
     Viewport calcViewport(WidgetPosition pos,

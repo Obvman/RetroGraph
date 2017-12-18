@@ -23,7 +23,7 @@ Renderer::Renderer(const Window& w, const RetroGraph& _rg,
     m_fontManager{ w.getHwnd(), w.getHeight() },
     m_timeWidget{ &m_fontManager, &_rg.getCPUMeasure(), &_rg.getNetMeasure(),
                   m_settings->isVisible(RG_WIDGET_TIME) },
-    m_hddWidget{ &m_fontManager, &_rg.getDriveMeasure(), 
+    m_hddWidget{ &m_fontManager, _rg.getDriveMeasure(), 
                  m_settings->isVisible(RG_WIDGET_DRIVES) },
     m_cpuStatsWidget{ &m_fontManager, &_rg.getCPUMeasure(),
                       m_settings->isVisible(RG_WIDGET_CPU_STATS) },
@@ -76,6 +76,38 @@ void Renderer::updateWindowSize(int32_t newWidth, int32_t newHeight) {
     m_fontManager.refreshFonts(newHeight);
 
     m_systemStatsWidget.needsRedraw();
+}
+
+void Renderer::setWidgetVisibility(Widget w, bool v) {
+    switch (w) {
+        case Widget::CPUStats:
+            m_cpuStatsWidget.setVisibility(v);
+            break;
+        case Widget::Time:
+            m_timeWidget.setVisibility(v);
+            break;
+        case Widget::HDD:
+            m_hddWidget.setVisibility(v);
+            break;
+        case Widget::ProcessRAM:
+            m_processRAMWidget.setVisibility(v);
+            break;
+        case Widget::ProcessCPU:
+            m_processCPUWidget.setVisibility(v);
+            break;
+        case Widget::Graph:
+            m_graphWidget.setVisibility(v);
+            break;
+        case Widget::SystemStats:
+            m_systemStatsWidget.setVisibility(v);
+            break;
+        case Widget::Main:
+            m_mainWidget.setVisibility(v);
+            break;
+        case Widget::Music:
+            m_musicWidget.setVisibility(v);
+            break;
+    }
 }
 
 /********************* Private Functions ********************/

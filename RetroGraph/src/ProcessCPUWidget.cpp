@@ -10,11 +10,15 @@
 
 namespace rg {
 
+void ProcessCPUWidget::clear() const {
+    glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
+    scissorClear(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
+}
+
 void ProcessCPUWidget::draw() const {
     if (!m_visible) return;
 
-    glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
-    scissorClear(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
+    clear();
 
     drawWidgetBackground();
 
@@ -45,6 +49,15 @@ void ProcessCPUWidget::draw() const {
     m_fontManager->renderLines(RG_FONT_STANDARD, procPercentages, 0, 0, 0, 0,
                                RG_ALIGN_RIGHT | RG_ALIGN_CENTERED_VERTICAL,
                                15, 5);
+}
+
+void ProcessCPUWidget::setVisibility(bool b) {
+    m_visible = b;
+    if (m_visible) {
+        draw();
+    } else {
+        clear();
+    }
 }
 
 }

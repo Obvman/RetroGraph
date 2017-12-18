@@ -2,6 +2,11 @@ use gl lists to draw things like graph grids
 
 Enable disabling widgets from config file
 
+Volume + Audio device widget
+
+toggle rest of widgets from menu
+	- have toggles in separate dropdown menu
+
 Handle invalid monitor selections
 
 Widgets: Allow free position (x, y coords), full alignment options 

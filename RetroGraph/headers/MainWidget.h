@@ -15,10 +15,11 @@ public:
     MainWidget& operator=(const MainWidget&) = delete;
 
     void draw() const;
+    void clear() const;
 
     void setViewport(Viewport vp) { m_viewport = vp; };
 
-    void setVisible(bool b) { m_visible = b; }
+    void setVisibility(bool b);
 private:
 
     const FontManager* m_fontManager{ nullptr };

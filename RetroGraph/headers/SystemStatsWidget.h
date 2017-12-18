@@ -24,10 +24,11 @@ public:
     SystemStatsWidget& operator=(const SystemStatsWidget&) = delete;
 
     void draw() const;
+    void clear() const;
 
     void setViewport(Viewport vp) { m_viewport = vp; };
 
-    void setVisible(bool b) { m_visible = b; }
+    void setVisibility(bool b);
 
     void needsRedraw() const { m_needsRedraw = true; }
 private:

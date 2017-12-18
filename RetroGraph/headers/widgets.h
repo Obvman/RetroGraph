@@ -14,6 +14,10 @@ enum class WidgetPosition : uint8_t {
     BOT_RIGHT
 };
 
+enum class Widget {
+    Time, HDD, CPUStats, ProcessRAM, ProcessCPU, Graph, SystemStats, Main, Music
+};
+
 constexpr size_t RG_WIDGET_PROCESSES_RAM{ 0U };
 constexpr size_t RG_WIDGET_PROCESSES_CPU{ 1U };
 constexpr size_t RG_WIDGET_TIME{ 2U };

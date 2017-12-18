@@ -26,6 +26,8 @@ public:
     void setViewport(Viewport vp) { m_viewport = vp; };
 
     void clear() const;
+
+    void setVisibility(bool v);
 private:
     const FontManager* m_fontManager{ nullptr };
     Viewport m_viewport{ };

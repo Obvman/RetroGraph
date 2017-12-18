@@ -19,10 +19,11 @@ public:
     CPUStatsWidget& operator=(const CPUStatsWidget&) = delete;
 
     void draw() const;
+    void clear() const;
 
     void setViewport(Viewport vp);
 
-    void setVisible(bool b) { m_visible = b; }
+    void setVisibility(bool b);
 private:
     void drawCoreGraphs() const;
     void drawStats() const;

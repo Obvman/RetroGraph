@@ -15,7 +15,7 @@ RetroGraph::RetroGraph(HINSTANCE hInstance) :
     m_ramMeasure{ m_userSettings },
     m_netMeasure{ m_userSettings },
     m_processMeasure{ m_userSettings },
-    m_driveMeasure{ },
+    m_driveMeasure{ std::make_unique<DriveMeasure>() },
     m_musicMeasure{ std::make_unique<MusicMeasure>(&m_processMeasure) },
     m_systemMeasure{ },
     m_renderer{ m_window, *this, m_userSettings } {
@@ -36,7 +36,7 @@ void RetroGraph::update(uint32_t ticks) {
     m_ramMeasure.update(ticks + ++i);
     m_netMeasure.update(ticks + ++i);
     m_processMeasure.update(ticks + ++i);
-    m_driveMeasure.update(ticks + ++i);
+    if (m_driveMeasure) m_driveMeasure->update(ticks + ++i);
     if (m_musicMeasure) m_musicMeasure->update(ticks + ++i);
     m_systemMeasure.update(ticks + ++i);
 }
@@ -61,47 +61,59 @@ void RetroGraph::updateWindowSize(int32_t width, int32_t height) {
 }
 
 void RetroGraph::toggleTimeWidget() {
-
+    m_timeWidgetEnabled = !m_timeWidgetEnabled;
+    m_renderer.setWidgetVisibility(Widget::Time, m_timeWidgetEnabled);
 }
 
 void RetroGraph::toggleHDDWidget() {
-
+    if (m_HDDWidgetEnabled) {
+        // Disable the measure here to free up resources since it's not used anywhere else
+        m_driveMeasure.reset();
+    } else {
+        m_driveMeasure = std::make_unique<DriveMeasure>();
+    }
+    m_HDDWidgetEnabled = !m_HDDWidgetEnabled;
+    m_renderer.setWidgetVisibility(Widget::HDD, m_HDDWidgetEnabled);
 }
 
 void RetroGraph::toggleCPUStatsWidget() {
-
+    m_cpuStatsWidgetEnabled = !m_cpuStatsWidgetEnabled;
+    m_renderer.setWidgetVisibility(Widget::CPUStats, m_cpuStatsWidgetEnabled);
 }
 
 void RetroGraph::toggleCPUProcessWidget() {
-
+    m_cpuProcessWidgetEnabled = !m_cpuProcessWidgetEnabled;
+    m_renderer.setWidgetVisibility(Widget::ProcessCPU, m_cpuProcessWidgetEnabled);
 }
 
 void RetroGraph::toggleRAMProcessWidget() {
-
+    m_ramProcessWidgetEnabled = !m_ramProcessWidgetEnabled;
+    m_renderer.setWidgetVisibility(Widget::ProcessRAM, m_ramProcessWidgetEnabled);
 }
 
 void RetroGraph::toggleGraphWidget() {
-
+    m_graphWidgetEnabled = !m_graphWidgetEnabled;
+    m_renderer.setWidgetVisibility(Widget::Graph, m_graphWidgetEnabled);
 }
 
 void RetroGraph::toggleMainWidget() {
-
+    m_mainWidgetEnabled = !m_mainWidgetEnabled;
+    m_renderer.setWidgetVisibility(Widget::Main, m_mainWidgetEnabled);
 }
 
 void RetroGraph::toggleMusicWidget() {
     if (m_musicWidgetEnabled) {
-        std::cout << "Disabling Music Measure\n";
         m_musicMeasure.reset();
-        m_musicWidgetEnabled = false;
     } else {
-        std::cout << "Enabling Music Measure\n";
         m_musicMeasure = std::make_unique<MusicMeasure>(&m_processMeasure);
-        m_musicWidgetEnabled = true;
     }
+    m_musicWidgetEnabled = !m_musicWidgetEnabled;
+    m_renderer.setWidgetVisibility(Widget::Music, m_musicWidgetEnabled);
 }
 
 void RetroGraph::toggleSystemStatsWidget() {
-
+    m_systemStatsWidgetEnabled = !m_systemStatsWidgetEnabled;
+    m_renderer.setWidgetVisibility(Widget::SystemStats, m_systemStatsWidgetEnabled);
 }
 
 }
