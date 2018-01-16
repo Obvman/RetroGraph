@@ -146,17 +146,21 @@ void drawViewportBorder() {
 }
 
 void drawVerticalProgressBar(float barWidth, float startY, float endY,
-                             float currValue, float totalValue) {
+                             float currValue, float totalValue, bool warningColor) {
     const auto percentage{ currValue / totalValue };
     const auto startX = float{ ((2.0f - barWidth) / 2.0f) - 1.0f };
     const auto rangeY{ endY - startY };
 
     glBegin(GL_QUADS); {
         glColor3f(BARFILLED_R, BARFILLED_G, BARFILLED_B);
+        glVertex2f(startX + barWidth, startY);
         glVertex2f(startX, startY);
+        // Draw high percentages in warning colour gradient
+        if (warningColor && percentage > 0.8f) {
+            glColor4f(WARNING_BAR_R, WARNING_BAR_G, WARNING_BAR_B, 0.4f);
+        }
         glVertex2f(startX, startY + percentage * rangeY);
         glVertex2f(startX + barWidth, startY + percentage * rangeY);
-        glVertex2f(startX + barWidth, startY);
 
         glColor3f(BARFREE_R, BARFREE_G, BARFREE_B);
         glVertex2f(startX, startY + percentage * rangeY);

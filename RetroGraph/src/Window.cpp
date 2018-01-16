@@ -83,6 +83,9 @@ void Window::runTest() {
 
         printf("CreateProcess failed: %d\n", GetLastError());
     }*/
+
+    // Start foobar2000 process to allow controls
+    system("\"C:\\Program Files\\foobar2000\\foobar2000.exe\" /playpause");
 }
 
 Window::Window(RetroGraph* rg_, HINSTANCE hInstance, int32_t startupMonitor,
@@ -318,31 +321,31 @@ void Window::createRClickMenu(HWND hWnd) {
             runTest();
             break;
         case ID_TOGGLE_MUSIC_WIDGET:
-            m_retroGraph->toggleMusicWidget();
+            m_retroGraph->toggleWidget(Widget::Music);
             break;
         case ID_TOGGLE_TIME_WIDGET:
-            m_retroGraph->toggleTimeWidget();
+            m_retroGraph->toggleWidget(Widget::Time);
             break;
         case ID_TOGGLE_HDD_WIDGET:
-            m_retroGraph->toggleHDDWidget();
+            m_retroGraph->toggleWidget(Widget::HDD);
             break;
         case ID_TOGGLE_CPUSTATS_WIDGET:
-            m_retroGraph->toggleCPUStatsWidget();
+            m_retroGraph->toggleWidget(Widget::CPUStats);
             break;
         case ID_TOGGLE_PROCESS_CPU_WIDGET:
-            m_retroGraph->toggleCPUProcessWidget();
+            m_retroGraph->toggleWidget(Widget::ProcessCPU);
             break;
         case ID_TOGGLE_PROCESS_RAM_WIDGET:
-            m_retroGraph->toggleRAMProcessWidget();
+            m_retroGraph->toggleWidget(Widget::ProcessRAM);
             break;
         case ID_TOGGLE_GRAPH_WIDGET:
-            m_retroGraph->toggleGraphWidget();
+            m_retroGraph->toggleWidget(Widget::Graph);
             break;
         case ID_TOGGLE_SYSTEMSTATS_WIDGET:
-            m_retroGraph->toggleSystemStatsWidget();
+            m_retroGraph->toggleWidget(Widget::SystemStats);
             break;
         case ID_TOGGLE_MAIN_WIDGET:
-            m_retroGraph->toggleMainWidget();
+            m_retroGraph->toggleWidget(Widget::Main);
             break;
         default:
             // Default case handles monitor selection list
@@ -352,6 +355,12 @@ void Window::createRClickMenu(HWND hWnd) {
 }
 
 void Window::handleClick(DWORD clickX, DWORD clickY) {
+    // Check if a media control was clicked and handle it. If one was clicked, 
+    // then don't continue with the dragging checks.
+    if (m_retroGraph->getMusicMeasure()->handleClick(clickX, clickY)) {
+        return;
+    }
+
     // Origin is at top left for click coords, so convert to bottom left
     clickY = m_height - clickY;
 
@@ -388,6 +397,7 @@ void Window::changeMonitor(HWND hWnd, uint32_t monIndex) {
 }
 
 void Window::handleTrayMessage(HWND hWnd, WPARAM wParam, LPARAM lParam) {
+    (void)wParam;
     switch (LOWORD(lParam)) {
         case WM_MBUTTONUP:
             m_running = false;

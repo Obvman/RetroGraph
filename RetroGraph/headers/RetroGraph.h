@@ -15,6 +15,7 @@
 #include "MusicMeasure.h"
 #include "SystemMeasure.h"
 #include "UserSettings.h"
+#include "AnimationState.h"
 
 namespace rg {
 
@@ -41,19 +42,14 @@ public:
     const std::unique_ptr<MusicMeasure>& getMusicMeasure() const { return m_musicMeasure; }
     const SystemMeasure& getSystemMeasure() const { return m_systemMeasure; }
     const UserSettings& getUserSettings() const { return m_userSettings; }
+    const std::unique_ptr<AnimationState>& getAnimationState() const { return m_animationState; }
 
     bool isRunning() const { return m_window.isRunning(); }
 
-    void toggleTimeWidget();
-    void toggleHDDWidget();
-    void toggleCPUStatsWidget();
-    void toggleCPUProcessWidget();
-    void toggleRAMProcessWidget();
-    void toggleGraphWidget();
-    void toggleMainWidget();
-    void toggleMusicWidget();
-    void toggleSystemStatsWidget();
+    void toggleWidget(Widget w);
+
 private:
+
     UserSettings m_userSettings;
 
     Window m_window;
@@ -70,6 +66,7 @@ private:
     std::unique_ptr<DriveMeasure> m_driveMeasure;
     std::unique_ptr<MusicMeasure> m_musicMeasure;
     SystemMeasure m_systemMeasure;
+    std::unique_ptr<AnimationState> m_animationState;
 
     // Measures are shared among widgets so we need these so we know to disable
     // a measure only when there are no widgets using it.

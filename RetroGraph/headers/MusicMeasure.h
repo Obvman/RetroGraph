@@ -26,6 +26,11 @@ public:
      */
     void update(uint32_t ticks);
 
+    /* Checks click coordinates for collision with media controls, returns true if a
+     * media key was successfully clicked 
+     */
+    bool handleClick(int32_t clickX, int32_t clickY) const;
+
     /* Returns true if the music player window is currently running */
     bool isPlayerRunning() const { return m_playerRunning; }
 
@@ -47,7 +52,7 @@ private:
     void scrapeInfoFromTitle();
 
 
-    const char* m_playerTitlePattern{ "foobar2000 v1.3." };
+    const char* m_playerTitlePattern{ "foobar2000 v1." };
 
     const ProcessMeasure* m_processMeasure{ nullptr };
 

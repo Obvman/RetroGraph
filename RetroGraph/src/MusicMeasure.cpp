@@ -41,6 +41,12 @@ void MusicMeasure::update(uint32_t ticks) {
     }
 }
 
+bool MusicMeasure::handleClick(int32_t clickX, int32_t clickY) const {
+    (void)clickX;
+    (void)clickY;
+    return true;
+}
+
 void MusicMeasure::updateTitleString() {
     // Get the title string
     const auto titleLen{ GetWindowTextLength(m_playerHandle) + 1 };

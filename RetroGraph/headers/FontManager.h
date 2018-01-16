@@ -85,7 +85,7 @@ public:
                                          RG_ALIGN_CENTERED_VERTICAL,
                     uint32_t alignMarginX = 10U,
                     uint32_t alignMarginY = 10U) const;
-    /* Renders multiple lines. Requires lines.size() > 1 */
+    /* Renders multiple lines. Assumes lines.size() > 1 */
     void renderLines(RGFONTCODE fontCode,
                      const std::vector<std::string>& lines,
                      uint32_t areaX,

@@ -1,15 +1,17 @@
 #pragma once
 
+#include <memory>
 #include "drawUtils.h"
 
 namespace rg {
 
 class FontManager;
+class AnimationState;
 
 class MainWidget {
 public:
-    MainWidget(const FontManager* fontManager, bool visible) :
-        m_fontManager{ fontManager }, m_visible{ visible } {}
+    MainWidget(const FontManager* fontManager, const std::unique_ptr<AnimationState>& as, bool visible) :
+        m_fontManager{ fontManager }, m_animationState{ as }, m_visible{ visible } { }
     ~MainWidget() noexcept = default;
     MainWidget(const MainWidget&) = delete;
     MainWidget& operator=(const MainWidget&) = delete;
@@ -23,6 +25,7 @@ public:
 private:
 
     const FontManager* m_fontManager{ nullptr };
+    const std::unique_ptr<AnimationState>& m_animationState{ nullptr };
     Viewport m_viewport{ };
     bool m_visible{ true };
 };

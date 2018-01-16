@@ -48,7 +48,7 @@ void HDDWidget::draw() const {
         drawVerticalProgressBar(0.3f, -0.5f, 0.5f,
                 static_cast<float>(drives[i]->totalBytes -
                     drives[i]->totalFreeBytes),
-                static_cast<float>(drives[i]->totalBytes));
+                static_cast<float>(drives[i]->totalBytes), true);
     }
 }
 

@@ -1,5 +1,19 @@
 use gl lists to draw things like graph grids
 
+only update music measure when foobar title is different from prev update
+
+lower bound on the network graph scaling
+
+sum types to store settings (
+struct Setting {
+	union { string s; int n; bool b; };
+	enum Type { Str, Int, Bool };
+	Type tag;
+}
+Do this but with std::variant
+
+foobar media controls - enter foobar path in config file
+
 Enable disabling widgets from config file
 
 Volume + Audio device widget

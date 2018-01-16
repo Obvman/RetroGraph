@@ -37,7 +37,7 @@ Renderer::Renderer(const Window& w, const RetroGraph& _rg,
     m_systemStatsWidget{ &m_fontManager, &_rg.getSystemMeasure(),
                          &_rg.getCPUMeasure(), &_rg.getNetMeasure(),
                          m_settings->isVisible(RG_WIDGET_SYSTEM_STATS) },
-    m_mainWidget{ &m_fontManager, m_settings->isVisible(RG_WIDGET_MAIN) },
+    m_mainWidget{ &m_fontManager, _rg.getAnimationState(), m_settings->isVisible(RG_WIDGET_MAIN) },
     m_musicWidget{ &m_fontManager, _rg.getMusicMeasure(), 
                    m_settings->isVisible(RG_WIDGET_MUSIC) } {
 
@@ -53,6 +53,7 @@ Renderer::~Renderer() {
 }
 
 void Renderer::draw(uint32_t ticks) const {
+    // Render the bulk of widgets at a low FPS to keep light on resources
     constexpr auto framesPerSecond = uint32_t{ 2U };
     if ((ticks % std::lround(
         static_cast<float>(rg::ticksPerSecond)/framesPerSecond)) == 0) {
@@ -66,8 +67,14 @@ void Renderer::draw(uint32_t ticks) const {
         m_processRAMWidget.draw();
         m_graphWidget.draw();
         m_systemStatsWidget.draw();
-        m_mainWidget.draw();
         m_musicWidget.draw();
+    }
+
+    constexpr auto mainWidgetFPS = uint32_t{ 10U };
+    if ((ticks % std::lround(
+        static_cast<float>(rg::ticksPerSecond) / mainWidgetFPS)) == 0) {
+
+        m_mainWidget.draw();
     }
 }
 

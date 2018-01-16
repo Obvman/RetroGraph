@@ -48,6 +48,10 @@ constexpr float WARNING_TEXT_G{ RED_G };
 constexpr float WARNING_TEXT_B{ RED_B };
 constexpr float WARNING_TEXT_A{ 0.7f };
 
+constexpr float WARNING_BAR_R{ 1.0f };
+constexpr float WARNING_BAR_G{ 76.0f / 255.0f };
+constexpr float WARNING_BAR_B{ 76.0f / 255.0f };
+
 constexpr float WBG_R{ 0.0f };
 constexpr float WBG_G{ 0.0f };
 constexpr float WBG_B{ 0.0f };

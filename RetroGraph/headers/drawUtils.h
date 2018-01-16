@@ -51,7 +51,7 @@ void drawViewportBorder();
 
 /* Draws a vertical bar that is centerred horizontally in the current viewport */
 void drawVerticalProgressBar(float barWidth, float startY, float endY,
-                             float currValue, float totalValue);
+                             float currValue, float totalValue, bool warningColor = true);
 
 /* Draws a horizontal bar that is centerred vertically in the current viewport */
 void drawHorizontalProgressBar(float barWidth, float startX, float endX,
