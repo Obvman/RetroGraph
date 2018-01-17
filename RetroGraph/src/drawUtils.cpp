@@ -103,7 +103,7 @@ void drawBorder() {
 }
 
 void drawWidgetBackground() {
-    if (std::get<bool>(UserSettings::inst().getSettingValue("Window.WidgetBackground"))) {
+    if (std::get<bool>(UserSettings::inst().getVal("Window.WidgetBackground"))) {
         glColor4f(WBG_R, WBG_G, WBG_B, WBG_A);
         glBegin(GL_QUADS); {
             glVertex2f(-1.0f,  1.0f);

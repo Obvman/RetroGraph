@@ -27,7 +27,7 @@ public:
     UserSettings(const UserSettings&) = delete;
     UserSettings& operator=(const UserSettings&) = delete;
 
-    settingVariant getSettingValue(const std::string& settingName) const;
+    settingVariant getVal(const std::string& settingName) const;
 
     bool isVisible(size_t w) const { return m_widgetVisibilities[w]; }
     WidgetPosition getWidgetPosition(size_t w) const { return m_widgetPositions[w]; }

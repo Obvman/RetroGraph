@@ -9,13 +9,14 @@
 #include <GL/gl.h>
 
 #include "../headers/units.h"
+#include "../headers/utils.h"
+#include "../headers/UserSettings.h"
 
 namespace rg {
 
-AnimationState::AnimationState() {
-    m_particles = std::vector<Particle>{ };
-    // m_particles.emplace_back(-0.9f, 0.9f, 0.0f, 0.3f, 0.005f);
-    // m_particles.emplace_back( 0.2f, -0.3f, 0.1f, -0.2f, 0.005f );
+AnimationState::AnimationState() : 
+    m_particles{ },
+    m_animationFPS{ std::get<uint32_t>(UserSettings::inst().getVal("Widgets-Main.FPS")) } {
 
     srand(static_cast<uint32_t>(time(nullptr)));
     for (auto i = size_t{ 0U }; i < 100; ++i) {
@@ -30,7 +31,6 @@ AnimationState::~AnimationState() {
 void AnimationState::drawParticles() const {
     for (const auto& p : m_particles) {
         p.draw();
-
 
         // std::vector<const Particle*> collisions{};
         for (const auto& neighbour : m_particles) {
@@ -56,7 +56,7 @@ void AnimationState::drawParticles() const {
 }
 
 void AnimationState::update(uint32_t ticks) {
-    if (ticks % (ticksPerSecond / animationFPS) == 0) {
+    if (ticks % (ticksPerSecond / m_animationFPS) == 0) {
         using clock = std::chrono::high_resolution_clock;
         static auto time_start = clock::now();
 

@@ -27,9 +27,9 @@
 namespace rg {
 
 NetMeasure::NetMeasure() :
-    m_pingServer{ std::get<std::string>(UserSettings::inst().getSettingValue("Network.PingServer")) },
-    m_pingFreqMs{ std::get<uint32_t>(UserSettings::inst().getSettingValue("Network.PingFrequency")) },
-    dataSize{ std::get<uint32_t>(UserSettings::inst().getSettingValue("Widgets-Graphs-Network.NumUsageSamples")) } {
+    m_pingServer{ std::get<std::string>(UserSettings::inst().getVal("Network.PingServer")) },
+    m_pingFreqMs{ std::get<uint32_t>(UserSettings::inst().getVal("Network.PingFrequency")) },
+    dataSize{ std::get<uint32_t>(UserSettings::inst().getVal("Widgets-Graphs-Network.NumUsageSamples")) } {
 
     // Fill data vectors with default values
     m_downBytes.assign(dataSize, 0U);

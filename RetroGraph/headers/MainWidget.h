@@ -16,7 +16,7 @@ public:
     MainWidget(const MainWidget&) = delete;
     MainWidget& operator=(const MainWidget&) = delete;
 
-    void draw() const;
+    void draw(uint32_t ticks) const;
     void clear() const;
 
     void setViewport(Viewport vp) { m_viewport = vp; };

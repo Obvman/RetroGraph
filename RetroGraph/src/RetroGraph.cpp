@@ -7,8 +7,8 @@
 namespace rg {
 
 RetroGraph::RetroGraph(HINSTANCE hInstance) :
-    m_window{ this, hInstance, std::get<int32_t>(UserSettings::inst().getSettingValue("Window.Monitor")), 
-               std::get<bool>(UserSettings::inst().getSettingValue("Window.ClickThrough")) },
+    m_window{ this, hInstance, std::get<int32_t>(UserSettings::inst().getVal("Window.Monitor")), 
+               std::get<bool>(UserSettings::inst().getVal("Window.ClickThrough")) },
     m_cpuMeasure{},
     m_gpuMeasure{},
     m_ramMeasure{},
@@ -42,7 +42,7 @@ void RetroGraph::update(uint32_t ticks) {
 }
 
 void RetroGraph::draw(uint32_t ticks) const {
-    const auto framesPerSecond = uint32_t{ (m_mainWidgetEnabled) ? animationFPS : 2U };
+    const auto framesPerSecond = uint32_t{ (m_mainWidgetEnabled) ? m_animationState->getAnimationFPS() : 2U };
     if ((ticks % std::lround(
         static_cast<float>(rg::ticksPerSecond)/framesPerSecond)) == 0) {
 

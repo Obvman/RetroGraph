@@ -7,6 +7,8 @@
 #include <Windows.h>
 
 #include "../headers/colors.h"
+#include "../headers/units.h"
+#include "../headers/utils.h"
 #include "../headers/FontManager.h"
 #include "../headers/AnimationState.h"
 
@@ -19,8 +21,19 @@ void MainWidget::clear() const {
     scissorClear(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
 }
 
-void MainWidget::draw() const {
-    if (!m_visible) return;
+void MainWidget::draw(uint32_t ticks) const {
+    if (!m_visible) {
+        return;
+    }
+
+    // Only draw if ticks are 0, or we have to draw this
+    // frame to maintain our FPS
+    if (ticks != 0 &&
+        ticks % std::lround(
+            static_cast<float>(rg::ticksPerSecond) /
+            m_animationState->getAnimationFPS()) != 0) {
+        return;
+    }
 
     clear();
 
@@ -45,7 +58,9 @@ void MainWidget::draw() const {
     // glOrtho(m_viewport.x, m_viewport.x + m_viewport.width, m_viewport.y, m_viewport.y + m_viewport.height, 0.0f, 1.0f);
 
     // glMatrixMode(GL_MODELVIEW);
-    m_animationState->drawParticles();
+    // printTimeToExecuteHighRes("Animation Draw", [this]() {
+        m_animationState->drawParticles();
+    // });
 
     // glMatrixMode(GL_PROJECTION);
     // glPopMatrix();
@@ -54,7 +69,7 @@ void MainWidget::draw() const {
 void MainWidget::setVisibility(bool b) {
     m_visible = b;
     if (m_visible) {
-        draw();
+        draw(0);
     } else {
         clear();
     }

@@ -5,8 +5,6 @@
 
 namespace rg {
 
-constexpr uint32_t animationFPS{ 45U };
-
 constexpr float PARTICLE_R{ 0.8f };
 constexpr float PARTICLE_G{ 0.8f };
 constexpr float PARTICLE_B{ 0.8f };
@@ -48,8 +46,14 @@ public:
     void update(uint32_t ticks);
     void drawParticles() const;
 
+    uint32_t getAnimationFPS() const { return m_animationFPS; };
 private:
     std::vector<Particle> m_particles{ };
+    uint32_t m_animationFPS{ 20U };
+
+    // Members for spatial partitioning
+    float m_cellSize{ 0.3f };
+    std::vector<int> m_cells;
 };
 
 }

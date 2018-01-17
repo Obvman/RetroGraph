@@ -34,8 +34,8 @@ typedef struct _SYSTEM_PROCESS_INFO {
 } SYSTEM_PROCESS_INFO, *PSYSTEM_PROCESS_INFO;
 
 ProcessMeasure::ProcessMeasure() :
-    m_numCPUProcessesToDisplay{ std::get<uint32_t>(UserSettings::inst().getSettingValue("Widgets-ProcessesCPU.NumProcessesDisplayed")) },
-    m_numRAMProcessesToDisplay{ std::get<uint32_t>(UserSettings::inst().getSettingValue("Widgets-ProcessesRAM.NumProcessesDisplayed")) } {
+    m_numCPUProcessesToDisplay{ std::get<uint32_t>(UserSettings::inst().getVal("Widgets-ProcessesCPU.NumProcessesDisplayed")) },
+    m_numRAMProcessesToDisplay{ std::get<uint32_t>(UserSettings::inst().getVal("Widgets-ProcessesRAM.NumProcessesDisplayed")) } {
 
 #if !_DEBUG
     // Set the debug privilege in order to gain access to system processes
