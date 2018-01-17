@@ -16,8 +16,8 @@ typedef int (*NvAPI_GPU_GetUsages_t)(NvPhysicalGpuHandle handle, NvU32* usages);
 NvAPI_QueryInterface_t NvAPI_QueryInterface{ nullptr };
 NvAPI_GPU_GetUsages_t NvAPI_GPU_GetUsages{ nullptr };
 
-GPUMeasure::GPUMeasure(const UserSettings& settings) :
-        dataSize{ std::get<uint32_t>(settings.getSettingValue("Widgets-Graphs-GPU.NumUsageSamples")) } {
+GPUMeasure::GPUMeasure() :
+        dataSize{ std::get<uint32_t>(UserSettings::inst().getSettingValue("Widgets-Graphs-GPU.NumUsageSamples")) } {
 
     m_usageData.assign(dataSize, 0.0f);
 

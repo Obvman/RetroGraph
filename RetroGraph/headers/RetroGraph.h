@@ -41,7 +41,6 @@ public:
     const std::unique_ptr<DriveMeasure>& getDriveMeasure() const { return m_driveMeasure; }
     const std::unique_ptr<MusicMeasure>& getMusicMeasure() const { return m_musicMeasure; }
     const SystemMeasure& getSystemMeasure() const { return m_systemMeasure; }
-    const UserSettings& getUserSettings() const { return m_userSettings; }
     const std::unique_ptr<AnimationState>& getAnimationState() const { return m_animationState; }
 
     bool isRunning() const { return m_window.isRunning(); }
@@ -49,8 +48,6 @@ public:
     void toggleWidget(Widget w);
 
 private:
-
-    const UserSettings& m_userSettings;
 
     Window m_window;
 

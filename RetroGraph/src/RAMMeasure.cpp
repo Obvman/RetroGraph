@@ -11,8 +11,8 @@
 
 namespace rg {
 
-RAMMeasure::RAMMeasure(const UserSettings& settings) :
-    dataSize{ std::get<uint32_t>(settings.getSettingValue("Widgets-Graphs-RAM.NumUsageSamples")) } {
+RAMMeasure::RAMMeasure() :
+    dataSize{ std::get<uint32_t>(UserSettings::inst().getSettingValue("Widgets-Graphs-RAM.NumUsageSamples")) } {
 
     // Fill the memory stat struct with system information
     m_memStatus.dwLength = sizeof(m_memStatus);

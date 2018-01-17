@@ -13,7 +13,7 @@ class UserSettings;
 /* Stores capacity totals and availability for system RAM */
 class RAMMeasure {
 public:
-    RAMMeasure(const UserSettings& settings);
+    RAMMeasure();
     ~RAMMeasure() noexcept = default;
     RAMMeasure(const RAMMeasure&) = delete;
     RAMMeasure& operator=(const RAMMeasure&) = delete;

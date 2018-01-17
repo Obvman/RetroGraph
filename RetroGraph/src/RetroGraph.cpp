@@ -7,21 +7,20 @@
 namespace rg {
 
 RetroGraph::RetroGraph(HINSTANCE hInstance) :
-    m_userSettings{ UserSettings::inst() },
-    m_window{ this, hInstance, std::get<int32_t>(m_userSettings.getSettingValue("Window.Monitor")), 
-               std::get<bool>(m_userSettings.getSettingValue("Window.ClickThrough")) },
-    m_cpuMeasure{ m_userSettings },
-    m_gpuMeasure{ m_userSettings },
-    m_ramMeasure{ m_userSettings },
-    m_netMeasure{ m_userSettings },
-    m_processMeasure{ m_userSettings },
+    m_window{ this, hInstance, std::get<int32_t>(UserSettings::inst().getSettingValue("Window.Monitor")), 
+               std::get<bool>(UserSettings::inst().getSettingValue("Window.ClickThrough")) },
+    m_cpuMeasure{},
+    m_gpuMeasure{},
+    m_ramMeasure{},
+    m_netMeasure{},
+    m_processMeasure{},
     m_driveMeasure{ std::make_unique<DriveMeasure>() },
     m_musicMeasure{ std::make_unique<MusicMeasure>(&m_processMeasure) },
     m_systemMeasure{ },
     m_animationState{ std::make_unique<AnimationState>() },
-    m_renderer{ m_window, *this, m_userSettings } {
+    m_renderer{ m_window, *this } {
 
-    g_widgetBGVisible = std::get<bool>(m_userSettings.getSettingValue("Window.WidgetBackground"));
+    g_widgetBGVisible = std::get<bool>(UserSettings::inst().getSettingValue("Window.WidgetBackground"));
 
     update(0);
     draw(0);

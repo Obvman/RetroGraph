@@ -20,8 +20,8 @@ unsigned long long FileTimeToInt64(const FILETIME & ft) {
         | ((unsigned long long)ft.dwLowDateTime);
 }
 
-CPUMeasure::CPUMeasure(const UserSettings& settings) :
-    dataSize{ std::get<uint32_t>(settings.getSettingValue("Widgets-Graphs-CPU.NumUsageSamples")) } {
+CPUMeasure::CPUMeasure() :
+    dataSize{ std::get<uint32_t>(UserSettings::inst().getSettingValue("Widgets-Graphs-CPU.NumUsageSamples")) } {
 
     // Fill CPU name if CoreTemp interfacing was successful
     if (m_cpuName.size() == 0 && m_coreTempPlugin.getCoreTempInfoSuccess()) {

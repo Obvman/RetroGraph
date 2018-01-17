@@ -17,7 +17,7 @@ class UserSettings;
 /* Tracks system processes and their CPU/RAM usage */
 class ProcessMeasure {
 public:
-    ProcessMeasure(const UserSettings& settings);
+    ProcessMeasure();
     ~ProcessMeasure() noexcept = default;
     ProcessMeasure(const ProcessMeasure&) = delete;
     ProcessMeasure& operator=(const ProcessMeasure&) = delete;

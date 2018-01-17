@@ -16,7 +16,7 @@ class UserSettings;
 /* Measures statistics about the system CPU: Model name, total CPU load*/
 class CPUMeasure {
 public:
-    CPUMeasure(const UserSettings& settings);
+    CPUMeasure();
     ~CPUMeasure() noexcept = default;
     CPUMeasure(const CPUMeasure&) = delete;
     CPUMeasure& operator=(const CPUMeasure&) = delete;

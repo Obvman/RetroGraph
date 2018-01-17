@@ -15,7 +15,7 @@ class UserSettings;
    a single, NVIDIA GPU */
 class GPUMeasure {
 public:
-    GPUMeasure(const UserSettings& settings);
+    GPUMeasure();
     ~GPUMeasure() noexcept;
     GPUMeasure(const GPUMeasure&) = delete;
     GPUMeasure& operator=(const GPUMeasure&) = delete;

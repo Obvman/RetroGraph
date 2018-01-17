@@ -17,7 +17,7 @@ class UserSettings;
 
 class NetMeasure {
 public:
-    NetMeasure(const UserSettings& settings);
+    NetMeasure();
     ~NetMeasure() noexcept = default;
     NetMeasure(const NetMeasure&) = delete;
     NetMeasure& operator=(const NetMeasure&) = delete;
