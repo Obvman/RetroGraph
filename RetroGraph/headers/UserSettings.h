@@ -45,27 +45,17 @@ private:
     std::vector<bool> m_widgetVisibilities;
     std::vector<WidgetPosition> m_widgetPositions;
 
-    // TODO remove all these members and rewrite generateDefaultFile()
-    // Window options
-    bool m_clickthrough{ true };
-    bool m_widgetBackground{ false };
-
-    // Network options
-    std::string m_pingServer{ "http://www.google.com/" };
-    uint32_t m_pingFreq{ 10U };
-
-    // Appearance options
-    uint32_t m_numCPUProcessesDisplayed{ 8U };
-    uint32_t m_numRAMProcessesDisplayed{ 8U };
-    float m_processCPUUsageThreshold{ 0.2f };
-    uint32_t m_processRAMUsageThresholdMB{ 1024U };
-
-    // Widget options
-    uint32_t m_netUsageSamples{ 20U };
-    uint32_t m_cpuUsageSamples{ 20U };
-    uint32_t m_gpuUsageSamples{ 20U };
-    uint32_t m_ramUsageSamples{ 20U };
-
+    const std::map<std::string, WidgetPosition> m_posMap = {
+        {"top-left", WidgetPosition::TOP_LEFT},
+        {"top-middle", WidgetPosition::TOP_MID},
+        {"top-right", WidgetPosition::TOP_RIGHT},
+        {"middle-left", WidgetPosition::MID_LEFT},
+        {"middle-middle", WidgetPosition::MID_MID},
+        {"middle-right", WidgetPosition::MID_RIGHT},
+        {"bottom-left", WidgetPosition::BOT_LEFT},
+        {"bottom-middle", WidgetPosition::BOT_MID},
+        {"bottom-right", WidgetPosition::BOT_RIGHT},
+    };
 };
 
 }
