@@ -1,5 +1,6 @@
 #include "../headers/AnimationState.h"
 
+#include <cassert>
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
@@ -15,11 +16,11 @@
 namespace rg {
 
 AnimationState::AnimationState() : 
-    m_particles{ },
-    m_animationFPS{ std::get<uint32_t>(UserSettings::inst().getVal("Widgets-Main.FPS")) } {
+        m_particles{ },
+        m_animationFPS{ std::get<uint32_t>(UserSettings::inst().getVal("Widgets-Main.FPS")) } {
 
     srand(static_cast<uint32_t>(time(nullptr)));
-    for (auto i = size_t{ 0U }; i < 100; ++i) {
+    for (auto i = size_t{ 0U }; i < numParticles; ++i) {
         m_particles.emplace_back();
     }
 }
@@ -32,8 +33,44 @@ void AnimationState::drawParticles() const {
     for (const auto& p : m_particles) {
         p.draw();
 
+        uint32_t nextX{ p.cellX + 1 };
+        uint32_t nextY{ p.cellY + 1};
+        if (nextX >= numCellsPerSide)
+            nextX = 0;
+        if (nextY >= numCellsPerSide)
+            nextY = 0;
+
+        std::array<const std::vector<const Particle*>*, 5> cellsToCheck = {
+            &(m_cells[p.cellX][p.cellY]),
+            &(m_cells[p.cellX][nextY]),
+            &(m_cells[nextX][p.cellY]),
+            &(m_cells[nextX][p.cellY]),
+            &(m_cells[nextX][nextY]),
+        };
+        for (const auto& cell : cellsToCheck) {
+            for (const auto& neighbour : *cell) {
+                if (&p == neighbour) continue;
+
+                const auto dx{ fabs(p.x - neighbour->x) };
+                const auto dy{ fabs(p.y - neighbour->y) };
+                constexpr auto radiusSq{ particleConnectionDistance * particleConnectionDistance };
+                const auto distance{ dx * dx + dy * dy };
+
+                // if (dx < radius && dy < radius) {
+                if (distance < radiusSq) {
+                    // collisions.push_back(&neighbour);
+                    const float distFactor{ 1.0f - distance / radiusSq };
+                    glColor4f(1.0f, 1.0f, 1.0f, distFactor);
+                    glBegin(GL_LINES);
+                    {
+                        glVertex2f(p.x, p.y);
+                        glVertex2f(neighbour->x, neighbour->y);
+                    } glEnd();
+                }
+            }
+        }
         // std::vector<const Particle*> collisions{};
-        for (const auto& neighbour : m_particles) {
+        /*for (const auto& neighbour : m_particles) {
             if (&p == &neighbour) continue;
 
             const auto dx{ fabs(p.x - neighbour.x) };
@@ -51,7 +88,7 @@ void AnimationState::drawParticles() const {
                     glVertex2f(neighbour.x, neighbour.y);
                 } glEnd();
             }
-        }
+        }*/
     }
 }
 
@@ -68,7 +105,45 @@ void AnimationState::update(uint32_t ticks) {
         for (auto& p : m_particles) {
             p.update(dt);
         }
+
+        updateSpacialPartitioningGrid();
     }
+}
+
+void AnimationState::updateSpacialPartitioningGrid() {
+    // Reset the particle list for each cell
+    for (auto& x : m_cells) {
+        for (auto& y : x) {
+            y.clear();
+        }
+    }
+
+    for (auto& p : m_particles) {
+        // Get the cell index from the particle's position. offset the particle
+        // coord by 1.0f to give value in range 0 .. numCellsPerSide - 1
+        const uint32_t cellX{ static_cast<uint32_t>((p.x + 1.0f) / cellSize) };
+        const uint32_t cellY{ static_cast<uint32_t>((p.y + 1.0f) / cellSize) };
+        assert(cellX >= 0);
+        assert(cellY >= 0);
+        assert(cellX < numCellsPerSide);
+        assert(cellY < numCellsPerSide);
+
+        p.cellX = cellX;
+        p.cellY = cellY;
+
+        m_cells[cellX][cellY].push_back(&p);
+    }
+
+    /*int sum = 0;
+    for (int i = 0; i < m_cells.size(); ++i) {
+        for (int j = 0; j < m_cells[i].size(); ++j) {
+            printf("%d, ", m_cells[i][j].size());
+            sum += m_cells[i][j].size();
+        }
+        printf("\n");
+    }
+    printf("SUM: %d\n\n", sum);
+    assert(sum == numParticles);*/
 }
 
 Particle::Particle() {
@@ -97,17 +172,17 @@ void Particle::update(float dt) {
 
     // If we move off the screen, wrap the particle around to the other side
     if (x <= -1.0f) {
-        x = 1.0f;
+        x = particleMaxPos;
         y = -y;
     } else if (y <= -1.0f) {
         x = -x;
-        y = 1.0f;
+        y = particleMaxPos;
     } else if (x >= 1.0f) {
-        x = -1.0f;
+        x = particleMinPos;
         y = -y;
     } else if (y >= 1.0f) {
         x = -x;
-        y = -1.0f;
+        y = particleMinPos;
     }
 }
 

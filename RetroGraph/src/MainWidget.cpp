@@ -37,6 +37,8 @@ void MainWidget::draw(uint32_t ticks) const {
 
     clear();
 
+    drawWidgetBackground();
+
     glColor4f(DIVIDER_R, DIVIDER_G, DIVIDER_B, DIVIDER_A);
     drawTopSerifLine(-1.0f, 1.0f);
     drawBottomSerifLine(-1.0f, 1.0f);

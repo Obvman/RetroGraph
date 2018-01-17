@@ -1,7 +1,12 @@
+spacial partitioning: compare resetting cell vectors each update vs updating cells on each movement
 
 FPS: 15, with foreach loops
 drawParticles(): 41.07%
 fabs: 33.08%
+
+FPS: 15, with regular for loop, inner loop starting at i + 1, 
+drawParticles(): 49.05%
+operator[]: 32.42%
 
 use gl lists to draw things like graph grids
 
