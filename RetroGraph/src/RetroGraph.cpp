@@ -20,8 +20,6 @@ RetroGraph::RetroGraph(HINSTANCE hInstance) :
     m_animationState{ std::make_unique<AnimationState>() },
     m_renderer{ m_window, *this } {
 
-    g_widgetBGVisible = std::get<bool>(UserSettings::inst().getSettingValue("Window.WidgetBackground"));
-
     update(0);
     draw(0);
 }

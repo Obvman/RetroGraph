@@ -4,11 +4,10 @@
 #include <GL/gl.h>
 #include <cmath>
 
+#include "../headers/UserSettings.h"
 #include "../headers/colors.h"
 
 namespace rg {
-
-bool g_widgetBGVisible{ false };
 
 GLuint graphGridVertsID;
 GLuint graphGridIndicesID;
@@ -104,7 +103,7 @@ void drawBorder() {
 }
 
 void drawWidgetBackground() {
-    if (g_widgetBGVisible) {
+    if (std::get<bool>(UserSettings::inst().getSettingValue("Window.WidgetBackground"))) {
         glColor4f(WBG_R, WBG_G, WBG_B, WBG_A);
         glBegin(GL_QUADS); {
             glVertex2f(-1.0f,  1.0f);

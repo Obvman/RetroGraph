@@ -150,7 +150,7 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
                     break;
                 }
                 case ID_SET_WIDGET_BG: {
-                    g_widgetBGVisible = !g_widgetBGVisible;
+                    UserSettings::inst().toggleWidgetBackgroundVisible();
                     m_retroGraph->needsRedraw();
                     break;
                 }
@@ -314,7 +314,7 @@ void Window::createRClickMenu(HWND hWnd) {
             break;
         }
         case ID_SET_WIDGET_BG:
-            g_widgetBGVisible = !g_widgetBGVisible;
+            UserSettings::inst().toggleWidgetBackgroundVisible();
             m_retroGraph->needsRedraw();
             break;
         case ID_TEST:

@@ -1,27 +1,16 @@
 use gl lists to draw things like graph grids
 
+benchmark time for animation update() and draw() calls
+
 high-performance mode - switch between low and high FPS for main widget, graphs
 
 only update music measure when foobar title is different from prev update
 
 lower bound on the network graph scaling
 
-sum types to store settings (
-struct Setting {
-	union { string s; int n; bool b; };
-	enum Type { Str, Int, Bool };
-	Type tag;
-}
-Do this but with std::variant
-
 foobar media controls - enter foobar path in config file
 
-Enable disabling widgets from config file
-
 Volume + Audio device widget
-
-toggle rest of widgets from menu
-	- have toggles in separate dropdown menu
 
 Handle invalid monitor selections
 
@@ -36,12 +25,6 @@ disable data gathering for non-visible widgets to save on CPU
 fix vertical text line centering
 
 When failing to open a process, fail silently instead of crashing
-
-create a borderless terminal window to embed in a widget
-
-enable switching clickthrough modes at runtime
-
-MainWidget animation
 
 network: show how many MB have been downloaded since retrograph started
 
@@ -72,8 +55,6 @@ separate net traffic graphs
 have an average ping time display
 
 net speed seems to max at 7.5MB when it really hits 13MB according to task mgr
-
-BUG: right click menu pauses drawing.
 
 test suite
 

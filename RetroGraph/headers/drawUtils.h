@@ -12,8 +12,6 @@ typedef int GLint;
 
 namespace rg {
 
-extern bool g_widgetBGVisible;
-
 constexpr float serifLen{ 0.05f };
 
 /* Minimum distance from the edge of the screen to draw each object (in pixels) */
