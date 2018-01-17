@@ -21,7 +21,7 @@ unsigned long long FileTimeToInt64(const FILETIME & ft) {
 }
 
 CPUMeasure::CPUMeasure(const UserSettings& settings) :
-    dataSize{ settings.getCPUUsageSamples() } {
+    dataSize{ std::get<uint32_t>(settings.getSettingValue("Widgets-Graphs-CPU.NumUsageSamples")) } {
 
     // Fill CPU name if CoreTemp interfacing was successful
     if (m_cpuName.size() == 0 && m_coreTempPlugin.getCoreTempInfoSuccess()) {

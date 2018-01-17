@@ -1,8 +1,13 @@
 #pragma once
 
+#define _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING
+#define _SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING
+
 #include <stdint.h>
 #include <string>
 #include <vector>
+#include <map>
+#include <variant>
 #include <boost/program_options.hpp>
 #include <boost/property_tree/ptree.hpp>
 
@@ -10,46 +15,31 @@
 
 namespace rg {
 
+using settingVariant = std::variant<int32_t, uint32_t, bool, float, std::string>;
+
 class UserSettings {
 public:
-    UserSettings();
+    static const UserSettings& inst() {
+        static UserSettings i;
+        return i;
+    }
     ~UserSettings() noexcept = default;
     UserSettings(const UserSettings&) = delete;
     UserSettings& operator=(const UserSettings&) = delete;
 
-    int32_t getStartupMonitor() const { return m_startupMonitor; }
-    bool getClickthrough() const { return m_clickthrough; }
-    bool getWidgetBackground() const { return m_widgetBackground; }
-
-    const std::string& getPingServer() const { return m_pingServer; }
-    uint32_t getPingFreq() const { return m_pingFreq; }
-
-    uint32_t getNumCPUProcessesDisplayed() const {
-        return m_numCPUProcessesDisplayed;
-    }
-    uint32_t getNumRAMProcessesDisplayed() const {
-        return m_numRAMProcessesDisplayed;
-    }
-    float getHighCPUUsageThreshold() const {
-        return m_processCPUUsageThreshold;
-    }
-    uint32_t getHighRAMUsageThresholdMB() const {
-        return m_processRAMUsageThresholdMB;
-    }
-
-    uint32_t getNetUsageSamples() const { return m_netUsageSamples; }
-    uint32_t getCPUUsageSamples() const { return m_cpuUsageSamples; }
-    uint32_t getGPUUsageSamples() const { return m_gpuUsageSamples; }
-    uint32_t getRAMUsageSamples() const { return m_ramUsageSamples; }
+    settingVariant getSettingValue(const std::string& settingName) const;
 
     bool isVisible(size_t w) const { return m_widgetVisibilities[w]; }
     WidgetPosition getWidgetPosition(size_t w) const { return m_widgetPositions[w]; }
 
 private:
+    UserSettings();
+
     void generateDefaultFile(boost::property_tree::ptree& propTree);
 
+    std::map<std::string, settingVariant> m_settings;
+
     // Window options
-    int32_t m_startupMonitor{ 0 };
     bool m_clickthrough{ true };
     bool m_widgetBackground{ false };
 

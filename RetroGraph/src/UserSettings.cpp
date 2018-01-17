@@ -10,14 +10,12 @@
 
 namespace rg {
 
-namespace po = boost::program_options;
-namespace pt = boost::property_tree;
-
-
 const std::string iniPath{ ((IsDebuggerPresent()) ? "resources\\config.ini" :
                             "..\\RetroGraph\\resources\\config.ini") };
 
 UserSettings::UserSettings() {
+    namespace po = boost::program_options;
+    namespace pt = boost::property_tree;
 
     m_widgetVisibilities.assign(RG_NUM_WIDGETS, false);
     m_widgetPositions.resize(RG_NUM_WIDGETS);
@@ -40,31 +38,32 @@ UserSettings::UserSettings() {
                 {"bottom-right", WidgetPosition::BOT_RIGHT},
             };
 
-            m_startupMonitor = propTree.get<uint32_t>("Window.Monitor");
-            m_clickthrough = propTree.get<bool>("Window.ClickThrough");
-            m_widgetBackground = propTree.get<bool>("Window.WidgetBackground");
+            m_settings["Window.Monitor"] = propTree.get<int32_t>("Window.Monitor");
 
-            m_pingServer = propTree.get<std::string>("Network.PingServer");
-            m_pingFreq = propTree.get<uint32_t>("Network.PingFrequency");
+            m_settings["Window.ClickThrough"] = propTree.get<bool>("Window.ClickThrough");
+            m_settings["Window.WidgetBackground"] = propTree.get<bool>("Window.WidgetBackground");
 
-            m_numCPUProcessesDisplayed = propTree.get<uint32_t>(
-                    "Widgets-ProcessesCPU.NumProcessesDisplayed");
-            m_processCPUUsageThreshold = propTree.get<float>(
-                    "Widgets-ProcessesCPU.HighCPUUsageThreshold");
+            m_settings["Network.PingServer"] = propTree.get<std::string>("Network.PingServer");
+            m_settings["Network.PingFrequency"] = propTree.get<uint32_t>("Network.PingFrequency");
 
-            m_numRAMProcessesDisplayed = propTree.get<uint32_t>(
-                    "Widgets-ProcessesRAM.NumProcessesDisplayed");
-            m_processRAMUsageThresholdMB = propTree.get<uint32_t>(
-                    "Widgets-ProcessesRAM.HighRAMUsageThresholdMB");
+            m_settings[ "Widgets-ProcessesCPU.NumProcessesDisplayed"] = propTree.get<uint32_t>(
+                "Widgets-ProcessesCPU.NumProcessesDisplayed");
+            m_settings[ "Widgets-ProcessesCPU.HighCPUUsageThreshold"] = propTree.get<float>(
+                "Widgets-ProcessesCPU.HighCPUUsageThreshold");
 
-            m_netUsageSamples = propTree.get<uint32_t>(
-                    "Widgets-Graphs-Network.NumUsageSamples");
-            m_cpuUsageSamples = propTree.get<uint32_t>(
-                    "Widgets-Graphs-CPU.NumUsageSamples");
-            m_gpuUsageSamples = propTree.get<uint32_t>(
-                    "Widgets-Graphs-GPU.NumUsageSamples");
-            m_ramUsageSamples = propTree.get<uint32_t>(
-                    "Widgets-Graphs-RAM.NumUsageSamples");
+            m_settings[ "Widgets-ProcessesRAM.NumProcessesDisplayed"] = propTree.get<uint32_t>(
+                "Widgets-ProcessesRAM.NumProcessesDisplayed");
+            m_settings[ "Widgets-ProcessesRAM.HighRAMUsageThresholdMB"] = propTree.get<uint32_t>(
+                "Widgets-ProcessesRAM.HighRAMUsageThresholdMB");
+
+            m_settings["Widgets-Graphs-Network.NumUsageSamples"] = propTree.get<uint32_t>(
+                "Widgets-Graphs-Network.NumUsageSamples");
+            m_settings["Widgets-Graphs-CPU.NumUsageSamples"] = propTree.get<uint32_t>(
+                "Widgets-Graphs-CPU.NumUsageSamples");
+            m_settings["Widgets-Graphs-GPU.NumUsageSamples"] = propTree.get<uint32_t>(
+                "Widgets-Graphs-GPU.NumUsageSamples");
+            m_settings["Widgets-Graphs-RAM.NumUsageSamples"] = propTree.get<uint32_t>(
+                "Widgets-Graphs-RAM.NumUsageSamples");
 
             m_widgetVisibilities[RG_WIDGET_TIME] = propTree.get<bool>(
                     "Widgets-Time.Visible");
@@ -114,11 +113,18 @@ UserSettings::UserSettings() {
     }
 }
 
-void UserSettings::generateDefaultFile(pt::ptree& propTree) {
+settingVariant UserSettings::getSettingValue(const std::string& settingName) const {
+    if (m_settings.count(settingName) == 0) {
+        fatalMessageBox("Failed to find setting " + settingName);
+    }
+    return m_settings.at(settingName);
+}
+
+void UserSettings::generateDefaultFile(boost::property_tree::ptree& propTree) {
     std::cout << "Generating new config file\n";
 
     // Use default values for each property
-    propTree.put("Window.Monitor", m_startupMonitor);
+    propTree.put("Window.Monitor", std::get<int32_t>(m_settings["Window.Monitor"]));
     propTree.put("Window.ClickThrough", m_clickthrough);
     propTree.put("Window.WidgetBackground", m_widgetBackground);
 
@@ -154,7 +160,6 @@ void UserSettings::generateDefaultFile(pt::ptree& propTree) {
     propTree.put("Widgets-Time.Position", "top-left");
     propTree.put("Widgets-SystemStats.Position", "bottom-left");
     propTree.put("Widgets-CPUStats.Position", "middle-right");
-    // TODO change.
     propTree.put("Widgets-ProcessesCPU.Position", "bottom-middle");
     propTree.put("Widgets-ProcessesRAM.Position", "bottom-middle");
     propTree.put("Widgets-Music.Position", "bottom-right");
@@ -162,7 +167,7 @@ void UserSettings::generateDefaultFile(pt::ptree& propTree) {
     propTree.put("Widgets-Drives.Position", "top-right");
     propTree.put("Widgets-Graphs.Position", "middle-left");
 
-    pt::ini_parser::write_ini(iniPath, propTree);
+    boost::property_tree::ini_parser::write_ini(iniPath, propTree);
 }
 
 }

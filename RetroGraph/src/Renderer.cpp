@@ -70,7 +70,7 @@ void Renderer::draw(uint32_t ticks) const {
         m_musicWidget.draw();
     }
 
-    constexpr auto mainWidgetFPS = uint32_t{ 10U };
+    constexpr auto mainWidgetFPS = uint32_t{ animationFPS };
     if ((ticks % std::lround(
         static_cast<float>(rg::ticksPerSecond) / mainWidgetFPS)) == 0) {
 

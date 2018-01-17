@@ -27,9 +27,9 @@
 namespace rg {
 
 NetMeasure::NetMeasure(const UserSettings& settings) :
-    m_pingServer{ settings.getPingServer() },
-    m_pingFreqMs{ settings.getPingFreq() },
-    dataSize{ settings.getNetUsageSamples() } {
+    m_pingServer{ std::get<std::string>(settings.getSettingValue("Network.PingServer")) },
+    m_pingFreqMs{ std::get<uint32_t>(settings.getSettingValue("Network.PingFrequency")) },
+    dataSize{ std::get<uint32_t>(settings.getSettingValue("Widgets-Graphs-Network.NumUsageSamples")) } {
 
     // Fill data vectors with default values
     m_downBytes.assign(dataSize, 0U);
@@ -155,6 +155,10 @@ void NetMeasure::getDNSAndHostname() {
     }
 
     m_DNSIP = std::string{ pFixedInfo->DnsServerList.IpAddress.String };
+    if (pFixedInfo->DnsServerList.Next) {
+        m_DNSIP += ", " + std::string{pFixedInfo->DnsServerList.Next->IpAddress.String};
+    }
+    
     m_hostname = std::string{ pFixedInfo->HostName };
 
     free(pFixedInfo);

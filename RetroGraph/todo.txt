@@ -1,5 +1,7 @@
 use gl lists to draw things like graph grids
 
+high-performance mode - switch between low and high FPS for main widget, graphs
+
 only update music measure when foobar title is different from prev update
 
 lower bound on the network graph scaling

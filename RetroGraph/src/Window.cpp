@@ -265,6 +265,8 @@ void Window::createRClickMenu(HWND hWnd) {
     InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)widgetSubmenu, "Toggle Widgets");
 
     InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
+            ID_TOGGLE_MAIN_WIDGET, "Main Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
             ID_TOGGLE_TIME_WIDGET, "Time Widget");
     InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
             ID_TOGGLE_HDD_WIDGET, "HDD Widget");
@@ -278,8 +280,6 @@ void Window::createRClickMenu(HWND hWnd) {
             ID_TOGGLE_GRAPH_WIDGET, "Graph Widget");
     InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
             ID_TOGGLE_SYSTEMSTATS_WIDGET, "System Stats Widget");
-    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
-            ID_TOGGLE_MAIN_WIDGET, "Main Widget");
     InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
             ID_TOGGLE_MUSIC_WIDGET, "Music Widget");
 

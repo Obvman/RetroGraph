@@ -2,6 +2,9 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <ctime>
+#include <chrono>
+#include <iostream>
 #include <GL/glew.h>
 #include <GL/gl.h>
 
@@ -14,7 +17,7 @@ AnimationState::AnimationState() {
     // m_particles.emplace_back(-0.9f, 0.9f, 0.0f, 0.3f, 0.005f);
     // m_particles.emplace_back( 0.2f, -0.3f, 0.1f, -0.2f, 0.005f );
 
-    srand(10);
+    srand(static_cast<uint32_t>(time(nullptr)));
     for (auto i = size_t{ 0U }; i < 100; ++i) {
         m_particles.emplace_back();
     }
@@ -53,9 +56,17 @@ void AnimationState::drawParticles() const {
 }
 
 void AnimationState::update(uint32_t ticks) {
-    if (ticks % (ticksPerSecond / 10) == 0) {
+    if (ticks % (ticksPerSecond / animationFPS) == 0) {
+        using clock = std::chrono::high_resolution_clock;
+        static auto time_start = clock::now();
+
+        auto time_end = clock::now();
+        const auto deltaTimeStep{ time_end - time_start };
+        time_start = clock::now();
+        const auto dt{ std::chrono::duration_cast<std::chrono::duration<float>>(deltaTimeStep).count() };
+
         for (auto& p : m_particles) {
-            p.update(ticks);
+            p.update(dt);
         }
     }
 }
@@ -63,6 +74,7 @@ void AnimationState::update(uint32_t ticks) {
 Particle::Particle() {
     constexpr auto seed = 10U;
 
+    // Randomly initialise each particle
     x = particleMinPos + static_cast<float> (rand()) /(static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos)));
     y = particleMinPos + static_cast<float> (rand()) /(static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos)));
     dirX = particleMinPos + static_cast<float> (rand()) /(static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos)));
@@ -79,9 +91,9 @@ Particle::Particle(float x_, float y_, float dirX_, float dirY_, float size_) :
 
 }
 
-void Particle::update(uint32_t ticks) {
-    x += speed * dirX;
-    y += speed * dirY;
+void Particle::update(float dt) {
+    x += speed * dirX * dt;
+    y += speed * dirY * dt;
 
     // If we move off the screen, wrap the particle around to the other side
     if (x <= -1.0f) {

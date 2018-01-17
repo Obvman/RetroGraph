@@ -50,7 +50,7 @@ public:
 
 private:
 
-    UserSettings m_userSettings;
+    const UserSettings& m_userSettings;
 
     Window m_window;
 
