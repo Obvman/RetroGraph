@@ -11,7 +11,6 @@
 namespace rg {
 
 void createFormattedTimeStr(char* buffer, size_t buffSize, uint32_t seconds);
-BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam);
 
 void MusicWidget::clear() const {
     glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);

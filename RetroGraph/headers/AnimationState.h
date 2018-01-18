@@ -11,7 +11,7 @@ constexpr float PARTICLE_G{ 0.8f };
 constexpr float PARTICLE_B{ 0.8f };
 constexpr float PARTICLE_A{ 0.5f };
 
-constexpr size_t numParticles{ 100U };
+constexpr size_t numParticles{ 150U };
 constexpr float particleMinSize{ 0.005f };
 constexpr float particleMaxSize{ 0.012f };
 
@@ -24,9 +24,9 @@ constexpr float particleMaxSpeed{ 0.1f };
 constexpr float particleConnectionDistance{ 0.2f };
 
 // NOTE: numCellsPerSide == (2.0 / cellSize)
-// cellSize should be no greater than particleConnectionDistance / 2
-constexpr float cellSize{ 0.125f };
-const int32_t numCellsPerSide{ 16 };
+// cellSize should be no smaller than particleConnectionDistance
+constexpr float cellSize{ particleConnectionDistance };
+const int32_t numCellsPerSide{ 10 };
 
 class AnimationState;
 
@@ -59,6 +59,8 @@ public:
 
     uint32_t getAnimationFPS() const { return m_animationFPS; };
 private:
+    void drawCells() const;
+
     std::vector<Particle> m_particles{ };
     uint32_t m_animationFPS{ 20U };
 

@@ -1,3 +1,8 @@
+BUG: lines in animations are popping in/out instead of fading sometimes :/
+
+store measures in smart pointers to control lifetime manually to start/stop measuring
+disable data gathering for non-visible widgets to save on CPU - store dependencies in a list,
+only destroy a measure if all dependencies are destroyed.
 
 use gl lists to draw things like graph grids
 
@@ -18,12 +23,7 @@ Widgets: Allow free position (x, y coords), full alignment options
 
 Allow user-defined ordering of widgets in multi-widget positions
 
-store measures in smart pointers to control lifetime manually to start/stop measuring
-disable data gathering for non-visible widgets to save on CPU
-
 fix vertical text line centering
-
-When failing to open a process, fail silently instead of crashing
 
 network: show how many MB have been downloaded since retrograph started
 
@@ -45,19 +45,18 @@ hdd read/write usage
 
 3D effects on graph
 
-rounded HDD/RAM bars
-
 have config options for polling intervals of individual measures
 
 separate net traffic graphs
 
 have an average ping time display
 
-net speed seems to max at 7.5MB when it really hits 13MB according to task mgr
-
 test suite
 
-Foobar status format=%title% | [%album artist%] | [%album%[ CD%discnumber%][ #%tracknumber%]] | $if(%ispaused%,Paused,Playing) | [%_time_elapsed_seconds%, %_time_total_seconds%] | 
+
+NOTES:
+Foobar status format:
+%title% | [%album artist%] | [%album%[ CD%discnumber%][ #%tracknumber%]] | $if(%ispaused%,Paused,Playing) | [%_time_elapsed_seconds%, %_time_total_seconds%] | 
 
 
 spacial partitioning: compare resetting cell vectors each update vs updating cells on each movement

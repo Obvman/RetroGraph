@@ -39,11 +39,9 @@ void MusicMeasure::update(uint32_t ticks) {
             m_playerRunning = true;
             updateTitleString();
 
-            printTimeToExecuteHighRes("MusicScrape", [&oldTitle, this]() {
-                if (oldTitle != m_playerWindowTitle) {
-                    scrapeInfoFromTitle();
-                }
-            });
+            if (oldTitle != m_playerWindowTitle) {
+                scrapeInfoFromTitle();
+            }
         }
     }
 }

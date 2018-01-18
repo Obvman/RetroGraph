@@ -26,8 +26,7 @@ RetroGraph::RetroGraph(HINSTANCE hInstance) :
 
 void RetroGraph::update(uint32_t ticks) {
     // Update with a tick offset so all measures don't update in the same
-    // cycle
-
+    // cycle and spike the CPU
     auto i = uint32_t{ 0U };
     m_cpuMeasure.update(ticks + ++i);
     m_gpuMeasure.update(ticks + ++i);
@@ -37,7 +36,6 @@ void RetroGraph::update(uint32_t ticks) {
     if (m_driveMeasure) m_driveMeasure->update(ticks + ++i);
     if (m_musicMeasure) m_musicMeasure->update(ticks + ++i);
     m_systemMeasure.update(ticks + ++i);
-
     if (m_animationState) m_animationState->update(ticks);
 }
 

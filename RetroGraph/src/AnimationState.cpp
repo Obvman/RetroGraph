@@ -57,6 +57,10 @@ void AnimationState::drawParticles() const {
             &(m_cells[nextX][prevY]),
             &(m_cells[nextX][nextY]),
         };
+        // TODO only compare to nodes in the same cell once, currently we do it twice,
+        // which doubles the alpha on the line and causes jumps in line transparency when
+        // particles cross cell borders.
+        // Also, 
 
         for (const auto cell : cellsToCheck) {
             for (const auto neighbour : *cell) {
@@ -78,6 +82,21 @@ void AnimationState::drawParticles() const {
                 }
             }
         }
+    }
+    drawCells();
+}
+
+void AnimationState::drawCells() const {
+    // Vertical lines
+    glColor4f(1.0f, 1.0f, 1.0f, 0.2f);
+    for (int i = 0; i < numCellsPerSide; ++i) {
+        glBegin(GL_LINES); {
+            glVertex2f((i * cellSize) - 1.0f, -1.0f);
+            glVertex2f((i * cellSize) - 1.0f,  1.0f);
+
+            glVertex2f(-1.0f, (i * cellSize) - 1.0f);
+            glVertex2f( 1.0f, (i * cellSize) - 1.0f);
+        } glEnd();
     }
 }
 
