@@ -5,7 +5,9 @@
 #include <cstdlib>
 #include <ctime>
 #include <chrono>
+#include <algorithm>
 #include <iostream>
+
 #include <GL/glew.h>
 #include <GL/gl.h>
 
@@ -19,18 +21,20 @@ AnimationState::AnimationState() :
         m_particles{ },
         m_animationFPS{ std::get<uint32_t>(UserSettings::inst().getVal("Widgets-Main.FPS")) } {
 
+    // Generate particles and populate the cell particle observer lists.
     srand(static_cast<uint32_t>(time(nullptr)));
     for (auto i = size_t{ 0U }; i < numParticles; ++i) {
         m_particles.emplace_back();
     }
+    for (const auto& p : m_particles) {
+        m_cells[p.cellX][p.cellY].push_back(&p);
+    }
 }
-
 
 AnimationState::~AnimationState() {
 }
 
 void AnimationState::drawParticles() const {
-    int checks = 0;
     for (const auto& p : m_particles) {
         p.draw();
 
@@ -44,6 +48,8 @@ void AnimationState::drawParticles() const {
         if (prevY < 0)
             prevY = numCellsPerSide - 1;
 
+        // We check four neighbouring cells since some collisions may 
+        // occur across cell boundaries
         const auto cellsToCheck = {
             &(m_cells[p.cellX][p.cellY]),
             &(m_cells[p.cellX][nextY]),
@@ -56,17 +62,16 @@ void AnimationState::drawParticles() const {
             for (const auto neighbour : *cell) {
                 if (&p == neighbour) continue;
 
-                checks++;
                 const auto dx{ fabs(p.x - neighbour->x) };
                 const auto dy{ fabs(p.y - neighbour->y) };
                 constexpr auto radiusSq{ particleConnectionDistance * particleConnectionDistance };
                 const auto distance{ dx * dx + dy * dy };
 
+                // Draw a line to neighbouring particles. The line fades the further away it is.
                 if (distance < radiusSq) {
                     const float distFactor{ 1.0f - distance / radiusSq };
                     glColor4f(1.0f, 1.0f, 1.0f, distFactor);
-                    glBegin(GL_LINES);
-                    {
+                    glBegin(GL_LINES); {
                         glVertex2f(p.x, p.y);
                         glVertex2f(neighbour->x, neighbour->y);
                     } glEnd();
@@ -74,8 +79,9 @@ void AnimationState::drawParticles() const {
             }
         }
     }
-    printf("Checks: %d\n", checks);
 }
+
+constexpr bool resetGrid{ false };
 
 void AnimationState::update(uint32_t ticks) {
     if (ticks % (ticksPerSecond / m_animationFPS) == 0) {
@@ -93,13 +99,15 @@ void AnimationState::update(uint32_t ticks) {
             dt = 0.016f;
         }
 
-        printTimeToExecuteHighRes("Update", [this, dt]() {
+        // printTimeToExecuteHighRes("Update", [this, dt]() {
             for (auto& p : m_particles) {
-                p.update(dt);
+                p.update(*this, dt);
             }
 
-            updateSpacialPartitioningGrid();
-        });
+            if constexpr (resetGrid) {
+                updateSpacialPartitioningGrid();
+            }
+        // });
     }
 }
 
@@ -114,44 +122,31 @@ void AnimationState::updateSpacialPartitioningGrid() {
     for (auto& p : m_particles) {
         // Get the cell index from the particle's position. offset the particle
         // coord by 1.0f to give value in range 0 .. numCellsPerSide - 1
-        const uint32_t cellX{ static_cast<uint32_t>((p.x + 1.0f) / cellSize) };
-        const uint32_t cellY{ static_cast<uint32_t>((p.y + 1.0f) / cellSize) };
-        if (cellX < 0 || cellY < 0 || cellX >= numCellsPerSide || cellY >= numCellsPerSide) {
-            printf("(%f, %f) -> %d, %d\n", p.x, p.y, cellX, cellY);
-            assert(cellX >= 0);
-            assert(cellY >= 0);
-            assert(cellX < numCellsPerSide);
-            assert(cellY < numCellsPerSide);
-        }
+        p.cellX = static_cast<uint32_t>((p.x + 1.0f) / cellSize);
+        p.cellY = static_cast<uint32_t>((p.y + 1.0f) / cellSize);
 
-        p.cellX = cellX;
-        p.cellY = cellY;
-
-        m_cells[cellX][cellY].push_back(&p);
+        m_cells[p.cellX][p.cellY].push_back(&p);
     }
 }
 
-Particle::Particle() {
-    constexpr auto seed = 10U;
-
-    // Randomly initialise each particle
-    x = particleMinPos + static_cast<float> (rand()) /(static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos)));
-    y = particleMinPos + static_cast<float> (rand()) /(static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos)));
-    dirX = particleMinPos + static_cast<float> (rand()) /(static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos)));
-    dirY = particleMinPos + static_cast<float> (rand()) /(static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos)));
-    size = particleMinSize + static_cast<float> (rand()) /(static_cast<float>(RAND_MAX/(particleMaxSize-particleMinSize)));
-    speed = particleMinSpeed + static_cast<float> (rand()) /(static_cast<float>(RAND_MAX/(particleMaxSpeed-particleMinSpeed)));
+Particle::Particle() :
+    x{ particleMinPos + static_cast<float>(rand()) /
+       (static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos))) },
+    y{ particleMinPos + static_cast<float>(rand()) /
+       (static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos))) },
+    dirX{ particleMinPos + static_cast<float>(rand()) /
+          (static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos))) },
+    dirY{ particleMinPos + static_cast<float>(rand()) /
+          (static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos))) },
+    size{ particleMinSize + static_cast<float>(rand()) /
+          (static_cast<float>(RAND_MAX/(particleMaxSize-particleMinSize))) },
+    speed{ particleMinSpeed + static_cast<float>(rand()) /
+           (static_cast<float>(RAND_MAX/(particleMaxSpeed-particleMinSpeed))) },
+    cellX{ static_cast<uint32_t>((x + 1.0f) / cellSize) },
+    cellY{ static_cast<uint32_t>((y + 1.0f) / cellSize) } {
 }
 
-Particle::Particle(float x_, float y_, float dirX_, float dirY_, float size_) :
-    x{ x_ }, y{ y_ },
-    dirX{ dirX_ }, dirY{ dirY_ },
-    size{ size_ }, speed{ 0.01f } {
-
-
-}
-
-void Particle::update(float dt) {
+void Particle::update(AnimationState& as, float dt) {
     x += speed * dirX * dt;
     y += speed * dirY * dt;
 
@@ -170,6 +165,24 @@ void Particle::update(float dt) {
         x = -x;
         y = particleMinPos;
     }
+
+    if constexpr (!resetGrid) {
+        const uint32_t newCellX{ static_cast<uint32_t>((x + 1.0f) / cellSize) };
+        const uint32_t newCellY{ static_cast<uint32_t>((y + 1.0f) / cellSize) };
+
+        // If we've shifted into a new cell, we have to update the cell's particle list
+        if (newCellX != cellX || newCellY != cellY) {
+            // remove from old cell
+            auto& cell{ as.m_cells[cellX][cellY] };
+            cell.erase(std::remove(cell.begin(), cell.end(), this), cell.end());
+
+            // add to new cell
+            as.m_cells[newCellX][newCellY].push_back(this);
+
+            cellX = newCellX;
+            cellY = newCellY;
+        }
+    }
 }
 
 void Particle::draw() const {
@@ -178,6 +191,7 @@ void Particle::draw() const {
         glTranslatef(x, y, 0.0f);
 
         glColor4f(PARTICLE_R, PARTICLE_G, PARTICLE_B, PARTICLE_A);
+        // Draw a circle if the particle is large enough, otherwise draw tiny square
         if (size > particleMinSize * 2) {
             glBegin(GL_TRIANGLE_FAN); {
                 glVertex2f(0.0f, 0.0f);

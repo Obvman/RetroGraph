@@ -24,16 +24,18 @@ constexpr float particleMaxSpeed{ 0.1f };
 constexpr float particleConnectionDistance{ 0.2f };
 
 // NOTE: numCellsPerSide == (2.0 / cellSize)
-constexpr float cellSize{ 0.25f };
-const int32_t numCellsPerSide{ 8 };
+// cellSize should be no greater than particleConnectionDistance / 2
+constexpr float cellSize{ 0.125f };
+const int32_t numCellsPerSide{ 16 };
+
+class AnimationState;
 
 class Particle {
 public:
     Particle();
-    Particle(float x_, float y_, float dirX_, float dirY_, float size_);
 
     void draw() const;
-    void update(float dt);
+    void update(AnimationState& as, float dt);
 
     float x{ 0.0f };
     float y{ 0.0f };
@@ -66,6 +68,9 @@ private:
     // The world space coordinates range from -1.0 to 1.0 for both x and y,
     // so we have a range of 2.0 for our world sides
     std::array<std::array<std::vector<const Particle*>, numCellsPerSide>, numCellsPerSide> m_cells;
+
+    friend class Particle;
 };
+
 
 }
