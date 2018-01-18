@@ -144,10 +144,8 @@ void NetMeasure::getDNSAndHostname() {
         free(pFixedInfo);
         pFixedInfo = (FIXED_INFO*)malloc(ulOutBufLen);
         if (!pFixedInfo) {
-            printf("Error allocating memory needed to call GetNetworkParams\n");
+            fatalMessageBox("Error allocating memory needed to call GetNetworkParams\n");
         }
-    } else {
-        std::cout << "Failed to get FIXED_INFO buffer size\n";
     }
 
     if (GetNetworkParams(pFixedInfo, &ulOutBufLen) != NO_ERROR) {

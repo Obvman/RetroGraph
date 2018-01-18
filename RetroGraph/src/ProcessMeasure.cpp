@@ -79,7 +79,6 @@ void ProcessMeasure::update(uint32_t ticks) {
                         << std::to_string(error) << ". ProcessID: "
                         << std::to_string(pd.getPID()) << '\n';
                 }
-                CloseHandle(pHandle);
                 continue;
             }
 
@@ -278,7 +277,6 @@ void ProcessMeasure::populateList() {
                         << std::to_string(error) << ". ProcessID: "
                         << std::to_string(procID) << '\n';
             }
-            CloseHandle(pHandle);
         } else {
             // Convert the process name from wchar* to char*
             size_t charsConverted{ 0U };
@@ -350,7 +348,6 @@ void ProcessMeasure::detectNewProcesses() {
                         << std::to_string(error) << ". ProcessID: "
                         << std::to_string(procID) << '\n';
                 }
-                CloseHandle(pHandle);
             } else {
                 // Convert the ImageName buffer from wchar* to char*
                 auto charsConverted = size_t{ 0U };
