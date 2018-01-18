@@ -59,8 +59,6 @@ public:
 
     uint32_t getAnimationFPS() const { return m_animationFPS; };
 private:
-    void updateSpacialPartitioningGrid();
-
     std::vector<Particle> m_particles{ };
     uint32_t m_animationFPS{ 20U };
 

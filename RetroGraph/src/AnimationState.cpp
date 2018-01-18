@@ -81,8 +81,6 @@ void AnimationState::drawParticles() const {
     }
 }
 
-constexpr bool resetGrid{ false };
-
 void AnimationState::update(uint32_t ticks) {
     if (ticks % (ticksPerSecond / m_animationFPS) == 0) {
         using clock = std::chrono::high_resolution_clock;
@@ -99,33 +97,9 @@ void AnimationState::update(uint32_t ticks) {
             dt = 0.016f;
         }
 
-        // printTimeToExecuteHighRes("Update", [this, dt]() {
-            for (auto& p : m_particles) {
-                p.update(*this, dt);
-            }
-
-            if constexpr (resetGrid) {
-                updateSpacialPartitioningGrid();
-            }
-        // });
-    }
-}
-
-void AnimationState::updateSpacialPartitioningGrid() {
-    // Reset the particle list for each cell
-    for (auto& x : m_cells) {
-        for (auto& y : x) {
-            y.clear();
+        for (auto& p : m_particles) {
+            p.update(*this, dt);
         }
-    }
-
-    for (auto& p : m_particles) {
-        // Get the cell index from the particle's position. offset the particle
-        // coord by 1.0f to give value in range 0 .. numCellsPerSide - 1
-        p.cellX = static_cast<uint32_t>((p.x + 1.0f) / cellSize);
-        p.cellY = static_cast<uint32_t>((p.y + 1.0f) / cellSize);
-
-        m_cells[p.cellX][p.cellY].push_back(&p);
     }
 }
 
@@ -166,22 +140,20 @@ void Particle::update(AnimationState& as, float dt) {
         y = particleMinPos;
     }
 
-    if constexpr (!resetGrid) {
-        const uint32_t newCellX{ static_cast<uint32_t>((x + 1.0f) / cellSize) };
-        const uint32_t newCellY{ static_cast<uint32_t>((y + 1.0f) / cellSize) };
+    const uint32_t newCellX{ static_cast<uint32_t>((x + 1.0f) / cellSize) };
+    const uint32_t newCellY{ static_cast<uint32_t>((y + 1.0f) / cellSize) };
 
-        // If we've shifted into a new cell, we have to update the cell's particle list
-        if (newCellX != cellX || newCellY != cellY) {
-            // remove from old cell
-            auto& cell{ as.m_cells[cellX][cellY] };
-            cell.erase(std::remove(cell.begin(), cell.end(), this), cell.end());
+    // If we've shifted into a new cell, we have to update the cell's particle list
+    if (newCellX != cellX || newCellY != cellY) {
+        // remove from old cell
+        auto& cell{ as.m_cells[cellX][cellY] };
+        cell.erase(std::remove(cell.begin(), cell.end(), this), cell.end());
 
-            // add to new cell
-            as.m_cells[newCellX][newCellY].push_back(this);
+        // add to new cell
+        as.m_cells[newCellX][newCellY].push_back(this);
 
-            cellX = newCellX;
-            cellY = newCellY;
-        }
+        cellX = newCellX;
+        cellY = newCellY;
     }
 }
 
