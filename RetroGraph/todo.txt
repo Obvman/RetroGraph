@@ -5,8 +5,6 @@ BUG: having lower tick lengths causes updates in  most widgets to occur every 2-
 
 high-performance mode - switch between low and high FPS for main widget, graphs
 
-only update music measure when foobar title is different from prev update
-
 lower bound on the network graph scaling
 
 foobar media controls - enter foobar path in config file

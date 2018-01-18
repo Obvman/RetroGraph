@@ -1,6 +1,7 @@
 #include "../headers/MusicMeasure.h"
 
 #include <cstring>
+#include <iostream>
 #include <stdio.h>
 
 #include "../headers/utils.h"
@@ -18,9 +19,10 @@ MusicMeasure::MusicMeasure(const ProcessMeasure* procMeasure) :
 
 void MusicMeasure::update(uint32_t ticks) {
     if ((ticks % (ticksPerSecond * 1)) == 0) {
+        const auto oldTitle{ m_playerWindowTitle };
+
         // Get the window class name for the player if it hasn't yet been set
         // Encode the this pointer into lParam so the proc can access members
-
         if ((ticks % (ticksPerSecond * 5)) == 0 &&
             (m_playerWindowClassName.size() == 0)) {
             EnumWindows(MusicMeasure::EnumWindowsProc,
@@ -36,7 +38,12 @@ void MusicMeasure::update(uint32_t ticks) {
         } else {
             m_playerRunning = true;
             updateTitleString();
-            scrapeInfoFromTitle();
+
+            printTimeToExecuteHighRes("MusicScrape", [&oldTitle, this]() {
+                if (oldTitle != m_playerWindowTitle) {
+                    scrapeInfoFromTitle();
+                }
+            });
         }
     }
 }
