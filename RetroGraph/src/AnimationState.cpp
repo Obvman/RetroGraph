@@ -35,6 +35,8 @@ AnimationState::~AnimationState() {
 }
 
 void AnimationState::drawParticles() const {
+    // Draw the particle itself, and draw lines to particles in neighbouring cells
+    // (but not the current cell)
     for (const auto& p : m_particles) {
         p.draw();
 
@@ -47,43 +49,55 @@ void AnimationState::drawParticles() const {
             nextY = 0;
         if (prevY < 0)
             prevY = numCellsPerSide - 1;
-
+        
         // We check four neighbouring cells since some collisions may 
         // occur across cell boundaries
-        const auto cellsToCheck = {
-            &(m_cells[p.cellX][p.cellY]),
+        const auto neighbouringCells = {
             &(m_cells[p.cellX][nextY]),
             &(m_cells[nextX][p.cellY]),
             &(m_cells[nextX][prevY]),
             &(m_cells[nextX][nextY]),
         };
-        // TODO only compare to nodes in the same cell once, currently we do it twice,
-        // which doubles the alpha on the line and causes jumps in line transparency when
-        // particles cross cell borders.
-        // Also, 
 
-        for (const auto cell : cellsToCheck) {
+        for (const auto cell : neighbouringCells) {
             for (const auto neighbour : *cell) {
-                if (&p == neighbour) continue;
+                drawParticleConnection(&p, neighbour);
+            }
+        }
+    }
 
-                const auto dx{ fabs(p.x - neighbour->x) };
-                const auto dy{ fabs(p.y - neighbour->y) };
-                constexpr auto radiusSq{ particleConnectionDistance * particleConnectionDistance };
-                const auto distance{ dx * dx + dy * dy };
-
-                // Draw a line to neighbouring particles. The line fades the further away it is.
-                if (distance < radiusSq) {
-                    const float distFactor{ 1.0f - distance / radiusSq };
-                    glColor4f(1.0f, 1.0f, 1.0f, distFactor);
-                    glBegin(GL_LINES); {
-                        glVertex2f(p.x, p.y);
-                        glVertex2f(neighbour->x, neighbour->y);
-                    } glEnd();
+    // Handle the current cell particle lines here such that we only
+    // test each pair once
+    for (const auto& row : m_cells) {
+        for (const auto& cell : row) {
+            const auto cellParticles{ cell.size() };
+            for (auto i = size_t{ 0U }; i < cellParticles; ++i) {
+                // j starts at i+1 so we don't duplicate collision checks.
+                for (auto j = size_t{ i + 1 }; j < cellParticles; ++j) {
+                    drawParticleConnection(cell[i], cell[j]);
                 }
             }
         }
     }
-    drawCells();
+}
+
+void AnimationState::drawParticleConnection(const Particle* const p1, const Particle* const p2) const {
+    if (p1 == p2) return;
+
+    const auto dx{ fabs(p1->x - p2->x) };
+    const auto dy{ fabs(p1->y - p2->y) };
+    constexpr auto radiusSq{ particleConnectionDistance * particleConnectionDistance };
+    const auto distance{ dx * dx + dy * dy };
+
+    // Draw a line to neighbouring particles. The line fades the further away it is.
+    if (distance < radiusSq) {
+        const float distFactor{ 1.0f - distance / radiusSq };
+        glColor4f(1.0f, 1.0f, 1.0f, distFactor);
+        glBegin(GL_LINES); {
+            glVertex2f(p1->x, p1->y);
+            glVertex2f(p2->x, p2->y);
+        } glEnd();
+    }
 }
 
 void AnimationState::drawCells() const {

@@ -59,6 +59,7 @@ public:
 
     uint32_t getAnimationFPS() const { return m_animationFPS; };
 private:
+    void drawParticleConnection(const Particle* const p1, const Particle* const p2) const;
     void drawCells() const;
 
     std::vector<Particle> m_particles{ };
