@@ -23,7 +23,7 @@ constexpr float particleMaxSpeed{ 0.1f };
 // TODO alter this value based on size
 constexpr float particleConnectionDistance{ 0.2f };
 
-// NOTE: numCellsPerSide == (2.0 / cellSize + 2)
+// NOTE: numCellsPerSide == (2.0 / cellSize)
 constexpr float cellSize{ 0.25f };
 const int32_t numCellsPerSide{ 8 };
 

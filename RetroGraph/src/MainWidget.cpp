@@ -60,9 +60,9 @@ void MainWidget::draw(uint32_t ticks) const {
     // glOrtho(m_viewport.x, m_viewport.x + m_viewport.width, m_viewport.y, m_viewport.y + m_viewport.height, 0.0f, 1.0f);
 
     // glMatrixMode(GL_MODELVIEW);
-    // printTimeToExecuteHighRes("Animation Draw", [this]() {
+    printTimeToExecuteHighRes("Animation Draw", [this]() {
         m_animationState->drawParticles();
-    // });
+    });
 
     // glMatrixMode(GL_PROJECTION);
     // glPopMatrix();

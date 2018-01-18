@@ -30,35 +30,39 @@ AnimationState::~AnimationState() {
 }
 
 void AnimationState::drawParticles() const {
+    int checks = 0;
     for (const auto& p : m_particles) {
         p.draw();
 
-        uint32_t nextX{ p.cellX + 1 };
-        uint32_t nextY{ p.cellY + 1};
+        auto nextX = uint32_t{ p.cellX + 1 };
+        auto nextY = uint32_t{ p.cellY + 1};
+        auto prevY = int32_t{ static_cast<int32_t>(p.cellY) - 1}; // can be negative
         if (nextX >= numCellsPerSide)
             nextX = 0;
         if (nextY >= numCellsPerSide)
             nextY = 0;
+        if (prevY < 0)
+            prevY = numCellsPerSide - 1;
 
-        std::array<const std::vector<const Particle*>*, 5> cellsToCheck = {
+        const auto cellsToCheck = {
             &(m_cells[p.cellX][p.cellY]),
             &(m_cells[p.cellX][nextY]),
             &(m_cells[nextX][p.cellY]),
-            &(m_cells[nextX][p.cellY]),
+            &(m_cells[nextX][prevY]),
             &(m_cells[nextX][nextY]),
         };
-        for (const auto& cell : cellsToCheck) {
-            for (const auto& neighbour : *cell) {
+
+        for (const auto cell : cellsToCheck) {
+            for (const auto neighbour : *cell) {
                 if (&p == neighbour) continue;
 
+                checks++;
                 const auto dx{ fabs(p.x - neighbour->x) };
                 const auto dy{ fabs(p.y - neighbour->y) };
                 constexpr auto radiusSq{ particleConnectionDistance * particleConnectionDistance };
                 const auto distance{ dx * dx + dy * dy };
 
-                // if (dx < radius && dy < radius) {
                 if (distance < radiusSq) {
-                    // collisions.push_back(&neighbour);
                     const float distFactor{ 1.0f - distance / radiusSq };
                     glColor4f(1.0f, 1.0f, 1.0f, distFactor);
                     glBegin(GL_LINES);
@@ -69,27 +73,8 @@ void AnimationState::drawParticles() const {
                 }
             }
         }
-        // std::vector<const Particle*> collisions{};
-        /*for (const auto& neighbour : m_particles) {
-            if (&p == &neighbour) continue;
-
-            const auto dx{ fabs(p.x - neighbour.x) };
-            const auto dy{ fabs(p.y - neighbour.y) };
-            constexpr auto radiusSq{ particleConnectionDistance * particleConnectionDistance };
-            const auto distance{ dx * dx + dy * dy };
-
-            // if (dx < radius && dy < radius) {
-            if (distance < radiusSq) {
-                // collisions.push_back(&neighbour);
-                const float distFactor{ 1.0f - distance / radiusSq };
-                glColor4f(1.0f, 1.0f, 1.0f, distFactor);
-                glBegin(GL_LINES); {
-                    glVertex2f(p.x, p.y);
-                    glVertex2f(neighbour.x, neighbour.y);
-                } glEnd();
-            }
-        }*/
     }
+    printf("Checks: %d\n", checks);
 }
 
 void AnimationState::update(uint32_t ticks) {
@@ -100,13 +85,21 @@ void AnimationState::update(uint32_t ticks) {
         auto time_end = clock::now();
         const auto deltaTimeStep{ time_end - time_start };
         time_start = clock::now();
-        const auto dt{ std::chrono::duration_cast<std::chrono::duration<float>>(deltaTimeStep).count() };
+        auto dt{ std::chrono::duration_cast<std::chrono::duration<float>>(deltaTimeStep).count() };
 
-        for (auto& p : m_particles) {
-            p.update(dt);
+        // If a lot of time has passed, set dt to a small value so we don't have
+        // one large jump
+        if (dt > 1.0f) {
+            dt = 0.016f;
         }
 
-        updateSpacialPartitioningGrid();
+        printTimeToExecuteHighRes("Update", [this, dt]() {
+            for (auto& p : m_particles) {
+                p.update(dt);
+            }
+
+            updateSpacialPartitioningGrid();
+        });
     }
 }
 
@@ -123,27 +116,19 @@ void AnimationState::updateSpacialPartitioningGrid() {
         // coord by 1.0f to give value in range 0 .. numCellsPerSide - 1
         const uint32_t cellX{ static_cast<uint32_t>((p.x + 1.0f) / cellSize) };
         const uint32_t cellY{ static_cast<uint32_t>((p.y + 1.0f) / cellSize) };
-        assert(cellX >= 0);
-        assert(cellY >= 0);
-        assert(cellX < numCellsPerSide);
-        assert(cellY < numCellsPerSide);
+        if (cellX < 0 || cellY < 0 || cellX >= numCellsPerSide || cellY >= numCellsPerSide) {
+            printf("(%f, %f) -> %d, %d\n", p.x, p.y, cellX, cellY);
+            assert(cellX >= 0);
+            assert(cellY >= 0);
+            assert(cellX < numCellsPerSide);
+            assert(cellY < numCellsPerSide);
+        }
 
         p.cellX = cellX;
         p.cellY = cellY;
 
         m_cells[cellX][cellY].push_back(&p);
     }
-
-    /*int sum = 0;
-    for (int i = 0; i < m_cells.size(); ++i) {
-        for (int j = 0; j < m_cells[i].size(); ++j) {
-            printf("%d, ", m_cells[i][j].size());
-            sum += m_cells[i][j].size();
-        }
-        printf("\n");
-    }
-    printf("SUM: %d\n\n", sum);
-    assert(sum == numParticles);*/
 }
 
 Particle::Particle() {
@@ -174,12 +159,13 @@ void Particle::update(float dt) {
     if (x <= -1.0f) {
         x = particleMaxPos;
         y = -y;
-    } else if (y <= -1.0f) {
-        x = -x;
-        y = particleMaxPos;
     } else if (x >= 1.0f) {
         x = particleMinPos;
         y = -y;
+    } 
+    if (y <= -1.0f) {
+        x = -x;
+        y = particleMaxPos;
     } else if (y >= 1.0f) {
         x = -x;
         y = particleMinPos;
