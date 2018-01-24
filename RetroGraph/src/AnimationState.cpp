@@ -29,14 +29,12 @@ constexpr float particleMaxPos{ 0.998f };
 constexpr float particleMinSpeed{ 0.01f };
 constexpr float particleMaxSpeed{ 0.1f };
 
-static std::array<float, numCoordsPerCircle> m_particleVertices{ };
-GLuint m_verticesID;
-
 AnimationState::AnimationState() : 
         m_particles{ },
         m_animationFPS{ std::get<uint32_t>(
                             UserSettings::inst().getVal("Widgets-Main.FPS")
-                        ) } {
+                        ) },
+        m_circleList{ glGenLists(1) } {
 
     // Generate particles and populate the cell particle observer lists.
     srand(static_cast<uint32_t>(time(nullptr)));
@@ -47,55 +45,38 @@ AnimationState::AnimationState() :
         m_cells[p.cellX][p.cellY].push_back(&p);
     }
 
-    // Create a set of vertices for a circle
-    m_particleVertices[0]   = 0.0f;
-    m_particleVertices[1] = 0.0f;
-    for (int i = 0; i < circleLines; ++i) {
-        constexpr auto thetaFactor{ 2.0f * 3.1415926f /
-            static_cast<float>(circleLines - 1) };
-        const auto theta{ thetaFactor * static_cast<float>(i) };
-
-        m_particleVertices[2 + i * 2] = (cosf(theta));
-        m_particleVertices[3 + i * 2] = (sinf(theta));
-
-        if (i == circleLines - 1) {
-            m_particleVertices[4 + i * 2] = (cosf(theta));
-            m_particleVertices[5 + i * 2] = (sinf(theta));
+    // Create a static circle used to draw each particle.
+    glNewList(m_circleList, GL_COMPILE);
+    glBegin(GL_TRIANGLE_FAN); {
+        glVertex2f(0.0f, 0.0f);
+        for (int i = 0; i < circleLines; ++i) {
+            const auto theta{ 2.0f * 3.1415926f * static_cast<float>(i) /
+                static_cast<float>(circleLines - 1) };
+            glVertex2f(cosf(theta), sinf(theta));
         }
-    }
+    } glEnd();
+    glEndList();
 
-    // Initialise VBO stuff:
-    glGenBuffers(1, &m_verticesID);
-    glBindBuffer(GL_ARRAY_BUFFER, m_verticesID);
-    glBufferData(GL_ARRAY_BUFFER, numCoordsPerCircle * sizeof(float),
-                 &m_particleVertices[0], GL_STATIC_DRAW);
 
 }
 
 AnimationState::~AnimationState() {
+    glDeleteLists(m_circleList, 1);
 }
 
 void AnimationState::drawParticles() const {
-    glBindBuffer(GL_ARRAY_BUFFER, m_verticesID);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(2, GL_FLOAT, 0, nullptr);
-    // glMultiDrawArrays(GL_TRIANGLE_FAN, starts, counts, numParticles);
-
     // Draw the particle itself
     for (const auto& p : m_particles) {
         glPushMatrix();
         glTranslatef(p.x, p.y, 0.0f);
         glScalef(p.size, p.size, 1.0f);
-        glDrawArrays(GL_TRIANGLE_FAN, 0, numVerticesPerCircle);
+        glCallList(m_circleList);
         glPopMatrix();
     }
-    glDisableClientState(GL_VERTEX_ARRAY);
 
     //  draw lines to particles in neighbouring cells
     // (but not the current cell)
     for (const auto& p : m_particles) {
-        // p.draw();
-
         auto nextX = uint32_t{ p.cellX + 1 };
         auto nextY = uint32_t{ p.cellY + 1};
         auto prevY = int32_t{ static_cast<int32_t>(p.cellY) - 1}; // can be negative
@@ -154,20 +135,6 @@ void AnimationState::drawParticleConnection(const Particle* const p1,
         glBegin(GL_LINES); {
             glVertex2f(p1->x, p1->y);
             glVertex2f(p2->x, p2->y);
-        } glEnd();
-    }
-}
-
-void AnimationState::drawCells() const {
-    // Vertical lines
-    glColor4f(1.0f, 1.0f, 1.0f, 0.2f);
-    for (int i = 0; i < numCellsPerSide; ++i) {
-        glBegin(GL_LINES); {
-            glVertex2f((i * cellSize) - 1.0f, -1.0f);
-            glVertex2f((i * cellSize) - 1.0f,  1.0f);
-
-            glVertex2f(-1.0f, (i * cellSize) - 1.0f);
-            glVertex2f( 1.0f, (i * cellSize) - 1.0f);
         } glEnd();
     }
 }
@@ -247,32 +214,6 @@ void Particle::update(AnimationState& as, float dt) {
         cellX = newCellX;
         cellY = newCellY;
     }
-}
-
-void Particle::draw() const {
-    glPushMatrix(); {
-        glColor4f(PARTICLE_R, PARTICLE_G, PARTICLE_B, PARTICLE_A);
-        glTranslatef(x, y, 0.0f);
-
-        // Draw a circle if the particle is large enough, otherwise draw tiny square
-        if (size > particleMinSize * 2) {
-            glBegin(GL_TRIANGLE_FAN); {
-                glVertex2f(0.0f, 0.0f);
-                for (int i = 0; i < circleLines; ++i) {
-                    const auto theta{ 2.0f * 3.1415926f * static_cast<float>(i) /
-                        static_cast<float>(circleLines - 1) };
-                    glVertex2f(size * cosf(theta), size * sinf(theta));
-                }
-            } glEnd();
-        } else {
-            glBegin(GL_QUADS); {
-                glVertex2f(- size/2.0f, size/2.0f);
-                glVertex2f(size/2.0f, size/2.0f);
-                glVertex2f(size/2.0f, - size/2.0f);
-                glVertex2f(- size/2.0f, - size/2.0f);
-            } glEnd();
-        }
-    } glPopMatrix();
 }
 
 }

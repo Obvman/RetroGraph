@@ -4,6 +4,10 @@
 #include <vector>
 #include <array>
 
+#ifndef __GL_H__
+typedef unsigned int GLuint;
+#endif
+
 namespace rg {
 
 constexpr float PARTICLE_R{ 0.8f };
@@ -25,7 +29,6 @@ class Particle {
 public:
     Particle();
 
-    void draw() const;
     void update(AnimationState& as, float dt);
 
     float x{ 0.0f };
@@ -52,7 +55,6 @@ public:
 private:
     void drawParticleConnection(const Particle* const p1,
                                 const Particle* const p2) const;
-    void drawCells() const;
 
     std::vector<Particle> m_particles{ };
     uint32_t m_animationFPS{ 20U };
@@ -64,6 +66,7 @@ private:
         std::array<std::vector<const Particle*>, numCellsPerSide>, 
         numCellsPerSide> m_cells;
 
+    GLuint m_circleList;
     friend class Particle;
 };
 
