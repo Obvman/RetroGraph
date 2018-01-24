@@ -43,28 +43,12 @@ void MainWidget::draw(uint32_t ticks) const {
 
     glColor4f(PARTICLE_R, PARTICLE_G, PARTICLE_B, PARTICLE_A);
 
-    // glMatrixMode(GL_PROJECTION);
-    // glPushMatrix();
-    // glLoadIdentity();
-    // float aspect = static_cast<float>(m_viewport.width) /
-    //     static_cast<float>(m_viewport.height);
-    // const float l = m_viewport.width;
-    // const float r = (float)m_viewport.width + m_viewport.x;
-    // const float t = (float)m_viewport.height + m_viewport.y;
-    // const float b = m_viewport.y;
-    // printf("Left: %f, Right: %f, Bottom: %f, Top: %f\n", l, r, b, t);
-    // glOrtho(l, r, b, t, 0, 1);
-    // printf("Left: %d, Right: %d, Bottom: %d, Top: %d\n",
-    //        m_viewport.x, m_viewport.x + m_viewport.width,
-           // m_viewport.y, m_viewport.y + m_viewport.height);
-    // glOrtho(m_viewport.x, m_viewport.x + m_viewport.width,
-    //         m_viewport.y, m_viewport.y + m_viewport.height, 0.0f, 1.0f);
-
-    // glMatrixMode(GL_MODELVIEW);
-    m_animationState->drawParticles();
-
-    // glMatrixMode(GL_PROJECTION);
-    // glPopMatrix();
+    float aspect = static_cast<float>(m_viewport.width) /
+                   static_cast<float>(m_viewport.height);
+    glPushMatrix();
+    glScalef(1.0f, aspect, 1.0f);
+        m_animationState->drawParticles();
+    glPopMatrix();
 }
 
 void MainWidget::setVisibility(bool b) {

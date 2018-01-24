@@ -11,15 +11,6 @@ constexpr float PARTICLE_G{ 0.8f };
 constexpr float PARTICLE_B{ 0.8f };
 constexpr float PARTICLE_A{ 0.5f };
 
-constexpr size_t numParticles{ 100U };
-constexpr float particleMinSize{ 0.005f };
-constexpr float particleMaxSize{ 0.012f };
-
-constexpr float particleMinPos{ -0.998f };
-constexpr float particleMaxPos{ 0.998f };
-constexpr float particleMinSpeed{ 0.01f };
-constexpr float particleMaxSpeed{ 0.1f };
-
 // TODO alter this value based on size
 constexpr float particleConnectionDistance{ 0.2f };
 

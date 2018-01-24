@@ -59,7 +59,7 @@ void RetroGraph::draw(uint32_t ticks) const {
         ReleaseDC(m_window.getHwnd(), hdc);
 
         const auto fps{ m_fpsLimiter.end() };
-        printf("%f\n", fps);
+        // printf("%f\n", fps);
     }
 }
 
