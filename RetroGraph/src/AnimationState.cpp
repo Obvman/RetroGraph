@@ -29,10 +29,8 @@ constexpr float particleMaxPos{ 0.998f };
 constexpr float particleMinSpeed{ 0.01f };
 constexpr float particleMaxSpeed{ 0.1f };
 
-static std::array<float, numCoordsPerCircle * numParticles> m_particleVertices{ };
+static std::array<float, numCoordsPerCircle> m_particleVertices{ };
 GLuint m_verticesID;
-GLsizei starts[numParticles];
-GLsizei counts[numParticles];
 
 AnimationState::AnimationState() : 
         m_particles{ },
@@ -49,43 +47,28 @@ AnimationState::AnimationState() :
         m_cells[p.cellX][p.cellY].push_back(&p);
     }
 
-    for (auto i = size_t{ 0U }; i < numParticles; ++i) {
-        const auto vertexIndex = i * numCoordsPerCircle;
+    // Create a set of vertices for a circle
+    m_particleVertices[0]   = 0.0f;
+    m_particleVertices[1] = 0.0f;
+    for (int i = 0; i < circleLines; ++i) {
+        constexpr auto thetaFactor{ 2.0f * 3.1415926f /
+            static_cast<float>(circleLines - 1) };
+        const auto theta{ thetaFactor * static_cast<float>(i) };
 
-        const auto x{ m_particles[i].x };
-        const auto y{ m_particles[i].y };
-        const auto size{ m_particles[i].size };
-        printf("%f\n", size);
+        m_particleVertices[2 + i * 2] = (cosf(theta));
+        m_particleVertices[3 + i * 2] = (sinf(theta));
 
-        m_particleVertices[vertexIndex]   = 0.0f;
-        m_particleVertices[vertexIndex + 1] = 0.0f;
-
-        for (int j = 0; j < circleLines; ++j) {
-            constexpr auto thetaFactor{ 2.0f * 3.1415926f /
-                static_cast<float>(circleLines - 1) };
-            const auto theta{ thetaFactor * static_cast<float>(j) };
-
-            m_particleVertices[vertexIndex + 2 + j * 2] = (size * cosf(theta));
-            m_particleVertices[vertexIndex + 3 + j * 2] = (size * sinf(theta));
-
-            if (j == circleLines - 1) {
-                m_particleVertices[vertexIndex + 4 + j * 2] = (size * cosf(theta));
-                m_particleVertices[vertexIndex + 5 + j * 2] = (size * sinf(theta));
-            }
+        if (i == circleLines - 1) {
+            m_particleVertices[4 + i * 2] = (cosf(theta));
+            m_particleVertices[5 + i * 2] = (sinf(theta));
         }
     }
 
     // Initialise VBO stuff:
     glGenBuffers(1, &m_verticesID);
     glBindBuffer(GL_ARRAY_BUFFER, m_verticesID);
-    glBufferData(GL_ARRAY_BUFFER, numCoordsPerCircle * numParticles * sizeof(float),
-                 &m_particleVertices[0], GL_DYNAMIC_DRAW);
-
-    // Used to tell glMultiDrawArrays how large each triangle fan is.
-    for (int i = 0; i < numParticles; ++i) {
-        starts[i] = i * numVerticesPerCircle;
-        counts[i] = numVerticesPerCircle;
-    }
+    glBufferData(GL_ARRAY_BUFFER, numCoordsPerCircle * sizeof(float),
+                 &m_particleVertices[0], GL_STATIC_DRAW);
 
 }
 
@@ -99,10 +82,11 @@ void AnimationState::drawParticles() const {
     // glMultiDrawArrays(GL_TRIANGLE_FAN, starts, counts, numParticles);
 
     // Draw the particle itself
-    for (int i = 0; i < numParticles; ++i) {
+    for (const auto& p : m_particles) {
         glPushMatrix();
-        glTranslatef(m_particles[i].x, m_particles[i].y, 0.0f);
-        glDrawArrays(GL_TRIANGLE_FAN, i * numVerticesPerCircle, numVerticesPerCircle);
+        glTranslatef(p.x, p.y, 0.0f);
+        glScalef(p.size, p.size, 1.0f);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, numVerticesPerCircle);
         glPopMatrix();
     }
     glDisableClientState(GL_VERTEX_ARRAY);
