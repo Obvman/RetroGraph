@@ -16,6 +16,7 @@
 #include "SystemMeasure.h"
 #include "UserSettings.h"
 #include "AnimationState.h"
+#include "FPSLimiter.h"
 
 namespace rg {
 
@@ -77,6 +78,7 @@ private:
     bool m_musicWidgetEnabled{ true };
     bool m_systemStatsWidgetEnabled{ true };
 
+    mutable FPSLimiter m_fpsLimiter;
     Renderer m_renderer;
 };
 

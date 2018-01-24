@@ -145,7 +145,8 @@ void drawViewportBorder() {
 }
 
 void drawVerticalProgressBar(float barWidth, float startY, float endY,
-                             float currValue, float totalValue, bool warningColor) {
+                             float currValue, float totalValue, 
+                             bool warningColor) {
     const auto percentage{ currValue / totalValue };
     const auto startX = float{ ((2.0f - barWidth) / 2.0f) - 1.0f };
     const auto rangeY{ endY - startY };

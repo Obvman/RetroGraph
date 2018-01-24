@@ -7,8 +7,9 @@
 namespace rg {
 
 RetroGraph::RetroGraph(HINSTANCE hInstance) :
-    m_window{ this, hInstance, std::get<int32_t>(UserSettings::inst().getVal("Window.Monitor")), 
-               std::get<bool>(UserSettings::inst().getVal("Window.ClickThrough")) },
+    m_window{ this, hInstance, 
+              std::get<int32_t>(UserSettings::inst().getVal("Window.Monitor")), 
+              std::get<bool>(UserSettings::inst().getVal("Window.ClickThrough")) },
     m_cpuMeasure{},
     m_gpuMeasure{},
     m_ramMeasure{},
@@ -18,6 +19,7 @@ RetroGraph::RetroGraph(HINSTANCE hInstance) :
     m_musicMeasure{ std::make_unique<MusicMeasure>(&m_processMeasure) },
     m_systemMeasure{ },
     m_animationState{ std::make_unique<AnimationState>() },
+    m_fpsLimiter{},
     m_renderer{ m_window, *this } {
 
     update(0);
@@ -25,6 +27,8 @@ RetroGraph::RetroGraph(HINSTANCE hInstance) :
 }
 
 void RetroGraph::update(uint32_t ticks) {
+    m_fpsLimiter.begin();
+
     // Update with a tick offset so all measures don't update in the same
     // cycle and spike the CPU
     auto i = uint32_t{ 0U };
@@ -40,7 +44,9 @@ void RetroGraph::update(uint32_t ticks) {
 }
 
 void RetroGraph::draw(uint32_t ticks) const {
-    const auto framesPerSecond = uint32_t{ (m_mainWidgetEnabled) ? m_animationState->getAnimationFPS() : 2U };
+    const auto framesPerSecond = uint32_t{ (m_mainWidgetEnabled) ? 
+        m_animationState->getAnimationFPS() : 2U };
+
     if ((ticks % std::lround(
         static_cast<float>(rg::ticksPerSecond)/framesPerSecond)) == 0) {
 
@@ -51,6 +57,9 @@ void RetroGraph::draw(uint32_t ticks) const {
 
         SwapBuffers(hdc);
         ReleaseDC(m_window.getHwnd(), hdc);
+
+        const auto fps{ m_fpsLimiter.end() };
+        printf("%f\n", fps);
     }
 }
 
@@ -66,7 +75,8 @@ void RetroGraph::toggleWidget(Widget w) {
             break;
         case Widget::HDD:
             if (m_HDDWidgetEnabled) {
-                // Disable the measure here to free up resources since it's not used anywhere else
+                // Disable the measure here to free up resources since 
+                // it's not used anywhere else
                 m_driveMeasure.reset();
             } else {
                 m_driveMeasure = std::make_unique<DriveMeasure>();
@@ -102,15 +112,18 @@ void RetroGraph::toggleWidget(Widget w) {
             break;
         case Widget::SystemStats:
             m_systemStatsWidgetEnabled = !m_systemStatsWidgetEnabled;
-            m_renderer.setWidgetVisibility(Widget::SystemStats, m_systemStatsWidgetEnabled);
+            m_renderer.setWidgetVisibility(Widget::SystemStats,
+                                           m_systemStatsWidgetEnabled);
             break;
         case Widget::ProcessCPU:
             m_cpuProcessWidgetEnabled = !m_cpuProcessWidgetEnabled;
-            m_renderer.setWidgetVisibility(Widget::ProcessCPU, m_cpuProcessWidgetEnabled);
+            m_renderer.setWidgetVisibility(Widget::ProcessCPU,
+                                           m_cpuProcessWidgetEnabled);
             break;
         case Widget::ProcessRAM:
             m_ramProcessWidgetEnabled = !m_ramProcessWidgetEnabled;
-            m_renderer.setWidgetVisibility(Widget::ProcessRAM, m_ramProcessWidgetEnabled);
+            m_renderer.setWidgetVisibility(Widget::ProcessRAM,
+                                           m_ramProcessWidgetEnabled);
             break;
     }
 }

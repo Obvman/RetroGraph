@@ -26,72 +26,87 @@ UserSettings::UserSettings() {
         if (propTree.empty()) {
             generateDefaultFile(propTree);
         } else {
-            m_settings["Window.Monitor"] = propTree.get<int32_t>("Window.Monitor");
+            m_settings["Window.Monitor"] = 
+                propTree.get<int32_t>("Window.Monitor");
 
-            m_settings["Window.ClickThrough"] = propTree.get<bool>("Window.ClickThrough");
-            m_settings["Window.WidgetBackground"] = propTree.get<bool>("Window.WidgetBackground");
+            m_settings["Window.ClickThrough"] =
+                propTree.get<bool>("Window.ClickThrough");
+            m_settings["Window.WidgetBackground"] =
+                propTree.get<bool>("Window.WidgetBackground");
 
-            m_settings["Network.PingServer"] = propTree.get<std::string>("Network.PingServer");
-            m_settings["Network.PingFrequency"] = propTree.get<uint32_t>("Network.PingFrequency");
+            m_settings["Network.PingServer"] =
+                propTree.get<std::string>("Network.PingServer");
+            m_settings["Network.PingFrequency"] =
+                propTree.get<uint32_t>("Network.PingFrequency");
 
-            m_settings[ "Widgets-ProcessesCPU.NumProcessesDisplayed"] = propTree.get<uint32_t>(
-                "Widgets-ProcessesCPU.NumProcessesDisplayed");
-            m_settings[ "Widgets-ProcessesCPU.HighCPUUsageThreshold"] = propTree.get<float>(
-                "Widgets-ProcessesCPU.HighCPUUsageThreshold");
+            m_settings[ "Widgets-ProcessesCPU.NumProcessesDisplayed"] =
+                propTree.get<uint32_t>("Widgets-ProcessesCPU.NumProcessesDisplayed");
+            m_settings[ "Widgets-ProcessesCPU.HighCPUUsageThreshold"] =
+                propTree.get<float>("Widgets-ProcessesCPU.HighCPUUsageThreshold");
 
-            m_settings[ "Widgets-ProcessesRAM.NumProcessesDisplayed"] = propTree.get<uint32_t>(
-                "Widgets-ProcessesRAM.NumProcessesDisplayed");
-            m_settings[ "Widgets-ProcessesRAM.HighRAMUsageThresholdMB"] = propTree.get<uint32_t>(
-                "Widgets-ProcessesRAM.HighRAMUsageThresholdMB");
+            m_settings[ "Widgets-ProcessesRAM.NumProcessesDisplayed"] =
+                propTree.get<uint32_t>("Widgets-ProcessesRAM.NumProcessesDisplayed");
+            m_settings[ "Widgets-ProcessesRAM.HighRAMUsageThresholdMB"] =
+                propTree.get<uint32_t>("Widgets-ProcessesRAM.HighRAMUsageThresholdMB");
 
-            m_settings["Widgets-Graphs-Network.NumUsageSamples"] = propTree.get<uint32_t>(
-                "Widgets-Graphs-Network.NumUsageSamples");
-            m_settings["Widgets-Graphs-CPU.NumUsageSamples"] = propTree.get<uint32_t>(
-                "Widgets-Graphs-CPU.NumUsageSamples");
-            m_settings["Widgets-Graphs-GPU.NumUsageSamples"] = propTree.get<uint32_t>(
-                "Widgets-Graphs-GPU.NumUsageSamples");
-            m_settings["Widgets-Graphs-RAM.NumUsageSamples"] = propTree.get<uint32_t>(
-                "Widgets-Graphs-RAM.NumUsageSamples");
+            m_settings["Widgets-Graphs-Network.NumUsageSamples"] =
+                propTree.get<uint32_t>("Widgets-Graphs-Network.NumUsageSamples");
+            m_settings["Widgets-Graphs-CPU.NumUsageSamples"] =
+                propTree.get<uint32_t>("Widgets-Graphs-CPU.NumUsageSamples");
+            m_settings["Widgets-Graphs-GPU.NumUsageSamples"] =
+                propTree.get<uint32_t>("Widgets-Graphs-GPU.NumUsageSamples");
+            m_settings["Widgets-Graphs-RAM.NumUsageSamples"] =
+                propTree.get<uint32_t>("Widgets-Graphs-RAM.NumUsageSamples");
 
-            m_settings["Widgets-Main.FPS"] = propTree.get<uint32_t>("Widgets-Main.FPS");
+            m_settings["Widgets-Main.FPS"] =
+                propTree.get<uint32_t>("Widgets-Main.FPS");
 
-            m_widgetVisibilities[RG_WIDGET_TIME] = propTree.get<bool>(
-                    "Widgets-Time.Visible");
-            m_widgetVisibilities[RG_WIDGET_CPU_STATS] = propTree.get<bool>(
-                    "Widgets-CPUStats.Visible");
-            m_widgetVisibilities[RG_WIDGET_SYSTEM_STATS] = propTree.get<bool>(
-                    "Widgets-SystemStats.Visible");
-            m_widgetVisibilities[RG_WIDGET_PROCESSES_CPU] = propTree.get<bool>(
-                    "Widgets-ProcessesCPU.Visible");
-            m_widgetVisibilities[RG_WIDGET_PROCESSES_RAM] = propTree.get<bool>(
-                    "Widgets-ProcessesRAM.Visible");
-            m_widgetVisibilities[RG_WIDGET_MUSIC] = propTree.get<bool>(
-                    "Widgets-Music.Visible");
-            m_widgetVisibilities[RG_WIDGET_MAIN] = propTree.get<bool>(
-                    "Widgets-Main.Visible");
-            m_widgetVisibilities[RG_WIDGET_DRIVES] = propTree.get<bool>(
-                    "Widgets-Drives.Visible");
-            m_widgetVisibilities[RG_WIDGET_GRAPHS] = propTree.get<bool>(
-                    "Widgets-Graphs.Visible");
+            m_widgetVisibilities[RG_WIDGET_TIME] =
+                propTree.get<bool>("Widgets-Time.Visible");
+            m_widgetVisibilities[RG_WIDGET_CPU_STATS] =
+                propTree.get<bool>("Widgets-CPUStats.Visible");
+            m_widgetVisibilities[RG_WIDGET_SYSTEM_STATS] =
+                propTree.get<bool>("Widgets-SystemStats.Visible");
+            m_widgetVisibilities[RG_WIDGET_PROCESSES_CPU] =
+                propTree.get<bool>("Widgets-ProcessesCPU.Visible");
+            m_widgetVisibilities[RG_WIDGET_PROCESSES_RAM] =
+                propTree.get<bool>("Widgets-ProcessesRAM.Visible");
+            m_widgetVisibilities[RG_WIDGET_MUSIC] =
+                propTree.get<bool>("Widgets-Music.Visible");
+            m_widgetVisibilities[RG_WIDGET_MAIN] =
+                propTree.get<bool>("Widgets-Main.Visible");
+            m_widgetVisibilities[RG_WIDGET_DRIVES] =
+                propTree.get<bool>("Widgets-Drives.Visible");
+            m_widgetVisibilities[RG_WIDGET_GRAPHS] =
+                propTree.get<bool>("Widgets-Graphs.Visible");
 
-            m_widgetPositions[RG_WIDGET_PROCESSES_CPU] = 
-                    m_posMap.at(propTree.get<std::string>("Widgets-ProcessesCPU.Position"));
+            m_widgetPositions[RG_WIDGET_PROCESSES_CPU] =
+                    m_posMap.at(propTree.get<std::string>(
+                                    "Widgets-ProcessesCPU.Position"));
             m_widgetPositions[RG_WIDGET_PROCESSES_RAM] = 
-                    m_posMap.at(propTree.get<std::string>("Widgets-ProcessesRAM.Position"));
+                    m_posMap.at(propTree.get<std::string>(
+                                    "Widgets-ProcessesRAM.Position"));
             m_widgetPositions[RG_WIDGET_TIME] = 
-                    m_posMap.at(propTree.get<std::string>("Widgets-Time.Position"));
+                    m_posMap.at(propTree.get<std::string>(
+                                    "Widgets-Time.Position"));
             m_widgetPositions[RG_WIDGET_SYSTEM_STATS] = 
-                    m_posMap.at(propTree.get<std::string>("Widgets-SystemStats.Position"));
+                    m_posMap.at(propTree.get<std::string>(
+                                    "Widgets-SystemStats.Position"));
             m_widgetPositions[RG_WIDGET_MUSIC] = 
-                    m_posMap.at(propTree.get<std::string>("Widgets-Music.Position"));
+                    m_posMap.at(propTree.get<std::string>(
+                                    "Widgets-Music.Position"));
             m_widgetPositions[RG_WIDGET_CPU_STATS] = 
-                    m_posMap.at(propTree.get<std::string>("Widgets-CPUStats.Position"));
+                    m_posMap.at(propTree.get<std::string>(
+                                    "Widgets-CPUStats.Position"));
             m_widgetPositions[RG_WIDGET_DRIVES] = 
-                    m_posMap.at(propTree.get<std::string>("Widgets-Drives.Position"));
+                    m_posMap.at(propTree.get<std::string>(
+                                    "Widgets-Drives.Position"));
             m_widgetPositions[RG_WIDGET_MAIN] = 
-                    m_posMap.at(propTree.get<std::string>("Widgets-Main.Position"));
+                    m_posMap.at(propTree.get<std::string>(
+                                    "Widgets-Main.Position"));
             m_widgetPositions[RG_WIDGET_GRAPHS] = 
-                    m_posMap.at(propTree.get<std::string>("Widgets-Graphs.Position"));
+                    m_posMap.at(propTree.get<std::string>(
+                                    "Widgets-Graphs.Position"));
         }
 
     } catch (const pt::ptree_bad_path& e) {
@@ -143,24 +158,33 @@ void UserSettings::generateDefaultFile(boost::property_tree::ptree& propTree) {
                  std::get<uint32_t>(m_settings["Network.PingFrequency"]));
 
     propTree.put("Widgets-ProcessesCPU.NumProcessesDisplayed", 
-                 std::get<uint32_t>(m_settings["Widgets-ProcessesCPU.NumProcessesDisplayed"]));
+                 std::get<uint32_t>(
+                    m_settings["Widgets-ProcessesCPU.NumProcessesDisplayed"]));
     propTree.put("Widgets-ProcessesRAM.NumProcessesDisplayed", 
-                 std::get<uint32_t>(m_settings["Widgets-ProcessesRAM.NumProcessesDisplayed"]));
+                 std::get<uint32_t>(
+                    m_settings["Widgets-ProcessesRAM.NumProcessesDisplayed"]));
     propTree.put("Widgets-ProcessesCPU.HighCPUUsageThreshold", 
-                 std::get<float>(m_settings["Widgets-ProcessesCPU.HighCPUUsageThreshold"]));
+                 std::get<float>(
+                    m_settings["Widgets-ProcessesCPU.HighCPUUsageThreshold"]));
     propTree.put("Widgets-ProcessesRAM.HighRAMUsageThresholdMB", 
-                 std::get<uint32_t>(m_settings["Widgets-ProcessesRAM.HighRAMUsageThresholdMB"]));
+                 std::get<uint32_t>(
+                    m_settings["Widgets-ProcessesRAM.HighRAMUsageThresholdMB"]));
 
     propTree.put("Widgets-Graphs-Network.NumUsageSamples", 
-                 std::get<uint32_t>(m_settings["Widgets-Graphs-Network.NumUsageSamples"]));
+                 std::get<uint32_t>(
+                    m_settings["Widgets-Graphs-Network.NumUsageSamples"]));
     propTree.put("Widgets-Graphs-CPU.NumUsageSamples", 
-                 std::get<uint32_t>(m_settings["Widgets-Graphs-CPU.NumUsageSamples"]));
+                 std::get<uint32_t>(
+                    m_settings["Widgets-Graphs-CPU.NumUsageSamples"]));
     propTree.put("Widgets-Graphs-GPU.NumUsageSamples", 
-                 std::get<uint32_t>(m_settings["Widgets-Graphs-GPU.NumUsageSamples"]));
+                 std::get<uint32_t>(
+                    m_settings["Widgets-Graphs-GPU.NumUsageSamples"]));
     propTree.put("Widgets-Graphs-RAM.NumUsageSamples", 
-                 std::get<uint32_t>(m_settings["Widgets-Graphs-RAM.NumUsageSamples"]));
+                 std::get<uint32_t>(
+                    m_settings["Widgets-Graphs-RAM.NumUsageSamples"]));
 
-    propTree.put("Widgets-Main.FPS", std::get<uint32_t>(m_settings["Widgets-Main.FPS"]));
+    propTree.put("Widgets-Main.FPS",
+                 std::get<uint32_t>(m_settings["Widgets-Main.FPS"]));
 
     // Widget Visibilities
     propTree.put("Widgets-Time.Visible",         isVisible(RG_WIDGET_TIME));

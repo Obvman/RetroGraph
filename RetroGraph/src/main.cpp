@@ -5,6 +5,7 @@
 
 #include <GL/glew.h>
 #include <GL/gl.h>
+#include <tweeny/tweeny.h>
 
 #include <Windows.h>
 //#include <winternl.h>
@@ -26,6 +27,7 @@ int main() {
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
     hInstance = GetModuleHandle(nullptr);
 #endif
+
     try {
         rg::RetroGraph retroGraph{ hInstance };
 
@@ -41,8 +43,9 @@ void mainLoop(rg::RetroGraph& retroGraph) {
     using namespace std::chrono;
 
     auto frameStartTime{ duration_cast<milliseconds>(
-        system_clock::now().time_since_epoch()).count()
-    };
+        system_clock::now().time_since_epoch()
+        ).count() };
+
     auto ticks = uint32_t{ 1 };
     auto lastTick{ ticks };
 
@@ -54,21 +57,21 @@ void mainLoop(rg::RetroGraph& retroGraph) {
                              ).count() };
         const auto dt{ currTime - frameStartTime };
 
-        // Handle windows messages
+        // Handle Windows messages
         if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
+
         // Execute timed actions when the tick rolls over
         if (lastTick != ticks) {
             retroGraph.update(ticks);
-
             retroGraph.draw(ticks);
 
             lastTick = ticks;
         }
 
-        // Reset the millisecond counter every tick
+        // Reset the millisecond counter every tick, and roll over to next tick
         if (dt > rg::tickDuration) {
             frameStartTime = currTime;
             ++ticks;

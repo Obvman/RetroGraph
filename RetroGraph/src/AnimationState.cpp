@@ -19,7 +19,9 @@ namespace rg {
 
 AnimationState::AnimationState() : 
         m_particles{ },
-        m_animationFPS{ std::get<uint32_t>(UserSettings::inst().getVal("Widgets-Main.FPS")) } {
+        m_animationFPS{ std::get<uint32_t>(
+                            UserSettings::inst().getVal("Widgets-Main.FPS")
+                        ) } {
 
     // Generate particles and populate the cell particle observer lists.
     srand(static_cast<uint32_t>(time(nullptr)));
@@ -81,15 +83,17 @@ void AnimationState::drawParticles() const {
     }
 }
 
-void AnimationState::drawParticleConnection(const Particle* const p1, const Particle* const p2) const {
+void AnimationState::drawParticleConnection(const Particle* const p1,
+                                            const Particle* const p2) const {
     if (p1 == p2) return;
 
     const auto dx{ fabs(p1->x - p2->x) };
     const auto dy{ fabs(p1->y - p2->y) };
-    constexpr auto radiusSq{ particleConnectionDistance * particleConnectionDistance };
+    constexpr auto radiusSq{ particleConnectionDistance * 
+                             particleConnectionDistance };
     const auto distance{ dx * dx + dy * dy };
 
-    // Draw a line to neighbouring particles. The line fades the further away it is.
+    // Draw a line to neighbouring particles. line fades the further away it is.
     if (distance < radiusSq) {
         const float distFactor{ 1.0f - distance / radiusSq };
         glColor4f(1.0f, 1.0f, 1.0f, distFactor);
@@ -116,13 +120,14 @@ void AnimationState::drawCells() const {
 
 void AnimationState::update(uint32_t ticks) {
     if (ticks % (ticksPerSecond / m_animationFPS) == 0) {
+        using namespace std::chrono;
         using clock = std::chrono::high_resolution_clock;
         static auto time_start = clock::now();
 
         auto time_end = clock::now();
         const auto deltaTimeStep{ time_end - time_start };
         time_start = clock::now();
-        auto dt{ std::chrono::duration_cast<std::chrono::duration<float>>(deltaTimeStep).count() };
+        auto dt{ duration_cast<duration<float>>(deltaTimeStep).count() };
 
         // If a lot of time has passed, set dt to a small value so we don't have
         // one large jump
@@ -158,21 +163,21 @@ void Particle::update(AnimationState& as, float dt) {
     y += speed * dirY * dt;
 
     // If we move off the screen, wrap the particle around to the other side
-    if (x <= -1.0f) {
+    if (x < particleMinPos) {
         x = particleMaxPos;
         y = -y;
-    } else if (x >= 1.0f) {
+    } else if (x > particleMaxPos) {
         x = particleMinPos;
         y = -y;
-    } 
-    if (y <= -1.0f) {
+    } else if (y < particleMinPos) {
         x = -x;
         y = particleMaxPos;
-    } else if (y >= 1.0f) {
+    } else if (y > particleMaxPos) {
         x = -x;
         y = particleMinPos;
     }
 
+    // fails for x = 0.999999940
     const uint32_t newCellX{ static_cast<uint32_t>((x + 1.0f) / cellSize) };
     const uint32_t newCellY{ static_cast<uint32_t>((y + 1.0f) / cellSize) };
 
@@ -194,8 +199,8 @@ void Particle::draw() const {
     constexpr auto circleLines = int32_t{ 10 };
     glPushMatrix(); {
         glTranslatef(x, y, 0.0f);
-
         glColor4f(PARTICLE_R, PARTICLE_G, PARTICLE_B, PARTICLE_A);
+
         // Draw a circle if the particle is large enough, otherwise draw tiny square
         if (size > particleMinSize * 2) {
             glBegin(GL_TRIANGLE_FAN); {
@@ -214,7 +219,6 @@ void Particle::draw() const {
                 glVertex2f(-size/2.0f, -size/2.0f);
             } glEnd();
         }
-
     } glPopMatrix();
 }
 

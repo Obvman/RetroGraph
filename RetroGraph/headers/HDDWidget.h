@@ -11,10 +11,10 @@ class DriveMeasure;
 
 class HDDWidget {
 public:
-    HDDWidget(const FontManager* fontManager, const std::unique_ptr<DriveMeasure>& driveMeasure,
-              bool visible) :
+    HDDWidget(const FontManager* fontManager, 
+              const std::unique_ptr<DriveMeasure>& driveMeasure, bool visible) :
         m_fontManager{ fontManager }, m_visible{ visible },
-        m_driveMeasure{ driveMeasure } {}
+        m_driveMeasure{ driveMeasure } { /* Empty */ }
 
     ~HDDWidget() noexcept = default;
     HDDWidget(const HDDWidget&) = delete;

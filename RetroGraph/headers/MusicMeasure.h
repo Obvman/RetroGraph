@@ -26,8 +26,8 @@ public:
      */
     void update(uint32_t ticks);
 
-    /* Checks click coordinates for collision with media controls, returns true if a
-     * media key was successfully clicked 
+    /* Checks click coordinates for collision with media controls, returns true 
+     * if a media key was successfully clicked 
      */
     bool handleClick(int32_t clickX, int32_t clickY) const;
 

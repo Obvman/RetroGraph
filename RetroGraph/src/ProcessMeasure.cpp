@@ -34,8 +34,14 @@ typedef struct _SYSTEM_PROCESS_INFO {
 } SYSTEM_PROCESS_INFO, *PSYSTEM_PROCESS_INFO;
 
 ProcessMeasure::ProcessMeasure() :
-    m_numCPUProcessesToDisplay{ std::get<uint32_t>(UserSettings::inst().getVal("Widgets-ProcessesCPU.NumProcessesDisplayed")) },
-    m_numRAMProcessesToDisplay{ std::get<uint32_t>(UserSettings::inst().getVal("Widgets-ProcessesRAM.NumProcessesDisplayed")) } {
+    m_numCPUProcessesToDisplay{ std::get<uint32_t>(
+                                UserSettings::inst().getVal(
+                                    "Widgets-ProcessesCPU.NumProcessesDisplayed")
+                                ) },
+    m_numRAMProcessesToDisplay{ std::get<uint32_t>(
+                                UserSettings::inst().getVal(
+                                    "Widgets-ProcessesRAM.NumProcessesDisplayed")
+                                ) } {
 
 #if !_DEBUG
     // Set the debug privilege in order to gain access to system processes
@@ -86,7 +92,8 @@ void ProcessMeasure::update(uint32_t ticks) {
             auto exitCode = DWORD{ 1U };
             if (!GetExitCodeProcess(pHandle, &exitCode)) {
                 const auto error{ GetLastError() };
-                std::cout << "Failed to retreive exit code of process. Error: " << std::to_string(error) << '\n';
+                std::cout << "Failed to retreive exit code of process. Error: " 
+                          << std::to_string(error) << '\n';
                 CloseHandle(pHandle);
                 continue;
             }
@@ -224,12 +231,15 @@ double ProcessMeasure::calculateCPUUsage(HANDLE pHandle, ProcessData& oldData) {
         // Find delta in the entire system's CPU usage time
         FILETIME sysIdle, sysKernel, sysUser;
         GetSystemTimes(&sysIdle, &sysKernel, &sysUser);
-        const auto sysKernelDiff{ subtractTimes(sysKernel, oldData.getLastSystemKernelTime()) };
-        const auto sysUserDiff{ subtractTimes(sysUser, oldData.getLastSystemUserTime()) };
+        const auto sysKernelDiff{ subtractTimes(sysKernel,
+                                                oldData.getLastSystemKernelTime()) };
+        const auto sysUserDiff{ subtractTimes(sysUser,
+                                              oldData.getLastSystemUserTime()) };
         const auto totalSys{ sysKernelDiff + sysUserDiff };
 
         // Get the CPU usage as a percentage
-        const double cpuUse = static_cast<double>(100 * totalProc) / static_cast<double>(totalSys);
+        const double cpuUse = static_cast<double>(100 * totalProc) /
+                              static_cast<double>(totalSys);
 
         oldData.setTimes(cTime, eTime, kTime, uTime);
 
@@ -271,7 +281,8 @@ void ProcessMeasure::populateList() {
                                         PROCESS_VM_READ, false, procID) };
         if (!pHandle) {
             const auto error{ GetLastError() };
-            // If access is denied or the process is the system idle process, just silently skip the process
+            // If access is denied or the process is the system idle process,
+            // just silently skip the process
             if (error != ERROR_ACCESS_DENIED && procID != 0) {
                     std::cout << "Failed to open process. Code: "
                         << std::to_string(error) << ". ProcessID: "
@@ -355,7 +366,8 @@ void ProcessMeasure::detectNewProcesses() {
                 wcstombs_s(&charsConverted, nameBuff, spi->ImageName.Length,
                            spi->ImageName.Buffer, spi->ImageName.Length);
                 if (pHandle == (HANDLE)0xdddddddd) {
-                    std::cout << nameBuff << ": " << procID << ": " << pHandle << '\n';
+                    std::cout << nameBuff << ": " << procID << ": " 
+                              << pHandle << '\n';
                 }
 
 

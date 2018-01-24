@@ -11,7 +11,7 @@ constexpr float PARTICLE_G{ 0.8f };
 constexpr float PARTICLE_B{ 0.8f };
 constexpr float PARTICLE_A{ 0.5f };
 
-constexpr size_t numParticles{ 150U };
+constexpr size_t numParticles{ 100U };
 constexpr float particleMinSize{ 0.005f };
 constexpr float particleMaxSize{ 0.012f };
 
@@ -59,7 +59,8 @@ public:
 
     uint32_t getAnimationFPS() const { return m_animationFPS; };
 private:
-    void drawParticleConnection(const Particle* const p1, const Particle* const p2) const;
+    void drawParticleConnection(const Particle* const p1,
+                                const Particle* const p2) const;
     void drawCells() const;
 
     std::vector<Particle> m_particles{ };
@@ -68,7 +69,9 @@ private:
     // Members for spatial partitioning
     // The world space coordinates range from -1.0 to 1.0 for both x and y,
     // so we have a range of 2.0 for our world sides
-    std::array<std::array<std::vector<const Particle*>, numCellsPerSide>, numCellsPerSide> m_cells;
+    std::array<
+        std::array<std::vector<const Particle*>, numCellsPerSide>, 
+        numCellsPerSide> m_cells;
 
     friend class Particle;
 };

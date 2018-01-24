@@ -156,7 +156,8 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
                 }
                 default:
                     // Default case handles monitor selection list
-                     changeMonitor(hWnd, LOWORD(wParam) - ID_CHANGE_DISPLAY_MONITOR);
+                     changeMonitor(hWnd, 
+                                   LOWORD(wParam) - ID_CHANGE_DISPLAY_MONITOR);
                      break;
             }
         case WM_CONTEXTMENU: {
@@ -255,33 +256,34 @@ void Window::createRClickMenu(HWND hWnd) {
     auto widgetSubmenu{ CreatePopupMenu() };
 
     InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_EXIT,
-            "Exit");
+               "Exit");
     InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
-            ID_SEND_TO_BACK, "Send to back");
+               ID_SEND_TO_BACK, "Send to back");
     InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
-            ID_SET_WIDGET_BG, "Toggle Widget Background");
+               ID_SET_WIDGET_BG, "Toggle Widget Background");
     InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
-            ID_TEST, "Test");
-    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)widgetSubmenu, "Toggle Widgets");
+               ID_TEST, "Test");
+    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING | MF_POPUP, 
+               (UINT_PTR)widgetSubmenu, "Toggle Widgets");
 
     InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
-            ID_TOGGLE_MAIN_WIDGET, "Main Widget");
+               ID_TOGGLE_MAIN_WIDGET, "Main Widget");
     InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
-            ID_TOGGLE_TIME_WIDGET, "Time Widget");
+               ID_TOGGLE_TIME_WIDGET, "Time Widget");
     InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
-            ID_TOGGLE_HDD_WIDGET, "HDD Widget");
+               ID_TOGGLE_HDD_WIDGET, "HDD Widget");
     InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
-            ID_TOGGLE_CPUSTATS_WIDGET, "CPU Stats Widget");
+               ID_TOGGLE_CPUSTATS_WIDGET, "CPU Stats Widget");
     InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
-            ID_TOGGLE_PROCESS_CPU_WIDGET, "Cpu Process Widget");
+               ID_TOGGLE_PROCESS_CPU_WIDGET, "Cpu Process Widget");
     InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
-            ID_TOGGLE_PROCESS_RAM_WIDGET, "Ram Process Widget");
+               ID_TOGGLE_PROCESS_RAM_WIDGET, "Ram Process Widget");
     InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
-            ID_TOGGLE_GRAPH_WIDGET, "Graph Widget");
+               ID_TOGGLE_GRAPH_WIDGET, "Graph Widget");
     InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
-            ID_TOGGLE_SYSTEMSTATS_WIDGET, "System Stats Widget");
+               ID_TOGGLE_SYSTEMSTATS_WIDGET, "System Stats Widget");
     InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
-            ID_TOGGLE_MUSIC_WIDGET, "Music Widget");
+               ID_TOGGLE_MUSIC_WIDGET, "Music Widget");
 
     // Create an option for each monitor for multi-monitor systems
     const auto& md{ m_monitors.getMonitorData() };
@@ -290,7 +292,7 @@ void Window::createRClickMenu(HWND hWnd) {
             char optionName[] = "Move to display 0";
             optionName[16] = '0' + static_cast<char>(i);
             InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
-                    ID_CHANGE_DISPLAY_MONITOR + i, optionName);
+                       ID_CHANGE_DISPLAY_MONITOR + i, optionName);
         }
     }
 

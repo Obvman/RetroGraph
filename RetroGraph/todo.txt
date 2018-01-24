@@ -1,4 +1,10 @@
-BUG: lines in animations are popping in/out instead of fading sometimes :/
+look into using shaders to perform particle calculations
+
+particles get stuck in corners
+
+implement 30 min work/rest timer
+
+sleep until next frame
 
 store measures in smart pointers to control lifetime manually to start/stop measuring
 disable data gathering for non-visible widgets to save on CPU - store dependencies in a list,

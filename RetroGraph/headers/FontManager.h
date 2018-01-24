@@ -116,7 +116,9 @@ private:
 
     HWND m_hWnd{ nullptr };
     std::array<GLuint, RG_NUM_FONTS> m_fontBases{ };
-    std::array<std::array<int32_t, RG_NUM_CHARS_IN_FONT>, RG_NUM_FONTS> m_fontCharWidths{ };
+    std::array<
+        std::array<int32_t, RG_NUM_CHARS_IN_FONT>,
+        RG_NUM_FONTS> m_fontCharWidths{ };
     std::array<int32_t, RG_NUM_FONTS> m_fontCharHeights{ };
     std::array<int32_t, RG_NUM_FONTS> m_fontCharAscents{ };
     std::array<int32_t, RG_NUM_FONTS> m_fontCharDescents{ };

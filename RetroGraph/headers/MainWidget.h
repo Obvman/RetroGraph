@@ -10,8 +10,10 @@ class AnimationState;
 
 class MainWidget {
 public:
-    MainWidget(const FontManager* fontManager, const std::unique_ptr<AnimationState>& as, bool visible) :
-        m_fontManager{ fontManager }, m_animationState{ as }, m_visible{ visible } { }
+    MainWidget(const FontManager* fontManager, 
+               const std::unique_ptr<AnimationState>& as, bool visible) :
+        m_fontManager{ fontManager }, m_animationState{ as },
+        m_visible{ visible } { /* Empty */ }
     ~MainWidget() noexcept = default;
     MainWidget(const MainWidget&) = delete;
     MainWidget& operator=(const MainWidget&) = delete;
