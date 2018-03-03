@@ -1,7 +1,7 @@
 ## RetroGraph
 A graphical resource monitor for Windows, developed as a personal project.
 
-![Retrograph Demo](https://github.com/Obvman/RetroGraph/blob/master/RetrographDemo.jpg)
+![Retrograph Demo](https://github.com/Obvman/RetroGraph/blob/master/RetroGraphFull.jpg)
 
 # Dependencies
 Unfortunately this project is quite bespoke to my own system
