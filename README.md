@@ -4,10 +4,10 @@ A graphical resource monitor for Windows, developed as a personal project.
 ![Retrograph Demo](https://github.com/Obvman/RetroGraph/blob/master/RetroGraphFull.jpg)
 
 # Dependencies
-Unfortunately this project is quite bespoke to my own system
+Unfortunately this project is pretty bespoke to my own system
 
-* Additional CPU information requires CoreTemp 1.0 or greater
-* GPU information is only available for Nvidia GPUs
+* Additional CPU information (Per-core usage and temperatures) requires CoreTemp 1.0 or greater
+* GPU information is only available for Nvidia GPUs compatible with NVAPI
 * Media information requires Foobar2000
 
 # Built with
