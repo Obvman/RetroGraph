@@ -3,23 +3,14 @@
 #include <chrono>
 #include <memory>
 
-#include <GL/glew.h>
-#include <GL/gl.h>
-#include <tweeny/tweeny.h>
-
 #include <Windows.h>
-//#include <winternl.h>
-//#include <comdef.h>
-//#include <Wbemidl.h>
-//#pragma comment(lib, "wbemuuid.lib")
-//#pragma comment(lib, "Ntdll.lib")
-
 
 #include "../headers/utils.h"
 #include "../headers/RetroGraph.h"
 
 void mainLoop(rg::RetroGraph& retroGraph);
 
+// Allows debug mode to show debug console, and release mode hides it
 #if _DEBUG
 int main() {
     HINSTANCE hInstance = GetModuleHandle(nullptr);
@@ -50,7 +41,6 @@ void mainLoop(rg::RetroGraph& retroGraph) {
     auto lastTick{ ticks };
 
     // Enter main update/draw loop
-    MSG msg;
     while(retroGraph.isRunning()) {
         const auto currTime{ duration_cast<milliseconds>(
                                   system_clock::now().time_since_epoch()
@@ -58,6 +48,7 @@ void mainLoop(rg::RetroGraph& retroGraph) {
         const auto dt{ currTime - frameStartTime };
 
         // Handle Windows messages
+        MSG msg{};
         if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
@@ -82,13 +73,13 @@ void mainLoop(rg::RetroGraph& retroGraph) {
             ticks = 1U;
         }
 
-        // Force flush to stdout for Cygwin
+        // Force flush to stdout for Cygwin/WSL
         #if _DEBUG
             fflush(stdout);
         #endif
 
         // Lay off the CPU a little
-        Sleep(8);
+        Sleep(1);
     }
 }
 

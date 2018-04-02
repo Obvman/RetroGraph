@@ -66,9 +66,14 @@ void DriveMeasure::update(uint32_t ticks) {
                 GetDiskFreeSpaceEx(path, &freeBytesAvailable,
                                    &totalBytes, &totalFreeBytes);
 
-                // We don't expect the max capacity of a fixed drive to change,
-                // so only update the DriveInfo with the freeBytes
                 pdi->totalFreeBytes = totalFreeBytes.QuadPart;
+
+                // Some rare cases allow a drive's max capacity to change
+                // (like unlocking a bitlocked drive)
+                if (totalBytes.QuadPart != pdi->totalBytes) {
+                    pdi->totalBytes = totalBytes.QuadPart;
+                    pdi->updateCapacityStr();
+                }
             }
 
         }

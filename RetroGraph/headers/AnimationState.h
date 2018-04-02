@@ -47,14 +47,18 @@ class AnimationState {
 public:
     AnimationState();
     ~AnimationState();
+    AnimationState(const AnimationState&) = delete;
+    AnimationState& operator=(const AnimationState&) = delete;
+    AnimationState(AnimationState&&) = delete;
+    AnimationState& operator=(AnimationState&&) = delete;
 
     void update(uint32_t ticks);
     void drawParticles() const;
 
     uint32_t getAnimationFPS() const { return m_animationFPS; };
 private:
-    void drawParticleConnection(const Particle* const p1,
-                                const Particle* const p2) const;
+    void drawParticleConnection(const Particle* p1,
+                                const Particle* p2) const;
 
     std::vector<Particle> m_particles{ };
     uint32_t m_animationFPS{ 20U };
@@ -71,4 +75,4 @@ private:
 };
 
 
-}
+} // namespace rg

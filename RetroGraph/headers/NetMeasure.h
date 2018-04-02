@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 #include <vector>
 #include <thread>
@@ -21,6 +21,8 @@ public:
     ~NetMeasure() noexcept = default;
     NetMeasure(const NetMeasure&) = delete;
     NetMeasure& operator=(const NetMeasure&) = delete;
+    NetMeasure(NetMeasure&&) = delete;
+    NetMeasure& operator=(NetMeasure&&) = delete;
 
     void update(uint32_t ticks);
 
@@ -58,4 +60,4 @@ private:
     std::vector<uint64_t> m_upBytes{ };
 };
 
-}
+} // namespace rg

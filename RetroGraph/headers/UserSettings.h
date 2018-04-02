@@ -3,7 +3,7 @@
 #define _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING
 #define _SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING
 
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 #include <vector>
 #include <map>
@@ -26,6 +26,8 @@ public:
     ~UserSettings() noexcept = default;
     UserSettings(const UserSettings&) = delete;
     UserSettings& operator=(const UserSettings&) = delete;
+    UserSettings(UserSettings&&) = delete;
+    UserSettings& operator=(UserSettings&&) = delete;
 
     settingVariant getVal(const std::string& settingName) const;
 
@@ -58,4 +60,4 @@ private:
     };
 };
 
-}
+} // namespace rg

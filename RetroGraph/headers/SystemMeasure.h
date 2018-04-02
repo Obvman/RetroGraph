@@ -13,6 +13,8 @@ public:
     ~SystemMeasure() noexcept = default;
     SystemMeasure(const SystemMeasure&) = delete;
     SystemMeasure& operator=(const SystemMeasure&) = delete;
+    SystemMeasure(SystemMeasure&&) = delete;
+    SystemMeasure& operator=(SystemMeasure&&) = delete;
 
     void update(uint32_t ticks);
 
@@ -59,4 +61,4 @@ private:
     std::string m_computerName{ "" };
 };
 
-}
+} // namespace rg

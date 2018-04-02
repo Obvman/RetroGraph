@@ -27,7 +27,7 @@ CPUPlugin::CPUPlugin() {
     m_getCoreTempInfoSuccess = GetCoreTempInfo(&m_ctData);
 }
 
-CPUPlugin::~CPUPlugin() {
+CPUPlugin::~CPUPlugin() noexcept {
     FreeLibrary(m_libHandle);
 }
 

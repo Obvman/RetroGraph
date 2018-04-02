@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 #include <Psapi.h>
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 
 #include "units.h"
@@ -16,6 +16,8 @@ public:
     ~ProcessData() noexcept;
     ProcessData(const ProcessData&) = delete;
     ProcessData& operator=(const ProcessData&) = delete;
+    ProcessData(ProcessData&&) = delete;
+    ProcessData& operator=(ProcessData&&) = delete;
 
     /* Gets the process ID */
     DWORD getPID() const { return m_processID; }
@@ -83,4 +85,4 @@ private:
     double m_cpuUsage{ 0.0 };
 };
 
-}
+} // namespace rg

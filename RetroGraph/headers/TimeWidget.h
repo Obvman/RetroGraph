@@ -22,6 +22,8 @@ public:
     ~TimeWidget() noexcept = default;
     TimeWidget(const TimeWidget&) = delete;
     TimeWidget& operator=(const TimeWidget&) = delete;
+    TimeWidget(TimeWidget&&) = delete;
+    TimeWidget& operator=(TimeWidget&&) = delete;
 
     void draw() const;
     void clear() const;
@@ -38,4 +40,4 @@ private:
     const NetMeasure* m_netMeasure{ nullptr };
 };
 
-}
+} // namespace rg

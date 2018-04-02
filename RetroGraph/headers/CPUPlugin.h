@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 #include <CoreTempSDK/GetCoreTempInfo.h>
 
 namespace rg {
@@ -14,6 +14,8 @@ public:
     ~CPUPlugin() noexcept;
     CPUPlugin(const CPUPlugin&) = delete;
     CPUPlugin& operator=(const CPUPlugin&) = delete;
+    CPUPlugin(CPUPlugin&&) = delete;
+    CPUPlugin& operator=(CPUPlugin&&) = delete;
 
     /* Gets latest information from CoreTemp */
     void update();
@@ -47,9 +49,9 @@ public:
 
 private:
     HMODULE m_libHandle{ nullptr };
-    CORE_TEMP_SHARED_DATA m_ctData{ 0 };
+    CORE_TEMP_SHARED_DATA m_ctData{};
     mutable bool m_getCoreTempInfoSuccess{ false };
     bool m_coreTempWasStarted{ false };
 };
 
-}
+} // namespace rg

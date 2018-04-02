@@ -30,4 +30,4 @@ constexpr size_t RG_WIDGET_GRAPHS{ 8U };
 
 constexpr size_t RG_NUM_WIDGETS{ 9U };
 
-}
+} // namespace rg

@@ -20,6 +20,8 @@ public:
     ~MusicWidget() noexcept = default;
     MusicWidget(const MusicWidget&) = delete;
     MusicWidget& operator=(const MusicWidget&) = delete;
+    MusicWidget(MusicWidget&&) = delete;
+    MusicWidget& operator=(MusicWidget&&) = delete;
 
     void draw() const;
 
@@ -33,7 +35,7 @@ private:
     Viewport m_viewport{ };
     bool m_visible{ true };
 
-    const std::unique_ptr<MusicMeasure>& m_musicMeasure{ nullptr };
+    const std::unique_ptr<MusicMeasure>& m_musicMeasure;
 };
 
-}
+} // namespace rg

@@ -38,7 +38,8 @@ Renderer::Renderer(const Window& w, const RetroGraph& _rg) :
     m_mainWidget{ &m_fontManager, _rg.getAnimationState(),
                   UserSettings::inst().isVisible(RG_WIDGET_MAIN) },
     m_musicWidget{ &m_fontManager, _rg.getMusicMeasure(), 
-                   UserSettings::inst().isVisible(RG_WIDGET_MUSIC) } {
+                   UserSettings::inst().isVisible(RG_WIDGET_MUSIC) },
+    m_fpsWidget{ &m_fontManager } {
 
     setViewports(w.getWidth(), w.getHeight());
 
@@ -47,8 +48,6 @@ Renderer::Renderer(const Window& w, const RetroGraph& _rg) :
 }
 
 Renderer::~Renderer() {
-    glDeleteBuffers(1, &m_graphGridVertsID);
-    glDeleteBuffers(1, &m_graphGridIndicesID);
 }
 
 void Renderer::draw(uint32_t ticks) const {
@@ -67,6 +66,8 @@ void Renderer::draw(uint32_t ticks) const {
         m_graphWidget.draw();
         m_systemStatsWidget.draw();
         m_musicWidget.draw();
+
+        m_fpsWidget.draw();
     }
 
     // The main widget can have a higher framerate, so call every tick
@@ -154,8 +155,11 @@ void Renderer::setViewports(int32_t windowWidth, int32_t windowHeight) {
             windowWidth, windowHeight, positionFills));
 
     m_processRAMWidget.setViewport(calcViewport(
-            UserSettings::inst().getWidgetPosition(RG_WIDGET_PROCESSES_RAM),
+            settings.getWidgetPosition(RG_WIDGET_PROCESSES_RAM),
             windowWidth, windowHeight, positionFills));
+
+    m_fpsWidget.setViewport({ marginX, marginY, windowWidth / 24, windowHeight / 24 });
+
 
     if (positionFills[0] > 2) {
         fatalMessageBox("You put too many widgets in the top-middle area!");

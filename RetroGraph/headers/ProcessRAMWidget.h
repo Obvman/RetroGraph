@@ -12,12 +12,14 @@ public:
     ProcessRAMWidget(const FontManager* fontManager,
                      const ProcessMeasure* procMeasure,
                      bool visible) :
-        m_fontManager{ fontManager }, m_procMeasure{ procMeasure },
-        m_visible{ visible } {}
+        m_fontManager{ fontManager }, m_visible{ visible },
+        m_procMeasure{ procMeasure } {}
 
     ~ProcessRAMWidget() noexcept = default;
     ProcessRAMWidget(const ProcessRAMWidget&) = delete;
     ProcessRAMWidget& operator=(const ProcessRAMWidget&) = delete;
+    ProcessRAMWidget(ProcessRAMWidget&&) = delete;
+    ProcessRAMWidget& operator=(ProcessRAMWidget&&) = delete;
 
     void draw() const;
     void clear() const;
@@ -35,4 +37,4 @@ private:
     const ProcessMeasure* m_procMeasure{ nullptr };
 };
 
-}
+} // namespace rg

@@ -17,6 +17,8 @@ public:
     ~MainWidget() noexcept = default;
     MainWidget(const MainWidget&) = delete;
     MainWidget& operator=(const MainWidget&) = delete;
+    MainWidget(MainWidget&&) = delete;
+    MainWidget& operator=(MainWidget&&) = delete;
 
     void draw(uint32_t ticks) const;
     void clear() const;
@@ -27,9 +29,9 @@ public:
 private:
 
     const FontManager* m_fontManager{ nullptr };
-    const std::unique_ptr<AnimationState>& m_animationState{ nullptr };
+    const std::unique_ptr<AnimationState>& m_animationState;
     Viewport m_viewport{ };
     bool m_visible{ true };
 };
 
-}
+} // namespace rg

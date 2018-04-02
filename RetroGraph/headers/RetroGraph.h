@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 #include <memory>
 
 #include "Window.h"
@@ -26,6 +26,8 @@ public:
     ~RetroGraph() = default;
     RetroGraph(const RetroGraph&) = delete;
     RetroGraph& operator=(const RetroGraph&) = delete;
+    RetroGraph(RetroGraph&&) = delete;
+    RetroGraph& operator=(RetroGraph&&) = delete;
 
     void update(uint32_t ticks);
     void draw(uint32_t ticks) const;
@@ -78,8 +80,7 @@ private:
     bool m_musicWidgetEnabled{ true };
     bool m_systemStatsWidgetEnabled{ true };
 
-    mutable FPSLimiter m_fpsLimiter;
     Renderer m_renderer;
 };
 
-}
+} // namespace rg

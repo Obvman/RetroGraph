@@ -22,6 +22,8 @@ public:
     ~SystemStatsWidget() noexcept = default;
     SystemStatsWidget(const SystemStatsWidget&) = delete;
     SystemStatsWidget& operator=(const SystemStatsWidget&) = delete;
+    SystemStatsWidget(SystemStatsWidget&&) = delete;
+    SystemStatsWidget& operator=(SystemStatsWidget&&) = delete;
 
     void draw() const;
     void clear() const;
@@ -40,4 +42,4 @@ private:
     mutable bool m_needsRedraw{ true };
 };
 
-}
+} // namespace rg

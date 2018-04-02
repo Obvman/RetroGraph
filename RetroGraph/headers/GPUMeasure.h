@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 #include <GL/glew.h>
 #include <NVAPI/nvapi.h>
 #include <vector>
@@ -19,6 +19,8 @@ public:
     ~GPUMeasure() noexcept;
     GPUMeasure(const GPUMeasure&) = delete;
     GPUMeasure& operator=(const GPUMeasure&) = delete;
+    GPUMeasure(GPUMeasure&&) = delete;
+    GPUMeasure& operator=(GPUMeasure&&) = delete;
 
     /* Get latest GPU stats from OpenGL or nvapi and updates dynamic members */
     void update(uint32_t ticks);
@@ -64,4 +66,4 @@ private:
     std::vector<float> m_usageData{ };
 };
 
-}
+} // namespace rg

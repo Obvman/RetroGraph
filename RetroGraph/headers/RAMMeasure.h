@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 #include <vector>
 #include <Windows.h>
 
@@ -17,6 +17,8 @@ public:
     ~RAMMeasure() noexcept = default;
     RAMMeasure(const RAMMeasure&) = delete;
     RAMMeasure& operator=(const RAMMeasure&) = delete;
+    RAMMeasure(RAMMeasure&&) = delete;
+    RAMMeasure& operator=(RAMMeasure&&) = delete;
 
     /* Updates the system memory status values */
     void update(uint32_t ticks);
@@ -83,4 +85,4 @@ private:
     std::vector<float> m_usageData{ };
 };
 
-}
+} // namespace rg

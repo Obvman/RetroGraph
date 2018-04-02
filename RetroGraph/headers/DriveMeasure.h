@@ -19,8 +19,18 @@ public:
             totalFreeBytes{ initFreeBytes },
             totalBytes{ totalBytes },
             volumeName{ volumeName },
-            capacityStr{} {
+            capacityStr{ "" } {
 
+        updateCapacityStr();
+    }
+
+    ~DriveInfo() noexcept = default;
+    DriveInfo(const DriveInfo&) = delete;
+    DriveInfo& operator=(const DriveInfo&) = delete;
+    DriveInfo(DriveInfo&&) = delete;
+    DriveInfo& operator=(DriveInfo&&) = delete;
+
+    void updateCapacityStr() {
         const auto capacity{ totalBytes / GB };
         if (capacity < 1000) {
             capacityStr = std::to_string(capacity) + "GB";
@@ -29,12 +39,7 @@ public:
             snprintf(buff, sizeof(buff), "%.1fTB", capacity / 1024.0f);
             capacityStr = buff;
         }
-
     }
-
-    ~DriveInfo() noexcept = default;
-    DriveInfo(const DriveInfo&) = delete;
-    DriveInfo& operator=(const DriveInfo&) = delete;
 
     char driveLetter{ 'A' };
     uint64_t totalFreeBytes{ 0U };
@@ -50,6 +55,8 @@ public:
     ~DriveMeasure() noexcept = default;
     DriveMeasure(const DriveMeasure&) = delete;
     DriveMeasure& operator=(const DriveMeasure&) = delete;
+    DriveMeasure(DriveMeasure&&) = delete;
+    DriveMeasure& operator=(DriveMeasure&&) = delete;
 
     /* Updates each drive with new values */
     void update(uint32_t ticks);
@@ -67,4 +74,4 @@ private:
     std::vector<std::unique_ptr<DriveInfo>> m_drives{ };
 };
 
-}
+} // namespace rg

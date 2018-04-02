@@ -17,6 +17,8 @@ public:
     ~CPUStatsWidget() noexcept = default;
     CPUStatsWidget(const CPUStatsWidget&) = delete;
     CPUStatsWidget& operator=(const CPUStatsWidget&) = delete;
+    CPUStatsWidget(CPUStatsWidget&&) = delete;
+    CPUStatsWidget& operator=(CPUStatsWidget&&) = delete;
 
     void draw() const;
     void clear() const;
@@ -38,4 +40,4 @@ private:
     const CPUMeasure* m_cpuMeasure{ nullptr };
 };
 
-}
+} // namespace rg

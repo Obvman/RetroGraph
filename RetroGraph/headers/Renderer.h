@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 #include <vector>
 #include <Windows.h>
 #include <GL/glew.h>
@@ -15,6 +15,7 @@
 #include "SystemStatsWidget.h"
 #include "MainWidget.h"
 #include "MusicWidget.h"
+#include "FPSWidget.h"
 #include "widgets.h"
 
 namespace rg {
@@ -40,6 +41,8 @@ public:
     ~Renderer() noexcept;
     Renderer(const Renderer&) = delete;
     Renderer& operator=(const Renderer&) = delete;
+    Renderer(Renderer&&) = delete;
+    Renderer& operator=(Renderer&&) = delete;
 
     /* Draws scene to the window */
     void draw(uint32_t ticks) const;
@@ -74,11 +77,7 @@ private:
     SystemStatsWidget m_systemStatsWidget;
     MainWidget m_mainWidget;
     MusicWidget m_musicWidget;
-
-    // VBO members
-    GLuint m_graphGridVertsID{ 0U };
-    GLuint m_graphGridIndicesID{ 0U };
-    GLsizei m_graphIndicesSize{ 0U };
+    FPSWidget m_fpsWidget;
 
     // Shaders
     GLuint m_cpuGraphShader{ 0U };
@@ -87,4 +86,4 @@ private:
     GLint m_graphAlphaLoc{ -1 };
 };
 
-}
+} // namespace rg

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Windows.h>
-#include <stdint.h>
+#include <cstdint>
 #include <array>
 #include <vector>
 #include <string>
@@ -47,6 +47,8 @@ public:
     ~FontManager() noexcept;
     FontManager(const FontManager&) = delete;
     FontManager& operator=(const FontManager&) = delete;
+    FontManager(FontManager&&) = delete;
+    FontManager& operator=(FontManager&&) = delete;
 
     /* Release current font data and reinitialises to match new window size */
     void refreshFonts(uint32_t newWindowHeight);
@@ -125,4 +127,4 @@ private:
     std::array<int32_t, RG_NUM_FONTS> m_fontCharInternalLeadings{ };
 };
 
-}
+} // namespace rg

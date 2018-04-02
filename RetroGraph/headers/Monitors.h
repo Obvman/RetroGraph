@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include <stdint.h>
+#include <cstdint>
 #include <Windows.h>
 
 namespace rg {
@@ -9,10 +9,15 @@ namespace rg {
 struct MonitorData {
     MonitorData(int32_t _index, HMONITOR _handle, 
                 int32_t _width, int32_t _height, int32_t _x, int32_t _y) : 
-        index{ _index }, handle{ _handle },
-        width{ _width }, height{ _height }, x{ _x }, y{ _y } { /* Empty */ }
+        index{ _index }, width{ _width }, height{ _height }, x{ _x }, y{ _y },
+        handle{ _handle } { /* Empty */
+    }
 
     ~MonitorData() noexcept = default;
+    MonitorData(const MonitorData&) = default;
+    MonitorData& operator=(const MonitorData&) = default;
+    MonitorData(MonitorData&&) = default;
+    MonitorData& operator=(MonitorData&&) = default;
 
     int32_t index;
     int32_t width;
@@ -28,6 +33,8 @@ public:
     ~Monitors() noexcept = default;
     Monitors(const Monitors&) = delete;
     Monitors& operator=(const Monitors&) = delete;
+    Monitors(Monitors&&) = delete;
+    Monitors& operator=(Monitors&&) = delete;
 
     const std::vector<MonitorData>& getMonitorData() const { return m_monitors; }
     size_t getNumMonitors() const { return m_monitors.size(); }
@@ -46,4 +53,4 @@ private:
     std::vector<MonitorData> m_monitors{ };
 };
 
-}
+} // namespace rg

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 #include <Windows.h>
 
@@ -69,4 +69,4 @@ void printTimeToExecuteHighRes(F f) {
     printTimeToExecuteHighRes("Function", f);
 }
 
-}
+} // namespace rg

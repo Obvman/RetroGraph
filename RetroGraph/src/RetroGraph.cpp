@@ -19,7 +19,6 @@ RetroGraph::RetroGraph(HINSTANCE hInstance) :
     m_musicMeasure{ std::make_unique<MusicMeasure>(&m_processMeasure) },
     m_systemMeasure{ },
     m_animationState{ std::make_unique<AnimationState>() },
-    m_fpsLimiter{},
     m_renderer{ m_window, *this } {
 
     update(0);
@@ -27,7 +26,6 @@ RetroGraph::RetroGraph(HINSTANCE hInstance) :
 }
 
 void RetroGraph::update(uint32_t ticks) {
-    m_fpsLimiter.begin();
 
     // Update with a tick offset so all measures don't update in the same
     // cycle and spike the CPU
@@ -44,6 +42,9 @@ void RetroGraph::update(uint32_t ticks) {
 }
 
 void RetroGraph::draw(uint32_t ticks) const {
+    // If the main widget is running, draw at it's target FPS,
+    // Otherwise, we don't have to waste cycles swapping buffers when
+    // the other measures update twice a second, so just draw at 2 FPS
     const auto framesPerSecond = uint32_t{ (m_mainWidgetEnabled) ? 
         m_animationState->getAnimationFPS() : 2U };
 
@@ -58,8 +59,8 @@ void RetroGraph::draw(uint32_t ticks) const {
         SwapBuffers(hdc);
         ReleaseDC(m_window.getHwnd(), hdc);
 
-        const auto fps{ m_fpsLimiter.end() };
-        // printf("%f\n", fps);
+        FPSLimiter::inst().end();
+        FPSLimiter::inst().begin();
     }
 }
 

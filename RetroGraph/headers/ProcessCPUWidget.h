@@ -12,12 +12,14 @@ public:
     ProcessCPUWidget(const FontManager* fontManager,
                      const ProcessMeasure* procMeasure,
                      bool visible) :
-        m_fontManager{ fontManager }, m_procMeasure{ procMeasure },
-        m_visible{ visible } {}
+        m_fontManager{ fontManager },  m_visible{ visible }, 
+        m_procMeasure{ procMeasure } {}
 
     ~ProcessCPUWidget() noexcept = default;
     ProcessCPUWidget(const ProcessCPUWidget&) = delete;
     ProcessCPUWidget& operator=(const ProcessCPUWidget&) = delete;
+    ProcessCPUWidget(ProcessCPUWidget&&) = delete;
+    ProcessCPUWidget& operator=(ProcessCPUWidget&&) = delete;
 
     void draw() const;
     void clear() const;
@@ -35,4 +37,4 @@ private:
     const ProcessMeasure* m_procMeasure{ nullptr };
 };
 
-}
+} // namespace rg

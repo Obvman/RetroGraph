@@ -22,6 +22,8 @@ public:
     ~GraphWidget() noexcept = default;
     GraphWidget(const GraphWidget&) = delete;
     GraphWidget& operator=(const GraphWidget&) = delete;
+    GraphWidget(GraphWidget&&) = delete;
+    GraphWidget& operator=(GraphWidget&&) = delete;
 
     void draw() const;
     void clear() const;
@@ -49,4 +51,4 @@ private:
     const GPUMeasure* m_gpuMeasure{ nullptr };
 };
 
-}
+} // namespace rg

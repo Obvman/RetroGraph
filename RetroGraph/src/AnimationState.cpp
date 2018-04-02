@@ -183,22 +183,40 @@ void Particle::update(AnimationState& as, float dt) {
     x += speed * dirX * dt;
     y += speed * dirY * dt;
 
+    uint8_t timesTeleported{ 0U };
+
     // If we move off the screen, wrap the particle around to the other side
     if (x < particleMinPos) {
         x = particleMaxPos;
         y = -y;
+        ++timesTeleported;
     } else if (x > particleMaxPos) {
         x = particleMinPos;
         y = -y;
-    } else if (y < particleMinPos) {
+        ++timesTeleported;
+    } 
+    if (y < particleMinPos) {
         x = -x;
         y = particleMaxPos;
+        ++timesTeleported;
     } else if (y > particleMaxPos) {
         x = -x;
         y = particleMinPos;
+        ++timesTeleported;
     }
 
-    // fails for x = 0.999999940
+    // This occurs when the particle has moved from one corner to
+    // the opposite, and then it's moved back to the original corner,
+    // so the particle is forever stuck. We just shift it a little to
+    // keep it moving.
+    /*if (timesTeleported == 2) {
+        if (x > 0.0f) {
+            x -= 0.1f;
+        } else {
+            x += 0.1f;
+        }
+    }*/
+
     const uint32_t newCellX{ static_cast<uint32_t>((x + 1.0f) / cellSize) };
     const uint32_t newCellY{ static_cast<uint32_t>((y + 1.0f) / cellSize) };
 
@@ -209,7 +227,7 @@ void Particle::update(AnimationState& as, float dt) {
         cell.erase(std::remove(cell.begin(), cell.end(), this), cell.end());
 
         // add to new cell
-        as.m_cells[newCellX][newCellY].push_back(this);
+        as.m_cells[newCellX][newCellY].push_back(this); // still fukn bugged
 
         cellX = newCellX;
         cellY = newCellY;

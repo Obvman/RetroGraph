@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 #include <vector>
 
 #ifndef __GL_H__
@@ -73,4 +73,4 @@ constexpr inline uint32_t vpCoordsToPixels(float vpCoord, uint32_t vpWidth) {
     return static_cast<uint32_t>(((vpCoord + 1.0f) / 2.0f) * vpWidth);
 }
 
-}
+} // namespace rg

@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 #include <chrono>
-#include <stdint.h>
+#include <cstdint>
 
 #include "CPUPlugin.h"
 
@@ -20,6 +20,8 @@ public:
     ~CPUMeasure() noexcept = default;
     CPUMeasure(const CPUMeasure&) = delete;
     CPUMeasure& operator=(const CPUMeasure&) = delete;
+    CPUMeasure(CPUMeasure&&) = delete;
+    CPUMeasure& operator=(CPUMeasure&&) = delete;
 
     /* Updates the total system's CPU usage statistics */
     void update(uint32_t ticks);
@@ -85,4 +87,4 @@ private:
     std::string m_cpuName{ "" };
 };
 
-}
+} // namespace rg

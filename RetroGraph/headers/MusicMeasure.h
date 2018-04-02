@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <stdint.h>
+#include <cstdint>
 #include <Windows.h>
 
 #include "drawUtils.h"
@@ -19,6 +19,8 @@ public:
     ~MusicMeasure() noexcept = default;
     MusicMeasure(const MusicMeasure&) = delete;
     MusicMeasure& operator=(const MusicMeasure&) = delete;
+    MusicMeasure(MusicMeasure&&) = delete;
+    MusicMeasure& operator=(MusicMeasure&&) = delete;
 
     /* If the player class name isn't yet set, enumerates all running windows
      * to find it. If the class name is set, then searches windows with the
@@ -69,4 +71,4 @@ private:
     uint32_t m_elapsedTime{ 0U };
     uint32_t m_totalTime{ 0U };
 };
-}
+} // namespace rg

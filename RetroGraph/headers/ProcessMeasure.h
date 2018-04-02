@@ -21,6 +21,8 @@ public:
     ~ProcessMeasure() noexcept = default;
     ProcessMeasure(const ProcessMeasure&) = delete;
     ProcessMeasure& operator=(const ProcessMeasure&) = delete;
+    ProcessMeasure(ProcessMeasure&&) = delete;
+    ProcessMeasure& operator=(ProcessMeasure&&) = delete;
 
     /* Updates the currently tracked processes and their CPU usage.
        Stops tracking any processes that have exited */
@@ -72,4 +74,4 @@ private:
         m_procRAMListData{ m_numRAMProcessesToDisplay };
 };
 
-}
+} // namespace rg

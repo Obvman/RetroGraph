@@ -19,6 +19,8 @@ public:
     ~HDDWidget() noexcept = default;
     HDDWidget(const HDDWidget&) = delete;
     HDDWidget& operator=(const HDDWidget&) = delete;
+    HDDWidget(HDDWidget&&) = delete;
+    HDDWidget& operator=(HDDWidget&&) = delete;
 
     void draw() const;
     void clear() const;
@@ -30,7 +32,7 @@ private:
     Viewport m_viewport{ };
     bool m_visible{ true };
 
-    const std::unique_ptr<DriveMeasure>& m_driveMeasure{ nullptr };
+    const std::unique_ptr<DriveMeasure>& m_driveMeasure;
 };
 
-}
+} // namespace rg
