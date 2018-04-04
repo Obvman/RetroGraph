@@ -25,13 +25,13 @@ public:
     }
 
     ~DriveInfo() noexcept = default;
-    DriveInfo(const DriveInfo&) = delete;
-    DriveInfo& operator=(const DriveInfo&) = delete;
-    DriveInfo(DriveInfo&&) = delete;
-    DriveInfo& operator=(DriveInfo&&) = delete;
+    DriveInfo(const DriveInfo&) = default;
+    DriveInfo& operator=(const DriveInfo&) = default;
+    DriveInfo(DriveInfo&&) = default;
+    DriveInfo& operator=(DriveInfo&&) = default;
 
     void updateCapacityStr() {
-        const auto capacity{ totalBytes / GB };
+        const auto capacity{ bToGB(totalBytes) };
         if (capacity < 1000) {
             capacityStr = std::to_string(capacity) + "GB";
         } else {

@@ -32,10 +32,10 @@ public:
         return m_memStatus.ullTotalPhys;
     }
     DWORDLONG getTotalPhysicalKB() const {
-        return m_memStatus.ullTotalPhys / KB;
+        return bToKB(m_memStatus.ullTotalPhys);
     }
     DWORDLONG getTotalPhysicalMB() const {
-        return m_memStatus.ullTotalPhys / MB;
+        return bToMB(m_memStatus.ullTotalPhys);
     }
     float getTotalPhysicalGB() const {
         return m_memStatus.ullTotalPhys / static_cast<float>(GB);
