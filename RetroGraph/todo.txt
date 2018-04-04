@@ -1,11 +1,19 @@
 
+turning off fps counter, selecting corner
+
+implement 30 min work/rest timer
+
+sleep until next frame
+
+store measures in smart pointers to control lifetime manually to start/stop measuring
+disable data gathering for non-visible widgets to save on CPU - store dependencies in a list,
+only destroy a measure if all dependencies are destroyed.
+
 use gl lists to draw things like graph grids
 
 BUG: having lower tick lengths causes updates in  most widgets to occur every 2-3 sec instead of .5 sec
 
 high-performance mode - switch between low and high FPS for main widget, graphs
-
-only update music measure when foobar title is different from prev update
 
 lower bound on the network graph scaling
 
@@ -13,19 +21,14 @@ foobar media controls - enter foobar path in config file
 
 Volume + Audio device widget
 
-Handle invalid monitor selections
+Handle invalid config values
 
 Widgets: Allow free position (x, y coords), full alignment options 
 (centered, left, top eg.) and a mix of centering and coords (vertical center with x coords)
 
 Allow user-defined ordering of widgets in multi-widget positions
 
-store measures in smart pointers to control lifetime manually to start/stop measuring
-disable data gathering for non-visible widgets to save on CPU
-
 fix vertical text line centering
-
-When failing to open a process, fail silently instead of crashing
 
 network: show how many MB have been downloaded since retrograph started
 
@@ -47,43 +50,22 @@ hdd read/write usage
 
 3D effects on graph
 
-rounded HDD/RAM bars
-
 have config options for polling intervals of individual measures
 
 separate net traffic graphs
 
 have an average ping time display
 
-net speed seems to max at 7.5MB when it really hits 13MB according to task mgr
-
 test suite
 
-Foobar status format=%title% | [%album artist%] | [%album%[ CD%discnumber%][ #%tracknumber%]] | $if(%ispaused%,Paused,Playing) | [%_time_elapsed_seconds%, %_time_total_seconds%] | 
 
+NOTES:
+Foobar status format:
+%title% | [%album artist%] | [%album%[ CD%discnumber%][ #%tracknumber%]] | $if(%ispaused%,Paused,Playing) | [%_time_elapsed_seconds%, %_time_total_seconds%] | 
 
-spacial partitioning: compare resetting cell vectors each update vs updating cells on each movement
-
-8x8 cells:
-~770 checks done
-Update(): 6.72%
-drawParticles(): 13.62%
-total: 20.44%
-
-16x16 cells:
-~200 checks done
-Update(): 11.98%
-drawParticles(): 12.24%
-
-No grid resets (1.2 - 1.6 procexp):
-	8x8 (~780):
-		update(): 3.79%, 1.74, 2.15
-		drawParticles(): 16.43, 15.93, 12.9
-
-	16x16 (160-200):
-		update(): 2.57%
-		drawParticles(): 11.76
-
-Grid resets (1.3 - 1.8 procexp):
-update(): 8.31%, 6.93%
-drawParticles(): 9.79%, 14.07%
+Github README:
+	Images of retrograph
+	dependency explanation:
+		Nvidia GPU
+		extra CPU stats require CoreTemp
+		Foobar for media display
