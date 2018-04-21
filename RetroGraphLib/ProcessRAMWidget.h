@@ -1,18 +1,20 @@
 #pragma once
 
 #include "drawUtils.h"
+#include "Widget.h"
 
 namespace rg {
 
 class FontManager;
 class ProcessMeasure;
 
-class ProcessRAMWidget {
+class ProcessRAMWidget : public Widget{
 public:
     ProcessRAMWidget(const FontManager* fontManager,
                      const ProcessMeasure* procMeasure,
                      bool visible) :
-        m_fontManager{ fontManager }, m_visible{ visible },
+        Widget{ visible },
+        m_fontManager{ fontManager },
         m_procMeasure{ procMeasure } {}
 
     ~ProcessRAMWidget() noexcept = default;
@@ -21,19 +23,9 @@ public:
     ProcessRAMWidget(ProcessRAMWidget&&) = delete;
     ProcessRAMWidget& operator=(ProcessRAMWidget&&) = delete;
 
-    void draw() const;
-    void clear() const;
-
-    void setViewport(Viewport vp) { m_viewport = vp; };
-
-    void setVisibility(bool b);
-
+    void draw() const override;
 private:
-
     const FontManager* m_fontManager{ nullptr };
-    Viewport m_viewport{ };
-    bool m_visible{ true };
-
     const ProcessMeasure* m_procMeasure{ nullptr };
 };
 

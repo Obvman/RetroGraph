@@ -2,6 +2,7 @@
 
 #include "drawUtils.h"
 // TODO merge widgets.h into this file
+// TODO integrate the FontManager observer
 
 namespace rg {
 

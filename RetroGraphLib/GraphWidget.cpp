@@ -13,11 +13,6 @@
 
 namespace rg {
 
-void GraphWidget::clear() const {
-    glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
-    scissorClear(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
-}
-
 void GraphWidget::setViewport(Viewport vp) { 
     m_viewport = vp;
 
@@ -45,7 +40,6 @@ void GraphWidget::setViewport(Viewport vp) {
 
 void GraphWidget::draw() const {
     if (!m_visible) return;
-
     clear();
 
     drawWidgetBackground();
@@ -268,15 +262,5 @@ void GraphWidget::drawGpuGraph() const {
                              m_gpuGraphVP.width/5, m_gpuGraphVP.height,
                              RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
 }
-
-void GraphWidget::setVisibility(bool b) {
-    m_visible = b;
-    if (m_visible) {
-        draw();
-    } else {
-        clear();
-    }
-}
-
 
 }

@@ -10,11 +10,6 @@
 
 namespace rg {
 
-void ProcessRAMWidget::clear() const {
-    glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
-    scissorClear(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
-}
-
 void ProcessRAMWidget::draw() const {
     if (!m_visible) return;
 
@@ -56,15 +51,6 @@ void ProcessRAMWidget::draw() const {
                                15, 5);
 
 
-}
-
-void ProcessRAMWidget::setVisibility(bool b) {
-    m_visible = b;
-    if (m_visible) {
-        draw();
-    } else {
-        clear();
-    }
 }
 
 }

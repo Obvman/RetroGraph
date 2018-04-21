@@ -3,18 +3,19 @@
 #include <memory>
 
 #include "drawUtils.h"
+#include "Widget.h"
 
 namespace rg {
 
 class FontManager;
 class MusicMeasure;
 
-class MusicWidget {
+class MusicWidget : public Widget {
 public:
     MusicWidget(const FontManager* fontManager,
                 const std::unique_ptr<MusicMeasure>& musicMeasure,
                 bool visible) :
-        m_fontManager{ fontManager }, m_visible{ visible }, 
+        Widget{ visible }, m_fontManager{ fontManager },
         m_musicMeasure{ musicMeasure } {}
 
     ~MusicWidget() noexcept = default;
@@ -23,18 +24,10 @@ public:
     MusicWidget(MusicWidget&&) = delete;
     MusicWidget& operator=(MusicWidget&&) = delete;
 
-    void draw() const;
+    void draw() const override;
 
-    void setViewport(Viewport vp) { m_viewport = vp; };
-
-    void clear() const;
-
-    void setVisibility(bool v);
 private:
     const FontManager* m_fontManager{ nullptr };
-    Viewport m_viewport{ };
-    bool m_visible{ true };
-
     const std::unique_ptr<MusicMeasure>& m_musicMeasure;
 };
 

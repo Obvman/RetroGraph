@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "drawUtils.h"
+#include "Widget.h"
 
 namespace rg {
 
@@ -12,7 +13,7 @@ class SystemMeasure;
 class CPUMeasure;
 class NetMeasure;
 
-class SystemStatsWidget {
+class SystemStatsWidget : public Widget {
 public:
     SystemStatsWidget(const FontManager* fontManager,
                       const SystemMeasure* sysInfo,
@@ -25,12 +26,7 @@ public:
     SystemStatsWidget(SystemStatsWidget&&) = delete;
     SystemStatsWidget& operator=(SystemStatsWidget&&) = delete;
 
-    void draw() const;
-    void clear() const;
-
-    void setViewport(Viewport vp) { m_viewport = vp; };
-
-    void setVisibility(bool b);
+    void draw() const override;
 
     void needsRedraw() const { m_needsRedraw = true; }
 private:

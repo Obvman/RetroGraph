@@ -16,8 +16,8 @@ SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
                                      const CPUMeasure* cpuMeasure,
                                      const NetMeasure* netMeasure,
                                      bool visible) :
-    m_fontManager{ fontManager },
-    m_visible{ visible } {
+    Widget{ visible },
+    m_fontManager{ fontManager } {
 
     // Just create stats string here since we expect it not to change during
     // the lifetime of the program
@@ -36,11 +36,6 @@ SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
     m_statsStrings.emplace_back("Hostname: " + netMeasure->getHostname());
     m_statsStrings.emplace_back("MAC: " + netMeasure->getAdapterMAC());
     m_statsStrings.emplace_back("LAN IP: " + netMeasure->getAdapterIP());
-}
-
-void SystemStatsWidget::clear() const {
-    glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
-    scissorClear(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
 }
 
 void SystemStatsWidget::draw() const {
@@ -62,15 +57,6 @@ void SystemStatsWidget::draw() const {
                                15, 10);
 
     m_needsRedraw = false;
-}
-
-void SystemStatsWidget::setVisibility(bool b) {
-    m_visible = b;
-    if (m_visible) {
-        draw();
-    } else {
-        clear();
-    }
 }
 
 }

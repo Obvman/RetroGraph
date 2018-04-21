@@ -11,11 +11,6 @@
 
 namespace rg {
 
-void TimeWidget::clear() const {
-    glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
-    scissorClear(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
-}
-
 void TimeWidget::draw() const {
     if (!m_visible) return;
 
@@ -109,14 +104,5 @@ void TimeWidget::draw() const {
     }
 
 };
-
-void TimeWidget::setVisibility(bool b) {
-    m_visible = b;
-    if (m_visible) {
-        draw();
-    } else {
-        clear();
-    }
-}
 
 }

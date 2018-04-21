@@ -14,25 +14,19 @@
 
 namespace rg {
 
-void MainWidget::clear() const {
-    glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
-    scissorClear(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
-}
-
-void MainWidget::draw(uint32_t ticks) const {
-    if (!m_visible) {
-        return;
-    }
-
-    // Only draw if ticks are 0, or we have to draw this
-    // frame to maintain our FPS
-    if (ticks != 0 &&
+bool MainWidget::needsDraw(uint32_t ticks) const {
+    if (!m_visible ||
+        (ticks != 0 &&
         ticks % std::lround(
             static_cast<float>(rg::ticksPerSecond) /
-            m_animationState->getAnimationFPS()) != 0) {
-        return;
-    }
+            m_animationState->getAnimationFPS()) != 0)) {
 
+        return false;
+    }
+    return true;
+}
+
+void MainWidget::draw() const {
     clear();
 
     drawWidgetBackground();
@@ -49,15 +43,6 @@ void MainWidget::draw(uint32_t ticks) const {
     glScalef(1.0f, aspect, 1.0f);
         m_animationState->drawParticles();
     glPopMatrix();
-}
-
-void MainWidget::setVisibility(bool b) {
-    m_visible = b;
-    if (m_visible) {
-        draw(0);
-    } else {
-        clear();
-    }
 }
 
 }

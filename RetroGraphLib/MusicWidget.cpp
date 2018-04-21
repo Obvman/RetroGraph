@@ -12,11 +12,6 @@ namespace rg {
 
 void createFormattedTimeStr(char* buffer, size_t buffSize, uint32_t seconds);
 
-void MusicWidget::clear() const {
-    glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
-    scissorClear(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
-}
-
 void MusicWidget::draw() const {
     if (!m_visible || !m_musicMeasure) return;
 
@@ -88,15 +83,6 @@ void createFormattedTimeStr(char* buffer, size_t buffSize, uint32_t seconds) {
         snprintf(buffer, buffSize, "%02d:%02d", M, S);
     } else {
         snprintf(buffer, buffSize, "00:%02d", seconds);
-    }
-}
-
-void MusicWidget::setVisibility(bool b) {
-    m_visible = b;
-    if (m_visible) {
-        draw();
-    } else {
-        clear();
     }
 }
 

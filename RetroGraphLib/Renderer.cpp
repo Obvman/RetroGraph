@@ -70,8 +70,11 @@ void Renderer::draw(uint32_t ticks) const {
         m_fpsWidget.draw();
     }
 
+
     // The main widget can have a higher framerate, so call every tick
-    m_mainWidget.draw(ticks);
+    if (m_mainWidget.needsDraw(ticks)) {
+        m_mainWidget.draw();
+    }
 }
 
 void Renderer::updateWindowSize(int32_t newWidth, int32_t newHeight) {
