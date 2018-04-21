@@ -7,7 +7,6 @@
 
 namespace rg {
 
-class FontManager;
 class MusicMeasure;
 
 class MusicWidget : public Widget {
@@ -15,8 +14,7 @@ public:
     MusicWidget(const FontManager* fontManager,
                 const std::unique_ptr<MusicMeasure>& musicMeasure,
                 bool visible) :
-        Widget{ visible }, m_fontManager{ fontManager },
-        m_musicMeasure{ musicMeasure } {}
+        Widget{ fontManager, visible }, m_musicMeasure{ musicMeasure } {}
 
     ~MusicWidget() noexcept = default;
     MusicWidget(const MusicWidget&) = delete;
@@ -27,7 +25,6 @@ public:
     void draw() const override;
 
 private:
-    const FontManager* m_fontManager{ nullptr };
     const std::unique_ptr<MusicMeasure>& m_musicMeasure;
 };
 

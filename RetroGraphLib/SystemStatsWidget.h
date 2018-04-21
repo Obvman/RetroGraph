@@ -8,7 +8,6 @@
 
 namespace rg {
 
-class FontManager;
 class SystemMeasure;
 class CPUMeasure;
 class NetMeasure;
@@ -30,9 +29,6 @@ public:
 
     void needsRedraw() const { m_needsRedraw = true; }
 private:
-    const FontManager* m_fontManager{ nullptr };
-    Viewport m_viewport{ };
-    bool m_visible{ true };
     std::vector<std::string> m_statsStrings{ };
 
     mutable bool m_needsRedraw{ true };

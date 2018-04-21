@@ -11,7 +11,7 @@
 #include <boost/program_options.hpp>
 #include <boost/property_tree/ptree.hpp>
 
-#include "widgets.h"
+#include "Widget.h"
 
 namespace rg {
 

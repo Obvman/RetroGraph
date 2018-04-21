@@ -5,12 +5,10 @@
 
 namespace rg {
 
-class FontManager;
-
 class FPSWidget : public Widget {
 public:
-    FPSWidget(const FontManager* fm) :
-        m_fontManager{ fm } { /* Empty */ }
+    FPSWidget(const FontManager* fontManager) :
+        Widget{ fontManager, true } { }
     ~FPSWidget() noexcept = default;
     FPSWidget(const FPSWidget&) = delete;
     FPSWidget& operator=(const FPSWidget&) = delete;
@@ -19,8 +17,6 @@ public:
 
     void draw() const override;
 
-private:
-    const FontManager* m_fontManager{ nullptr };
 };
 
 } // namespace rg

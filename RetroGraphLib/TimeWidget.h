@@ -5,7 +5,6 @@
 
 namespace rg {
 
-class FontManager;
 class CPUMeasure;
 class NetMeasure;
 
@@ -15,8 +14,7 @@ public:
                const CPUMeasure* cpuMeasure,
                const NetMeasure* netMeasure,
                bool visible) :
-        Widget{ visible },
-        m_fontManager{ fontManager },
+        Widget{ fontManager, visible },
         m_cpuMeasure{ cpuMeasure },
         m_netMeasure{ netMeasure } { }
 
@@ -28,8 +26,6 @@ public:
 
     void draw() const override;
 private:
-    const FontManager* m_fontManager{ nullptr };
-
     const CPUMeasure* m_cpuMeasure{ nullptr };
     const NetMeasure* m_netMeasure{ nullptr };
 };

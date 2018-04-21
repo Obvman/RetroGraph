@@ -5,7 +5,6 @@
 
 namespace rg {
 
-class FontManager;
 class ProcessMeasure;
 
 class ProcessCPUWidget : public Widget {
@@ -13,8 +12,7 @@ public:
     ProcessCPUWidget(const FontManager* fontManager,
                      const ProcessMeasure* procMeasure,
                      bool visible) :
-        Widget{ visible }, m_fontManager{ fontManager }, 
-        m_procMeasure{ procMeasure } {}
+        Widget{ fontManager, visible }, m_procMeasure{ procMeasure } {}
 
     ~ProcessCPUWidget() noexcept = default;
     ProcessCPUWidget(const ProcessCPUWidget&) = delete;
@@ -24,7 +22,6 @@ public:
 
     void draw() const override;
 private:
-    const FontManager* m_fontManager{ nullptr };
     const ProcessMeasure* m_procMeasure{ nullptr };
 };
 

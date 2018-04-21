@@ -15,8 +15,7 @@ class CPUStatsWidget : public Widget {
 public:
     CPUStatsWidget(const FontManager* fontManager, const CPUMeasure* cpuMeasure,
                    bool visible) :
-        Widget{ visible }, m_fontManager{ fontManager },
-        m_cpuMeasure{ cpuMeasure } {}
+        Widget{ fontManager, visible }, m_cpuMeasure{ cpuMeasure } {}
 
     ~CPUStatsWidget() noexcept = default;
     CPUStatsWidget(const CPUStatsWidget&) = delete;
@@ -32,7 +31,6 @@ private:
     void drawStats() const;
     void drawNoInfoState() const;
 
-    const FontManager* m_fontManager{ nullptr };
     Viewport m_coreGraphViewport{ };
     Viewport m_statsViewport{ };
 

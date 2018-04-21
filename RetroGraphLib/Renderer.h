@@ -16,7 +16,7 @@
 #include "MainWidget.h"
 #include "MusicWidget.h"
 #include "FPSWidget.h"
-#include "widgets.h"
+#include "Widget.h"
 
 namespace rg {
 

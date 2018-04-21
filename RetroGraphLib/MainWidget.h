@@ -6,15 +6,13 @@
 
 namespace rg {
 
-class FontManager;
 class AnimationState;
 
 class MainWidget : public Widget {
 public:
     MainWidget(const FontManager* fontManager, 
                const std::unique_ptr<AnimationState>& as, bool visible) :
-        Widget{ visible }, m_fontManager{ fontManager },
-        m_animationState{ as } { /* Empty */ }
+        Widget{ fontManager, visible }, m_animationState{ as } { }
     ~MainWidget() noexcept = default;
     MainWidget(const MainWidget&) = delete;
     MainWidget& operator=(const MainWidget&) = delete;
@@ -25,7 +23,6 @@ public:
     bool needsDraw(uint32_t ticks) const;
     void draw() const override;
 private:
-    const FontManager* m_fontManager{ nullptr };
     const std::unique_ptr<AnimationState>& m_animationState;
 };
 

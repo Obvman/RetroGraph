@@ -16,8 +16,7 @@ SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
                                      const CPUMeasure* cpuMeasure,
                                      const NetMeasure* netMeasure,
                                      bool visible) :
-    Widget{ visible },
-    m_fontManager{ fontManager } {
+    Widget{ fontManager, visible } {
 
     // Just create stats string here since we expect it not to change during
     // the lifetime of the program

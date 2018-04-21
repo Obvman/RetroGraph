@@ -13,8 +13,7 @@ public:
     ProcessRAMWidget(const FontManager* fontManager,
                      const ProcessMeasure* procMeasure,
                      bool visible) :
-        Widget{ visible },
-        m_fontManager{ fontManager },
+        Widget{ fontManager, visible },
         m_procMeasure{ procMeasure } {}
 
     ~ProcessRAMWidget() noexcept = default;
@@ -25,7 +24,6 @@ public:
 
     void draw() const override;
 private:
-    const FontManager* m_fontManager{ nullptr };
     const ProcessMeasure* m_procMeasure{ nullptr };
 };
 

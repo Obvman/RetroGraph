@@ -5,7 +5,6 @@
 
 namespace rg {
 
-class FontManager;
 class CPUMeasure;
 class RAMMeasure;
 class NetMeasure;
@@ -16,7 +15,7 @@ public:
     GraphWidget(const FontManager* fontManager, const CPUMeasure* cpuMeasure,
                 const RAMMeasure* ramMeasure, const NetMeasure* netMeasure,
                 const GPUMeasure* gpuMeasure, bool visible) :
-        Widget{ visible }, m_fontManager{ fontManager },
+        Widget{ fontManager, visible },
         m_cpuMeasure{ cpuMeasure }, m_ramMeasure{ ramMeasure },
         m_netMeasure{ netMeasure }, m_gpuMeasure{ gpuMeasure } {}
 
@@ -35,7 +34,6 @@ private:
     void drawNetGraph() const;
     void drawGpuGraph() const;
 
-    const FontManager* m_fontManager{ nullptr };
     Viewport m_cpuGraphVP{ };
     Viewport m_ramGraphVP{ };
     Viewport m_netGraphVP{ };
