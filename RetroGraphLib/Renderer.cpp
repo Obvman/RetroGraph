@@ -287,13 +287,13 @@ void Renderer::initVBOs() {
 }
 
 void Renderer::initShaders() {
-    m_cpuGraphShader = loadShader("cpuGraph.vert", "cpuGraph.frag");
+    // m_cpuGraphShader = loadShader("cpuGraph.vert", "cpuGraph.frag");
 
-    m_graphAlphaLoc = glGetUniformLocation(m_cpuGraphShader, "lineAlpha");
+    // m_graphAlphaLoc = glGetUniformLocation(m_cpuGraphShader, "lineAlpha");
 
-    if (m_graphAlphaLoc == -1) {
+    // if (m_graphAlphaLoc == -1) {
         //std::cout << "Failed to get uniform location for \'lineAlpha\'\n";
-    }
+    // }
 }
 
 }

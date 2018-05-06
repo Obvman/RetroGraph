@@ -132,6 +132,15 @@ void RetroGraph::toggleWidget(WidgetType w) {
                                            m_fpsWidgetEnabled);
             break;
     }
+
+    // Check dependant measures, if theres a measure that isn't being used by any
+    // Widget, we can disable it. If a disabled measure needs to be used by a widget,
+    // reenable it
+    //for ()
+    for (const auto&[measureName, widget] : m_dependencyMap) {
+        (void)widget;
+        std::cout << "Measure: " << measureName << '\n';
+    }
 }
 
 }

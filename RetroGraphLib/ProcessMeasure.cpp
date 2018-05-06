@@ -52,7 +52,7 @@ ProcessMeasure::ProcessMeasure() :
     }
     if (!setDebugPrivileges(hToken, SE_DEBUG_NAME, true)) {
         CloseHandle(hToken);
-        fatalMessageBox("Failed to set privilege");
+        fatalMessageBox("Failed to set privilege, please run as administrator");
     }
 #endif
 
