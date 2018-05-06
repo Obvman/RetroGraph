@@ -242,7 +242,10 @@ void GraphWidget::drawGpuGraph() const {
                (m_gpuGraphVP.width*4)/5 , m_gpuGraphVP.height);
     drawGraphGrid();
     glLineWidth(0.5f);
-    drawLineGraph(m_gpuMeasure->getUsageData());
+
+    if (m_gpuMeasure->isEnabled()) {
+        drawLineGraph(m_gpuMeasure->getUsageData());
+    }
 
     // Set viewport for text drawing
     glViewport(m_gpuGraphVP.x + (4 * m_gpuGraphVP.width) / 5, m_gpuGraphVP.y,

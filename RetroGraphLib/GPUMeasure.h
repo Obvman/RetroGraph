@@ -25,6 +25,11 @@ public:
     /* Get latest GPU stats from OpenGL or nvapi and updates dynamic members */
     void update(uint32_t ticks);
 
+    /* Returns true if the measure successfully initialized and is getting data,
+     * And false if it failed to initialise
+     */
+    bool isEnabled() const { return m_isEnabled; }
+
     uint32_t getFrameBufferSizeKB() const { return m_frameBufferSize; }
     uint32_t getCoreCount() const { return m_gpuCoreCount; }
     uint32_t getMemoryClockHz() const { return m_memoryClock; }
@@ -43,6 +48,8 @@ private:
     void getClockFrequencies();
     void getMemInformation();
     void getGpuUsage();
+
+    bool m_isEnabled{ true };
 
     std::string m_driverVersion{ "" };
     std::string m_gpuName{ "" };

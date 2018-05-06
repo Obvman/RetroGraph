@@ -24,7 +24,8 @@ GPUMeasure::GPUMeasure() :
     m_usageData.assign(dataSize, 0.0f);
 
     if (NvAPI_Initialize() != NVAPI_OK) {
-        fatalMessageBox("Failed to initialize NvAPI\n");
+        m_isEnabled = false;
+        return;
     }
 
     NvU32 driverVersion;
@@ -63,6 +64,8 @@ GPUMeasure::~GPUMeasure() {
 }
 
 void GPUMeasure::update(uint32_t ticks) {
+    if (!m_isEnabled) return;
+
     if (ticks % (ticksPerSecond / 2) == 0) {
         //updateGpuTemp(); // High CPU usage function
         //getClockFrequencies(); // High CPU usage function
