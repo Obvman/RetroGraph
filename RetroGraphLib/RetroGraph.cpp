@@ -19,10 +19,67 @@ RetroGraph::RetroGraph(HINSTANCE hInstance) :
     m_musicMeasure{ std::make_unique<MusicMeasure>(&m_processMeasure) },
     m_systemMeasure{ },
     m_animationState{ std::make_unique<AnimationState>() },
-    m_renderer{ m_window, *this } {
+    m_renderer{ m_window, *this },
+    m_dependencyMap{
+        { "AnimationState", WidgetType::Main },
+        { "MusicMeasure", WidgetType::Music },
+
+        { "ProcessMeasure", WidgetType::Music },
+        { "ProcessMeasure", WidgetType::ProcessCPU },
+        { "ProcessMeasure", WidgetType::ProcessRAM },
+
+        { "SystemMeasure", WidgetType::SystemStats },
+
+        { "CPUMeasure", WidgetType::CPUStats },
+        { "CPUMeasure", WidgetType::Graph },
+        { "CPUMeasure", WidgetType::SystemStats },
+        { "CPUMeasure", WidgetType::Time },
+
+        { "GPUMeasure", WidgetType::Graph },
+        { "RAMMeasure", WidgetType::Graph },
+
+        { "NetMeasure", WidgetType::Graph },
+        { "NetMeasure", WidgetType::Time },
+        { "NetMeasure", WidgetType::SystemStats },
+
+        { "DriveMeasure", WidgetType::HDD },
+    } {
 
     update(0);
     draw(0);
+
+    /*for (const auto&[measure, widget] : m_dependencyMap) {
+        std::cout << measure << " => ";
+        switch (widget) {
+            case WidgetType::Main:
+                std::cout << "MainWidget" << '\n';
+                break;
+            case WidgetType::Music:
+                std::cout << "MusicWidget" << '\n';
+                break;
+            case WidgetType::ProcessCPU:
+                std::cout << "ProcessCPUWidget" << '\n';
+                break;
+            case WidgetType::ProcessRAM:
+                std::cout << "ProcessRAMWidget" << '\n';
+                break;
+            case WidgetType::SystemStats:
+                std::cout << "SystemStatsWidget" << '\n';
+                break;
+            case WidgetType::Time:
+                std::cout << "TimeWidget" << '\n';
+                break;
+            case WidgetType::CPUStats:
+                std::cout << "CPUStatsWidget" << '\n';
+                break;
+            case WidgetType::Graph:
+                std::cout << "GraphWidget" << '\n';
+                break;
+            case WidgetType::HDD:
+                std::cout << "HDDWidget" << '\n';
+                break;
+        }
+    }*/
 }
 
 void RetroGraph::update(uint32_t ticks) {

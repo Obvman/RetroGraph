@@ -2,6 +2,8 @@
 
 #include <cstdint>
 #include <memory>
+#include <map>
+#include <string>
 
 #include "Window.h"
 #include "Renderer.h"
@@ -51,7 +53,6 @@ public:
     void toggleWidget(WidgetType w);
 
 private:
-
     Window m_window;
 
     /* Measure data acquisition/updating is managed by the lifetime of the
@@ -82,6 +83,8 @@ private:
     bool m_fpsWidgetEnabled{ true };
 
     Renderer m_renderer;
+
+    std::multimap<std::string, WidgetType> m_dependencyMap;
 };
 
 } // namespace rg

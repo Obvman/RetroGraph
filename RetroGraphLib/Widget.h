@@ -56,8 +56,8 @@ public:
     void setVisibility(bool b);
 protected:
     bool m_visible;
-    Viewport m_viewport;
-    const FontManager* m_fontManager{ nullptr };
+    Viewport m_viewport{};
+    const FontManager* m_fontManager;
 };
 
-}
+} // namespace rg
