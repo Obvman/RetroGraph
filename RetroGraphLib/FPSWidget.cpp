@@ -15,6 +15,8 @@ void FPSWidget::draw() const {
     if (!m_visible) return;
     clear();
 
+    drawWidgetBackground();
+
     glColor4f(DIVIDER_R, DIVIDER_G, DIVIDER_B, DIVIDER_A);
     drawTopSerifLine(-1.0f, 1.0f);
     drawBottomSerifLine(-1.0f, 1.0f);
