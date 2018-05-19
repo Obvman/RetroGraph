@@ -1,5 +1,7 @@
 #pragma once
 
+#include "stdafx.h"
+
 #include "drawUtils.h"
 // TODO integrate the FontManager observer
 

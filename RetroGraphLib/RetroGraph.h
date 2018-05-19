@@ -1,5 +1,7 @@
 #pragma once
 
+#include "stdafx.h"
+
 #include <cstdint>
 #include <memory>
 #include <map>
@@ -55,6 +57,19 @@ public:
 private:
     Window m_window;
 
+    // Measures are shared among widgets so we need these so we know to disable
+    // a measure only when there are no widgets using it.
+    bool m_timeWidgetEnabled;
+    bool m_HDDWidgetEnabled;
+    bool m_cpuStatsWidgetEnabled;
+    bool m_cpuProcessWidgetEnabled;
+    bool m_ramProcessWidgetEnabled;
+    bool m_graphWidgetEnabled;
+    bool m_mainWidgetEnabled;
+    bool m_musicWidgetEnabled;
+    bool m_systemStatsWidgetEnabled;
+    bool m_fpsWidgetEnabled;
+
     /* Measure data acquisition/updating is managed by the lifetime of the
      * object, so wrapping them in smart pointers let's us disable/enable
      * measures by destroying/creating the objects
@@ -68,19 +83,6 @@ private:
     std::unique_ptr<MusicMeasure> m_musicMeasure;
     SystemMeasure m_systemMeasure;
     std::unique_ptr<AnimationState> m_animationState;
-
-    // Measures are shared among widgets so we need these so we know to disable
-    // a measure only when there are no widgets using it.
-    bool m_timeWidgetEnabled{ true };
-    bool m_HDDWidgetEnabled{ true };
-    bool m_cpuStatsWidgetEnabled{ true };
-    bool m_cpuProcessWidgetEnabled{ true };
-    bool m_ramProcessWidgetEnabled{ true };
-    bool m_graphWidgetEnabled{ true };
-    bool m_mainWidgetEnabled{ true };
-    bool m_musicWidgetEnabled{ true };
-    bool m_systemStatsWidgetEnabled{ true };
-    bool m_fpsWidgetEnabled{ true };
 
     Renderer m_renderer;
 

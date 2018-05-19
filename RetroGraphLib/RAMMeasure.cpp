@@ -1,10 +1,11 @@
+#include "stdafx.h"
+
 #include "RAMMeasure.h"
 
 #include <iostream>
 #include <string>
 
-#define GLUT_DISABLE_ATEXIT_HACK
-#include <GL/freeglut.h>
+// #include <GL/freeglut.h>
 
 #include "colors.h"
 #include "UserSettings.h"

@@ -1,8 +1,10 @@
+#include "stdafx.h"
+
 #include "MusicWidget.h"
 
 #include <stdio.h>
-#include <GL/glew.h>
-#include <GL/gl.h>
+// #include <GL/glew.h>
+// #include <GL/gl.h>
 
 #include "colors.h"
 #include "FontManager.h"

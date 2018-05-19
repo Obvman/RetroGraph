@@ -1,7 +1,9 @@
+#include "stdafx.h"
+
 #include "drawUtils.h"
 
-#include <GL/glew.h>
-#include <GL/gl.h>
+// #include <GL/glew.h>
+// #include <GL/gl.h>
 #include <cmath>
 
 #include "UserSettings.h"

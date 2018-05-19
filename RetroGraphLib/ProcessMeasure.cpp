@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "ProcessMeasure.h"
 
 #include <iostream>
@@ -9,9 +11,8 @@
 #include <winternl.h>
 #pragma comment(lib, "Ntdll.lib")
 
-#define GLUT_DISABLE_ATEXIT_HACK
-#include <GL/freeglut.h>
-#include <GL/gl.h>
+// #include <GL/freeglut.h>
+// #include <GL/gl.h>
 
 #include "colors.h"
 #include "ProcessData.h"
@@ -123,7 +124,9 @@ int32_t ProcessMeasure::getPIDFromName(const std::string& name) const {
                                 m_allProcessData.cend(),
             [&name](const auto& sp) {
                 return sp->getName() == name;
-            }) };
+            }) 
+    };
+
     if (it != m_allProcessData.cend()) {
         return (*it)->getPID();
     } else {

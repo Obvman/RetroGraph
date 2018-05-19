@@ -1,6 +1,7 @@
+#include "stdafx.h"
+
 #include "AnimationState.h"
 
-#include <cassert>
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
@@ -8,8 +9,8 @@
 #include <algorithm>
 #include <iostream>
 
-#include <GL/glew.h>
-#include <GL/gl.h>
+// #include <GL/glew.h>
+// #include <GL/gl.h>
 
 #include "units.h"
 #include "utils.h"
@@ -37,7 +38,7 @@ AnimationState::AnimationState() :
         m_circleList{ glGenLists(1) } {
 
     // Generate particles and populate the cell particle observer lists.
-    srand(static_cast<uint32_t>(time(nullptr)));
+    std::srand(static_cast<uint32_t>(time(nullptr)));
     for (auto i = size_t{ 0U }; i < numParticles; ++i) {
         m_particles.emplace_back();
     }

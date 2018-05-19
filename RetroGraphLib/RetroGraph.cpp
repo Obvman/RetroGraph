@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "RetroGraph.h"
 
 #include <iostream>
@@ -10,15 +12,25 @@ RetroGraph::RetroGraph(HINSTANCE hInstance) :
     m_window{ this, hInstance, 
               std::get<int32_t>(UserSettings::inst().getVal("Window.Monitor")), 
               std::get<bool>(UserSettings::inst().getVal("Window.ClickThrough")) },
+    m_timeWidgetEnabled{ true },
+    m_HDDWidgetEnabled{ UserSettings::inst().isVisible(RG_WIDGET_DRIVES) },
+    m_cpuStatsWidgetEnabled{ true },
+    m_cpuProcessWidgetEnabled{ true },
+    m_ramProcessWidgetEnabled{ true },
+    m_graphWidgetEnabled{ true },
+    m_mainWidgetEnabled{ UserSettings::inst().isVisible(RG_WIDGET_MAIN) },
+    m_musicWidgetEnabled{ UserSettings::inst().isVisible(RG_WIDGET_MUSIC) },
+    m_systemStatsWidgetEnabled{ true },
+    m_fpsWidgetEnabled{ true },
     m_cpuMeasure{},
     m_gpuMeasure{},
     m_ramMeasure{},
     m_netMeasure{},
     m_processMeasure{},
-    m_driveMeasure{ std::make_unique<DriveMeasure>() },
-    m_musicMeasure{ std::make_unique<MusicMeasure>(&m_processMeasure) },
+    m_driveMeasure{ m_HDDWidgetEnabled ?  std::make_unique<DriveMeasure>() : nullptr },
+    m_musicMeasure{  m_musicWidgetEnabled ?  std::make_unique<MusicMeasure>(&m_processMeasure) : nullptr },
     m_systemMeasure{ },
-    m_animationState{ std::make_unique<AnimationState>() },
+    m_animationState{  m_mainWidgetEnabled ? std::make_unique<AnimationState>() : nullptr },
     m_renderer{ m_window, *this },
     m_dependencyMap{
         { "AnimationState", WidgetType::Main },

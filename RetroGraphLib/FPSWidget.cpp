@@ -1,7 +1,9 @@
+#include "stdafx.h"
+
 #include "FPSWidget.h"
 
-#include <gl/glew.h>
-#include <gl/GL.h>
+// #include <gl/glew.h>
+// #include <gl/GL.h>
 
 #include "colors.h"
 #include "FontManager.h"
@@ -12,6 +14,8 @@ namespace rg {
 void FPSWidget::draw() const {
     if (!m_visible) return;
     clear();
+
+    drawWidgetBackground();
 
     glColor4f(DIVIDER_R, DIVIDER_G, DIVIDER_B, DIVIDER_A);
     drawTopSerifLine(-1.0f, 1.0f);

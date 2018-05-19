@@ -1,7 +1,9 @@
+#include "stdafx.h"
+
 #include "GraphWidget.h"
 
-#include <GL/glew.h>
-#include <GL/gl.h>
+// #include <GL/glew.h>
+// #include <GL/gl.h>
 #include <Windows.h>
 
 #include "colors.h"
@@ -136,7 +138,7 @@ void GraphWidget::drawNetGraph() const {
         const auto maxUpValMB{ m_netMeasure->getMaxUpValue() /
                                static_cast<float>(MB) };
 
-        const auto maxValMB{ max(maxUpValMB, maxDownValMB) };
+        const auto maxValMB{ std::max(maxUpValMB, maxDownValMB) };
 
         // Draw the download graph
         glBegin(GL_LINE_STRIP); {

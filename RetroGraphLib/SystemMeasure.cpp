@@ -1,9 +1,11 @@
+#include "stdafx.h"
+
 #include "SystemMeasure.h"
 
 #include <Winver.h>
 #include <intrin.h>
 #include <sstream>
-#include <GL/gl.h>
+// #include <GL/gl.h>
 
 #include "utils.h"
 #include "units.h"

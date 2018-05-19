@@ -1,7 +1,9 @@
+#include "stdafx.h"
+
 #include "Widget.h"
 
-#include <gl/glew.h>
-#include <gl/gl.h>
+// #include <gl/glew.h>
+// #include <gl/gl.h>
 
 namespace rg {
 

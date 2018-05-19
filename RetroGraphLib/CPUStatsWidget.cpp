@@ -1,7 +1,9 @@
+#include "stdafx.h"
+
 #include "CPUStatsWidget.h"
 
-#include <GL/glew.h>
-#include <GL/gl.h>
+// #include <GL/glew.h>
+// #include <GL/gl.h>
 #include <Windows.h>
 
 #include "utils.h"

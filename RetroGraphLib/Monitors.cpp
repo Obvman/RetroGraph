@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "Monitors.h"
 
 #include "utils.h"

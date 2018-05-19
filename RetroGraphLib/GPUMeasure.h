@@ -1,5 +1,7 @@
 #pragma once
 
+#include "stdafx.h"
+
 #include <cstdint>
 #include <GL/glew.h>
 #include <NVAPI/nvapi.h>
