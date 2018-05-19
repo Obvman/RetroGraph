@@ -1,5 +1,7 @@
 #pragma once
 
+#include "stdafx.h"
+
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif

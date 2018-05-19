@@ -1,8 +1,9 @@
+#include "stdafx.h"
+
 #include "utils.h"
 
-#include <GL/glew.h>
+// #include <GL/glew.h>
 #include <locale>
-// #include <codecvt>
 
 #include "colors.h"
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "stdafx.h"
+
 namespace rg {
 
 constexpr float BLACK_R{ 0x00 / 255.0f };

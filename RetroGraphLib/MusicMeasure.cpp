@@ -1,8 +1,10 @@
+#include "stdafx.h"
+
 #include "MusicMeasure.h"
 
 #include <cstring>
 #include <iostream>
-#include <stdio.h>
+#include <cstdio>
 
 #include "utils.h"
 #include "ProcessMeasure.h"

@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "RetroGraph.h"
 
 #include <iostream>

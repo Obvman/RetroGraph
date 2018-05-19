@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "FPSLimiter.h"
 
 #include <Windows.h>

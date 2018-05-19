@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "GLShaders.h"
 
 #include <vector>

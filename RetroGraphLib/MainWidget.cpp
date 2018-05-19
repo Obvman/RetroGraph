@@ -1,9 +1,11 @@
+#include "stdafx.h"
+
 #include "MainWidget.h"
 
 #include <iostream>
 
-#include <GL/glew.h>
-#include <GL/gl.h>
+// #include <GL/glew.h>
+// #include <GL/gl.h>
 #include <Windows.h>
 
 #include "colors.h"

@@ -1,7 +1,9 @@
+#include "stdafx.h"
+
 #include "FPSWidget.h"
 
-#include <gl/glew.h>
-#include <gl/GL.h>
+// #include <gl/glew.h>
+// #include <gl/GL.h>
 
 #include "colors.h"
 #include "FontManager.h"

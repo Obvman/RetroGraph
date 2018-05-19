@@ -1,6 +1,9 @@
 #pragma once
 
+#include "stdafx.h"
+
 #include <memory>
+
 #include "drawUtils.h"
 #include "Widget.h"
 

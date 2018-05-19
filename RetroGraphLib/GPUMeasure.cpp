@@ -1,6 +1,8 @@
+#include "stdafx.h"
+
 #include "GPUMeasure.h"
 
-#include <stdio.h>
+#include <cstdio>
 
 #include "units.h"
 #include "UserSettings.h"

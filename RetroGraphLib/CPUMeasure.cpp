@@ -1,13 +1,13 @@
+#include "stdafx.h"
+
 #include "CPUMeasure.h"
 
 #include <algorithm>
 #include <ctime>
-#include <time.h>
 #include <Windows.h>
-#include <GL/glew.h>
-#include <GL/gl.h>
-#define GLUT_DISABLE_ATEXIT_HACK
-#include <GL/freeglut.h>
+// #include <GL/glew.h>
+// #include <GL/gl.h>
+// #include <GL/freeglut.h>
 
 #include "UserSettings.h"
 #include "colors.h"

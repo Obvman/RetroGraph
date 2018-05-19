@@ -1,12 +1,12 @@
+#include "stdafx.h"
+
 #include "Window.h"
 
 
-#define GLUT_DISABLE_ATEXIT_HACK
-
-#include <GL/freeglut.h>
-#include <GL/glew.h>
-#include <GL/wglew.h>
-#include <GL/gl.h>
+// #include <GL/freeglut.h>
+// #include <GL/glew.h>
+// #include <GL/wglew.h>
+// #include <GL/gl.h>
 #include <dwmapi.h>
 #include <tchar.h>
 #include <Windowsx.h>

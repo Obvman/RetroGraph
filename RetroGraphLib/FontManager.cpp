@@ -1,10 +1,12 @@
+#include "stdafx.h"
+
 #include "FontManager.h"
 
 #include <stdio.h>
 #include <iostream>
 #include <algorithm>
 #include <cmath>
-#include <GL/glew.h>
+// #include <GL/glew.h>
 
 #include "utils.h"
 #include "drawUtils.h"

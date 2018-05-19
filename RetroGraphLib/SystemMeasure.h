@@ -1,5 +1,7 @@
 #pragma once
 
+#include "stdafx.h"
+
 #include <string>
 #include <GL/glew.h>
 #include <Windows.h>

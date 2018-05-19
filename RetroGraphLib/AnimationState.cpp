@@ -1,6 +1,7 @@
+#include "stdafx.h"
+
 #include "AnimationState.h"
 
-#include <cassert>
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
@@ -8,8 +9,8 @@
 #include <algorithm>
 #include <iostream>
 
-#include <GL/glew.h>
-#include <GL/gl.h>
+// #include <GL/glew.h>
+// #include <GL/gl.h>
 
 #include "units.h"
 #include "utils.h"

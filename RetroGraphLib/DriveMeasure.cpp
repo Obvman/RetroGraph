@@ -1,11 +1,12 @@
+#include "stdafx.h"
+
 #include "DriveMeasure.h"
 
 #include <Windows.h>
 
-#include <GL/glew.h>
-#include <GL/gl.h>
-#define GLUT_DISABLE_ATEXIT_HACK
-#include <GL/freeglut.h>
+// #include <GL/glew.h>
+// #include <GL/gl.h>
+// #include <GL/freeglut.h>
 
 #include "colors.h"
 

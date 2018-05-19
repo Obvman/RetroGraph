@@ -1,5 +1,7 @@
 #pragma once
 
+#include "stdafx.h"
+
 #include <vector>
 #include <cstdint>
 #include <Windows.h>

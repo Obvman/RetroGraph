@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "Renderer.h"
 
 #include "RetroGraph.h"

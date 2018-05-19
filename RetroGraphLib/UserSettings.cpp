@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "UserSettings.h"
 
 #include <iostream>

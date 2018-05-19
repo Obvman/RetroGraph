@@ -1,5 +1,7 @@
 #pragma once
 
+#include "stdafx.h"
+
 #include <Windows.h>
 #include <cstdint>
 #include <array>
