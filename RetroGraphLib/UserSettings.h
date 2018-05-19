@@ -38,8 +38,8 @@ public:
 
     settingVariant getVal(const std::string& settingName) const;
 
-    bool isVisible(size_t w) const { return m_widgetVisibilities[w]; }
-    WidgetPosition getWidgetPosition(size_t w) const { return m_widgetPositions[w]; }
+    bool isVisible(WidgetType w) const { return m_widgetVisibilities[w]; }
+    WidgetPosition getWidgetPosition(WidgetType w) const { return m_widgetPositions[w]; }
 
     void toggleWidgetBackgroundVisible() { m_settings["Window.WidgetBackground"] = 
         !std::get<bool>(m_settings["Window.WidgetBackground"]); }

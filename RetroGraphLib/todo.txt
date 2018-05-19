@@ -1,14 +1,8 @@
 Finish dependency map
 
-FPS background
-
-merge WidgetType enum and RG_WIDGET_...
-
 turning off fps counter, selecting corner
 
 implement 30 min work/rest timer
-
-sleep until next frame
 
 store measures in smart pointers to control lifetime manually to start/stop measuring
 disable data gathering for non-visible widgets to save on CPU - store dependencies in a list,
@@ -28,7 +22,7 @@ Volume + Audio device widget
 
 Handle invalid config values
 
-Widgets: Allow free position (x, y coords), full alignment options 
+Widgets: Allow free position (x, y coords), full alignment options
 (centered, left, top eg.) and a mix of centering and coords (vertical center with x coords)
 
 Allow user-defined ordering of widgets in multi-widget positions

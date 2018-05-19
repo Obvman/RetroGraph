@@ -22,25 +22,25 @@ Renderer::Renderer(const Window& w, const RetroGraph& _rg) :
     m_renderTargetHandle{ w.getHwnd() },
     m_fontManager{ w.getHwnd(), w.getHeight() },
     m_timeWidget{ &m_fontManager, &_rg.getCPUMeasure(), &_rg.getNetMeasure(),
-                  UserSettings::inst().isVisible(RG_WIDGET_TIME) },
+                  UserSettings::inst().isVisible(WidgetType::Time) },
     m_hddWidget{ &m_fontManager, _rg.getDriveMeasure(), 
-                 UserSettings::inst().isVisible(RG_WIDGET_DRIVES) },
+                 UserSettings::inst().isVisible(WidgetType::HDD) },
     m_cpuStatsWidget{ &m_fontManager, &_rg.getCPUMeasure(),
-                      UserSettings::inst().isVisible(RG_WIDGET_CPU_STATS) },
+                      UserSettings::inst().isVisible(WidgetType::CPUStats) },
     m_processCPUWidget{ &m_fontManager, &_rg.getProcessMeasure(), 
-                        UserSettings::inst().isVisible(RG_WIDGET_PROCESSES_CPU) },
+                        UserSettings::inst().isVisible(WidgetType::ProcessCPU) },
     m_processRAMWidget{ &m_fontManager, &_rg.getProcessMeasure(), 
-                        UserSettings::inst().isVisible(RG_WIDGET_PROCESSES_RAM) },
+                        UserSettings::inst().isVisible(WidgetType::ProcessRAM) },
     m_graphWidget{ &m_fontManager, &_rg.getCPUMeasure(), &_rg.getRAMMeasure(),
                    &_rg.getNetMeasure(), &_rg.getGPUMeasure(), 
-                   UserSettings::inst().isVisible(RG_WIDGET_GRAPHS) },
+                   UserSettings::inst().isVisible(WidgetType::Graph) },
     m_systemStatsWidget{ &m_fontManager, &_rg.getSystemMeasure(),
                          &_rg.getCPUMeasure(), &_rg.getNetMeasure(),
-                         UserSettings::inst().isVisible(RG_WIDGET_SYSTEM_STATS) },
+                         UserSettings::inst().isVisible(WidgetType::SystemStats) },
     m_mainWidget{ &m_fontManager, _rg.getAnimationState(),
-                  UserSettings::inst().isVisible(RG_WIDGET_MAIN) },
+                  UserSettings::inst().isVisible(WidgetType::Main) },
     m_musicWidget{ &m_fontManager, _rg.getMusicMeasure(), 
-                   UserSettings::inst().isVisible(RG_WIDGET_MUSIC) },
+                   UserSettings::inst().isVisible(WidgetType::Music) },
     m_fpsWidget{ &m_fontManager } {
 
     setViewports(w.getWidth(), w.getHeight());
@@ -131,39 +131,39 @@ void Renderer::setViewports(int32_t windowWidth, int32_t windowHeight) {
     const auto& settings{ UserSettings::inst() };
 
     m_timeWidget.setViewport(calcViewport(
-            settings.getWidgetPosition(RG_WIDGET_TIME),
+            settings.getWidgetPosition(WidgetType::Time),
             windowWidth, windowHeight, positionFills));
 
     m_hddWidget.setViewport(calcViewport(
-            settings.getWidgetPosition(RG_WIDGET_DRIVES),
+            settings.getWidgetPosition(WidgetType::HDD),
             windowWidth, windowHeight, positionFills));
 
     m_cpuStatsWidget.setViewport(calcViewport(
-            settings.getWidgetPosition(RG_WIDGET_CPU_STATS),
+            settings.getWidgetPosition(WidgetType::CPUStats),
             windowWidth, windowHeight, positionFills));
 
     m_graphWidget.setViewport(calcViewport(
-            settings.getWidgetPosition(RG_WIDGET_GRAPHS),
+            settings.getWidgetPosition(WidgetType::Graph),
             windowWidth, windowHeight, positionFills));
 
     m_systemStatsWidget.setViewport(calcViewport(
-            settings.getWidgetPosition(RG_WIDGET_SYSTEM_STATS),
+            settings.getWidgetPosition(WidgetType::SystemStats),
             windowWidth, windowHeight, positionFills));
 
     m_mainWidget.setViewport(calcViewport(
-            settings.getWidgetPosition(RG_WIDGET_MAIN),
+            settings.getWidgetPosition(WidgetType::Main),
             windowWidth, windowHeight, positionFills));
 
     m_musicWidget.setViewport(calcViewport(
-            settings.getWidgetPosition(RG_WIDGET_MUSIC),
+            settings.getWidgetPosition(WidgetType::Music),
             windowWidth, windowHeight, positionFills));
 
     m_processCPUWidget.setViewport(calcViewport(
-            settings.getWidgetPosition(RG_WIDGET_PROCESSES_CPU),
+            settings.getWidgetPosition(WidgetType::ProcessCPU),
             windowWidth, windowHeight, positionFills));
 
     m_processRAMWidget.setViewport(calcViewport(
-            settings.getWidgetPosition(RG_WIDGET_PROCESSES_RAM),
+            settings.getWidgetPosition(WidgetType::ProcessRAM),
             windowWidth, windowHeight, positionFills));
 
     // TODO allow selection of corner to place this

@@ -19,8 +19,8 @@ UserSettings::UserSettings() {
     namespace po = boost::program_options;
     namespace pt = boost::property_tree;
 
-    m_widgetVisibilities.assign(RG_NUM_WIDGETS, true);
-    m_widgetPositions.resize(RG_NUM_WIDGETS);
+    m_widgetVisibilities.assign(WidgetType::NumWidgets, true);
+    m_widgetPositions.resize(WidgetType::NumWidgets);
 
     pt::ptree propTree;
     try {
@@ -63,50 +63,50 @@ UserSettings::UserSettings() {
             m_settings["Widgets-Main.FPS"] =
                 propTree.get<uint32_t>("Widgets-Main.FPS");
 
-            m_widgetVisibilities[RG_WIDGET_TIME] =
+            m_widgetVisibilities[WidgetType::Time] =
                 propTree.get<bool>("Widgets-Time.Visible");
-            m_widgetVisibilities[RG_WIDGET_CPU_STATS] =
+            m_widgetVisibilities[WidgetType::CPUStats] =
                 propTree.get<bool>("Widgets-CPUStats.Visible");
-            m_widgetVisibilities[RG_WIDGET_SYSTEM_STATS] =
+            m_widgetVisibilities[WidgetType::SystemStats] =
                 propTree.get<bool>("Widgets-SystemStats.Visible");
-            m_widgetVisibilities[RG_WIDGET_PROCESSES_CPU] =
+            m_widgetVisibilities[WidgetType::ProcessCPU] =
                 propTree.get<bool>("Widgets-ProcessesCPU.Visible");
-            m_widgetVisibilities[RG_WIDGET_PROCESSES_RAM] =
+            m_widgetVisibilities[WidgetType::ProcessRAM] =
                 propTree.get<bool>("Widgets-ProcessesRAM.Visible");
-            m_widgetVisibilities[RG_WIDGET_MUSIC] =
+            m_widgetVisibilities[WidgetType::Music] =
                 propTree.get<bool>("Widgets-Music.Visible");
-            m_widgetVisibilities[RG_WIDGET_MAIN] =
+            m_widgetVisibilities[WidgetType::Main] =
                 propTree.get<bool>("Widgets-Main.Visible");
-            m_widgetVisibilities[RG_WIDGET_DRIVES] =
+            m_widgetVisibilities[WidgetType::HDD] =
                 propTree.get<bool>("Widgets-Drives.Visible");
-            m_widgetVisibilities[RG_WIDGET_GRAPHS] =
+            m_widgetVisibilities[WidgetType::Graph] =
                 propTree.get<bool>("Widgets-Graphs.Visible");
 
-            m_widgetPositions[RG_WIDGET_PROCESSES_CPU] =
+            m_widgetPositions[WidgetType::ProcessCPU] =
                     m_posMap.at(propTree.get<std::string>(
                                     "Widgets-ProcessesCPU.Position"));
-            m_widgetPositions[RG_WIDGET_PROCESSES_RAM] = 
+            m_widgetPositions[WidgetType::ProcessRAM] = 
                     m_posMap.at(propTree.get<std::string>(
                                     "Widgets-ProcessesRAM.Position"));
-            m_widgetPositions[RG_WIDGET_TIME] = 
+            m_widgetPositions[WidgetType::Time] = 
                     m_posMap.at(propTree.get<std::string>(
                                     "Widgets-Time.Position"));
-            m_widgetPositions[RG_WIDGET_SYSTEM_STATS] = 
+            m_widgetPositions[WidgetType::SystemStats] = 
                     m_posMap.at(propTree.get<std::string>(
                                     "Widgets-SystemStats.Position"));
-            m_widgetPositions[RG_WIDGET_MUSIC] = 
+            m_widgetPositions[WidgetType::Music] = 
                     m_posMap.at(propTree.get<std::string>(
                                     "Widgets-Music.Position"));
-            m_widgetPositions[RG_WIDGET_CPU_STATS] = 
+            m_widgetPositions[WidgetType::CPUStats] = 
                     m_posMap.at(propTree.get<std::string>(
                                     "Widgets-CPUStats.Position"));
-            m_widgetPositions[RG_WIDGET_DRIVES] = 
+            m_widgetPositions[WidgetType::HDD] = 
                     m_posMap.at(propTree.get<std::string>(
                                     "Widgets-Drives.Position"));
-            m_widgetPositions[RG_WIDGET_MAIN] = 
+            m_widgetPositions[WidgetType::Main] = 
                     m_posMap.at(propTree.get<std::string>(
                                     "Widgets-Main.Position"));
-            m_widgetPositions[RG_WIDGET_GRAPHS] = 
+            m_widgetPositions[WidgetType::Graph] = 
                     m_posMap.at(propTree.get<std::string>(
                                     "Widgets-Graphs.Position"));
         }
@@ -189,15 +189,15 @@ void UserSettings::generateDefaultFile(boost::property_tree::ptree& propTree) {
                  std::get<uint32_t>(m_settings["Widgets-Main.FPS"]));
 
     // Widget Visibilities
-    propTree.put("Widgets-Time.Visible",         isVisible(RG_WIDGET_TIME));
-    propTree.put("Widgets-SystemStats.Visible",  isVisible(RG_WIDGET_SYSTEM_STATS));
-    propTree.put("Widgets-CPUStats.Visible",     isVisible(RG_WIDGET_CPU_STATS));
-    propTree.put("Widgets-ProcessesCPU.Visible", isVisible(RG_WIDGET_PROCESSES_CPU));
-    propTree.put("Widgets-ProcessesRAM.Visible", isVisible(RG_WIDGET_PROCESSES_RAM));
-    propTree.put("Widgets-Music.Visible",        isVisible(RG_WIDGET_MUSIC));
-    propTree.put("Widgets-Main.Visible",         isVisible(RG_WIDGET_MAIN));
-    propTree.put("Widgets-Drives.Visible",       isVisible(RG_WIDGET_DRIVES));
-    propTree.put("Widgets-Graphs.Visible",       isVisible(RG_WIDGET_GRAPHS));
+    propTree.put("Widgets-Time.Visible",         isVisible(WidgetType::Time));
+    propTree.put("Widgets-SystemStats.Visible",  isVisible(WidgetType::SystemStats));
+    propTree.put("Widgets-CPUStats.Visible",     isVisible(WidgetType::CPUStats));
+    propTree.put("Widgets-ProcessesCPU.Visible", isVisible(WidgetType::ProcessCPU));
+    propTree.put("Widgets-ProcessesRAM.Visible", isVisible(WidgetType::ProcessRAM));
+    propTree.put("Widgets-Music.Visible",        isVisible(WidgetType::Music));
+    propTree.put("Widgets-Main.Visible",         isVisible(WidgetType::Main));
+    propTree.put("Widgets-Drives.Visible",       isVisible(WidgetType::HDD));
+    propTree.put("Widgets-Graphs.Visible",       isVisible(WidgetType::Graph));
 
     // Widget Positions
     propTree.put("Widgets-Time.Position",         "top-left");
@@ -210,23 +210,23 @@ void UserSettings::generateDefaultFile(boost::property_tree::ptree& propTree) {
     propTree.put("Widgets-Drives.Position",       "top-right");
     propTree.put("Widgets-Graphs.Position",       "middle-left");
 
-    m_widgetPositions[RG_WIDGET_PROCESSES_CPU] = 
+    m_widgetPositions[WidgetType::ProcessCPU] = 
         m_posMap.at(propTree.get<std::string>("Widgets-ProcessesCPU.Position"));
-    m_widgetPositions[RG_WIDGET_PROCESSES_RAM] = 
+    m_widgetPositions[WidgetType::ProcessRAM] = 
         m_posMap.at(propTree.get<std::string>("Widgets-ProcessesRAM.Position"));
-    m_widgetPositions[RG_WIDGET_TIME] = 
+    m_widgetPositions[WidgetType::Time] = 
         m_posMap.at(propTree.get<std::string>("Widgets-Time.Position"));
-    m_widgetPositions[RG_WIDGET_SYSTEM_STATS] = 
+    m_widgetPositions[WidgetType::SystemStats] = 
         m_posMap.at(propTree.get<std::string>("Widgets-SystemStats.Position"));
-    m_widgetPositions[RG_WIDGET_MUSIC] = 
+    m_widgetPositions[WidgetType::Music] = 
         m_posMap.at(propTree.get<std::string>("Widgets-Music.Position"));
-    m_widgetPositions[RG_WIDGET_CPU_STATS] = 
+    m_widgetPositions[WidgetType::CPUStats] = 
         m_posMap.at(propTree.get<std::string>("Widgets-CPUStats.Position"));
-    m_widgetPositions[RG_WIDGET_DRIVES] = 
+    m_widgetPositions[WidgetType::HDD] = 
         m_posMap.at(propTree.get<std::string>("Widgets-Drives.Position"));
-    m_widgetPositions[RG_WIDGET_MAIN] = 
+    m_widgetPositions[WidgetType::Main] = 
         m_posMap.at(propTree.get<std::string>("Widgets-Main.Position"));
-    m_widgetPositions[RG_WIDGET_GRAPHS] = 
+    m_widgetPositions[WidgetType::Graph] = 
         m_posMap.at(propTree.get<std::string>("Widgets-Graphs.Position"));
 
     boost::property_tree::ini_parser::write_ini(iniPath, propTree);
