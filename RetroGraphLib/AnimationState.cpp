@@ -38,7 +38,7 @@ AnimationState::AnimationState() :
         m_circleList{ glGenLists(1) } {
 
     // Generate particles and populate the cell particle observer lists.
-    srand(static_cast<uint32_t>(time(nullptr)));
+    std::srand(static_cast<uint32_t>(time(nullptr)));
     for (auto i = size_t{ 0U }; i < numParticles; ++i) {
         m_particles.emplace_back();
     }

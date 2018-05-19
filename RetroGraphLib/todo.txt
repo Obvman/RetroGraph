@@ -1,3 +1,8 @@
+Finish dependency map
+
+FPS background
+
+merge WidgetType enum and RG_WIDGET_...
 
 turning off fps counter, selecting corner
 
@@ -40,7 +45,7 @@ Music widget:
 
 display information (resolution)
 
-retrograph performance stats (clocks per frame, RAM, etc)
+retrograph debug performance stats (clocks per frame, RAM, etc)
 
 animate on startup
 

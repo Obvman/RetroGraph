@@ -4,7 +4,6 @@
 #define NOMINMAX
 #endif
 
-
 #include <Windows.h>
 #include <Windowsx.h>
 #include <Winver.h>

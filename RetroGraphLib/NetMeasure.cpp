@@ -1,12 +1,7 @@
-//#include "stdafx.h"
-
-#define WIN32_LEAN_AND_MEAN
+// #include "stdafx.h"
 #define _WIN32_WINNT 0x601
 
-#include <iostream>
-#include <sstream>
-#include <iomanip>
-#include <algorithm>
+#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <ws2def.h>
 #include <ws2ipdef.h>
@@ -15,11 +10,17 @@
 #include <icmpapi.h>
 #include <Ws2tcpip.h>
 
+#include <iostream>
+#include <sstream>
+#include <iomanip>
+#include <algorithm>
+
 #include "UserSettings.h"
 #include "utils.h"
 
 // Placing here avoids some nasty header conflicts
 #include "NetMeasure.h"
+
 
 #pragma comment(lib, "Iphlpapi.lib")
 #pragma comment(lib, "Wininet.lib")
