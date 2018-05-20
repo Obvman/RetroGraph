@@ -13,6 +13,7 @@
 #include "utils.h"
 #include "FontManager.h"
 #include "AnimationState.h"
+#include "RetroGraph.h"
 
 namespace rg {
 
@@ -26,6 +27,10 @@ bool MainWidget::needsDraw(uint32_t ticks) const {
         return false;
     }
     return true;
+}
+
+void MainWidget::updateObservers(const RetroGraph & rg) {
+    m_animationState = rg.getAnimationState().get();
 }
 
 void MainWidget::draw() const {

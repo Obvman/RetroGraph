@@ -16,7 +16,7 @@ public:
     MusicWidget(const FontManager* fontManager,
                 const std::unique_ptr<MusicMeasure>& musicMeasure,
                 bool visible) :
-        Widget{ fontManager, visible }, m_musicMeasure{ musicMeasure } {}
+        Widget{ fontManager, visible }, m_musicMeasure{ musicMeasure.get() } {}
 
     ~MusicWidget() noexcept = default;
     MusicWidget(const MusicWidget&) = delete;
@@ -24,10 +24,11 @@ public:
     MusicWidget(MusicWidget&&) = delete;
     MusicWidget& operator=(MusicWidget&&) = delete;
 
+    void updateObservers(const RetroGraph& rg) override;
     void draw() const override;
 
 private:
-    const std::unique_ptr<MusicMeasure>& m_musicMeasure;
+    const MusicMeasure* m_musicMeasure;
 };
 
 } // namespace rg

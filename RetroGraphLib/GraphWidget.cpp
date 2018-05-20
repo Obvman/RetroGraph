@@ -12,6 +12,7 @@
 #include "RAMMeasure.h"
 #include "NetMeasure.h"
 #include "GPUMeasure.h"
+#include "RetroGraph.h"
 
 namespace rg {
 
@@ -38,6 +39,13 @@ void GraphWidget::setViewport(Viewport vp) {
                      vp.y + 2*vp.height/4,
                      vp.width,
                      vp.height/4 };
+}
+
+void GraphWidget::updateObservers(const RetroGraph & rg) {
+    m_cpuMeasure = rg.getCPUMeasure().get();
+    m_ramMeasure = rg.getRAMMeasure().get();
+    m_netMeasure = rg.getNetMeasure().get();
+    m_gpuMeasure = rg.getGPUMeasure().get();
 }
 
 void GraphWidget::draw() const {

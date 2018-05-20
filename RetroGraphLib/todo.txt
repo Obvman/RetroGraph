@@ -1,12 +1,14 @@
+Refactor each widget's constructor to take a retrograph and use updateObservers to set observer pointers
+
+Measure observer pointers in widgets aren't being updated when a measure is destroyed then created!
+
 Finish dependency map
+
+fix the waiting on network connection thread when the network measure is destructed
 
 turning off fps counter, selecting corner
 
 implement 30 min work/rest timer
-
-store measures in smart pointers to control lifetime manually to start/stop measuring
-disable data gathering for non-visible widgets to save on CPU - store dependencies in a list,
-only destroy a measure if all dependencies are destroyed.
 
 use gl lists to draw things like graph grids
 

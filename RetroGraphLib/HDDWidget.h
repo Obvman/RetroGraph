@@ -15,7 +15,7 @@ class HDDWidget : public Widget {
 public:
     HDDWidget(const FontManager* fontManager, 
               const std::unique_ptr<DriveMeasure>& driveMeasure, bool visible) :
-        Widget{ fontManager, visible }, m_driveMeasure{ driveMeasure } { }
+        Widget{ fontManager, visible }, m_driveMeasure{ driveMeasure.get() } { }
 
     ~HDDWidget() noexcept = default;
     HDDWidget(const HDDWidget&) = delete;
@@ -23,9 +23,10 @@ public:
     HDDWidget(HDDWidget&&) = delete;
     HDDWidget& operator=(HDDWidget&&) = delete;
 
+    void updateObservers(const RetroGraph& rg) override;
     void draw() const override;
 private:
-    const std::unique_ptr<DriveMeasure>& m_driveMeasure;
+    const DriveMeasure* m_driveMeasure;
 };
 
 } // namespace rg

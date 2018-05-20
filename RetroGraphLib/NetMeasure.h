@@ -20,7 +20,7 @@ class UserSettings;
 class NetMeasure {
 public:
     NetMeasure();
-    ~NetMeasure() noexcept = default;
+    ~NetMeasure() noexcept;
     NetMeasure(const NetMeasure&) = delete;
     NetMeasure& operator=(const NetMeasure&) = delete;
     NetMeasure(NetMeasure&&) = delete;
@@ -52,6 +52,7 @@ private:
 
     std::string m_pingServer{ "" };
     std::atomic<bool> m_isConnected{ false };
+    std::atomic<bool> m_threadRunning{ false };
     std::thread m_netConnectionThread{ };
     uint32_t m_pingFreqMs{ 0U };
 

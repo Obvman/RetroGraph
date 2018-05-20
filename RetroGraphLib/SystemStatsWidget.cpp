@@ -14,9 +14,9 @@
 
 namespace rg {
 SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
-                                     const SystemMeasure* sysInfo,
-                                     const CPUMeasure* cpuMeasure,
-                                     const NetMeasure* netMeasure,
+                                     const std::unique_ptr<SystemMeasure>& sysInfo,
+                                     const std::unique_ptr<CPUMeasure>& cpuMeasure,
+                                     const std::unique_ptr<NetMeasure>& netMeasure,
                                      bool visible) :
     Widget{ fontManager, visible } {
 

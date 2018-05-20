@@ -9,8 +9,13 @@
 #include "colors.h"
 #include "FontManager.h"
 #include "DriveMeasure.h"
+#include "RetroGraph.h"
 
 namespace rg {
+
+void HDDWidget::updateObservers(const RetroGraph & rg) {
+    m_driveMeasure = rg.getDriveMeasure().get();
+}
 
 void HDDWidget::draw() const {
     if (!m_visible || !m_driveMeasure) return;

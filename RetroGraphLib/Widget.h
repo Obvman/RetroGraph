@@ -3,7 +3,6 @@
 #include "stdafx.h"
 
 #include "drawUtils.h"
-// TODO integrate the FontManager observer
 
 namespace rg {
 
@@ -19,7 +18,7 @@ enum class WidgetPosition : uint8_t {
     BOT_RIGHT
 };
 
-enum WidgetType : size_t {
+enum WidgetType : size_t { // Must be consecutive integers!
     ProcessRAM = 0U,
     ProcessCPU = 1U,
     Time = 2U,
@@ -35,6 +34,7 @@ enum WidgetType : size_t {
 };
 
 class FontManager;
+class RetroGraph;
 
 class Widget {
 public:
@@ -51,9 +51,15 @@ public:
     /* Sets the viewport for the entire widget. Should be overriden
        for widgets with sub-viewports */
     virtual void setViewport(Viewport vp) { m_viewport = vp; }
+    
+    /* Sets the observer pointers of the widget */
+    virtual void updateObservers(const RetroGraph& rg) = 0;
 
     /* Turns on/off drawing of the widget */
     void setVisibility(bool b);
+
+    static std::string widgetTypeToStr(WidgetType w);
+
 protected:
     bool m_visible;
     Viewport m_viewport{};

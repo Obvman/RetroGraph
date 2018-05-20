@@ -12,86 +12,38 @@ RetroGraph::RetroGraph(HINSTANCE hInstance) :
     m_window{ this, hInstance, 
               std::get<int32_t>(UserSettings::inst().getVal("Window.Monitor")), 
               std::get<bool>(UserSettings::inst().getVal("Window.ClickThrough")) },
-    m_timeWidgetEnabled{ true },
-    m_HDDWidgetEnabled{ UserSettings::inst().isVisible(WidgetType::HDD) },
-    m_cpuStatsWidgetEnabled{ true },
-    m_cpuProcessWidgetEnabled{ true },
-    m_ramProcessWidgetEnabled{ true },
-    m_graphWidgetEnabled{ true },
-    m_mainWidgetEnabled{ UserSettings::inst().isVisible(WidgetType::Main) },
-    m_musicWidgetEnabled{ UserSettings::inst().isVisible(WidgetType::Music) },
-    m_systemStatsWidgetEnabled{ true },
-    m_fpsWidgetEnabled{ true },
-    m_cpuMeasure{},
-    m_gpuMeasure{},
-    m_ramMeasure{},
-    m_netMeasure{},
-    m_processMeasure{},
-    m_driveMeasure{ m_HDDWidgetEnabled ?  std::make_unique<DriveMeasure>() : nullptr },
-    m_musicMeasure{  m_musicWidgetEnabled ?  std::make_unique<MusicMeasure>(&m_processMeasure) : nullptr },
-    m_systemMeasure{ },
-    m_animationState{  m_mainWidgetEnabled ? std::make_unique<AnimationState>() : nullptr },
+    m_widgetVisibilities( WidgetType::NumWidgets ),
+    m_cpuMeasure{ std::make_unique<CPUMeasure>() },
+    m_gpuMeasure{ std::make_unique<GPUMeasure>() },
+    m_ramMeasure{ std::make_unique<RAMMeasure>() },
+    m_netMeasure{ std::make_unique<NetMeasure>() },
+    m_processMeasure{ std::make_unique<ProcessMeasure>() },
+    m_driveMeasure{ std::make_unique<DriveMeasure>() },
+    m_musicMeasure{  std::make_unique<MusicMeasure>(m_processMeasure) },
+    m_systemMeasure{ std::make_unique<SystemMeasure>() },
+    m_animationState{ std::make_unique<AnimationState>() },
     m_renderer{ m_window, *this },
     m_dependencyMap{
-        { "AnimationState", WidgetType::Main },
-        { "MusicMeasure", WidgetType::Music },
+        { "AnimationState", { WidgetType::Main } },
+        { "MusicMeasure",   { WidgetType::Music } },
+        { "ProcessMeasure", { WidgetType::Music, WidgetType::ProcessCPU, WidgetType::ProcessRAM } },
+        { "SystemMeasure",  { WidgetType::SystemStats } },
+        { "NetMeasure",     { WidgetType::Graph, WidgetType::Time, WidgetType::SystemStats } },
+        { "CPUMeasure",     { WidgetType::CPUStats, WidgetType::Graph, WidgetType::SystemStats, WidgetType::Time } },
+        { "GPUMeasure",     { WidgetType::Graph } },
+        { "RAMMeasure",     { WidgetType::Graph } },
+        { "DriveMeasure",   { WidgetType::HDD } },
+    } 
+    {
 
-        { "ProcessMeasure", WidgetType::Music },
-        { "ProcessMeasure", WidgetType::ProcessCPU },
-        { "ProcessMeasure", WidgetType::ProcessRAM },
+    for (auto i = size_t{ 0U }; i < WidgetType::NumWidgets; ++i) {
+        m_widgetVisibilities[i] = UserSettings::inst().isVisible(static_cast<WidgetType>(i));
+    }
 
-        { "SystemMeasure", WidgetType::SystemStats },
-
-        { "CPUMeasure", WidgetType::CPUStats },
-        { "CPUMeasure", WidgetType::Graph },
-        { "CPUMeasure", WidgetType::SystemStats },
-        { "CPUMeasure", WidgetType::Time },
-
-        { "GPUMeasure", WidgetType::Graph },
-        { "RAMMeasure", WidgetType::Graph },
-
-        { "NetMeasure", WidgetType::Graph },
-        { "NetMeasure", WidgetType::Time },
-        { "NetMeasure", WidgetType::SystemStats },
-
-        { "DriveMeasure", WidgetType::HDD },
-    } {
+    checkDependencies();
 
     update(0);
     draw(0);
-
-    /*for (const auto&[measure, widget] : m_dependencyMap) {
-        std::cout << measure << " => ";
-        switch (widget) {
-            case WidgetType::Main:
-                std::cout << "MainWidget" << '\n';
-                break;
-            case WidgetType::Music:
-                std::cout << "MusicWidget" << '\n';
-                break;
-            case WidgetType::ProcessCPU:
-                std::cout << "ProcessCPUWidget" << '\n';
-                break;
-            case WidgetType::ProcessRAM:
-                std::cout << "ProcessRAMWidget" << '\n';
-                break;
-            case WidgetType::SystemStats:
-                std::cout << "SystemStatsWidget" << '\n';
-                break;
-            case WidgetType::Time:
-                std::cout << "TimeWidget" << '\n';
-                break;
-            case WidgetType::CPUStats:
-                std::cout << "CPUStatsWidget" << '\n';
-                break;
-            case WidgetType::Graph:
-                std::cout << "GraphWidget" << '\n';
-                break;
-            case WidgetType::HDD:
-                std::cout << "HDDWidget" << '\n';
-                break;
-        }
-    }*/
 }
 
 void RetroGraph::update(uint32_t ticks) {
@@ -99,14 +51,14 @@ void RetroGraph::update(uint32_t ticks) {
     // Update with a tick offset so all measures don't update in the same
     // cycle and spike the CPU
     auto i = uint32_t{ 0U };
-    m_cpuMeasure.update(ticks + ++i);
-    m_gpuMeasure.update(ticks + ++i);
-    m_ramMeasure.update(ticks + ++i);
-    m_netMeasure.update(ticks + ++i);
-    m_processMeasure.update(ticks + ++i);
+    if (m_cpuMeasure) m_cpuMeasure->update(ticks + ++i);
+    if (m_gpuMeasure) m_gpuMeasure->update(ticks + ++i);
+    if (m_ramMeasure) m_ramMeasure->update(ticks + ++i);
+    if (m_netMeasure) m_netMeasure->update(ticks + ++i);
+    if (m_processMeasure) m_processMeasure->update(ticks + ++i);
     if (m_driveMeasure) m_driveMeasure->update(ticks + ++i);
     if (m_musicMeasure) m_musicMeasure->update(ticks + ++i);
-    m_systemMeasure.update(ticks + ++i);
+    if (m_systemMeasure) m_systemMeasure->update(ticks + ++i);
     if (m_animationState) m_animationState->update(ticks);
 }
 
@@ -114,7 +66,7 @@ void RetroGraph::draw(uint32_t ticks) const {
     // If the main widget is running, draw at it's target FPS,
     // Otherwise, we don't have to waste cycles swapping buffers when
     // the other measures update twice a second, so just draw at 2 FPS
-    const auto framesPerSecond = uint32_t{ (m_mainWidgetEnabled) ? 
+    const auto framesPerSecond = uint32_t{ (m_widgetVisibilities[WidgetType::Main]) ? 
         m_animationState->getAnimationFPS() : 2U };
 
     if ((ticks % std::lround(
@@ -138,78 +90,118 @@ void RetroGraph::updateWindowSize(int32_t width, int32_t height) {
 }
 
 void RetroGraph::toggleWidget(WidgetType w) {
-    switch (w) {
-        case WidgetType::Time:
-            m_timeWidgetEnabled = !m_timeWidgetEnabled;
-            m_renderer.setWidgetVisibility(WidgetType::Time, m_timeWidgetEnabled);
-            break;
-        case WidgetType::HDD:
-            if (m_HDDWidgetEnabled) {
-                // Disable the measure here to free up resources since 
-                // it's not used anywhere else
-                m_driveMeasure.reset();
-            } else {
-                m_driveMeasure = std::make_unique<DriveMeasure>();
-            }
-            m_HDDWidgetEnabled = !m_HDDWidgetEnabled;
-            m_renderer.setWidgetVisibility(WidgetType::HDD, m_HDDWidgetEnabled);
-            break;
-        case WidgetType::CPUStats:
-            m_cpuStatsWidgetEnabled = !m_cpuStatsWidgetEnabled;
-            m_renderer.setWidgetVisibility(WidgetType::CPUStats, m_cpuStatsWidgetEnabled);
-            break;
-        case WidgetType::Graph:
-            m_graphWidgetEnabled = !m_graphWidgetEnabled;
-            m_renderer.setWidgetVisibility(WidgetType::Graph, m_graphWidgetEnabled);
-            break;
-        case WidgetType::Music:
-            if (m_musicWidgetEnabled) {
-                m_musicMeasure.reset();
-            } else {
-                m_musicMeasure = std::make_unique<MusicMeasure>(&m_processMeasure);
-            }
-            m_musicWidgetEnabled = !m_musicWidgetEnabled;
-            m_renderer.setWidgetVisibility(WidgetType::Music, m_musicWidgetEnabled);
-            break;
-        case WidgetType::Main:
-            if (m_mainWidgetEnabled) {
-                m_animationState.reset();
-            } else {
-                m_animationState = std::make_unique<AnimationState>();
-            }
-            m_mainWidgetEnabled = !m_mainWidgetEnabled;
-            m_renderer.setWidgetVisibility(WidgetType::Main, m_mainWidgetEnabled);
-            break;
-        case WidgetType::SystemStats:
-            m_systemStatsWidgetEnabled = !m_systemStatsWidgetEnabled;
-            m_renderer.setWidgetVisibility(WidgetType::SystemStats,
-                                           m_systemStatsWidgetEnabled);
-            break;
-        case WidgetType::ProcessCPU:
-            m_cpuProcessWidgetEnabled = !m_cpuProcessWidgetEnabled;
-            m_renderer.setWidgetVisibility(WidgetType::ProcessCPU,
-                                           m_cpuProcessWidgetEnabled);
-            break;
-        case WidgetType::ProcessRAM:
-            m_ramProcessWidgetEnabled = !m_ramProcessWidgetEnabled;
-            m_renderer.setWidgetVisibility(WidgetType::ProcessRAM,
-                                           m_ramProcessWidgetEnabled);
-            break;
-        case WidgetType::FPS:
-            m_fpsWidgetEnabled = !m_fpsWidgetEnabled;
-            m_renderer.setWidgetVisibility(WidgetType::FPS,
-                                           m_fpsWidgetEnabled);
-            break;
-    }
+    m_widgetVisibilities[w] = !m_widgetVisibilities[w];
+    checkDependencies();
+    m_renderer.setWidgetVisibility(w, m_widgetVisibilities[w]);
+}
 
+void RetroGraph::checkDependencies() {
     // Check dependant measures, if theres a measure that isn't being used by any
     // Widget, we can disable it. If a disabled measure needs to be used by a widget,
     // reenable it
-    //for ()
-    for (const auto&[measureName, widget] : m_dependencyMap) {
-        (void)widget;
-        std::cout << "Measure: " << measureName << '\n';
+    for (const auto&[measureName, widgets] : m_dependencyMap) {
+        bool allDependentWidgetsDisabled{ true };
+
+        for (const auto& w : widgets) {
+            if (m_widgetVisibilities[w]) {
+                allDependentWidgetsDisabled = false;
+                break;
+            }
+        }
+
+        if (measureName == "AnimationState") {
+            if (m_animationState) {
+                if (allDependentWidgetsDisabled) {
+                    m_animationState.reset();
+                }
+            } else {
+                if (!allDependentWidgetsDisabled) {
+                    m_animationState = std::make_unique<AnimationState>();
+                }
+            }
+        } else if (measureName == "DriveMeasure") {
+            if (m_driveMeasure) {
+                if (allDependentWidgetsDisabled) {
+                    m_driveMeasure.reset();
+                }
+            } else {
+                if (!allDependentWidgetsDisabled) {
+                    m_driveMeasure = std::make_unique<DriveMeasure>();
+                }
+            }
+        } else if (measureName == "MusicMeasure") {
+            if (m_musicMeasure) {
+                if (allDependentWidgetsDisabled) {
+                    m_musicMeasure.reset();
+                }
+            } else {
+                if (!allDependentWidgetsDisabled) {
+                    m_musicMeasure = std::make_unique<MusicMeasure>(m_processMeasure);
+                }
+            }
+        } else if (measureName == "NetMeasure") {
+            if (m_netMeasure) {
+                if (allDependentWidgetsDisabled) {
+                    m_netMeasure.reset();
+                }
+            } else {
+                if (!allDependentWidgetsDisabled) {
+                    m_netMeasure = std::make_unique<NetMeasure>();
+                }
+            }
+        } else if (measureName == "SystemMeasure") {
+            if (m_systemMeasure) {
+                if (allDependentWidgetsDisabled) {
+                    m_systemMeasure.reset();
+                }
+            } else {
+                if (!allDependentWidgetsDisabled) {
+                    m_systemMeasure = std::make_unique<SystemMeasure>();
+                }
+            }
+        } else if (measureName == "ProcessMeasure") {
+            if (m_processMeasure) {
+                if (allDependentWidgetsDisabled) {
+                    m_processMeasure.reset();
+                }
+            } else {
+                if (!allDependentWidgetsDisabled) {
+                    m_processMeasure = std::make_unique<ProcessMeasure>();
+                }
+            }
+        } else if (measureName == "RAMMeasure") {
+            if (m_ramMeasure) {
+                if (allDependentWidgetsDisabled) {
+                    m_ramMeasure.reset();
+                }
+            } else {
+                if (!allDependentWidgetsDisabled) {
+                    m_ramMeasure = std::make_unique<RAMMeasure>();
+                }
+            }
+        } else if (measureName == "CPUMeasure") {
+            if (m_cpuMeasure) {
+                if (allDependentWidgetsDisabled) {
+                    m_cpuMeasure.reset();
+                }
+            } else {
+                if (!allDependentWidgetsDisabled) {
+                    m_cpuMeasure = std::make_unique<CPUMeasure>();
+                }
+            }
+        } else if (measureName == "GPUMeasure") {
+            if (m_gpuMeasure) {
+                if (allDependentWidgetsDisabled) {
+                    m_gpuMeasure.reset();
+                }
+            } else {
+                if (!allDependentWidgetsDisabled) {
+                    m_gpuMeasure = std::make_unique<GPUMeasure>();
+                }
+            }
+        }
     }
+    m_renderer.updateObservers(*this);
 }
 
 }

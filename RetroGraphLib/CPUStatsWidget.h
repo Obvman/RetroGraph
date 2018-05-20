@@ -15,9 +15,9 @@ class CPUMeasure;
  */
 class CPUStatsWidget : public Widget {
 public:
-    CPUStatsWidget(const FontManager* fontManager, const CPUMeasure* cpuMeasure,
+    CPUStatsWidget(const FontManager* fontManager, const std::unique_ptr<CPUMeasure>& cpuMeasure,
                    bool visible) :
-        Widget{ fontManager, visible }, m_cpuMeasure{ cpuMeasure } {}
+        Widget{ fontManager, visible }, m_cpuMeasure{ cpuMeasure.get() } {}
 
     ~CPUStatsWidget() noexcept = default;
     CPUStatsWidget(const CPUStatsWidget&) = delete;
@@ -25,6 +25,7 @@ public:
     CPUStatsWidget(CPUStatsWidget&&) = delete;
     CPUStatsWidget& operator=(CPUStatsWidget&&) = delete;
 
+    void updateObservers(const RetroGraph& rg) override;
     void draw() const override;
     void setViewport(Viewport vp) override;
 

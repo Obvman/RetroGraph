@@ -14,12 +14,14 @@ class GPUMeasure;
 
 class GraphWidget : public Widget {
 public:
-    GraphWidget(const FontManager* fontManager, const CPUMeasure* cpuMeasure,
-                const RAMMeasure* ramMeasure, const NetMeasure* netMeasure,
-                const GPUMeasure* gpuMeasure, bool visible) :
+    GraphWidget(const FontManager* fontManager, 
+                const std::unique_ptr<CPUMeasure>& cpuMeasure,
+                const std::unique_ptr<RAMMeasure>& ramMeasure,
+                const std::unique_ptr<NetMeasure>& netMeasure,
+                const std::unique_ptr<GPUMeasure>& gpuMeasure, bool visible) :
         Widget{ fontManager, visible },
-        m_cpuMeasure{ cpuMeasure }, m_ramMeasure{ ramMeasure },
-        m_netMeasure{ netMeasure }, m_gpuMeasure{ gpuMeasure } {}
+        m_cpuMeasure{ cpuMeasure.get() }, m_ramMeasure{ ramMeasure.get() },
+        m_netMeasure{ netMeasure.get() }, m_gpuMeasure{ gpuMeasure.get() } {}
 
     ~GraphWidget() noexcept = default;
     GraphWidget(const GraphWidget&) = delete;
@@ -27,6 +29,7 @@ public:
     GraphWidget(GraphWidget&&) = delete;
     GraphWidget& operator=(GraphWidget&&) = delete;
 
+    void updateObservers(const RetroGraph& rg) override;
     void draw() const override;
     void setViewport(Viewport vp) override;
 
