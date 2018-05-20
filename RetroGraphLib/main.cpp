@@ -8,6 +8,7 @@
 #include <Windows.h>
 
 #include "utils.h"
+#include "units.h"
 #include "RetroGraph.h"
 
 void mainLoop(rg::RetroGraph& retroGraph);

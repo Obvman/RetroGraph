@@ -24,15 +24,6 @@ namespace rg {
 
 class RetroGraph;
 class Window;
-class CPUMeasure;
-class GPUMeasure;
-class RAMMeasure;
-class NetMeasure;
-class ProcessCPUMeasure;
-class ProcessRAMMeasure;
-class DriveMeasure;
-class DriveInfo;
-class SystemMeasure;
 class GLShaderHandler;
 class UserSettings;
 

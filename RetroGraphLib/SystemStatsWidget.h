@@ -17,10 +17,7 @@ class NetMeasure;
 class SystemStatsWidget : public Widget {
 public:
     SystemStatsWidget(const FontManager* fontManager,
-                      const std::unique_ptr<SystemMeasure>& sysInfo,
-                      const std::unique_ptr<CPUMeasure>& cpuMeasure,
-                      const std::unique_ptr<NetMeasure>& netMeasure,
-                      bool visible);
+                      const RetroGraph& rg, bool visible);
     ~SystemStatsWidget() noexcept = default;
     SystemStatsWidget(const SystemStatsWidget&) = delete;
     SystemStatsWidget& operator=(const SystemStatsWidget&) = delete;

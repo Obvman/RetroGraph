@@ -6,6 +6,7 @@
 // #include <GL/gl.h>
 #include <Windows.h>
 
+#include "drawUtils.h"
 #include "colors.h"
 #include "FontManager.h"
 #include "CPUMeasure.h"

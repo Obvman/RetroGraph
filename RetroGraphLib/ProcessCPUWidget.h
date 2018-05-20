@@ -4,6 +4,7 @@
 
 #include "drawUtils.h"
 #include "Widget.h"
+#include "RetroGraph.h"
 
 namespace rg {
 
@@ -12,9 +13,10 @@ class ProcessMeasure;
 class ProcessCPUWidget : public Widget {
 public:
     ProcessCPUWidget(const FontManager* fontManager,
-                     const std::unique_ptr<ProcessMeasure>& procMeasure,
+                     const RetroGraph& rg,
                      bool visible) :
-        Widget{ fontManager, visible }, m_procMeasure{ procMeasure.get() } {}
+        Widget{ fontManager, visible }, 
+        m_procMeasure{ rg.getProcessMeasure().get() } {}
 
     ~ProcessCPUWidget() noexcept = default;
     ProcessCPUWidget(const ProcessCPUWidget&) = delete;

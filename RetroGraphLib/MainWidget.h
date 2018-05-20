@@ -6,6 +6,7 @@
 
 #include "drawUtils.h"
 #include "Widget.h"
+#include "RetroGraph.h"
 
 namespace rg {
 
@@ -14,8 +15,8 @@ class AnimationState;
 class MainWidget : public Widget {
 public:
     MainWidget(const FontManager* fontManager, 
-               const std::unique_ptr<AnimationState>& as, bool visible) :
-        Widget{ fontManager, visible }, m_animationState{ as.get() } { }
+               const RetroGraph& rg, bool visible) :
+        Widget{ fontManager, visible }, m_animationState{ rg.getAnimationState().get() } { }
     ~MainWidget() noexcept = default;
     MainWidget(const MainWidget&) = delete;
     MainWidget& operator=(const MainWidget&) = delete;

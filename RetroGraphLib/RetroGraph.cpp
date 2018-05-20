@@ -5,6 +5,16 @@
 #include <iostream>
 
 #include "drawUtils.h"
+#include "Renderer.h"
+#include "CPUMeasure.h"
+#include "GPUMeasure.h"
+#include "RAMMeasure.h"
+#include "NetMeasure.h"
+#include "ProcessMeasure.h"
+#include "DriveMeasure.h"
+#include "MusicMeasure.h"
+#include "SystemMeasure.h"
+#include "AnimationState.h"
 
 namespace rg {
 
@@ -22,7 +32,7 @@ RetroGraph::RetroGraph(HINSTANCE hInstance) :
     m_musicMeasure{  std::make_unique<MusicMeasure>(m_processMeasure) },
     m_systemMeasure{ std::make_unique<SystemMeasure>() },
     m_animationState{ std::make_unique<AnimationState>() },
-    m_renderer{ m_window, *this },
+    m_renderer{ std::make_unique<Renderer>(m_window, *this) },
     m_dependencyMap{
         { "AnimationState", { WidgetType::Main } },
         { "MusicMeasure",   { WidgetType::Music } },
@@ -44,6 +54,10 @@ RetroGraph::RetroGraph(HINSTANCE hInstance) :
 
     update(0);
     draw(0);
+}
+
+RetroGraph::~RetroGraph() {
+
 }
 
 void RetroGraph::update(uint32_t ticks) {
@@ -75,7 +89,7 @@ void RetroGraph::draw(uint32_t ticks) const {
         HDC hdc = GetDC(m_window.getHwnd());
         wglMakeCurrent(hdc, m_window.getHGLRC());
 
-        m_renderer.draw(ticks);
+        m_renderer->draw(ticks);
 
         SwapBuffers(hdc);
         ReleaseDC(m_window.getHwnd(), hdc);
@@ -86,13 +100,17 @@ void RetroGraph::draw(uint32_t ticks) const {
 }
 
 void RetroGraph::updateWindowSize(int32_t width, int32_t height) {
-    m_renderer.updateWindowSize(width, height);
+    m_renderer->updateWindowSize(width, height);
+}
+
+void RetroGraph::needsRedraw() const {
+     m_renderer->needsRedraw();
 }
 
 void RetroGraph::toggleWidget(WidgetType w) {
     m_widgetVisibilities[w] = !m_widgetVisibilities[w];
     checkDependencies();
-    m_renderer.setWidgetVisibility(w, m_widgetVisibilities[w]);
+    m_renderer->setWidgetVisibility(w, m_widgetVisibilities[w]);
 }
 
 void RetroGraph::checkDependencies() {
@@ -201,7 +219,8 @@ void RetroGraph::checkDependencies() {
             }
         }
     }
-    m_renderer.updateObservers(*this);
+
+    m_renderer->updateObservers(*this);
 }
 
 }
