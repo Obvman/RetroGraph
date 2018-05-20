@@ -7,13 +7,14 @@
 #include <Windows.h>
 
 #include "units.h"
+#include "Measure.h"
 
 namespace rg {
 
 class UserSettings;
 
 /* Stores capacity totals and availability for system RAM */
-class RAMMeasure {
+class RAMMeasure : public Measure {
 public:
     RAMMeasure();
     ~RAMMeasure() noexcept = default;
@@ -23,7 +24,7 @@ public:
     RAMMeasure& operator=(RAMMeasure&&) = delete;
 
     /* Updates the system memory status values */
-    void update(uint32_t ticks);
+    void update(uint32_t ticks) override;
 
     /* Gets the total size of the system's physical memory in different
        byte units */

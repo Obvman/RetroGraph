@@ -16,8 +16,8 @@
 namespace rg {
 
 void TimeWidget::updateObservers(const RetroGraph & rg) {
-    m_cpuMeasure = rg.getCPUMeasure().get();
-    m_netMeasure = rg.getNetMeasure().get();
+    m_cpuMeasure = &rg.getCPUMeasure();
+    m_netMeasure = &rg.getNetMeasure();
 }
 
 void TimeWidget::draw() const {

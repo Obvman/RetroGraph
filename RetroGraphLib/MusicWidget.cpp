@@ -16,7 +16,7 @@ namespace rg {
 void createFormattedTimeStr(char* buffer, size_t buffSize, uint32_t seconds);
 
 void MusicWidget::updateObservers(const RetroGraph & rg) {
-    m_musicMeasure = rg.getMusicMeasure().get();
+    m_musicMeasure = &rg.getMusicMeasure();
 }
 
 void MusicWidget::draw() const {

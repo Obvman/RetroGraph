@@ -18,8 +18,8 @@ public:
     GraphWidget(const FontManager* fontManager, 
                 const RetroGraph& rg, bool visible) :
         Widget{ fontManager, visible },
-        m_cpuMeasure{ rg.getCPUMeasure().get() }, m_ramMeasure{ rg.getRAMMeasure().get() },
-        m_netMeasure{ rg.getNetMeasure().get() }, m_gpuMeasure{ rg.getGPUMeasure().get() } {}
+        m_cpuMeasure{ &rg.getCPUMeasure() }, m_ramMeasure{ &rg.getRAMMeasure() },
+        m_netMeasure{ &rg.getNetMeasure() }, m_gpuMeasure{ &rg.getGPUMeasure() } {}
 
     ~GraphWidget() noexcept = default;
     GraphWidget(const GraphWidget&) = delete;

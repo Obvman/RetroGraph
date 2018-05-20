@@ -15,8 +15,8 @@ public:
     TimeWidget(const FontManager* fontManager,
                const RetroGraph& rg, bool visible) :
         Widget{ fontManager, visible },
-        m_cpuMeasure{ rg.getCPUMeasure().get() },
-        m_netMeasure{ rg.getNetMeasure().get() } { }
+        m_cpuMeasure{ &rg.getCPUMeasure() },
+        m_netMeasure{ &rg.getNetMeasure() } { }
 
     ~TimeWidget() noexcept = default;
     TimeWidget(const TimeWidget&) = delete;

@@ -14,7 +14,7 @@
 namespace rg {
 
 void ProcessRAMWidget::updateObservers(const RetroGraph & rg) {
-    m_procMeasure = rg.getProcessMeasure().get();
+    m_procMeasure = &rg.getProcessMeasure();
 }
 
 void ProcessRAMWidget::draw() const {

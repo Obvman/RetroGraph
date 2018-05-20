@@ -364,7 +364,7 @@ void Window::createRClickMenu(HWND hWnd) {
 void Window::handleClick(DWORD clickX, DWORD clickY) {
     // Check if a media control was clicked and handle it. If one was clicked, 
     // then don't continue with the dragging checks.
-    if (m_retroGraph->getMusicMeasure()->handleClick(clickX, clickY)) {
+    if (m_retroGraph->getMusicMeasure().handleClick(clickX, clickY)) {
         return;
     }
 

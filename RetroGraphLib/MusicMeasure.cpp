@@ -13,8 +13,8 @@
 
 namespace rg {
 
-MusicMeasure::MusicMeasure(const std::unique_ptr<ProcessMeasure>& procMeasure) :
-    m_processMeasure{ procMeasure.get() } {
+MusicMeasure::MusicMeasure(const ProcessMeasure& procMeasure) :
+    m_processMeasure{ &procMeasure } {
 
     update(0);
 }

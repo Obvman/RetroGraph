@@ -11,9 +11,9 @@
 #include "Measure.h"
 #include "UserSettings.h"
 #include "FPSLimiter.h"
-
 namespace rg {
 
+class Renderer;
 class CPUMeasure;
 class GPUMeasure;
 class RAMMeasure;
@@ -23,7 +23,7 @@ class DriveMeasure;
 class MusicMeasure;
 class SystemMeasure;
 class AnimationState;
-class Renderer;
+
 
 class RetroGraph {
 public:
@@ -41,15 +41,15 @@ public:
 
     void needsRedraw() const;
 
-    const std::unique_ptr<CPUMeasure>& getCPUMeasure() const { return m_cpuMeasure; }
-    const std::unique_ptr<GPUMeasure>& getGPUMeasure() const { return m_gpuMeasure; }
-    const std::unique_ptr<RAMMeasure>& getRAMMeasure() const { return m_ramMeasure; }
-    const std::unique_ptr<NetMeasure>& getNetMeasure() const { return m_netMeasure; }
-    const std::unique_ptr<ProcessMeasure>& getProcessMeasure() const { return m_processMeasure; }
-    const std::unique_ptr<DriveMeasure>& getDriveMeasure() const { return m_driveMeasure; }
-    const std::unique_ptr<MusicMeasure>& getMusicMeasure() const { return m_musicMeasure; }
-    const std::unique_ptr<SystemMeasure>& getSystemMeasure() const { return m_systemMeasure; }
-    const std::unique_ptr<AnimationState>& getAnimationState() const { return m_animationState; }
+    const CPUMeasure& getCPUMeasure() const;
+    const GPUMeasure& getGPUMeasure() const;
+    const RAMMeasure& getRAMMeasure() const;
+    const NetMeasure& getNetMeasure() const;
+    const ProcessMeasure& getProcessMeasure() const;
+    const DriveMeasure& getDriveMeasure() const;
+    const MusicMeasure& getMusicMeasure() const;
+    const SystemMeasure& getSystemMeasure() const;
+    const AnimationState& getAnimationState() const;
 
     bool isRunning() const { return m_window.isRunning(); }
 
@@ -68,16 +68,6 @@ private:
      * object, so wrapping them in smart pointers let's us disable/enable
      * measures by destroying/creating the objects
      */
-    std::unique_ptr<CPUMeasure> m_cpuMeasure;
-    std::unique_ptr<GPUMeasure> m_gpuMeasure;
-    std::unique_ptr<RAMMeasure> m_ramMeasure;
-    std::unique_ptr<NetMeasure> m_netMeasure;
-    std::unique_ptr<ProcessMeasure> m_processMeasure;
-    std::unique_ptr<DriveMeasure> m_driveMeasure;
-    std::unique_ptr<MusicMeasure> m_musicMeasure;
-    std::unique_ptr<SystemMeasure> m_systemMeasure;
-    std::unique_ptr<AnimationState> m_animationState;
-
     std::vector<std::unique_ptr<Measure>> m_measures;
 
     std::unique_ptr<Renderer> m_renderer;

@@ -19,7 +19,7 @@ public:
     CPUStatsWidget(const FontManager* fontManager, const RetroGraph& rg,
                    bool visible) :
         Widget{ fontManager, visible }, 
-        m_cpuMeasure{ rg.getCPUMeasure().get() } {}
+        m_cpuMeasure{ &rg.getCPUMeasure() } {}
 
     ~CPUStatsWidget() noexcept = default;
     CPUStatsWidget(const CPUStatsWidget&) = delete;

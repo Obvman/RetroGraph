@@ -24,7 +24,7 @@ void CPUStatsWidget::setViewport(Viewport vp) {
 
 
 void CPUStatsWidget::updateObservers(const RetroGraph & rg) {
-    m_cpuMeasure = rg.getCPUMeasure().get();
+    m_cpuMeasure = &rg.getCPUMeasure();
 }
 
 void CPUStatsWidget::draw() const {

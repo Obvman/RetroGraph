@@ -18,7 +18,7 @@ class ProcessMeasure;
  */
 class MusicMeasure : public Measure {
 public:
-    MusicMeasure(const std::unique_ptr<ProcessMeasure>& procMeasure);
+    MusicMeasure(const ProcessMeasure& procMeasure);
     ~MusicMeasure() noexcept = default;
     MusicMeasure(const MusicMeasure&) = delete;
     MusicMeasure& operator=(const MusicMeasure&) = delete;

@@ -17,7 +17,7 @@ public:
     MusicWidget(const FontManager* fontManager,
                 const RetroGraph& rg, bool visible) :
         Widget{ fontManager, visible }, 
-        m_musicMeasure{ rg.getMusicMeasure().get() } {}
+        m_musicMeasure{ &rg.getMusicMeasure() } {}
 
     ~MusicWidget() noexcept = default;
     MusicWidget(const MusicWidget&) = delete;

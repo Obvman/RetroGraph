@@ -30,7 +30,7 @@ bool MainWidget::needsDraw(uint32_t ticks) const {
 }
 
 void MainWidget::updateObservers(const RetroGraph & rg) {
-    m_animationState = rg.getAnimationState().get();
+    m_animationState = &rg.getAnimationState();
 }
 
 void MainWidget::draw() const {

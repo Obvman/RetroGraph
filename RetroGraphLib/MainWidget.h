@@ -16,7 +16,7 @@ class MainWidget : public Widget {
 public:
     MainWidget(const FontManager* fontManager, 
                const RetroGraph& rg, bool visible) :
-        Widget{ fontManager, visible }, m_animationState{ rg.getAnimationState().get() } { }
+        Widget{ fontManager, visible }, m_animationState{ &rg.getAnimationState() } { }
     ~MainWidget() noexcept = default;
     MainWidget(const MainWidget&) = delete;
     MainWidget& operator=(const MainWidget&) = delete;

@@ -24,21 +24,21 @@ SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
 
     // Just create stats string here since we expect it not to change during
     // the lifetime of the program
-    m_statsStrings.emplace_back(sysInfo->getUserName() + "@" +
-                                sysInfo->getComputerName());
-    m_statsStrings.emplace_back(sysInfo->getOSInfoStr());
+    m_statsStrings.emplace_back(sysInfo.getUserName() + "@" +
+                                sysInfo.getComputerName());
+    m_statsStrings.emplace_back(sysInfo.getOSInfoStr());
 
-    if (cpuMeasure->getCoreTempInfoSuccess())
-        m_statsStrings.emplace_back(cpuMeasure->getCPUName());
+    if (cpuMeasure.getCoreTempInfoSuccess())
+        m_statsStrings.emplace_back(cpuMeasure.getCPUName());
     else
-        m_statsStrings.emplace_back(sysInfo->getCPUDescription());
+        m_statsStrings.emplace_back(sysInfo.getCPUDescription());
 
-    m_statsStrings.emplace_back(sysInfo->getGPUDescription());
-    m_statsStrings.emplace_back(sysInfo->getRAMDescription());
-    m_statsStrings.emplace_back("DNS: " + netMeasure->getDNS());
-    m_statsStrings.emplace_back("Hostname: " + netMeasure->getHostname());
-    m_statsStrings.emplace_back("MAC: " + netMeasure->getAdapterMAC());
-    m_statsStrings.emplace_back("LAN IP: " + netMeasure->getAdapterIP());
+    m_statsStrings.emplace_back(sysInfo.getGPUDescription());
+    m_statsStrings.emplace_back(sysInfo.getRAMDescription());
+    m_statsStrings.emplace_back("DNS: " + netMeasure.getDNS());
+    m_statsStrings.emplace_back("Hostname: " + netMeasure.getHostname());
+    m_statsStrings.emplace_back("MAC: " + netMeasure.getAdapterMAC());
+    m_statsStrings.emplace_back("LAN IP: " + netMeasure.getAdapterIP());
 }
 
 void SystemStatsWidget::draw() const {

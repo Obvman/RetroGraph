@@ -17,7 +17,7 @@ public:
                      const RetroGraph& rg,
                      bool visible) :
         Widget{ fontManager, visible },
-        m_procMeasure{ rg.getProcessMeasure().get() } {}
+        m_procMeasure{ &rg.getProcessMeasure() } {}
 
     ~ProcessRAMWidget() noexcept = default;
     ProcessRAMWidget(const ProcessRAMWidget&) = delete;

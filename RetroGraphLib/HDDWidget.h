@@ -15,7 +15,7 @@ public:
     HDDWidget(const FontManager* fontManager, 
               const RetroGraph& rg, bool visible) :
         Widget{ fontManager, visible }, 
-        m_driveMeasure{ rg.getDriveMeasure().get() } { }
+        m_driveMeasure{ &rg.getDriveMeasure() } { }
 
     ~HDDWidget() noexcept = default;
     HDDWidget(const HDDWidget&) = delete;

@@ -14,7 +14,7 @@
 namespace rg {
 
 void HDDWidget::updateObservers(const RetroGraph & rg) {
-    m_driveMeasure = rg.getDriveMeasure().get();
+    m_driveMeasure = &rg.getDriveMeasure();
 }
 
 void HDDWidget::draw() const {
