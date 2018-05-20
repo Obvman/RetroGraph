@@ -140,10 +140,7 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
                     SendMessage(hWnd, WM_QUIT, wParam, lParam);
                     break;
                 case ID_SEND_TO_BACK: {
-                    RECT wndRect;
-                    GetWindowRect(hWnd, &wndRect);
-                    SetWindowPos(hWnd, HWND_BOTTOM, wndRect.left, wndRect.top,
-                                 m_width, m_height, 0);
+                    SetWindowPos(hWnd, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
                     break;
                 }
                 case ID_RESET_POSITION: {
@@ -409,15 +406,16 @@ void Window::changeMonitor(HWND hWnd, uint32_t monIndex) {
 void Window::handleTrayMessage(HWND hWnd, WPARAM wParam, LPARAM lParam) {
     (void)wParam;
     switch (LOWORD(lParam)) {
-        case WM_MBUTTONUP:
-            m_running = false;
+        case WM_MBUTTONUP: {
+            SetWindowPos(hWnd, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
+            break;
+        }
         case WM_LBUTTONUP:
             SetForegroundWindow(hWnd);
             break;
-        case WM_RBUTTONUP: {
+        case WM_RBUTTONUP:
             createRClickMenu(hWnd);
             break;
-        }
         default:
             break;
     }
@@ -553,8 +551,7 @@ bool Window::createHGLRC() {
     SetWindowLong(m_hWndMain, GWLP_USERDATA, (LONG)this);
 
     // Display window at the desktop layer on startup
-    SetWindowPos(m_hWndMain, HWND_BOTTOM, 
-            m_startPosX, m_startPosY, m_width, m_height, 0);
+    SetWindowPos(m_hWndMain, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
 
     if(!m_hWndMain) {
         fatalMessageBox("CreateWindowEx - failed");
