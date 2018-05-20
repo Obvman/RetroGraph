@@ -119,8 +119,8 @@ void RetroGraph::checkDependencies() {
     // Widget, we can disable it. If a disabled measure needs to be used by a widget,
     // reenable it
     for (const auto&[measure, widgets] : m_dependencyMap) {
-        bool allDependentWidgetsDisabled{ true };
 
+        bool allDependentWidgetsDisabled{ true };
         for (const auto& w : widgets) {
             if (m_widgetVisibilities[w]) {
                 allDependentWidgetsDisabled = false;
@@ -128,6 +128,8 @@ void RetroGraph::checkDependencies() {
             }
         }
 
+        // Enable/Disable measures depending on whether all it's dependencies
+        // have toggled
         auto& measurePtr{ m_measures[measure] };
         if (allDependentWidgetsDisabled) {
             if (measurePtr) {
@@ -162,12 +164,12 @@ void RetroGraph::checkDependencies() {
                 case Measures::GPUMeasure:
                     measurePtr = std::make_unique<GPUMeasure>();
                     break;
-                default:
+                default: // nothing
                     break;
             }
+        }
     }
 
-        }
     // Most Widgets store observers to Measures, this updates their value
     // in case of destruction/construction of Measures
     m_renderer->updateObservers(*this);
