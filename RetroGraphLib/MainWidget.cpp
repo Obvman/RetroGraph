@@ -18,7 +18,7 @@
 namespace rg {
 
 bool MainWidget::needsDraw(uint32_t ticks) const {
-    if (!m_visible ||
+    if (!isVisible() ||
         (ticks != 0 &&
         ticks % std::lround(
             static_cast<float>(rg::ticksPerSecond) /

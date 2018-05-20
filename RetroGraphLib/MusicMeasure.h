@@ -7,6 +7,7 @@
 #include <Windows.h>
 
 #include "drawUtils.h"
+#include "Measure.h"
 
 namespace rg {
 
@@ -15,7 +16,7 @@ class ProcessMeasure;
 /* Monitors current music player status. Is dependent on ProcessMeasure, so must
  * be created after ProcessMeasure is created
  */
-class MusicMeasure {
+class MusicMeasure : public Measure {
 public:
     MusicMeasure(const std::unique_ptr<ProcessMeasure>& procMeasure);
     ~MusicMeasure() noexcept = default;
@@ -28,7 +29,7 @@ public:
      * to find it. If the class name is set, then searches windows with the
      * class name as a key to determine if the window is still open or not
      */
-    void update(uint32_t ticks);
+    void update(uint32_t ticks) override;
 
     /* Checks click coordinates for collision with media controls, returns true 
      * if a media key was successfully clicked 

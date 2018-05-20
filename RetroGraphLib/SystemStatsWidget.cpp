@@ -42,7 +42,7 @@ SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
 }
 
 void SystemStatsWidget::draw() const {
-    if (!m_visible) return;
+    if (!isVisible()) return;
 
     clear();
 

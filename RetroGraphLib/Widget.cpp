@@ -23,7 +23,7 @@ void Widget::setVisibility(bool b) {
 }
 
 // static
-std::string Widget::widgetTypeToStr(WidgetType w) {
+std::string Widget::widgetTypeToStr(Widgets w) {
     std::string str{};
 
     switch (w) {

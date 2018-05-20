@@ -8,7 +8,7 @@
 #include <string>
 
 #include "Window.h"
-
+#include "Measure.h"
 #include "UserSettings.h"
 #include "FPSLimiter.h"
 
@@ -53,7 +53,7 @@ public:
 
     bool isRunning() const { return m_window.isRunning(); }
 
-    void toggleWidget(WidgetType w);
+    void toggleWidget(Widgets w);
 
 private:
     void checkDependencies(); // Disables any measures that aren't currently used TODO rename this
@@ -78,12 +78,13 @@ private:
     std::unique_ptr<SystemMeasure> m_systemMeasure;
     std::unique_ptr<AnimationState> m_animationState;
 
+    std::vector<std::unique_ptr<Measure>> m_measures;
+
     std::unique_ptr<Renderer> m_renderer;
 
     // Specifies which widgets rely on which measures.
     // IMPORTANT: Must be updated everytime we modify widgets or their observer pointers to measures!
-    // TODO figure out type other than string for measures
-    std::map<std::string, std::vector<WidgetType>> m_dependencyMap;
+    std::map<Measures, std::vector<Widgets>> m_dependencyMap;
 };
 
 } // namespace rg

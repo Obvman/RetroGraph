@@ -8,6 +8,7 @@
 #include <cstdint>
 
 #include "CPUPlugin.h"
+#include "Measure.h"
 
 namespace rg {
 
@@ -16,7 +17,7 @@ class Window;
 class UserSettings;
 
 /* Measures statistics about the system CPU: Model name, total CPU load*/
-class CPUMeasure {
+class CPUMeasure : public Measure {
 public:
     CPUMeasure();
     ~CPUMeasure() noexcept = default;
@@ -26,7 +27,7 @@ public:
     CPUMeasure& operator=(CPUMeasure&&) = delete;
 
     /* Updates the total system's CPU usage statistics */
-    void update(uint32_t ticks);
+    void update(uint32_t ticks) override;
 
     /* Returns the current system CPU load as a percentage */
     float getCPULoad();

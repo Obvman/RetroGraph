@@ -18,7 +18,7 @@ void ProcessCPUWidget::updateObservers(const RetroGraph & rg) {
 }
 
 void ProcessCPUWidget::draw() const {
-    if (!m_visible) return;
+    if (!isVisible()) return;
 
     clear();
 

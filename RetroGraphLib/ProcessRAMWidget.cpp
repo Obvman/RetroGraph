@@ -18,7 +18,7 @@ void ProcessRAMWidget::updateObservers(const RetroGraph & rg) {
 }
 
 void ProcessRAMWidget::draw() const {
-    if (!m_visible) return;
+    if (!isVisible()) return;
 
     clear();
 

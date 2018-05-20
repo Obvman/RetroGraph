@@ -9,6 +9,7 @@
 #include <atomic>
 
 #include "units.h"
+#include "Measure.h"
 
 struct _MIB_IF_ROW2;
 struct _MIB_IF_TABLE2;
@@ -17,7 +18,7 @@ namespace rg {
 
 class UserSettings;
 
-class NetMeasure {
+class NetMeasure : public Measure {
 public:
     NetMeasure();
     ~NetMeasure() noexcept;
@@ -26,7 +27,7 @@ public:
     NetMeasure(NetMeasure&&) = delete;
     NetMeasure& operator=(NetMeasure&&) = delete;
 
-    void update(uint32_t ticks);
+    void update(uint32_t ticks) override;
 
     uint64_t getMaxDownValue() const { return m_downMaxVal; }
     uint64_t getMaxUpValue() const { return m_upMaxVal; }

@@ -18,7 +18,7 @@ void HDDWidget::updateObservers(const RetroGraph & rg) {
 }
 
 void HDDWidget::draw() const {
-    if (!m_visible || !m_driveMeasure) return;
+    if (!isVisible() || !m_driveMeasure) return;
 
     clear();
 

@@ -7,6 +7,7 @@
 #include <memory>
 
 #include "units.h"
+#include "Measure.h"
 
 namespace rg {
 
@@ -51,7 +52,7 @@ public:
 };
 
 /* Stores paths and statistics about all the system's fixed drives */
-class DriveMeasure {
+class DriveMeasure : public Measure {
 public:
     DriveMeasure();
     ~DriveMeasure() noexcept = default;
@@ -61,7 +62,7 @@ public:
     DriveMeasure& operator=(DriveMeasure&&) = delete;
 
     /* Updates each drive with new values */
-    void update(uint32_t ticks);
+    void update(uint32_t ticks) override;
 
     /* Returns the number of fixed drives active in the system */
     size_t getNumDrives() const { return m_drives.size(); }

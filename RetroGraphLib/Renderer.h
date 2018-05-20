@@ -44,7 +44,7 @@ public:
 
     void needsRedraw() const { m_systemStatsWidget.needsRedraw(); }
 
-    void setWidgetVisibility(WidgetType w, bool v);
+    void setWidgetVisibility(Widgets w, bool v);
 
     void updateObservers(const RetroGraph& rg);
 private:

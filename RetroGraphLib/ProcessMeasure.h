@@ -11,13 +11,14 @@
 #include <GL/glew.h>
 
 #include "ProcessData.h"
+#include "Measure.h"
 
 namespace rg {
 
 class UserSettings;
 
 /* Tracks system processes and their CPU/RAM usage */
-class ProcessMeasure {
+class ProcessMeasure : public Measure {
 public:
     ProcessMeasure();
     ~ProcessMeasure() noexcept = default;
@@ -28,7 +29,7 @@ public:
 
     /* Updates the currently tracked processes and their CPU usage.
        Stops tracking any processes that have exited */
-    void update(uint32_t ticks);
+    void update(uint32_t ticks) override;
 
     uint32_t getNumProcessesRunning() const { return m_allProcessData.size(); }
 

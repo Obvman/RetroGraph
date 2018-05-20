@@ -21,7 +21,7 @@ void TimeWidget::updateObservers(const RetroGraph & rg) {
 }
 
 void TimeWidget::draw() const {
-    if (!m_visible) return;
+    if (!isVisible()) return;
 
     clear();
 

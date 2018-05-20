@@ -12,7 +12,7 @@
 namespace rg {
 
 void FPSWidget::draw() const {
-    if (!m_visible) return;
+    if (!isVisible()) return;
     clear();
 
     drawWidgetBackground();

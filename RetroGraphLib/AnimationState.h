@@ -6,6 +6,8 @@
 #include <vector>
 #include <array>
 
+#include "Measure.h"
+
 #ifndef __GL_H__
 typedef unsigned int GLuint;
 #endif
@@ -45,7 +47,7 @@ public:
 private:
 };
 
-class AnimationState {
+class AnimationState : public Measure {
 public:
     AnimationState();
     ~AnimationState();
@@ -55,7 +57,7 @@ public:
     AnimationState& operator=(AnimationState&&) = delete;
 
     /* Updates the positions of all particles */
-    void update(uint32_t ticks);
+    void update(uint32_t ticks) override;
 
     /* Draws each particle */
     void drawParticles() const;

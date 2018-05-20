@@ -20,7 +20,7 @@ void MusicWidget::updateObservers(const RetroGraph & rg) {
 }
 
 void MusicWidget::draw() const {
-    if (!m_visible || !m_musicMeasure) return;
+    if (!isVisible() || !m_musicMeasure) return;
 
     clear();
 

@@ -28,7 +28,7 @@ void CPUStatsWidget::updateObservers(const RetroGraph & rg) {
 }
 
 void CPUStatsWidget::draw() const {
-    if (!m_visible) return;
+    if (!isVisible()) return;
 
     Widget::clear();
 

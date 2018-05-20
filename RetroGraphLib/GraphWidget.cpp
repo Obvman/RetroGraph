@@ -49,7 +49,7 @@ void GraphWidget::updateObservers(const RetroGraph & rg) {
 }
 
 void GraphWidget::draw() const {
-    if (!m_visible) return;
+    if (!isVisible()) return;
     clear();
 
     drawWidgetBackground();

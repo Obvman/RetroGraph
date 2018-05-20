@@ -325,34 +325,34 @@ void Window::createRClickMenu(HWND hWnd) {
             runTest();
             break;
         case ID_TOGGLE_MUSIC_WIDGET:
-            m_retroGraph->toggleWidget(WidgetType::Music);
+            m_retroGraph->toggleWidget(Widgets::Music);
             break;
         case ID_TOGGLE_TIME_WIDGET:
-            m_retroGraph->toggleWidget(WidgetType::Time);
+            m_retroGraph->toggleWidget(Widgets::Time);
             break;
         case ID_TOGGLE_HDD_WIDGET:
-            m_retroGraph->toggleWidget(WidgetType::HDD);
+            m_retroGraph->toggleWidget(Widgets::HDD);
             break;
         case ID_TOGGLE_CPUSTATS_WIDGET:
-            m_retroGraph->toggleWidget(WidgetType::CPUStats);
+            m_retroGraph->toggleWidget(Widgets::CPUStats);
             break;
         case ID_TOGGLE_PROCESS_CPU_WIDGET:
-            m_retroGraph->toggleWidget(WidgetType::ProcessCPU);
+            m_retroGraph->toggleWidget(Widgets::ProcessCPU);
             break;
         case ID_TOGGLE_PROCESS_RAM_WIDGET:
-            m_retroGraph->toggleWidget(WidgetType::ProcessRAM);
+            m_retroGraph->toggleWidget(Widgets::ProcessRAM);
             break;
         case ID_TOGGLE_GRAPH_WIDGET:
-            m_retroGraph->toggleWidget(WidgetType::Graph);
+            m_retroGraph->toggleWidget(Widgets::Graph);
             break;
         case ID_TOGGLE_SYSTEMSTATS_WIDGET:
-            m_retroGraph->toggleWidget(WidgetType::SystemStats);
+            m_retroGraph->toggleWidget(Widgets::SystemStats);
             break;
         case ID_TOGGLE_MAIN_WIDGET:
-            m_retroGraph->toggleWidget(WidgetType::Main);
+            m_retroGraph->toggleWidget(Widgets::Main);
             break;
         case ID_TOGGLE_FPS_WIDGET:
-            m_retroGraph->toggleWidget(WidgetType::FPS);
+            m_retroGraph->toggleWidget(Widgets::FPS);
             break;
         default:
             // Default case handles monitor selection list

@@ -5,11 +5,12 @@
 #include <string>
 #include <GL/glew.h>
 #include <Windows.h>
+#include "Measure.h"
 
 namespace rg {
 
 /* Contains static information about the computer so no need to update */
-class SystemMeasure {
+class SystemMeasure : public Measure {
 public:
     SystemMeasure();
     ~SystemMeasure() noexcept = default;
@@ -18,7 +19,7 @@ public:
     SystemMeasure(SystemMeasure&&) = delete;
     SystemMeasure& operator=(SystemMeasure&&) = delete;
 
-    void update(uint32_t ticks);
+    void update(uint32_t ticks) override;
 
     /* Returns string of current operating system version/build number */
     const std::string& getOSInfoStr() const { return m_osInfoStr; }

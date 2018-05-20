@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "utils.h"
+#include "Measure.h"
 
 namespace rg {
 
@@ -15,7 +16,7 @@ class UserSettings;
 
 /* Stores statistics about the system's GPU Assumes the system is running
    a single, NVIDIA GPU */
-class GPUMeasure {
+class GPUMeasure : public Measure {
 public:
     GPUMeasure();
     ~GPUMeasure() noexcept;
@@ -25,7 +26,7 @@ public:
     GPUMeasure& operator=(GPUMeasure&&) = delete;
 
     /* Get latest GPU stats from OpenGL or nvapi and updates dynamic members */
-    void update(uint32_t ticks);
+    void update(uint32_t ticks) override;
 
     /* Returns true if the measure successfully initialized and is getting data,
      * And false if it failed to initialise

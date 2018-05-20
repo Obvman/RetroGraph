@@ -18,7 +18,7 @@ enum class WidgetPosition : uint8_t {
     BOT_RIGHT
 };
 
-enum WidgetType : size_t { // Must be consecutive integers!
+enum Widgets : size_t { // Must be consecutive integers!
     ProcessRAM = 0U,
     ProcessCPU = 1U,
     Time = 2U,
@@ -58,12 +58,16 @@ public:
     /* Turns on/off drawing of the widget */
     void setVisibility(bool b);
 
-    static std::string widgetTypeToStr(WidgetType w);
+    bool isVisible() const { return m_visible; }
+
+    static std::string widgetTypeToStr(Widgets w);
 
 protected:
-    bool m_visible;
     Viewport m_viewport{};
     const FontManager* m_fontManager;
+
+private:
+    bool m_visible;
 };
 
 } // namespace rg
