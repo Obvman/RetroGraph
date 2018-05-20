@@ -9,8 +9,13 @@
 #include "colors.h"
 #include "FontManager.h"
 #include "ProcessMeasure.h"
+#include "RetroGraph.h"
 
 namespace rg {
+
+void ProcessCPUWidget::updateObservers(const RetroGraph & rg) {
+    m_procMeasure = rg.getProcessMeasure().get();
+}
 
 void ProcessCPUWidget::draw() const {
     if (!m_visible) return;

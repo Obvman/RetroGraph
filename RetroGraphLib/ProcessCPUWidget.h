@@ -12,9 +12,9 @@ class ProcessMeasure;
 class ProcessCPUWidget : public Widget {
 public:
     ProcessCPUWidget(const FontManager* fontManager,
-                     const ProcessMeasure* procMeasure,
+                     const std::unique_ptr<ProcessMeasure>& procMeasure,
                      bool visible) :
-        Widget{ fontManager, visible }, m_procMeasure{ procMeasure } {}
+        Widget{ fontManager, visible }, m_procMeasure{ procMeasure.get() } {}
 
     ~ProcessCPUWidget() noexcept = default;
     ProcessCPUWidget(const ProcessCPUWidget&) = delete;
@@ -22,6 +22,7 @@ public:
     ProcessCPUWidget(ProcessCPUWidget&&) = delete;
     ProcessCPUWidget& operator=(ProcessCPUWidget&&) = delete;
 
+    void updateObservers(const RetroGraph& rg) override;
     void draw() const override;
 private:
     const ProcessMeasure* m_procMeasure{ nullptr };

@@ -10,8 +10,14 @@
 #include "FontManager.h"
 #include "CPUMeasure.h"
 #include "NetMeasure.h"
+#include "RetroGraph.h"
 
 namespace rg {
+
+void TimeWidget::updateObservers(const RetroGraph & rg) {
+    m_cpuMeasure = rg.getCPUMeasure().get();
+    m_netMeasure = rg.getNetMeasure().get();
+}
 
 void TimeWidget::draw() const {
     if (!m_visible) return;

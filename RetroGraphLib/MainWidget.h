@@ -15,7 +15,7 @@ class MainWidget : public Widget {
 public:
     MainWidget(const FontManager* fontManager, 
                const std::unique_ptr<AnimationState>& as, bool visible) :
-        Widget{ fontManager, visible }, m_animationState{ as } { }
+        Widget{ fontManager, visible }, m_animationState{ as.get() } { }
     ~MainWidget() noexcept = default;
     MainWidget(const MainWidget&) = delete;
     MainWidget& operator=(const MainWidget&) = delete;
@@ -24,9 +24,10 @@ public:
 
     /* Checks if the widget should draw to maintain the target FPS */
     bool needsDraw(uint32_t ticks) const;
+    void updateObservers(const RetroGraph& rg) override;
     void draw() const override;
 private:
-    const std::unique_ptr<AnimationState>& m_animationState;
+    const AnimationState* m_animationState;
 };
 
 } // namespace rg

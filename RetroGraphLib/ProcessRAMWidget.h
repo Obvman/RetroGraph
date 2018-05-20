@@ -13,10 +13,10 @@ class ProcessMeasure;
 class ProcessRAMWidget : public Widget{
 public:
     ProcessRAMWidget(const FontManager* fontManager,
-                     const ProcessMeasure* procMeasure,
+                     const std::unique_ptr<ProcessMeasure>& procMeasure,
                      bool visible) :
         Widget{ fontManager, visible },
-        m_procMeasure{ procMeasure } {}
+        m_procMeasure{ procMeasure.get() } {}
 
     ~ProcessRAMWidget() noexcept = default;
     ProcessRAMWidget(const ProcessRAMWidget&) = delete;
@@ -24,6 +24,7 @@ public:
     ProcessRAMWidget(ProcessRAMWidget&&) = delete;
     ProcessRAMWidget& operator=(ProcessRAMWidget&&) = delete;
 
+    void updateObservers(const RetroGraph& rg) override;
     void draw() const override;
 private:
     const ProcessMeasure* m_procMeasure{ nullptr };

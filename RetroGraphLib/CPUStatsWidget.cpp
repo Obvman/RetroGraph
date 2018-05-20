@@ -10,6 +10,7 @@
 #include "colors.h"
 #include "FontManager.h"
 #include "CPUMeasure.h"
+#include "RetroGraph.h"
 
 namespace rg {
 
@@ -21,6 +22,10 @@ void CPUStatsWidget::setViewport(Viewport vp) {
         m_viewport.width, m_viewport.height/2 };
 };
 
+
+void CPUStatsWidget::updateObservers(const RetroGraph & rg) {
+    m_cpuMeasure = rg.getCPUMeasure().get();
+}
 
 void CPUStatsWidget::draw() const {
     if (!m_visible) return;

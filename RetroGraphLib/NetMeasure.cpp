@@ -70,15 +70,23 @@ NetMeasure::NetMeasure() :
     getMACAndLocalIP();
 
     // Start thread that periodically checks connection to internet.
+    m_threadRunning.store(true);
     m_netConnectionThread = std::thread{ [this]() {
-        while (true) {
+        while (m_threadRunning.load()) {
             // !! is to convert Win32 BOOL to bool without compiler warning :/
             setIsConnected(!!InternetCheckConnectionA(
                 m_pingServer.c_str(), FLAG_ICC_FORCE_CONNECTION, 0));
             Sleep(1000 * m_pingFreqMs);
         }
+        std::cout << "Exiting network thread\n";
     }};
-    m_netConnectionThread.detach();
+}
+
+NetMeasure::~NetMeasure() {
+    // End the background thread
+    // TODO this hangs the program until the thread is done sleeping!
+    m_threadRunning.store(false);
+    m_netConnectionThread.join();
 }
 
 void NetMeasure::getMACAndLocalIP() {

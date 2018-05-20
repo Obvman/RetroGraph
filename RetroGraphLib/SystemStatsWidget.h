@@ -17,9 +17,9 @@ class NetMeasure;
 class SystemStatsWidget : public Widget {
 public:
     SystemStatsWidget(const FontManager* fontManager,
-                      const SystemMeasure* sysInfo,
-                      const CPUMeasure* cpuMeasure,
-                      const NetMeasure* netMeasure,
+                      const std::unique_ptr<SystemMeasure>& sysInfo,
+                      const std::unique_ptr<CPUMeasure>& cpuMeasure,
+                      const std::unique_ptr<NetMeasure>& netMeasure,
                       bool visible);
     ~SystemStatsWidget() noexcept = default;
     SystemStatsWidget(const SystemStatsWidget&) = delete;
@@ -27,6 +27,7 @@ public:
     SystemStatsWidget(SystemStatsWidget&&) = delete;
     SystemStatsWidget& operator=(SystemStatsWidget&&) = delete;
 
+    void updateObservers(const RetroGraph&) override { /* Empty */ }
     void draw() const override;
 
     void needsRedraw() const { m_needsRedraw = true; }

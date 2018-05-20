@@ -21,21 +21,21 @@ namespace rg {
 Renderer::Renderer(const Window& w, const RetroGraph& _rg) :
     m_renderTargetHandle{ w.getHwnd() },
     m_fontManager{ w.getHwnd(), w.getHeight() },
-    m_timeWidget{ &m_fontManager, &_rg.getCPUMeasure(), &_rg.getNetMeasure(),
+    m_timeWidget{ &m_fontManager, _rg.getCPUMeasure(), _rg.getNetMeasure(),
                   UserSettings::inst().isVisible(WidgetType::Time) },
     m_hddWidget{ &m_fontManager, _rg.getDriveMeasure(), 
                  UserSettings::inst().isVisible(WidgetType::HDD) },
-    m_cpuStatsWidget{ &m_fontManager, &_rg.getCPUMeasure(),
+    m_cpuStatsWidget{ &m_fontManager, _rg.getCPUMeasure(),
                       UserSettings::inst().isVisible(WidgetType::CPUStats) },
-    m_processCPUWidget{ &m_fontManager, &_rg.getProcessMeasure(), 
+    m_processCPUWidget{ &m_fontManager, _rg.getProcessMeasure(), 
                         UserSettings::inst().isVisible(WidgetType::ProcessCPU) },
-    m_processRAMWidget{ &m_fontManager, &_rg.getProcessMeasure(), 
+    m_processRAMWidget{ &m_fontManager, _rg.getProcessMeasure(), 
                         UserSettings::inst().isVisible(WidgetType::ProcessRAM) },
-    m_graphWidget{ &m_fontManager, &_rg.getCPUMeasure(), &_rg.getRAMMeasure(),
-                   &_rg.getNetMeasure(), &_rg.getGPUMeasure(), 
+    m_graphWidget{ &m_fontManager, _rg.getCPUMeasure(), _rg.getRAMMeasure(),
+                   _rg.getNetMeasure(), _rg.getGPUMeasure(), 
                    UserSettings::inst().isVisible(WidgetType::Graph) },
-    m_systemStatsWidget{ &m_fontManager, &_rg.getSystemMeasure(),
-                         &_rg.getCPUMeasure(), &_rg.getNetMeasure(),
+    m_systemStatsWidget{ &m_fontManager, _rg.getSystemMeasure(),
+                         _rg.getCPUMeasure(), _rg.getNetMeasure(),
                          UserSettings::inst().isVisible(WidgetType::SystemStats) },
     m_mainWidget{ &m_fontManager, _rg.getAnimationState(),
                   UserSettings::inst().isVisible(WidgetType::Main) },
@@ -119,6 +119,19 @@ void Renderer::setWidgetVisibility(WidgetType w, bool v) {
             m_fpsWidget.setVisibility(v);
             break;
     }
+}
+
+void Renderer::updateObservers(const RetroGraph& rg) {
+    m_timeWidget.updateObservers(rg);
+    m_hddWidget.updateObservers(rg);
+    m_cpuStatsWidget.updateObservers(rg);
+    m_processRAMWidget.updateObservers(rg);
+    m_processCPUWidget.updateObservers(rg);
+    m_graphWidget.updateObservers(rg);
+    m_systemStatsWidget.updateObservers(rg);
+    m_mainWidget.updateObservers(rg);
+    m_musicWidget.updateObservers(rg);
+    m_fpsWidget.updateObservers(rg);
 }
 
 /********************* Private Functions ********************/
