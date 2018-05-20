@@ -2,10 +2,9 @@
 
 #include "stdafx.h"
 
-#include <memory>
-
 #include "drawUtils.h"
 #include "Widget.h"
+#include "RetroGraph.h"
 
 namespace rg {
 
@@ -14,8 +13,9 @@ class DriveMeasure;
 class HDDWidget : public Widget {
 public:
     HDDWidget(const FontManager* fontManager, 
-              const std::unique_ptr<DriveMeasure>& driveMeasure, bool visible) :
-        Widget{ fontManager, visible }, m_driveMeasure{ driveMeasure.get() } { }
+              const RetroGraph& rg, bool visible) :
+        Widget{ fontManager, visible }, 
+        m_driveMeasure{ rg.getDriveMeasure().get() } { }
 
     ~HDDWidget() noexcept = default;
     HDDWidget(const HDDWidget&) = delete;

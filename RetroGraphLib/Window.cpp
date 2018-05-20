@@ -14,9 +14,11 @@
 #include <thread>
 
 #include "RetroGraph.h"
+#include "MusicMeasure.h"
 #include "resource.h"
 #include "utils.h"
 #include "colors.h"
+#include "Renderer.h"
 
 namespace rg {
 

@@ -25,9 +25,6 @@ public:
     /* Updates the system memory status values */
     void update(uint32_t ticks);
 
-    /* Draws the components of this object */
-    void draw() const;
-
     /* Gets the total size of the system's physical memory in different
        byte units */
     DWORDLONG getTotalPhysicalB() const {

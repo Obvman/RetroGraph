@@ -6,6 +6,7 @@
 #include <Windows.h>
 
 #include "RetroGraph.h"
+#include "units.h"
 
 void mainLoop(rg::RetroGraph& retroGraph);
 

@@ -8,26 +8,27 @@
 #include <string>
 
 #include "Window.h"
-#include "Renderer.h"
 
-#include "CPUMeasure.h"
-#include "GPUMeasure.h"
-#include "RAMMeasure.h"
-#include "ProcessMeasure.h"
-#include "NetMeasure.h"
-#include "DriveMeasure.h"
-#include "MusicMeasure.h"
-#include "SystemMeasure.h"
 #include "UserSettings.h"
-#include "AnimationState.h"
 #include "FPSLimiter.h"
 
 namespace rg {
 
+class CPUMeasure;
+class GPUMeasure;
+class RAMMeasure;
+class NetMeasure;
+class ProcessMeasure;
+class DriveMeasure;
+class MusicMeasure;
+class SystemMeasure;
+class AnimationState;
+class Renderer;
+
 class RetroGraph {
 public:
     RetroGraph(HINSTANCE hInstance);
-    ~RetroGraph() = default;
+    ~RetroGraph();
     RetroGraph(const RetroGraph&) = delete;
     RetroGraph& operator=(const RetroGraph&) = delete;
     RetroGraph(RetroGraph&&) = delete;
@@ -38,7 +39,7 @@ public:
 
     void updateWindowSize(int32_t width, int32_t height);
 
-    void needsRedraw() const { m_renderer.needsRedraw(); }
+    void needsRedraw() const;
 
     const std::unique_ptr<CPUMeasure>& getCPUMeasure() const { return m_cpuMeasure; }
     const std::unique_ptr<GPUMeasure>& getGPUMeasure() const { return m_gpuMeasure; }
@@ -67,17 +68,17 @@ private:
      * object, so wrapping them in smart pointers let's us disable/enable
      * measures by destroying/creating the objects
      */
-    std::unique_ptr<CPUMeasure> m_cpuMeasure; // done
-    std::unique_ptr<GPUMeasure> m_gpuMeasure; // done
-    std::unique_ptr<RAMMeasure> m_ramMeasure; // done
-    std::unique_ptr<NetMeasure> m_netMeasure; // done
-    std::unique_ptr<ProcessMeasure> m_processMeasure; // done
-    std::unique_ptr<DriveMeasure> m_driveMeasure; // done
-    std::unique_ptr<MusicMeasure> m_musicMeasure; // done
-    std::unique_ptr<SystemMeasure> m_systemMeasure; // done
-    std::unique_ptr<AnimationState> m_animationState; // done
+    std::unique_ptr<CPUMeasure> m_cpuMeasure;
+    std::unique_ptr<GPUMeasure> m_gpuMeasure;
+    std::unique_ptr<RAMMeasure> m_ramMeasure;
+    std::unique_ptr<NetMeasure> m_netMeasure;
+    std::unique_ptr<ProcessMeasure> m_processMeasure;
+    std::unique_ptr<DriveMeasure> m_driveMeasure;
+    std::unique_ptr<MusicMeasure> m_musicMeasure;
+    std::unique_ptr<SystemMeasure> m_systemMeasure;
+    std::unique_ptr<AnimationState> m_animationState;
 
-    Renderer m_renderer;
+    std::unique_ptr<Renderer> m_renderer;
 
     // Specifies which widgets rely on which measures.
     // IMPORTANT: Must be updated everytime we modify widgets or their observer pointers to measures!

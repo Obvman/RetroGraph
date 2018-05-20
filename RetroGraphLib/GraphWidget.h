@@ -4,6 +4,7 @@
 
 #include "drawUtils.h"
 #include "Widget.h"
+#include "RetroGraph.h"
 
 namespace rg {
 
@@ -15,13 +16,10 @@ class GPUMeasure;
 class GraphWidget : public Widget {
 public:
     GraphWidget(const FontManager* fontManager, 
-                const std::unique_ptr<CPUMeasure>& cpuMeasure,
-                const std::unique_ptr<RAMMeasure>& ramMeasure,
-                const std::unique_ptr<NetMeasure>& netMeasure,
-                const std::unique_ptr<GPUMeasure>& gpuMeasure, bool visible) :
+                const RetroGraph& rg, bool visible) :
         Widget{ fontManager, visible },
-        m_cpuMeasure{ cpuMeasure.get() }, m_ramMeasure{ ramMeasure.get() },
-        m_netMeasure{ netMeasure.get() }, m_gpuMeasure{ gpuMeasure.get() } {}
+        m_cpuMeasure{ rg.getCPUMeasure().get() }, m_ramMeasure{ rg.getRAMMeasure().get() },
+        m_netMeasure{ rg.getNetMeasure().get() }, m_gpuMeasure{ rg.getGPUMeasure().get() } {}
 
     ~GraphWidget() noexcept = default;
     GraphWidget(const GraphWidget&) = delete;

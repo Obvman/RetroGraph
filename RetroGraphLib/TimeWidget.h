@@ -2,8 +2,8 @@
 
 #include "stdafx.h"
 
-#include "drawUtils.h"
 #include "Widget.h"
+#include "RetroGraph.h"
 
 namespace rg {
 
@@ -13,12 +13,10 @@ class NetMeasure;
 class TimeWidget : public Widget {
 public:
     TimeWidget(const FontManager* fontManager,
-               const std::unique_ptr<CPUMeasure>& cpuMeasure,
-               const std::unique_ptr<NetMeasure>& netMeasure,
-               bool visible) :
+               const RetroGraph& rg, bool visible) :
         Widget{ fontManager, visible },
-        m_cpuMeasure{ cpuMeasure.get() },
-        m_netMeasure{ netMeasure.get() } { }
+        m_cpuMeasure{ rg.getCPUMeasure().get() },
+        m_netMeasure{ rg.getNetMeasure().get() } { }
 
     ~TimeWidget() noexcept = default;
     TimeWidget(const TimeWidget&) = delete;

@@ -11,14 +11,16 @@
 #include "SystemMeasure.h"
 #include "CPUMeasure.h"
 #include "NetMeasure.h"
+#include "RetroGraph.h"
 
 namespace rg {
 SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
-                                     const std::unique_ptr<SystemMeasure>& sysInfo,
-                                     const std::unique_ptr<CPUMeasure>& cpuMeasure,
-                                     const std::unique_ptr<NetMeasure>& netMeasure,
-                                     bool visible) :
+                                     const RetroGraph& rg, bool visible) :
     Widget{ fontManager, visible } {
+
+    const auto& sysInfo{ rg.getSystemMeasure() };
+    const auto& cpuMeasure{ rg.getCPUMeasure() };
+    const auto& netMeasure{ rg.getNetMeasure() };
 
     // Just create stats string here since we expect it not to change during
     // the lifetime of the program
@@ -40,7 +42,7 @@ SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
 }
 
 void SystemStatsWidget::draw() const {
-    if (/*!m_needsRedraw ||*/ !m_visible) return;
+    if (!m_visible) return;
 
     clear();
 

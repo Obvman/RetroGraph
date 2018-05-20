@@ -9,7 +9,6 @@
 #include <Windows.h>
 #include <vector>
 
-#include "Renderer.h"
 #include "Monitors.h"
 
 namespace rg {

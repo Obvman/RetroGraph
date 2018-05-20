@@ -4,6 +4,7 @@
 
 #include "drawUtils.h"
 #include "Widget.h"
+#include "RetroGraph.h"
 
 namespace rg {
 
@@ -15,9 +16,10 @@ class CPUMeasure;
  */
 class CPUStatsWidget : public Widget {
 public:
-    CPUStatsWidget(const FontManager* fontManager, const std::unique_ptr<CPUMeasure>& cpuMeasure,
+    CPUStatsWidget(const FontManager* fontManager, const RetroGraph& rg,
                    bool visible) :
-        Widget{ fontManager, visible }, m_cpuMeasure{ cpuMeasure.get() } {}
+        Widget{ fontManager, visible }, 
+        m_cpuMeasure{ rg.getCPUMeasure().get() } {}
 
     ~CPUStatsWidget() noexcept = default;
     CPUStatsWidget(const CPUStatsWidget&) = delete;
