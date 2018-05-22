@@ -19,35 +19,37 @@
 
 namespace rg {
 
+using MTypes = Measures::Types;
+
 RetroGraph::RetroGraph(HINSTANCE hInstance) :
     m_window{ this, hInstance, 
               std::get<int32_t>(UserSettings::inst().getVal("Window.Monitor")), 
               std::get<bool>(UserSettings::inst().getVal("Window.ClickThrough")) },
     m_widgetVisibilities( Widgets::NumWidgets ),
-    m_measures( Measures::NumMeasures ),
+    m_measures( MTypes::NumMeasures ),
     m_renderer{ nullptr }, // Must be constructed after measures
     m_dependencyMap{
-        { Measures::AnimationState, { Widgets::Main } },
-        { Measures::MusicMeasure,   { Widgets::Music } },
-        { Measures::ProcessMeasure, { Widgets::Music, Widgets::ProcessCPU, Widgets::ProcessRAM } },
-        { Measures::SystemMeasure,  { Widgets::SystemStats } },
-        { Measures::NetMeasure,     { Widgets::Graph, Widgets::Time, Widgets::SystemStats } },
-        { Measures::CPUMeasure,     { Widgets::CPUStats, Widgets::Graph, Widgets::SystemStats, Widgets::Time } },
-        { Measures::GPUMeasure,     { Widgets::Graph } },
-        { Measures::RAMMeasure,     { Widgets::Graph } },
-        { Measures::DriveMeasure,   { Widgets::HDD } },
+        { MTypes::AnimationState, { Widgets::Main } },
+        { MTypes::MusicMeasure,   { Widgets::Music } },
+        { MTypes::ProcessMeasure, { Widgets::Music, Widgets::ProcessCPU, Widgets::ProcessRAM } },
+        { MTypes::SystemMeasure,  { Widgets::SystemStats } },
+        { MTypes::NetMeasure,     { Widgets::Graph, Widgets::Time, Widgets::SystemStats } },
+        { MTypes::CPUMeasure,     { Widgets::CPUStats, Widgets::Graph, Widgets::SystemStats, Widgets::Time } },
+        { MTypes::GPUMeasure,     { Widgets::Graph } },
+        { MTypes::RAMMeasure,     { Widgets::Graph } },
+        { MTypes::DriveMeasure,   { Widgets::HDD } },
     } 
     {
 
-    m_measures[Measures::CPUMeasure] = std::make_unique<CPUMeasure>();
-    m_measures[Measures::GPUMeasure] = std::make_unique<GPUMeasure>();
-    m_measures[Measures::RAMMeasure] = std::make_unique<RAMMeasure>();
-    m_measures[Measures::NetMeasure] = std::make_unique<NetMeasure>();
-    m_measures[Measures::ProcessMeasure] = std::make_unique<ProcessMeasure>();
-    m_measures[Measures::DriveMeasure] = std::make_unique<DriveMeasure>();
-    m_measures[Measures::MusicMeasure] = std::make_unique<MusicMeasure>(getProcessMeasure());
-    m_measures[Measures::SystemMeasure] = std::make_unique<SystemMeasure>();
-    m_measures[Measures::AnimationState] = std::make_unique<AnimationState>();
+    m_measures[MTypes::CPUMeasure] = std::make_unique<CPUMeasure>();
+    m_measures[MTypes::GPUMeasure] = std::make_unique<GPUMeasure>();
+    m_measures[MTypes::RAMMeasure] = std::make_unique<RAMMeasure>();
+    m_measures[MTypes::NetMeasure] = std::make_unique<NetMeasure>();
+    m_measures[MTypes::ProcessMeasure] = std::make_unique<ProcessMeasure>();
+    m_measures[MTypes::DriveMeasure] = std::make_unique<DriveMeasure>();
+    m_measures[MTypes::MusicMeasure] = std::make_unique<MusicMeasure>(getProcessMeasure());
+    m_measures[MTypes::SystemMeasure] = std::make_unique<SystemMeasure>();
+    m_measures[MTypes::AnimationState] = std::make_unique<AnimationState>();
 
     m_renderer = std::make_unique<Renderer>(m_window, *this);
 
@@ -69,7 +71,7 @@ void RetroGraph::update(uint32_t ticks) {
     // Update with a tick offset so all measures don't update in the same
     // cycle and spike the CPU
     auto offset = uint32_t{ 0U };
-    for (auto i = size_t{ 0U }; i < Measures::NumMeasures; ++i) {
+    for (auto i = size_t{ 0U }; i < MTypes::NumMeasures; ++i) {
         const auto& measurePtr{ m_measures[i] };
         if (measurePtr) {
             measurePtr->update(ticks + ++offset);
@@ -115,7 +117,7 @@ void RetroGraph::toggleWidget(Widgets w) {
 }
 
 void RetroGraph::checkDependencies() {
-    // Check dependant measures, if theres a measure that isn't being used by any
+    // Check dependent measures, if theres a measure that isn't being used by any
     // Widget, we can disable it. If a disabled measure needs to be used by a widget,
     // reenable it
     for (const auto&[measure, widgets] : m_dependencyMap) {
@@ -137,31 +139,31 @@ void RetroGraph::checkDependencies() {
             }
         } else if (!measurePtr) {
             switch (measure) {
-                case Measures::AnimationState:
+                case MTypes::AnimationState:
                     measurePtr = std::make_unique<AnimationState>();
                     break;
-                case Measures::DriveMeasure:
+                case MTypes::DriveMeasure:
                     measurePtr = std::make_unique<DriveMeasure>();
                     break;
-                case Measures::MusicMeasure:
+                case MTypes::MusicMeasure:
                     measurePtr = std::make_unique<MusicMeasure>(getProcessMeasure());
                     break;
-                case Measures::NetMeasure:
+                case MTypes::NetMeasure:
                     measurePtr = std::make_unique<NetMeasure>();
                     break;
-                case Measures::SystemMeasure:
+                case MTypes::SystemMeasure:
                     measurePtr = std::make_unique<SystemMeasure>();
                     break;
-                case Measures::ProcessMeasure:
+                case MTypes::ProcessMeasure:
                     measurePtr = std::make_unique<ProcessMeasure>();
                     break;
-                case Measures::RAMMeasure:
+                case MTypes::RAMMeasure:
                     measurePtr = std::make_unique<RAMMeasure>();
                     break;
-                case Measures::CPUMeasure:
+                case MTypes::CPUMeasure:
                     measurePtr = std::make_unique<CPUMeasure>();
                     break;
-                case Measures::GPUMeasure:
+                case MTypes::GPUMeasure:
                     measurePtr = std::make_unique<GPUMeasure>();
                     break;
                 default: // nothing
@@ -176,31 +178,31 @@ void RetroGraph::checkDependencies() {
 }
 
 const CPUMeasure& RetroGraph::getCPUMeasure() const {
-    return dynamic_cast<const CPUMeasure&>(*m_measures[Measures::CPUMeasure]); 
+    return dynamic_cast<const CPUMeasure&>(*m_measures[MTypes::CPUMeasure]); 
 }
 const GPUMeasure& RetroGraph::getGPUMeasure() const { 
-    return dynamic_cast<const GPUMeasure&>(*m_measures[Measures::GPUMeasure]);
+    return dynamic_cast<const GPUMeasure&>(*m_measures[MTypes::GPUMeasure]);
 }
 const RAMMeasure& RetroGraph::getRAMMeasure() const { 
-    return dynamic_cast<const RAMMeasure&>(*m_measures[Measures::RAMMeasure]);
+    return dynamic_cast<const RAMMeasure&>(*m_measures[MTypes::RAMMeasure]);
 }
 const NetMeasure& RetroGraph::getNetMeasure() const { 
-    return dynamic_cast<const NetMeasure&>(*m_measures[Measures::NetMeasure]);
+    return dynamic_cast<const NetMeasure&>(*m_measures[MTypes::NetMeasure]);
 }
 const ProcessMeasure& RetroGraph::getProcessMeasure() const { 
-    return dynamic_cast<const ProcessMeasure&>(*m_measures[Measures::ProcessMeasure]);
+    return dynamic_cast<const ProcessMeasure&>(*m_measures[MTypes::ProcessMeasure]);
 }
 const DriveMeasure& RetroGraph::getDriveMeasure() const { 
-    return dynamic_cast<const DriveMeasure&>(*m_measures[Measures::DriveMeasure]);
+    return dynamic_cast<const DriveMeasure&>(*m_measures[MTypes::DriveMeasure]);
 }
 const MusicMeasure& RetroGraph::getMusicMeasure() const { 
-    return dynamic_cast<const MusicMeasure&>(*m_measures[Measures::MusicMeasure]);
+    return dynamic_cast<const MusicMeasure&>(*m_measures[MTypes::MusicMeasure]);
 }
 const SystemMeasure& RetroGraph::getSystemMeasure() const { 
-    return dynamic_cast<const SystemMeasure&>(*m_measures[Measures::SystemMeasure]);
+    return dynamic_cast<const SystemMeasure&>(*m_measures[MTypes::SystemMeasure]);
 }
 const AnimationState& RetroGraph::getAnimationState() const { 
-    return dynamic_cast<const AnimationState&>(*m_measures[Measures::AnimationState]);
+    return dynamic_cast<const AnimationState&>(*m_measures[MTypes::AnimationState]);
 }
 
 

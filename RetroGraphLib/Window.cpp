@@ -140,7 +140,7 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
                     SendMessage(hWnd, WM_QUIT, wParam, lParam);
                     break;
                 case ID_SEND_TO_BACK: {
-                    SetWindowPos(hWnd, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
+                    sendToBack();
                     break;
                 }
                 case ID_RESET_POSITION: {
@@ -217,6 +217,9 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
                 ReleaseCapture();
             }
             return 0;
+        case WM_MBUTTONUP:
+            sendToBack();
+            break;
         case WM_MOUSEMOVE: {
             if (m_dragging) {
                 // Use mouse and window location to drag the window under the cursor
@@ -311,10 +314,7 @@ void Window::createRClickMenu(HWND hWnd) {
             SendMessage(hWnd, WM_QUIT, 0, 0);
             break;
         case ID_SEND_TO_BACK: {
-            RECT wndRect;
-            GetWindowRect(hWnd, &wndRect);
-            SetWindowPos(hWnd, HWND_BOTTOM, wndRect.left, wndRect.top,
-                         m_width, m_height, 0);
+            sendToBack();
             break;
         }
         case ID_SET_WIDGET_BG:
@@ -406,10 +406,9 @@ void Window::changeMonitor(HWND hWnd, uint32_t monIndex) {
 void Window::handleTrayMessage(HWND hWnd, WPARAM wParam, LPARAM lParam) {
     (void)wParam;
     switch (LOWORD(lParam)) {
-        case WM_MBUTTONUP: {
-            SetWindowPos(hWnd, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
+        case WM_MBUTTONUP:
+            sendToBack();
             break;
-        }
         case WM_LBUTTONUP:
             SetForegroundWindow(hWnd);
             break;
@@ -419,6 +418,10 @@ void Window::handleTrayMessage(HWND hWnd, WPARAM wParam, LPARAM lParam) {
         default:
             break;
     }
+}
+
+void Window::sendToBack() const {
+    SetWindowPos(m_hWndMain, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
 }
 
 void Window::updateSize(int32_t width, int32_t height) {
@@ -551,7 +554,7 @@ bool Window::createHGLRC() {
     SetWindowLong(m_hWndMain, GWLP_USERDATA, (LONG)this);
 
     // Display window at the desktop layer on startup
-    SetWindowPos(m_hWndMain, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
+    sendToBack();
 
     if(!m_hWndMain) {
         fatalMessageBox("CreateWindowEx - failed");

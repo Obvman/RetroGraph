@@ -74,7 +74,7 @@ private:
 
     // Specifies which widgets rely on which measures.
     // IMPORTANT: Must be updated everytime we modify widgets or their observer pointers to measures!
-    std::map<Measures, std::vector<Widgets>> m_dependencyMap;
+    std::map<Measures::Types, std::vector<Widgets>> m_dependencyMap;
 };
 
 } // namespace rg

@@ -83,6 +83,9 @@ private:
     /* Creates menu on interaction with notification tray icon */
     void handleTrayMessage(HWND hWnd, WPARAM wParam, LPARAM lParam);
 
+    /* Sends the window to the background layer (i.e. on the desktop) */
+    void sendToBack() const;
+
     bool m_running{ true };
     bool m_clickthrough{ true };
 

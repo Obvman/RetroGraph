@@ -11,8 +11,8 @@ using namespace rg;
 TEST_CLASS(UnitTest1) {
 public:
     TEST_METHOD(TestMethod1) {
-        // DriveMeasure dm{};
-        // Assert::IsTrue(dm.getNumDrives() > 0);
+        DriveMeasure dm{};
+        Assert::IsTrue(dm.getNumDrives() > 0);
     }
 };
 

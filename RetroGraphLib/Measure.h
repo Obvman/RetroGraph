@@ -1,6 +1,9 @@
 #pragma once
 
-enum Measures : size_t {
+namespace rg {
+
+namespace Measures {
+enum Types : size_t {
     CPUMeasure = 0U,
     GPUMeasure = 1U,
     RAMMeasure = 2U,
@@ -13,6 +16,7 @@ enum Measures : size_t {
 
     NumMeasures,
 };
+}
 
 class Measure {
 public:
@@ -26,3 +30,5 @@ public:
     virtual void update(uint32_t) = 0;
 private:
 };
+
+}
