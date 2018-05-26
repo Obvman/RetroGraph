@@ -4,14 +4,14 @@ namespace rg {
 
 namespace Measures {
 enum Types : size_t {
-    CPUMeasure = 0U,
-    GPUMeasure = 1U,
-    RAMMeasure = 2U,
-    NetMeasure = 3U,
-    ProcessMeasure = 4U,
-    DriveMeasure = 5U,
-    MusicMeasure = 6U,
-    SystemMeasure = 7U,
+    CPU = 0U,
+    GPU = 1U,
+    RAM = 2U,
+    Net = 3U,
+    Process = 4U,
+    Drive = 5U,
+    Music = 6U,
+    System = 7U,
     AnimationState = 8U,
 
     NumMeasures,

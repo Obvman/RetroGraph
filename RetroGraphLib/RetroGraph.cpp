@@ -26,32 +26,20 @@ RetroGraph::RetroGraph(HINSTANCE hInstance) :
               std::get<int32_t>(UserSettings::inst().getVal("Window.Monitor")), 
               std::get<bool>(UserSettings::inst().getVal("Window.ClickThrough")) },
     m_widgetVisibilities( Widgets::NumWidgets ),
-    m_measures( MTypes::NumMeasures ),
-    m_renderer{ nullptr }, // Must be constructed after measures
+    m_measures( createMeasures() ),
+    m_renderer{ std::make_unique<Renderer>(m_window, *this) },
     m_dependencyMap{
         { MTypes::AnimationState, { Widgets::Main } },
-        { MTypes::MusicMeasure,   { Widgets::Music } },
-        { MTypes::ProcessMeasure, { Widgets::Music, Widgets::ProcessCPU, Widgets::ProcessRAM } },
-        { MTypes::SystemMeasure,  { Widgets::SystemStats } },
-        { MTypes::NetMeasure,     { Widgets::Graph, Widgets::Time, Widgets::SystemStats } },
-        { MTypes::CPUMeasure,     { Widgets::CPUStats, Widgets::Graph, Widgets::SystemStats, Widgets::Time } },
-        { MTypes::GPUMeasure,     { Widgets::Graph } },
-        { MTypes::RAMMeasure,     { Widgets::Graph } },
-        { MTypes::DriveMeasure,   { Widgets::HDD } },
+        { MTypes::Music,   { Widgets::Music } },
+        { MTypes::Process, { Widgets::Music, Widgets::ProcessCPU, Widgets::ProcessRAM } },
+        { MTypes::System,  { Widgets::SystemStats } },
+        { MTypes::Net,     { Widgets::Graph, Widgets::Time, Widgets::SystemStats } },
+        { MTypes::CPU,     { Widgets::CPUStats, Widgets::Graph, Widgets::SystemStats, Widgets::Time } },
+        { MTypes::GPU,     { Widgets::Graph } },
+        { MTypes::RAM,     { Widgets::Graph } },
+        { MTypes::Drive,   { Widgets::HDD } },
     } 
     {
-
-    m_measures[MTypes::CPUMeasure] = std::make_unique<CPUMeasure>();
-    m_measures[MTypes::GPUMeasure] = std::make_unique<GPUMeasure>();
-    m_measures[MTypes::RAMMeasure] = std::make_unique<RAMMeasure>();
-    m_measures[MTypes::NetMeasure] = std::make_unique<NetMeasure>();
-    m_measures[MTypes::ProcessMeasure] = std::make_unique<ProcessMeasure>();
-    m_measures[MTypes::DriveMeasure] = std::make_unique<DriveMeasure>();
-    m_measures[MTypes::MusicMeasure] = std::make_unique<MusicMeasure>(getProcessMeasure());
-    m_measures[MTypes::SystemMeasure] = std::make_unique<SystemMeasure>();
-    m_measures[MTypes::AnimationState] = std::make_unique<AnimationState>();
-
-    m_renderer = std::make_unique<Renderer>(m_window, *this);
 
     for (auto i = size_t{ 0U }; i < Widgets::NumWidgets; ++i) {
         m_widgetVisibilities[i] = UserSettings::inst().isVisible(static_cast<Widgets>(i));
@@ -64,7 +52,22 @@ RetroGraph::RetroGraph(HINSTANCE hInstance) :
 }
 
 RetroGraph::~RetroGraph() {
+}
 
+auto RetroGraph::createMeasures() -> decltype(m_measures) {
+    decltype(m_measures) measureList( Measures::Types::NumMeasures );
+
+    measureList[MTypes::CPU] = std::make_unique<CPUMeasure>();
+    measureList[MTypes::GPU] = std::make_unique<GPUMeasure>();
+    measureList[MTypes::RAM] = std::make_unique<RAMMeasure>();
+    measureList[MTypes::Net] = std::make_unique<NetMeasure>();
+    measureList[MTypes::Process] = std::make_unique<ProcessMeasure>();
+    measureList[MTypes::Drive] = std::make_unique<DriveMeasure>();
+    measureList[MTypes::Music] = std::make_unique<MusicMeasure>(getProcessMeasure());
+    measureList[MTypes::System] = std::make_unique<SystemMeasure>();
+    measureList[MTypes::AnimationState] = std::make_unique<AnimationState>();
+
+    return measureList;
 }
 
 void RetroGraph::update(uint32_t ticks) {
@@ -142,28 +145,28 @@ void RetroGraph::checkDependencies() {
                 case MTypes::AnimationState:
                     measurePtr = std::make_unique<AnimationState>();
                     break;
-                case MTypes::DriveMeasure:
+                case MTypes::Drive:
                     measurePtr = std::make_unique<DriveMeasure>();
                     break;
-                case MTypes::MusicMeasure:
+                case MTypes::Music:
                     measurePtr = std::make_unique<MusicMeasure>(getProcessMeasure());
                     break;
-                case MTypes::NetMeasure:
+                case MTypes::Net:
                     measurePtr = std::make_unique<NetMeasure>();
                     break;
-                case MTypes::SystemMeasure:
+                case MTypes::System:
                     measurePtr = std::make_unique<SystemMeasure>();
                     break;
-                case MTypes::ProcessMeasure:
+                case MTypes::Process:
                     measurePtr = std::make_unique<ProcessMeasure>();
                     break;
-                case MTypes::RAMMeasure:
+                case MTypes::RAM:
                     measurePtr = std::make_unique<RAMMeasure>();
                     break;
-                case MTypes::CPUMeasure:
+                case MTypes::CPU:
                     measurePtr = std::make_unique<CPUMeasure>();
                     break;
-                case MTypes::GPUMeasure:
+                case MTypes::GPU:
                     measurePtr = std::make_unique<GPUMeasure>();
                     break;
                 default: // nothing
@@ -178,28 +181,28 @@ void RetroGraph::checkDependencies() {
 }
 
 const CPUMeasure& RetroGraph::getCPUMeasure() const {
-    return dynamic_cast<const CPUMeasure&>(*m_measures[MTypes::CPUMeasure]); 
+    return dynamic_cast<const CPUMeasure&>(*m_measures[MTypes::CPU]); 
 }
 const GPUMeasure& RetroGraph::getGPUMeasure() const { 
-    return dynamic_cast<const GPUMeasure&>(*m_measures[MTypes::GPUMeasure]);
+    return dynamic_cast<const GPUMeasure&>(*m_measures[MTypes::GPU]);
 }
 const RAMMeasure& RetroGraph::getRAMMeasure() const { 
-    return dynamic_cast<const RAMMeasure&>(*m_measures[MTypes::RAMMeasure]);
+    return dynamic_cast<const RAMMeasure&>(*m_measures[MTypes::RAM]);
 }
 const NetMeasure& RetroGraph::getNetMeasure() const { 
-    return dynamic_cast<const NetMeasure&>(*m_measures[MTypes::NetMeasure]);
+    return dynamic_cast<const NetMeasure&>(*m_measures[MTypes::Net]);
 }
 const ProcessMeasure& RetroGraph::getProcessMeasure() const { 
-    return dynamic_cast<const ProcessMeasure&>(*m_measures[MTypes::ProcessMeasure]);
+    return dynamic_cast<const ProcessMeasure&>(*m_measures[MTypes::Process]);
 }
 const DriveMeasure& RetroGraph::getDriveMeasure() const { 
-    return dynamic_cast<const DriveMeasure&>(*m_measures[MTypes::DriveMeasure]);
+    return dynamic_cast<const DriveMeasure&>(*m_measures[MTypes::Drive]);
 }
 const MusicMeasure& RetroGraph::getMusicMeasure() const { 
-    return dynamic_cast<const MusicMeasure&>(*m_measures[MTypes::MusicMeasure]);
+    return dynamic_cast<const MusicMeasure&>(*m_measures[MTypes::Music]);
 }
 const SystemMeasure& RetroGraph::getSystemMeasure() const { 
-    return dynamic_cast<const SystemMeasure&>(*m_measures[MTypes::SystemMeasure]);
+    return dynamic_cast<const SystemMeasure&>(*m_measures[MTypes::System]);
 }
 const AnimationState& RetroGraph::getAnimationState() const { 
     return dynamic_cast<const AnimationState&>(*m_measures[MTypes::AnimationState]);

@@ -8,16 +8,6 @@
 #include <GL/glew.h>
 
 #include "FontManager.h"
-#include "TimeWidget.h"
-#include "HDDWidget.h"
-#include "CPUStatsWidget.h"
-#include "ProcessCPUWidget.h"
-#include "ProcessRAMWidget.h"
-#include "GraphWidget.h"
-#include "SystemStatsWidget.h"
-#include "MainWidget.h"
-#include "MusicWidget.h"
-#include "FPSWidget.h"
 #include "Widget.h"
 
 namespace rg {
@@ -42,7 +32,7 @@ public:
 
     void updateWindowSize(int32_t newWidth, int32_t newHeight);
 
-    void needsRedraw() const { m_systemStatsWidget.needsRedraw(); }
+    void needsRedraw() const;
 
     void setWidgetVisibility(Widgets w, bool v);
 
@@ -62,22 +52,17 @@ private:
 
     FontManager m_fontManager;
 
-    TimeWidget m_timeWidget;
-    HDDWidget m_hddWidget;
-    CPUStatsWidget m_cpuStatsWidget;
-    ProcessRAMWidget m_processRAMWidget;
-    ProcessCPUWidget m_processCPUWidget;
-    GraphWidget m_graphWidget;
-    SystemStatsWidget m_systemStatsWidget;
-    MainWidget m_mainWidget;
-    MusicWidget m_musicWidget;
-    FPSWidget m_fpsWidget;
+    std::vector<std::unique_ptr<Widget>> m_widgets;
 
     // Shaders
     GLuint m_cpuGraphShader{ 0U };
 
     // Uniform location (UL) variables
     GLint m_graphAlphaLoc{ -1 };
+
+    auto createWidgets(const RetroGraph& _rg,
+                       int32_t windowWidth,
+                       int32_t windowHeight) -> decltype(m_widgets);
 };
 
 } // namespace rg

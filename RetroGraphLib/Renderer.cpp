@@ -4,16 +4,22 @@
 
 #include "RetroGraph.h"
 #include "Window.h"
-#include "CPUMeasure.h"
-#include "GPUMeasure.h"
-#include "RAMMeasure.h"
-#include "NetMeasure.h"
-#include "ProcessMeasure.h"
-#include "DriveMeasure.h"
-#include "SystemMeasure.h"
 #include "UserSettings.h"
+
+#include "TimeWidget.h"
+#include "HDDWidget.h"
+#include "CPUStatsWidget.h"
+#include "ProcessCPUWidget.h"
+#include "ProcessRAMWidget.h"
+#include "GraphWidget.h"
+#include "SystemStatsWidget.h"
+#include "MainWidget.h"
+#include "MusicWidget.h"
+#include "FPSWidget.h"
+
 #include "colors.h"
 #include "utils.h"
+#include "units.h"
 #include "GLShaders.h"
 
 namespace rg {
@@ -21,27 +27,7 @@ namespace rg {
 Renderer::Renderer(const Window& w, const RetroGraph& _rg) :
     m_renderTargetHandle{ w.getHwnd() },
     m_fontManager{ w.getHwnd(), w.getHeight() },
-    m_timeWidget{ &m_fontManager, _rg,
-                  UserSettings::inst().isVisible(Widgets::Time) },
-    m_hddWidget{ &m_fontManager, _rg,
-                 UserSettings::inst().isVisible(Widgets::HDD) },
-    m_cpuStatsWidget{ &m_fontManager, _rg,
-                      UserSettings::inst().isVisible(Widgets::CPUStats) },
-    m_processCPUWidget{ &m_fontManager, _rg,
-                        UserSettings::inst().isVisible(Widgets::ProcessCPU) },
-    m_processRAMWidget{ &m_fontManager, _rg,
-                        UserSettings::inst().isVisible(Widgets::ProcessRAM) },
-    m_graphWidget{ &m_fontManager, _rg,
-                   UserSettings::inst().isVisible(Widgets::Graph) },
-    m_systemStatsWidget{ &m_fontManager, _rg,
-                         UserSettings::inst().isVisible(Widgets::SystemStats) },
-    m_mainWidget{ &m_fontManager, _rg,
-                  UserSettings::inst().isVisible(Widgets::Main) },
-    m_musicWidget{ &m_fontManager, _rg,
-                   UserSettings::inst().isVisible(Widgets::Music) },
-    m_fpsWidget{ &m_fontManager } {
-
-    setViewports(w.getWidth(), w.getHeight());
+    m_widgets( createWidgets(_rg, w.getWidth(), w.getHeight()) ) {
 
     initVBOs();
     initShaders();
@@ -50,7 +36,48 @@ Renderer::Renderer(const Window& w, const RetroGraph& _rg) :
 Renderer::~Renderer() {
 }
 
+auto Renderer::createWidgets(const RetroGraph& _rg,
+                             int32_t windowWidth,
+                             int32_t windowHeight) -> decltype(m_widgets) {
+    decltype(m_widgets) widgetList( Widgets::NumWidgets );
+
+    m_widgets[Widgets::ProcessRAM] = std::make_unique<ProcessRAMWidget>(
+        &m_fontManager, _rg, UserSettings::inst().isVisible(Widgets::ProcessRAM)
+    );
+    m_widgets[Widgets::ProcessCPU] = std::make_unique<ProcessCPUWidget>(
+        &m_fontManager, _rg, UserSettings::inst().isVisible(Widgets::ProcessCPU)
+    );
+    m_widgets[Widgets::Time] = std::make_unique<TimeWidget>(
+        &m_fontManager, _rg, UserSettings::inst().isVisible(Widgets::Time)
+    );
+    m_widgets[Widgets::SystemStats] = std::make_unique<SystemStatsWidget>(
+        &m_fontManager, _rg, UserSettings::inst().isVisible(Widgets::SystemStats)
+    );
+    m_widgets[Widgets::Music] = std::make_unique<MusicWidget>(
+        &m_fontManager, _rg, UserSettings::inst().isVisible(Widgets::Music)
+    );
+    m_widgets[Widgets::CPUStats] = std::make_unique<CPUStatsWidget>(
+        &m_fontManager, _rg, UserSettings::inst().isVisible(Widgets::CPUStats)
+    );
+    m_widgets[Widgets::HDD] = std::make_unique<HDDWidget>(
+        &m_fontManager, _rg, UserSettings::inst().isVisible(Widgets::HDD)
+    );
+    m_widgets[Widgets::Main] = std::make_unique<MainWidget>(
+        &m_fontManager, _rg, UserSettings::inst().isVisible(Widgets::Main)
+    );
+    m_widgets[Widgets::Graph] = std::make_unique<GraphWidget>(
+        &m_fontManager, _rg, UserSettings::inst().isVisible(Widgets::Graph)
+    );
+    m_widgets[Widgets::FPS] = std::make_unique<FPSWidget>(&m_fontManager);
+
+    setViewports(windowWidth, windowHeight);
+
+    return widgetList;
+}
+
 void Renderer::draw(uint32_t ticks) const {
+    const auto& mainWidget{ dynamic_cast<MainWidget&>(*m_widgets[Widgets::Main]) };
+
     // Render the bulk of widgets at a low FPS to keep light on resources
     constexpr auto framesPerSecond = uint32_t{ 2U };
     if ((ticks % std::lround(
@@ -58,22 +85,15 @@ void Renderer::draw(uint32_t ticks) const {
 
         glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
 
-        m_timeWidget.draw();
-        m_hddWidget.draw();
-        m_cpuStatsWidget.draw();
-        m_processCPUWidget.draw();
-        m_processRAMWidget.draw();
-        m_graphWidget.draw();
-        m_systemStatsWidget.draw();
-        m_musicWidget.draw();
-
-        m_fpsWidget.draw();
+        for (const auto& widget : m_widgets) {
+            if (widget.get() != &mainWidget)
+                widget->draw();
+        }
     }
 
-
     // The main widget can have a higher framerate, so call every tick
-    if (m_mainWidget.needsDraw(ticks)) {
-        m_mainWidget.draw();
+    if (mainWidget.needsDraw(ticks)) {
+        mainWidget.draw();
     }
 }
 
@@ -81,55 +101,21 @@ void Renderer::updateWindowSize(int32_t newWidth, int32_t newHeight) {
     setViewports(newWidth, newHeight);
     m_fontManager.refreshFonts(newHeight);
 
-    m_systemStatsWidget.needsRedraw();
+    needsRedraw();
+}
+
+void Renderer::needsRedraw() const {
+    auto& sysWidget = dynamic_cast<SystemStatsWidget&>(*m_widgets[Widgets::SystemStats]);
+    sysWidget.needsRedraw();
 }
 
 void Renderer::setWidgetVisibility(Widgets w, bool v) {
-    switch (w) {
-        case Widgets::CPUStats:
-            m_cpuStatsWidget.setVisibility(v);
-            break;
-        case Widgets::Time:
-            m_timeWidget.setVisibility(v);
-            break;
-        case Widgets::HDD:
-            m_hddWidget.setVisibility(v);
-            break;
-        case Widgets::ProcessRAM:
-            m_processRAMWidget.setVisibility(v);
-            break;
-        case Widgets::ProcessCPU:
-            m_processCPUWidget.setVisibility(v);
-            break;
-        case Widgets::Graph:
-            m_graphWidget.setVisibility(v);
-            break;
-        case Widgets::SystemStats:
-            m_systemStatsWidget.setVisibility(v);
-            break;
-        case Widgets::Main:
-            m_mainWidget.setVisibility(v);
-            break;
-        case Widgets::Music:
-            m_musicWidget.setVisibility(v);
-            break;
-        case Widgets::FPS:
-            m_fpsWidget.setVisibility(v);
-            break;
-    }
+    m_widgets[w]->setVisibility(v);
 }
 
 void Renderer::updateObservers(const RetroGraph& rg) {
-    m_timeWidget.updateObservers(rg);
-    m_hddWidget.updateObservers(rg);
-    m_cpuStatsWidget.updateObservers(rg);
-    m_processRAMWidget.updateObservers(rg);
-    m_processCPUWidget.updateObservers(rg);
-    m_graphWidget.updateObservers(rg);
-    m_systemStatsWidget.updateObservers(rg);
-    m_mainWidget.updateObservers(rg);
-    m_musicWidget.updateObservers(rg);
-    m_fpsWidget.updateObservers(rg);
+    for (const auto& widget : m_widgets)
+        widget->updateObservers(rg);
 }
 
 /********************* Private Functions ********************/
@@ -139,46 +125,17 @@ void Renderer::setViewports(int32_t windowWidth, int32_t windowHeight) {
     // will fill that position. Currently on the horizontal center positions
     // can contain multiple widgets
     std::vector<int32_t> positionFills( 2, 0 );
-    const auto& settings{ UserSettings::inst() };
+    const auto& s{ UserSettings::inst() };
 
-    m_timeWidget.setViewport(calcViewport(
-            settings.getWidgetPosition(Widgets::Time),
-            windowWidth, windowHeight, positionFills));
-
-    m_hddWidget.setViewport(calcViewport(
-            settings.getWidgetPosition(Widgets::HDD),
-            windowWidth, windowHeight, positionFills));
-
-    m_cpuStatsWidget.setViewport(calcViewport(
-            settings.getWidgetPosition(Widgets::CPUStats),
-            windowWidth, windowHeight, positionFills));
-
-    m_graphWidget.setViewport(calcViewport(
-            settings.getWidgetPosition(Widgets::Graph),
-            windowWidth, windowHeight, positionFills));
-
-    m_systemStatsWidget.setViewport(calcViewport(
-            settings.getWidgetPosition(Widgets::SystemStats),
-            windowWidth, windowHeight, positionFills));
-
-    m_mainWidget.setViewport(calcViewport(
-            settings.getWidgetPosition(Widgets::Main),
-            windowWidth, windowHeight, positionFills));
-
-    m_musicWidget.setViewport(calcViewport(
-            settings.getWidgetPosition(Widgets::Music),
-            windowWidth, windowHeight, positionFills));
-
-    m_processCPUWidget.setViewport(calcViewport(
-            settings.getWidgetPosition(Widgets::ProcessCPU),
-            windowWidth, windowHeight, positionFills));
-
-    m_processRAMWidget.setViewport(calcViewport(
-            settings.getWidgetPosition(Widgets::ProcessRAM),
-            windowWidth, windowHeight, positionFills));
-
+    for (auto i = size_t{ 0U }; i < Widgets::NumWidgets; ++i) {
+        const Widgets w{ static_cast<Widgets>(i) };
+        m_widgets[w]->setViewport(
+            calcViewport(s.getWidgetPosition(w),
+                         windowWidth, windowHeight, positionFills)
+        );
+    }
     // TODO allow selection of corner to place this
-    m_fpsWidget.setViewport({ marginX, marginY, windowWidth / 24, windowHeight / 24 });
+    m_widgets[Widgets::FPS]->setViewport({ marginX, marginY, windowWidth / 24, windowHeight / 24 });
 
 
     if (positionFills[0] > 2) {

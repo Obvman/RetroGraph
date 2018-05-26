@@ -18,6 +18,8 @@
 namespace rg {
 
 bool MainWidget::needsDraw(uint32_t ticks) const {
+    // Only draw if visible and we need to draw to keep
+    // up with the animation framerate
     if (!isVisible() ||
         (ticks != 0 &&
         ticks % std::lround(
