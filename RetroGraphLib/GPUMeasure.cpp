@@ -12,8 +12,8 @@ namespace rg {
 constexpr uint32_t NVAPI_MAX_USAGES_PER_GPU{ 34 };
 constexpr uint32_t NVAPI_GPU_UTILIZATION_DOMAIN_GPU{ 0U };
 
-typedef int *(*NvAPI_QueryInterface_t)(uint32_t offset);
-typedef int (*NvAPI_GPU_GetUsages_t)(NvPhysicalGpuHandle handle, NvU32* usages);
+using NvAPI_QueryInterface_t = int *(*)(uint32_t offset);
+using NvAPI_GPU_GetUsages_t = int (*)(NvPhysicalGpuHandle handle, NvU32* usages);
 
 NvAPI_QueryInterface_t NvAPI_QueryInterface{ nullptr };
 NvAPI_GPU_GetUsages_t NvAPI_GPU_GetUsages{ nullptr };

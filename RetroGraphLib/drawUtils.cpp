@@ -21,7 +21,7 @@ void vboDrawScope(GLuint vertID, GLuint indexID, F f) {
     glBindBuffer(GL_ARRAY_BUFFER, vertID);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexID);
     glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(2, GL_FLOAT, 0, 0);
+    glVertexPointer(2, GL_FLOAT, 0, nullptr);
 
     f();
 
@@ -88,7 +88,7 @@ void drawGraphGrid() {
     vboDrawScope(graphGridVertsID, graphGridIndicesID, []() {
         glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.2f);
         glLineWidth(0.5f);
-        glDrawElements(GL_LINES, graphIndicesSize, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_LINES, graphIndicesSize, GL_UNSIGNED_INT, nullptr);
     });
 }
 

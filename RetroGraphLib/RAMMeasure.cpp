@@ -29,7 +29,7 @@ void RAMMeasure::update(uint32_t ticks) {
         GlobalMemoryStatusEx(&m_memStatus);
 
         // Add value to the list of load values and shift the list left
-        m_usageData[0] = getLoadPercentagef();
+        m_usageData.front() = getLoadPercentagef();
         std::rotate(m_usageData.begin(), m_usageData.begin() + 1,
                     m_usageData.end());
     }

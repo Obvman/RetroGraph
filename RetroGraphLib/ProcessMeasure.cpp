@@ -134,12 +134,12 @@ int32_t ProcessMeasure::getPIDFromName(const std::string& name) const {
     }
 }
 
-bool ProcessMeasure::setDebugPrivileges(HANDLE hToken, LPCTSTR Privilege,
+bool ProcessMeasure::setDebugPrivileges(HANDLE hToken, LPCTSTR privilege,
                                         bool enablePrivilege) {
     LUID luid;
     TOKEN_PRIVILEGES tpPrevious;
 
-    if(!LookupPrivilegeValue( NULL, Privilege, &luid )) 
+    if(!LookupPrivilegeValue(nullptr, privilege, &luid)) 
         return false;
 
     // first pass.  get current privilege setting
@@ -150,12 +150,7 @@ bool ProcessMeasure::setDebugPrivileges(HANDLE hToken, LPCTSTR Privilege,
 
     DWORD cbPrevious{ sizeof(TOKEN_PRIVILEGES) };
     AdjustTokenPrivileges(
-        hToken,
-        FALSE,
-        &tp,
-        sizeof(TOKEN_PRIVILEGES),
-        &tpPrevious,
-        &cbPrevious
+        hToken, false, &tp, sizeof(TOKEN_PRIVILEGES), &tpPrevious, &cbPrevious
     );
 
     if (GetLastError() != ERROR_SUCCESS) 
@@ -173,7 +168,7 @@ bool ProcessMeasure::setDebugPrivileges(HANDLE hToken, LPCTSTR Privilege,
                                                 tpPrevious.Privileges[0].Attributes);
     }
 
-    AdjustTokenPrivileges(hToken, FALSE, &tpPrevious, cbPrevious, NULL, NULL);
+    AdjustTokenPrivileges(hToken, FALSE, &tpPrevious, cbPrevious, nullptr, nullptr);
 
     if (GetLastError() != ERROR_SUCCESS) 
         return false;
@@ -183,8 +178,7 @@ bool ProcessMeasure::setDebugPrivileges(HANDLE hToken, LPCTSTR Privilege,
 
 
 void ProcessMeasure::fillCPUData() {
-    // Sort the vector based on the current CPU usage of processes in 
-    // descending order
+    // Sort based on the current CPU usage of processes in descending order
     std::sort(m_allProcessData.begin(), m_allProcessData.end(),
     [](const auto& ppd1, const auto& ppd2) {
         return ppd1->getCpuUsage() > ppd2->getCpuUsage();
@@ -298,17 +292,15 @@ void ProcessMeasure::populateList() {
             wcstombs_s(&charsConverted, nameBuff, spi->ImageName.Length,
                        spi->ImageName.Buffer, spi->ImageName.Length);
 
-            m_allProcessData.emplace_back(std::make_shared<ProcessData>(
-                pHandle,
-                procID,
-                nameBuff)
+            m_allProcessData.emplace_back(
+                std::make_shared<ProcessData>(pHandle, procID, nameBuff)
             );
 
             delete[] nameBuff;
         }
     }
 
-    VirtualFree(buffer,0,MEM_RELEASE); // Free the allocated buffer.
+    VirtualFree(buffer, 0, MEM_RELEASE); // Free the allocated buffer.
 }
 
 void ProcessMeasure::detectNewProcesses() {
@@ -374,10 +366,8 @@ void ProcessMeasure::detectNewProcesses() {
                 }
 
 
-                m_allProcessData.emplace_back(std::make_shared<ProcessData>(
-                    pHandle,
-                    procID,
-                    nameBuff)
+                m_allProcessData.emplace_back(
+                    std::make_shared<ProcessData>(pHandle, procID, nameBuff)
                 );
 
                 delete[] nameBuff;
@@ -385,7 +375,7 @@ void ProcessMeasure::detectNewProcesses() {
         }
     }
 
-    VirtualFree(buffer,0,MEM_RELEASE); // Free the allocated buffer.
+    VirtualFree(buffer, 0, MEM_RELEASE); // Free the allocated buffer.
 }
 
 }

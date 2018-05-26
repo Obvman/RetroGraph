@@ -119,7 +119,7 @@ void RetroGraph::toggleWidget(Widgets w) {
 void RetroGraph::checkDependencies() {
     // Check dependent measures, if theres a measure that isn't being used by any
     // Widget, we can disable it. If a disabled measure needs to be used by a widget,
-    // reenable it
+    // re-enable it
     for (const auto&[measure, widgets] : m_dependencyMap) {
 
         bool allDependentWidgetsDisabled{ true };

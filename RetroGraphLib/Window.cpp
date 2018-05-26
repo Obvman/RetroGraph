@@ -88,7 +88,7 @@ void Window::runTest() {
     }*/
 
     // Start foobar2000 process to allow controls
-    system("\"C:\\Program Files\\foobar2000\\foobar2000.exe\" /playpause");
+    system(R"("C:\Program Files\foobar2000\foobar2000.exe" /playpause)");
 }
 
 Window::Window(RetroGraph* rg_, HINSTANCE hInstance, int32_t startupMonitor,
@@ -569,9 +569,9 @@ bool Window::createHGLRC() {
     DwmEnableBlurBehindWindow(m_hWndMain, &bb);
 
     m_hdc = GetDC(m_hWndMain);
-    if (m_hdc == 0) {
+    if (!m_hdc) {
         DestroyWindow(m_hWndMain);
-        m_hWndMain = 0;
+        m_hWndMain = nullptr;
         return false;
     }
 
@@ -615,9 +615,9 @@ bool Window::createHGLRC() {
     // Set the pixel format for the window
     if (!SetPixelFormat(m_hdc, PixelFormat, &pfd)) {
         ReleaseDC(m_hWndMain, m_hdc);
-        m_hdc = 0;
+        m_hdc = nullptr;
         DestroyWindow(m_hWndMain);
-        m_hWndMain = 0;
+        m_hWndMain = nullptr;
         fatalMessageBox("SetPixelFormat - failed");
     }
 
@@ -625,20 +625,20 @@ bool Window::createHGLRC() {
     m_hrc = wglCreateContext(m_hdc);
     if (!m_hrc){
         ReleaseDC(m_hWndMain, m_hdc);
-        m_hdc = 0;
+        m_hdc = nullptr;
         DestroyWindow(m_hWndMain);
-        m_hWndMain = 0;
+        m_hWndMain = nullptr;
         fatalMessageBox("wglCreateContext - failed");
     }
 
     // Make the context the current one for the window
     if (!wglMakeCurrent(m_hdc, m_hrc)) {
         wglDeleteContext(m_hrc);
-        m_hrc = 0;
+        m_hrc = nullptr;
         ReleaseDC(m_hWndMain, m_hdc);
-        m_hdc = 0;
+        m_hdc = nullptr;
         DestroyWindow(m_hWndMain);
-        m_hWndMain = 0;
+        m_hWndMain = nullptr;
 
         fatalMessageBox("Failed to make current context with wglMakeCurrent");
     }
@@ -773,20 +773,20 @@ bool Window::initMultisample() {
 
 void Window::destroy() {
     // Release and zero the device context, openGL context and window handle
-    if (m_hWndMain != 0) {
-        if (m_hdc != 0) {
-            wglMakeCurrent(m_hdc, 0);
-            if (m_hrc != 0) {
+    if (m_hWndMain) {
+        if (m_hdc) {
+            wglMakeCurrent(m_hdc, nullptr);
+            if (m_hrc) {
                 wglDeleteContext(m_hrc);
-                m_hrc = 0;
+                m_hrc = nullptr;
             }
 
             ReleaseDC(m_hWndMain, m_hdc);
-            m_hdc = 0;
+            m_hdc = nullptr;
         }
 
         DestroyWindow(m_hWndMain);
-        m_hWndMain = 0;
+        m_hWndMain = nullptr;
     }
 }
 

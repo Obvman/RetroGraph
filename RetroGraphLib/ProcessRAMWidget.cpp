@@ -31,8 +31,8 @@ void ProcessRAMWidget::draw() const {
 
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
-    auto procNames = std::vector<std::string>{  };
-    auto procRamUsages = std::vector<std::string>{  };
+    auto procNames = std::vector<std::string>{};
+    auto procRamUsages = std::vector<std::string>{};
 
     procNames.reserve(m_procMeasure->getProcRAMData().size());
     procRamUsages.reserve(m_procMeasure->getProcRAMData().size());
