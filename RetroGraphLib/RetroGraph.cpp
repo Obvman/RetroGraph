@@ -57,15 +57,15 @@ RetroGraph::~RetroGraph() {
 auto RetroGraph::createMeasures() -> decltype(m_measures) {
     decltype(m_measures) measureList( Measures::Types::NumMeasures );
 
-    measureList[MTypes::CPU] = std::make_unique<CPUMeasure>();
-    measureList[MTypes::GPU] = std::make_unique<GPUMeasure>();
-    measureList[MTypes::RAM] = std::make_unique<RAMMeasure>();
-    measureList[MTypes::Net] = std::make_unique<NetMeasure>();
-    measureList[MTypes::Process] = std::make_unique<ProcessMeasure>();
-    measureList[MTypes::Drive] = std::make_unique<DriveMeasure>();
-    measureList[MTypes::Music] = std::make_unique<MusicMeasure>(
+    measureList[MTypes::CPU] =            std::make_unique<CPUMeasure>();
+    measureList[MTypes::GPU] =            std::make_unique<GPUMeasure>();
+    measureList[MTypes::RAM] =            std::make_unique<RAMMeasure>();
+    measureList[MTypes::Net] =            std::make_unique<NetMeasure>();
+    measureList[MTypes::Process] =        std::make_unique<ProcessMeasure>();
+    measureList[MTypes::Drive] =          std::make_unique<DriveMeasure>();
+    measureList[MTypes::Music] =          std::make_unique<MusicMeasure>(
         dynamic_cast<const ProcessMeasure&>(*measureList[MTypes::Process]));
-    measureList[MTypes::System] = std::make_unique<SystemMeasure>();
+    measureList[MTypes::System] =         std::make_unique<SystemMeasure>();
     measureList[MTypes::AnimationState] = std::make_unique<AnimationState>();
 
     return measureList;

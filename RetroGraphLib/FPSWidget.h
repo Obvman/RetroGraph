@@ -9,8 +9,8 @@ namespace rg {
 
 class FPSWidget : public Widget {
 public:
-    FPSWidget(const FontManager* fontManager) :
-        Widget{ fontManager, true } { }
+    FPSWidget(const FontManager* fontManager, bool visible) :
+        Widget{ fontManager, visible } { }
     ~FPSWidget() noexcept = default;
     FPSWidget(const FPSWidget&) = delete;
     FPSWidget& operator=(const FPSWidget&) = delete;

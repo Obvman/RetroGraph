@@ -41,34 +41,38 @@ Renderer::~Renderer() {
 auto Renderer::createWidgets(const RetroGraph& _rg) -> decltype(m_widgets) {
     decltype(m_widgets) widgetList( Widgets::NumWidgets );
 
+    const auto& s{ UserSettings::inst() };
+
     widgetList[Widgets::ProcessRAM] = std::make_unique<ProcessRAMWidget>(
-        &m_fontManager, _rg, UserSettings::inst().isVisible(Widgets::ProcessRAM)
+        &m_fontManager, _rg, s.isVisible(Widgets::ProcessRAM)
     );
     widgetList[Widgets::ProcessCPU] = std::make_unique<ProcessCPUWidget>(
-        &m_fontManager, _rg, UserSettings::inst().isVisible(Widgets::ProcessCPU)
+        &m_fontManager, _rg, s.isVisible(Widgets::ProcessCPU)
     );
     widgetList[Widgets::Time] = std::make_unique<TimeWidget>(
-        &m_fontManager, _rg, UserSettings::inst().isVisible(Widgets::Time)
+        &m_fontManager, _rg, s.isVisible(Widgets::Time)
     );
     widgetList[Widgets::SystemStats] = std::make_unique<SystemStatsWidget>(
-        &m_fontManager, _rg, UserSettings::inst().isVisible(Widgets::SystemStats)
+        &m_fontManager, _rg, s.isVisible(Widgets::SystemStats)
     );
     widgetList[Widgets::Music] = std::make_unique<MusicWidget>(
-        &m_fontManager, _rg, UserSettings::inst().isVisible(Widgets::Music)
+        &m_fontManager, _rg, s.isVisible(Widgets::Music)
     );
     widgetList[Widgets::CPUStats] = std::make_unique<CPUStatsWidget>(
-        &m_fontManager, _rg, UserSettings::inst().isVisible(Widgets::CPUStats)
+        &m_fontManager, _rg, s.isVisible(Widgets::CPUStats)
     );
     widgetList[Widgets::HDD] = std::make_unique<HDDWidget>(
-        &m_fontManager, _rg, UserSettings::inst().isVisible(Widgets::HDD)
+        &m_fontManager, _rg, s.isVisible(Widgets::HDD)
     );
     widgetList[Widgets::Main] = std::make_unique<MainWidget>(
-        &m_fontManager, _rg, UserSettings::inst().isVisible(Widgets::Main)
+        &m_fontManager, _rg, s.isVisible(Widgets::Main)
     );
     widgetList[Widgets::Graph] = std::make_unique<GraphWidget>(
-        &m_fontManager, _rg, UserSettings::inst().isVisible(Widgets::Graph)
+        &m_fontManager, _rg, s.isVisible(Widgets::Graph)
     );
-    widgetList[Widgets::FPS] = std::make_unique<FPSWidget>(&m_fontManager);
+    widgetList[Widgets::FPS] = std::make_unique<FPSWidget>(
+        &m_fontManager, s.isVisible(Widgets::FPS)
+    );
 
     return widgetList;
 }
