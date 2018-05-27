@@ -42,6 +42,8 @@ private:
     Viewport calcViewport(WidgetPosition pos,
                           int32_t windowWidth, int32_t windowHeight,
                           std::vector<int32_t>& positionFills);
+    Viewport calcFPSViewport(WidgetPosition pos, int32_t windowWidth,
+                             int32_t windowHeight);
 
     /* Fill VBOs with intial vertex data */
     void initVBOs();
@@ -60,9 +62,7 @@ private:
     // Uniform location (UL) variables
     GLint m_graphAlphaLoc{ -1 };
 
-    auto createWidgets(const RetroGraph& _rg,
-                       int32_t windowWidth,
-                       int32_t windowHeight) -> decltype(m_widgets);
+    auto createWidgets(const RetroGraph& _rg) -> decltype(m_widgets);
 };
 
 } // namespace rg

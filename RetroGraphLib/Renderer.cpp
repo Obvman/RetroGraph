@@ -27,7 +27,9 @@ namespace rg {
 Renderer::Renderer(const Window& w, const RetroGraph& _rg) :
     m_renderTargetHandle{ w.getHwnd() },
     m_fontManager{ w.getHwnd(), w.getHeight() },
-    m_widgets( createWidgets(_rg, w.getWidth(), w.getHeight()) ) {
+    m_widgets( createWidgets(_rg) ) {
+
+    setViewports(w.getWidth(), w.getHeight());
 
     initVBOs();
     initShaders();
@@ -36,41 +38,37 @@ Renderer::Renderer(const Window& w, const RetroGraph& _rg) :
 Renderer::~Renderer() {
 }
 
-auto Renderer::createWidgets(const RetroGraph& _rg,
-                             int32_t windowWidth,
-                             int32_t windowHeight) -> decltype(m_widgets) {
+auto Renderer::createWidgets(const RetroGraph& _rg) -> decltype(m_widgets) {
     decltype(m_widgets) widgetList( Widgets::NumWidgets );
 
-    m_widgets[Widgets::ProcessRAM] = std::make_unique<ProcessRAMWidget>(
+    widgetList[Widgets::ProcessRAM] = std::make_unique<ProcessRAMWidget>(
         &m_fontManager, _rg, UserSettings::inst().isVisible(Widgets::ProcessRAM)
     );
-    m_widgets[Widgets::ProcessCPU] = std::make_unique<ProcessCPUWidget>(
+    widgetList[Widgets::ProcessCPU] = std::make_unique<ProcessCPUWidget>(
         &m_fontManager, _rg, UserSettings::inst().isVisible(Widgets::ProcessCPU)
     );
-    m_widgets[Widgets::Time] = std::make_unique<TimeWidget>(
+    widgetList[Widgets::Time] = std::make_unique<TimeWidget>(
         &m_fontManager, _rg, UserSettings::inst().isVisible(Widgets::Time)
     );
-    m_widgets[Widgets::SystemStats] = std::make_unique<SystemStatsWidget>(
+    widgetList[Widgets::SystemStats] = std::make_unique<SystemStatsWidget>(
         &m_fontManager, _rg, UserSettings::inst().isVisible(Widgets::SystemStats)
     );
-    m_widgets[Widgets::Music] = std::make_unique<MusicWidget>(
+    widgetList[Widgets::Music] = std::make_unique<MusicWidget>(
         &m_fontManager, _rg, UserSettings::inst().isVisible(Widgets::Music)
     );
-    m_widgets[Widgets::CPUStats] = std::make_unique<CPUStatsWidget>(
+    widgetList[Widgets::CPUStats] = std::make_unique<CPUStatsWidget>(
         &m_fontManager, _rg, UserSettings::inst().isVisible(Widgets::CPUStats)
     );
-    m_widgets[Widgets::HDD] = std::make_unique<HDDWidget>(
+    widgetList[Widgets::HDD] = std::make_unique<HDDWidget>(
         &m_fontManager, _rg, UserSettings::inst().isVisible(Widgets::HDD)
     );
-    m_widgets[Widgets::Main] = std::make_unique<MainWidget>(
+    widgetList[Widgets::Main] = std::make_unique<MainWidget>(
         &m_fontManager, _rg, UserSettings::inst().isVisible(Widgets::Main)
     );
-    m_widgets[Widgets::Graph] = std::make_unique<GraphWidget>(
+    widgetList[Widgets::Graph] = std::make_unique<GraphWidget>(
         &m_fontManager, _rg, UserSettings::inst().isVisible(Widgets::Graph)
     );
-    m_widgets[Widgets::FPS] = std::make_unique<FPSWidget>(&m_fontManager);
-
-    setViewports(windowWidth, windowHeight);
+    widgetList[Widgets::FPS] = std::make_unique<FPSWidget>(&m_fontManager);
 
     return widgetList;
 }
@@ -125,6 +123,7 @@ void Renderer::setViewports(int32_t windowWidth, int32_t windowHeight) {
     // will fill that position. Currently on the horizontal center positions
     // can contain multiple widgets
     std::vector<int32_t> positionFills( 2, 0 );
+
     const auto& s{ UserSettings::inst() };
 
     for (auto i = size_t{ 0U }; i < Widgets::NumWidgets; ++i) {
@@ -135,7 +134,9 @@ void Renderer::setViewports(int32_t windowWidth, int32_t windowHeight) {
         );
     }
     // TODO allow selection of corner to place this
-    m_widgets[Widgets::FPS]->setViewport({ marginX, marginY, windowWidth / 24, windowHeight / 24 });
+    m_widgets[Widgets::FPS]->setViewport(calcFPSViewport(
+        s.getWidgetPosition(Widgets::FPS), windowWidth, windowHeight
+    ));
 
 
     if (positionFills[0] > 2) {
@@ -145,12 +146,36 @@ void Renderer::setViewports(int32_t windowWidth, int32_t windowHeight) {
     }
 }
 
+Viewport Renderer::calcFPSViewport(WidgetPosition pos, int32_t windowWidth,
+                                   int32_t windowHeight) {
+    const auto widgetW{ windowWidth / 24 };
+    const auto widgetH{ windowHeight / 24 };
+
+    switch (pos) {
+        case WidgetPosition::TOP_LEFT:
+            return Viewport{ marginX, windowHeight - marginY - widgetH,
+                             widgetW, widgetH };
+        case WidgetPosition::TOP_RIGHT:
+            return Viewport{ windowWidth - marginX - widgetW, windowHeight - marginY - widgetH,
+                             widgetW, widgetH };
+        case WidgetPosition::BOT_LEFT:
+            return Viewport{ marginX, marginY, widgetW, widgetH };
+        case WidgetPosition::BOT_RIGHT:
+            return Viewport{ windowWidth - marginX - widgetW, marginY,
+                             widgetW, widgetH };
+        default:
+            fatalMessageBox("Invalid position selected for FPS widget");
+            break;
+    }
+    return Viewport{};
+}
+
 Viewport Renderer::calcViewport(WidgetPosition pos,
                                 int32_t windowWidth, int32_t windowHeight,
                                 std::vector<int32_t>& positionFills) {
-    const auto widgetW{ windowWidth/5 };
-    const auto widgetH{ windowHeight/6 };
-    const auto sideWidgetH{ windowHeight/2 };
+    const auto widgetW{ windowWidth / 5 };
+    const auto widgetH{ windowHeight / 6 };
+    const auto sideWidgetH{ windowHeight / 2 };
 
     // For positions that fit multiple widgets, set the appropriate viewport
     // and increment the number of widgets in that position

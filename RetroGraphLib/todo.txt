@@ -1,8 +1,4 @@
-Refactor each widget's constructor to take a retrograph and use updateObservers to set observer pointers
-
-Measure observer pointers in widgets aren't being updated when a measure is destroyed then created!
-
-Finish dependency map
+Enforce position restrictions on FPS/Graph/Main/CPUStats widgets
 
 fix the waiting on network connection thread when the network measure is destructed
 

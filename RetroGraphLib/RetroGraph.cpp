@@ -63,7 +63,8 @@ auto RetroGraph::createMeasures() -> decltype(m_measures) {
     measureList[MTypes::Net] = std::make_unique<NetMeasure>();
     measureList[MTypes::Process] = std::make_unique<ProcessMeasure>();
     measureList[MTypes::Drive] = std::make_unique<DriveMeasure>();
-    measureList[MTypes::Music] = std::make_unique<MusicMeasure>(getProcessMeasure());
+    measureList[MTypes::Music] = std::make_unique<MusicMeasure>(
+        dynamic_cast<const ProcessMeasure&>(*measureList[MTypes::Process]));
     measureList[MTypes::System] = std::make_unique<SystemMeasure>();
     measureList[MTypes::AnimationState] = std::make_unique<AnimationState>();
 
@@ -123,7 +124,7 @@ void RetroGraph::checkDependencies() {
     // Check dependent measures, if theres a measure that isn't being used by any
     // Widget, we can disable it. If a disabled measure needs to be used by a widget,
     // re-enable it
-    for (const auto&[measure, widgets] : m_dependencyMap) {
+    for (const auto& [measure, widgets] : m_dependencyMap) {
 
         bool allDependentWidgetsDisabled{ true };
         for (const auto& w : widgets) {

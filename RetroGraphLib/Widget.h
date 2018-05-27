@@ -15,7 +15,7 @@ enum class WidgetPosition : uint8_t {
     MID_RIGHT,
     BOT_LEFT,
     BOT_MID,
-    BOT_RIGHT
+    BOT_RIGHT,
 };
 
 enum Widgets : size_t { // Must be consecutive integers!

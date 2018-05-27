@@ -12,8 +12,9 @@
 
 namespace rg {
 
-const std::string iniPath{ ((IsDebuggerPresent()) ? "resources\\config.ini" :
-                            "..\\RetroGraph\\resources\\config.ini") };
+const std::string iniPath{ ((IsDebuggerPresent()) ? 
+                            "resources\\config.ini" :
+                            R"(..\RetroGraph\resources\config.ini)") };
 
 UserSettings::UserSettings() {
     namespace po = boost::program_options;
@@ -81,6 +82,8 @@ UserSettings::UserSettings() {
                 propTree.get<bool>("Widgets-Drives.Visible");
             m_widgetVisibilities[Widgets::Graph] =
                 propTree.get<bool>("Widgets-Graphs.Visible");
+            m_widgetVisibilities[Widgets::FPS] =
+                propTree.get<bool>("Widgets-FPS.Visible");
 
             m_widgetPositions[Widgets::ProcessCPU] =
                     m_posMap.at(propTree.get<std::string>(
@@ -109,14 +112,20 @@ UserSettings::UserSettings() {
             m_widgetPositions[Widgets::Graph] = 
                     m_posMap.at(propTree.get<std::string>(
                                     "Widgets-Graphs.Position"));
+            m_widgetPositions[Widgets::FPS] = 
+                    m_posMap.at(propTree.get<std::string>(
+                                    "Widgets-FPS.Position"));
         }
 
     } catch (const pt::ptree_bad_path& e) {
+        std::string errorMsg{ "Config file path error: " };
+        errorMsg.append(e.what());
+        fatalMessageBox(errorMsg);
+    } catch (const pt::ini_parser_error& e) {
         std::string errorMsg{ "Config file parsing error: " };
         errorMsg.append(e.what());
         fatalMessageBox(errorMsg);
-    } catch (const pt::ini_parser_error&) {
-        generateDefaultFile(propTree);
+        // generateDefaultFile(propTree);
     }
 }
 
@@ -198,6 +207,7 @@ void UserSettings::generateDefaultFile(boost::property_tree::ptree& propTree) {
     propTree.put("Widgets-Main.Visible",         isVisible(Widgets::Main));
     propTree.put("Widgets-Drives.Visible",       isVisible(Widgets::HDD));
     propTree.put("Widgets-Graphs.Visible",       isVisible(Widgets::Graph));
+    propTree.put("Widgets-FPS.Visible",          isVisible(Widgets::FPS));
 
     // Widget Positions
     propTree.put("Widgets-Time.Position",         "top-left");
@@ -209,6 +219,7 @@ void UserSettings::generateDefaultFile(boost::property_tree::ptree& propTree) {
     propTree.put("Widgets-Main.Position",         "middle-middle");
     propTree.put("Widgets-Drives.Position",       "top-right");
     propTree.put("Widgets-Graphs.Position",       "middle-left");
+    propTree.put("Widgets-FPS.Position",          "top-left");
 
     m_widgetPositions[Widgets::ProcessCPU] = 
         m_posMap.at(propTree.get<std::string>("Widgets-ProcessesCPU.Position"));
@@ -228,6 +239,8 @@ void UserSettings::generateDefaultFile(boost::property_tree::ptree& propTree) {
         m_posMap.at(propTree.get<std::string>("Widgets-Main.Position"));
     m_widgetPositions[Widgets::Graph] = 
         m_posMap.at(propTree.get<std::string>("Widgets-Graphs.Position"));
+    m_widgetPositions[Widgets::FPS] = 
+        m_posMap.at(propTree.get<std::string>("Widgets-FPS.Position"));
 
     boost::property_tree::ini_parser::write_ini(iniPath, propTree);
 }
