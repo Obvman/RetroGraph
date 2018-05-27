@@ -35,6 +35,7 @@ typedef struct _SYSTEM_PROCESS_INFO {
 } SYSTEM_PROCESS_INFO, *PSYSTEM_PROCESS_INFO;
 
 ProcessMeasure::ProcessMeasure() :
+    Measure{ 2U, 10U, 5U },
     m_numCPUProcessesToDisplay{ std::get<uint32_t>(
                                 UserSettings::inst().getVal(
                                     "Widgets-ProcessesCPU.NumProcessesDisplayed")
@@ -63,11 +64,11 @@ ProcessMeasure::ProcessMeasure() :
 
 void ProcessMeasure::update(uint32_t ticks) {
     // Update the process list vector every 10 seconds
-    if ((ticks % (ticksPerSecond * 10)) == 0) {
+    if (ticksMatchSeconds(ticks, m_updateRates[1])) {
         detectNewProcesses();
     }
 
-    if ((ticks % (ticksPerSecond * 2)) == 0) {
+    if (shouldUpdate(ticks)) {
         // Track iterator outside while scope for std::erase
         auto it{ m_allProcessData.begin() };
         while (it != m_allProcessData.end()) {
@@ -114,7 +115,7 @@ void ProcessMeasure::update(uint32_t ticks) {
         fillCPUData();
     }
 
-    if ((ticks % (ticksPerSecond * 5)) == 0) {
+    if (ticksMatchSeconds(ticks, m_updateRates[2])) {
         fillRAMData();
     }
 }
@@ -132,6 +133,10 @@ int32_t ProcessMeasure::getPIDFromName(const std::string& name) const {
     } else {
         return -1;
     }
+}
+
+bool ProcessMeasure::shouldUpdate(uint32_t ticks) const {
+    return ticksMatchSeconds(ticks, m_updateRates.front());
 }
 
 bool ProcessMeasure::setDebugPrivileges(HANDLE hToken, LPCTSTR privilege,

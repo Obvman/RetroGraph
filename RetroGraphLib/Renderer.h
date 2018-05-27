@@ -28,7 +28,7 @@ public:
     Renderer& operator=(Renderer&&) = delete;
 
     /* Draws scene to the window */
-    void draw(uint32_t ticks) const;
+    void draw(uint32_t ticks, const Window& window, uint32_t totalFPS) const;
 
     void updateWindowSize(int32_t newWidth, int32_t newHeight);
 

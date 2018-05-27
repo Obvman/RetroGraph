@@ -19,8 +19,8 @@ enum class WidgetPosition : uint8_t {
 };
 
 enum Widgets : size_t { // Must be consecutive integers!
-    ProcessRAM = 0U,
-    ProcessCPU = 1U,
+    ProcessCPU = 0U,
+    ProcessRAM = 1U,
     Time = 2U,
     SystemStats = 3U,
     Music = 4U,

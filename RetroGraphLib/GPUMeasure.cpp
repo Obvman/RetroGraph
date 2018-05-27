@@ -19,6 +19,7 @@ NvAPI_QueryInterface_t NvAPI_QueryInterface{ nullptr };
 NvAPI_GPU_GetUsages_t NvAPI_GPU_GetUsages{ nullptr };
 
 GPUMeasure::GPUMeasure() :
+        Measure{ 2U },
         dataSize{ std::get<uint32_t>(
                       UserSettings::inst().getVal("Widgets-Graphs-GPU.NumUsageSamples")
                   ) } {
@@ -66,9 +67,7 @@ GPUMeasure::~GPUMeasure() {
 }
 
 void GPUMeasure::update(uint32_t ticks) {
-    if (!m_isEnabled) return;
-
-    if (ticks % (ticksPerSecond / 2) == 0) {
+    if (shouldUpdate(ticks)) {
         //updateGpuTemp(); // High CPU usage function
         //getClockFrequencies(); // High CPU usage function
         //getMemInformation();
@@ -139,6 +138,10 @@ void GPUMeasure::getGpuUsage() {
         return;
     }
     m_gpuUsage = m_pStateInfo.utilization[NVAPI_GPU_UTILIZATION_DOMAIN_GPU].percentage;
+}
+
+bool GPUMeasure::shouldUpdate(uint32_t ticks) const {
+    return m_isEnabled && ticksMatchRate(ticks, m_updateRates.front());
 }
 
 }

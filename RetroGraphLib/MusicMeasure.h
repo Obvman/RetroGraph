@@ -46,6 +46,8 @@ public:
     uint32_t getElapsedTime() const { return m_elapsedTime; }
     uint32_t getTotalTime() const { return m_totalTime; }
 private:
+    bool shouldUpdate(uint32_t ticks) const override;
+
     /* Called for each window running in the operating system. Tries to find
      * the music player by matching against the window title. If found, 
      * sets the player class name member

@@ -40,6 +40,8 @@ public:
     bool isConnected() const;
     void setIsConnected(bool b);
 private:
+    bool shouldUpdate(uint32_t ticks) const override;
+
     void getDNSAndHostname();
     void getMACAndLocalIP();
 

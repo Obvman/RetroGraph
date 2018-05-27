@@ -45,6 +45,8 @@ public:
     const std::string& getComputerName() const { return m_computerName; }
 
 private:
+    bool shouldUpdate(uint32_t /*ticks*/) const override { return false; }
+
     /* Sets the contents of m_osInfoStr. Only needs to be called once */
     void getOSVersionInfo();
     /* Queries OpenGL for GPU description and fills m_gpuDescription with

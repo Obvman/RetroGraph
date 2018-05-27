@@ -63,7 +63,7 @@ void mainLoop(rg::RetroGraph& retroGraph) {
         }
 
         // Reset the millisecond counter every tick, and roll over to next tick
-        if (dt > rg::tickDuration) {
+        if (dt >= rg::tickDuration) {
             frameStartTime = currTime;
             ++ticks;
         }

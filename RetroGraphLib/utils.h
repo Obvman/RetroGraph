@@ -6,6 +6,8 @@
 #include <string>
 #include <Windows.h>
 
+#include "units.h"
+
 namespace rg {
 
 
@@ -33,7 +35,21 @@ ULARGE_INTEGER ftToULI(const FILETIME& ft);
 uint64_t subtractTimes(const FILETIME& ftA, const FILETIME& ftB);
 
 /* Linear interpolation */
-constexpr float lerp(float x1, float x2, float t);
+constexpr inline float lerp(float x1, float x2, float t) {
+    return (1 - t) * x1 + t * x2;
+}
+
+/* Checks if the current tick is in line with the frequency given
+   Use this if you want to perform an action [hz] times per second */
+constexpr inline bool ticksMatchRate(uint32_t ticks, uint32_t hz) {
+    return (ticks % static_cast<uint32_t>(static_cast<float>(rg::ticksPerSecond)/hz + 0.5)) == 0;
+}
+
+/* Checks if the current tick is in line with the number of seconds given
+   Use this if you want to perform an action every [s] seconds */
+constexpr inline bool ticksMatchSeconds(uint32_t ticks, uint32_t s) {
+    return (ticks % (rg::ticksPerSecond * s)) == 0;
+}
 
 /* Prints how long the given function f took to execute */
 template<typename F>

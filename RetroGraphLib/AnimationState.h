@@ -62,15 +62,15 @@ public:
     /* Draws each particle */
     void drawParticles() const;
 
-    uint32_t getAnimationFPS() const { return m_animationFPS; };
+    uint32_t getAnimationFPS() const { return m_updateRates.front(); };
 private:
+    bool shouldUpdate(uint32_t ticks) const override;
 
     /* Draws the connecting line between particles that are close together */
     void drawParticleConnection(const Particle* p1,
                                 const Particle* p2) const;
 
     std::vector<Particle> m_particles{ };
-    uint32_t m_animationFPS{ 20U };
 
     // Members for spatial partitioning
     // The world space coordinates range from -1.0 to 1.0 for both x and y,

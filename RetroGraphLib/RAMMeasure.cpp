@@ -8,11 +8,13 @@
 // #include <GL/freeglut.h>
 
 #include "colors.h"
+#include "utils.h"
 #include "UserSettings.h"
 
 namespace rg {
 
 RAMMeasure::RAMMeasure() :
+    Measure{ 2 },
     dataSize{ std::get<uint32_t>(
                   UserSettings::inst().getVal("Widgets-Graphs-RAM.NumUsageSamples")
               ) } {
@@ -25,7 +27,7 @@ RAMMeasure::RAMMeasure() :
 }
 
 void RAMMeasure::update(uint32_t ticks) {
-    if ((ticks % (ticksPerSecond / 2)) == 0) {
+    if (shouldUpdate(ticks)) {
         GlobalMemoryStatusEx(&m_memStatus);
 
         // Add value to the list of load values and shift the list left
@@ -35,9 +37,15 @@ void RAMMeasure::update(uint32_t ticks) {
     }
 }
 
+bool RAMMeasure::shouldUpdate(uint32_t ticks) const {
+    return ticksMatchRate(ticks, m_updateRates.front());
+}
+
 float RAMMeasure::getLoadPercentagef() const {
     return (static_cast<float>(getUsedPhysicalB()) /
             static_cast<float>(getTotalPhysicalB()));
 }
+
+
 
 }

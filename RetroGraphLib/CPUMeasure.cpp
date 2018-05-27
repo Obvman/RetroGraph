@@ -22,12 +22,13 @@ unsigned long long FileTimeToInt64(const FILETIME & ft) {
 }
 
 CPUMeasure::CPUMeasure() :
+    Measure{ 2 },
     dataSize{ std::get<uint32_t>(
                   UserSettings::inst().getVal("Widgets-Graphs-CPU.NumUsageSamples")
               ) } {
 
     // Fill CPU name if CoreTemp interfacing was successful
-    if (m_cpuName.size() == 0 && m_coreTempPlugin.getCoreTempInfoSuccess()) {
+    if (m_cpuName.empty() && m_coreTempPlugin.getCoreTempInfoSuccess()) {
         m_cpuName = "CPU: ";
         m_cpuName.append(m_coreTempPlugin.getCPUName());
     }
@@ -44,7 +45,7 @@ CPUMeasure::CPUMeasure() :
 }
 
 void CPUMeasure::update(uint32_t ticks) {
-    if (ticks % (ticksPerSecond / 2) == 0) {
+    if (shouldUpdate(ticks)) {
         m_coreTempPlugin.update();
 
         /* If the coretemp program was started in the last frame, reset usage
@@ -57,7 +58,7 @@ void CPUMeasure::update(uint32_t ticks) {
 
         // Fill CPU name if CoreTemp interfacing was successful 
         // TODO code duplication
-        if (m_cpuName.size() == 0 && m_coreTempPlugin.getCoreTempInfoSuccess()) {
+        if (m_cpuName.empty() && m_coreTempPlugin.getCoreTempInfoSuccess()) {
             m_cpuName = "CPU: ";
             m_cpuName.append(m_coreTempPlugin.getCPUName());
         }
@@ -105,6 +106,10 @@ std::string CPUMeasure::getUptimeStr() const {
     }
 
     return std::string{ buff };
+}
+
+bool CPUMeasure::shouldUpdate(uint32_t ticks) const {
+    return ticksMatchRate(ticks, m_updateRates.front());
 }
 
 float CPUMeasure::calculateCPULoad(uint64_t idleTicks, uint64_t totalTicks) {

@@ -90,20 +90,7 @@ void RetroGraph::draw(uint32_t ticks) const {
     const auto framesPerSecond = uint32_t{ (m_widgetVisibilities[Widgets::Main]) ? 
        getAnimationState().getAnimationFPS() : 2U };
 
-    if ((ticks % std::lround(
-        static_cast<float>(rg::ticksPerSecond)/framesPerSecond)) == 0) {
-
-        HDC hdc = GetDC(m_window.getHwnd());
-        wglMakeCurrent(hdc, m_window.getHGLRC());
-
-        m_renderer->draw(ticks);
-
-        SwapBuffers(hdc);
-        ReleaseDC(m_window.getHwnd(), hdc);
-
-        FPSLimiter::inst().end();
-        FPSLimiter::inst().begin();
-    }
+    m_renderer->draw(ticks, m_window, framesPerSecond);
 }
 
 void RetroGraph::updateWindowSize(int32_t width, int32_t height) {

@@ -62,9 +62,4 @@ uint64_t subtractTimes(const FILETIME& ftA, const FILETIME& ftB) {
      return a.QuadPart - b.QuadPart;
 }
 
-
-constexpr float lerp(float x1, float x2, float t) {
-    return (1 - t) * x1 + t * x2;
-}
-
 }

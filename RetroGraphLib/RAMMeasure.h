@@ -77,6 +77,8 @@ public:
     const std::vector<float> getUsageData() const { return m_usageData; }
 
 private:
+    bool shouldUpdate(uint32_t ticks) const override;
+
     /* Returns more accurate load percentage as a float from 0.0 - 1.0 */
     float getLoadPercentagef() const;
 

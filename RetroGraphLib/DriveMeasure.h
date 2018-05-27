@@ -73,6 +73,8 @@ public:
     }
 
 private:
+    bool shouldUpdate(uint32_t ticks) const override;
+
     std::vector<std::string> m_drivePaths{ };
     std::vector<std::unique_ptr<DriveInfo>> m_drives{ };
 };

@@ -45,6 +45,8 @@ public:
         return m_procRAMListData;
     }
 private:
+    bool shouldUpdate(uint32_t ticks) const override;
+
     /* Sets the debug privileges of the programs to allow reading of system
      * processes */
     bool setDebugPrivileges(HANDLE hToken, LPCTSTR Privilege,

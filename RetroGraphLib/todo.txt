@@ -2,13 +2,9 @@ Enforce position restrictions on FPS/Graph/Main/CPUStats widgets
 
 fix the waiting on network connection thread when the network measure is destructed
 
-turning off fps counter, selecting corner
-
 implement 30 min work/rest timer
 
 use gl lists to draw things like graph grids
-
-BUG: having lower tick lengths causes updates in  most widgets to occur every 2-3 sec instead of .5 sec
 
 high-performance mode - switch between low and high FPS for main widget, graphs
 

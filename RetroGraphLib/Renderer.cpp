@@ -43,11 +43,11 @@ auto Renderer::createWidgets(const RetroGraph& _rg) -> decltype(m_widgets) {
 
     const auto& s{ UserSettings::inst() };
 
-    widgetList[Widgets::ProcessRAM] = std::make_unique<ProcessRAMWidget>(
-        &m_fontManager, _rg, s.isVisible(Widgets::ProcessRAM)
-    );
     widgetList[Widgets::ProcessCPU] = std::make_unique<ProcessCPUWidget>(
         &m_fontManager, _rg, s.isVisible(Widgets::ProcessCPU)
+    );
+    widgetList[Widgets::ProcessRAM] = std::make_unique<ProcessRAMWidget>(
+        &m_fontManager, _rg, s.isVisible(Widgets::ProcessRAM)
     );
     widgetList[Widgets::Time] = std::make_unique<TimeWidget>(
         &m_fontManager, _rg, s.isVisible(Widgets::Time)
@@ -77,26 +77,38 @@ auto Renderer::createWidgets(const RetroGraph& _rg) -> decltype(m_widgets) {
     return widgetList;
 }
 
-void Renderer::draw(uint32_t ticks) const {
+void Renderer::draw(uint32_t ticks, const Window& window, uint32_t totalFPS) const {
     const auto& mainWidget{ dynamic_cast<MainWidget&>(*m_widgets[Widgets::Main]) };
 
     // Render the bulk of widgets at a low FPS to keep light on resources
-    constexpr auto framesPerSecond = uint32_t{ 2U };
-    if ((ticks % std::lround(
-        static_cast<float>(rg::ticksPerSecond)/framesPerSecond)) == 0) {
+    if (ticksMatchRate(ticks, 2U) || ticksMatchRate(ticks, totalFPS)) {
+
+        HDC hdc = GetDC(window.getHwnd());
+        wglMakeCurrent(hdc, window.getHGLRC());
 
         glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
 
-        for (const auto& widget : m_widgets) {
-            if (widget.get() != &mainWidget)
-                widget->draw();
+        if (ticksMatchRate(ticks, 2U)) {
+            for (const auto& widget : m_widgets) {
+                if (widget.get() != &mainWidget)
+                    widget->draw();
+            }
         }
+
+        // The main widget can have a higher framerate, so call every tick
+        if (ticksMatchRate(ticks, totalFPS)) {
+            if (mainWidget.needsDraw(ticks)) {
+                mainWidget.draw();
+            }
+        }
+
+        SwapBuffers(hdc);
+        ReleaseDC(window.getHwnd(), hdc);
+
+        FPSLimiter::inst().end();
+        FPSLimiter::inst().begin();
     }
 
-    // The main widget can have a higher framerate, so call every tick
-    if (mainWidget.needsDraw(ticks)) {
-        mainWidget.draw();
-    }
 }
 
 void Renderer::updateWindowSize(int32_t newWidth, int32_t newHeight) {
@@ -132,16 +144,17 @@ void Renderer::setViewports(int32_t windowWidth, int32_t windowHeight) {
 
     for (auto i = size_t{ 0U }; i < Widgets::NumWidgets; ++i) {
         const Widgets w{ static_cast<Widgets>(i) };
-        m_widgets[w]->setViewport(
-            calcViewport(s.getWidgetPosition(w),
-                         windowWidth, windowHeight, positionFills)
-        );
+        if (w == Widgets::FPS) {
+            m_widgets[Widgets::FPS]->setViewport(calcFPSViewport(
+                s.getWidgetPosition(Widgets::FPS), windowWidth, windowHeight
+            ));
+        } else {
+            m_widgets[w]->setViewport(
+                calcViewport(s.getWidgetPosition(w),
+                             windowWidth, windowHeight, positionFills)
+            );
+        }
     }
-    // TODO allow selection of corner to place this
-    m_widgets[Widgets::FPS]->setViewport(calcFPSViewport(
-        s.getWidgetPosition(Widgets::FPS), windowWidth, windowHeight
-    ));
-
 
     if (positionFills[0] > 2) {
         fatalMessageBox("You put too many widgets in the top-middle area!");

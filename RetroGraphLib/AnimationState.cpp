@@ -30,11 +30,11 @@ constexpr float particleMaxPos{ 0.998f };
 constexpr float particleMinSpeed{ 0.01f };
 constexpr float particleMaxSpeed{ 0.1f };
 
-AnimationState::AnimationState() : 
+AnimationState::AnimationState() :
+        Measure{ std::get<uint32_t>(
+                    UserSettings::inst().getVal("Widgets-Main.FPS")
+        ) },
         m_particles{ },
-        m_animationFPS{ std::get<uint32_t>(
-                            UserSettings::inst().getVal("Widgets-Main.FPS")
-                        ) },
         m_circleList{ glGenLists(1) } {
 
     // Generate particles and populate the cell particle observer lists.
@@ -119,6 +119,10 @@ void AnimationState::drawParticles() const {
     }
 }
 
+bool AnimationState::shouldUpdate(uint32_t ticks) const {
+    return ticksMatchRate(ticks, m_updateRates.front());
+}
+
 void AnimationState::drawParticleConnection(const Particle* const p1,
                                             const Particle* const p2) const {
     if (p1 == p2) return;
@@ -141,7 +145,7 @@ void AnimationState::drawParticleConnection(const Particle* const p1,
 }
 
 void AnimationState::update(uint32_t ticks) {
-    if (ticks % (ticksPerSecond / m_animationFPS) == 0) {
+    if (shouldUpdate(ticks)) {
         using namespace std::chrono;
         using clock = std::chrono::high_resolution_clock;
         static auto time_start = clock::now();

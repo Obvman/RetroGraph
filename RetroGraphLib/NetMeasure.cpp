@@ -30,6 +30,7 @@
 namespace rg {
 
 NetMeasure::NetMeasure() :
+    Measure{ 2U, 30U },
     m_pingServer{ std::get<std::string>(UserSettings::inst().getVal("Network.PingServer")) },
     m_pingFreqMs{ std::get<uint32_t>(UserSettings::inst().getVal("Network.PingFrequency")) },
     dataSize{ std::get<uint32_t>(
@@ -176,10 +177,10 @@ void NetMeasure::getDNSAndHostname() {
 }
 
 void NetMeasure::update(uint32_t ticks) {
-    if ((ticks % (ticksPerSecond / 2)) == 0) {
+    if (shouldUpdate(ticks)) {
         // Check if the best network interface has changed and update to the new
         // one if so.
-        if ((ticks % (ticksPerSecond * 30)) == 0) {
+        if (ticksMatchSeconds(ticks, m_updateRates[1])) {
             DWORD bestIfaceIndex;
             if (GetBestInterface(INADDR_ANY, &bestIfaceIndex) != NO_ERROR) {
                 fatalMessageBox("Failed to get best interface");
@@ -215,6 +216,10 @@ bool NetMeasure::isConnected() const {
 
 void NetMeasure::setIsConnected(bool b) {
     m_isConnected.store(b);
+}
+
+bool NetMeasure::shouldUpdate(uint32_t ticks) const {
+    return ticksMatchRate(ticks, m_updateRates.front());
 }
 
 }

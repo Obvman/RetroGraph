@@ -8,11 +8,13 @@
 // #include <GL/gl.h>
 // #include <GL/freeglut.h>
 
+#include "utils.h"
 #include "colors.h"
 
 namespace rg {
 
-DriveMeasure::DriveMeasure() {
+DriveMeasure::DriveMeasure() : 
+        Measure{ 15, 60 * 20 } {
     // Enumerate all available logical drives and store the drive paths
     const auto driveMask{ GetLogicalDrives() };
     for (int8_t i{ 0U }; i < 26; ++i) {
@@ -50,7 +52,7 @@ DriveMeasure::DriveMeasure() {
 }
 
 void DriveMeasure::update(uint32_t ticks) {
-    if ((ticks % (ticksPerSecond * 15)) == 0) {
+    if (shouldUpdate(ticks)) {
         /* Refresh drive statistics. We won't consider drives being
          * added/removed since these are fixed drives and the program shouldn't
          * be running in those events
@@ -58,29 +60,24 @@ void DriveMeasure::update(uint32_t ticks) {
         for (const auto& pdi : m_drives) {
             char path[4] = { pdi->driveLetter, ':', '\\', '\0' };
 
-            // Only update drive capacity every 15 seconds
-            if ((ticks % (ticksPerSecond * 15)) == 0) {
+            ULARGE_INTEGER freeBytesAvailable;
+            ULARGE_INTEGER totalBytes;
+            ULARGE_INTEGER totalFreeBytes;
+            GetDiskFreeSpaceEx(path, &freeBytesAvailable,
+                               &totalBytes, &totalFreeBytes);
 
-                ULARGE_INTEGER freeBytesAvailable;
-                ULARGE_INTEGER totalBytes;
-                ULARGE_INTEGER totalFreeBytes;
-                GetDiskFreeSpaceEx(path, &freeBytesAvailable,
-                                   &totalBytes, &totalFreeBytes);
+            pdi->totalFreeBytes = totalFreeBytes.QuadPart;
 
-                pdi->totalFreeBytes = totalFreeBytes.QuadPart;
-
-                // Some rare cases allow a drive's max capacity to change
-                // (like unlocking a bitlocked drive)
-                if (totalBytes.QuadPart != pdi->totalBytes) {
-                    pdi->totalBytes = totalBytes.QuadPart;
-                    pdi->updateCapacityStr();
-                }
+            // Some rare cases allow a drive's max capacity to change
+            // (like unlocking a bitlocked drive)
+            if (totalBytes.QuadPart != pdi->totalBytes) {
+                pdi->totalBytes = totalBytes.QuadPart;
+                pdi->updateCapacityStr();
             }
-
         }
     }
     // Check for drive name updates every 20 minutes
-    if ((ticks % (ticksPerSecond * 60 * 20)) == 0) {
+    if (ticksMatchSeconds(ticks, m_updateRates[1])) {
         for (const auto& pdi : m_drives) {
             char path[4] = { pdi->driveLetter, ':', '\\', '\0' };
             char volumeNameBuff[maxVolumeNameSize];
@@ -92,6 +89,10 @@ void DriveMeasure::update(uint32_t ticks) {
             }
         }
     }
+}
+
+bool DriveMeasure::shouldUpdate(uint32_t ticks) const {
+    return ticksMatchSeconds(ticks, m_updateRates.front());
 }
 
 }

@@ -14,19 +14,20 @@
 namespace rg {
 
 MusicMeasure::MusicMeasure(const ProcessMeasure& procMeasure) :
+    Measure{ 1U, 5U },
     m_processMeasure{ &procMeasure } {
 
     update(0);
 }
 
 void MusicMeasure::update(uint32_t ticks) {
-    if ((ticks % (ticksPerSecond * 1)) == 0) {
+    if (shouldUpdate(ticks)) {
         const auto oldTitle{ m_playerWindowTitle };
 
         // Get the window class name for the player if it hasn't yet been set
         // Encode the this pointer into lParam so the proc can access members
-        if ((ticks % (ticksPerSecond * 5)) == 0 &&
-            (m_playerWindowClassName.size() == 0)) {
+        if (ticksMatchSeconds(ticks, m_updateRates[1]) &&
+            m_playerWindowClassName.empty()) {
             EnumWindows(MusicMeasure::EnumWindowsProc,
                         reinterpret_cast<LPARAM>(this));
         }
@@ -101,7 +102,7 @@ void MusicMeasure::scrapeInfoFromTitle() {
     tokens.pop_back();
 
     // Handle case where player is open but no song is playing
-    if (tokens.size() == 0) {
+    if (tokens.empty()) {
         m_isPlaying = false;
         m_trackName = "-";
         m_artist = "-";
@@ -136,6 +137,10 @@ void MusicMeasure::scrapeInfoFromTitle() {
     m_elapsedTime = std::stoi(elapsed);
     m_totalTime = std::stoi(total);
 
+}
+
+bool MusicMeasure::shouldUpdate(uint32_t ticks) const {
+    return ticksMatchSeconds(ticks, m_updateRates.front());
 }
 
 BOOL CALLBACK MusicMeasure::EnumWindowsProc(HWND hwnd, LPARAM lParam) {
