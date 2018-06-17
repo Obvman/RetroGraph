@@ -77,7 +77,7 @@ void MusicMeasure::scrapeInfoFromTitle() {
     title[m_playerWindowTitle.copy(title, sizeof(title), 0)] = '\0';
     const char* delim{ "|" };
     char* nextToken{ nullptr };
-    char* whitespace{ "\n \t" };
+    const char* whitespace{ "\n \t" };
 
     char* token{ strtok_s(title, delim, &nextToken) };
     // Split each section (deliminated by |) of the title into the token vector

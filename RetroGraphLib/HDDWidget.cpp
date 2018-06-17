@@ -31,10 +31,11 @@ void HDDWidget::draw() const {
 
     // Draw each drive status section
     const auto& drives{ m_driveMeasure->getDrives() };
-    for (auto i = size_t{ 0 }; i < drives.size(); ++i) {
-        glViewport(m_viewport.x + i * (m_viewport.width / drives.size()),
+    const auto driveSize{ static_cast<GLsizei>(drives.size()) };
+    for (int i = 0; i < driveSize; ++i) {
+        glViewport(m_viewport.x + i * (m_viewport.width / driveSize),
                    m_viewport.y, 
-                   m_viewport.width / drives.size(),
+                   m_viewport.width / driveSize,
                    m_viewport.height);
 
         // Draw the drive label on the bottom

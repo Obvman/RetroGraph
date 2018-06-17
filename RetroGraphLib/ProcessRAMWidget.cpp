@@ -45,7 +45,7 @@ void ProcessRAMWidget::draw() const {
         if (pair.second >= 1000) {
             snprintf(buff, sizeof(buff), "%.1fGB", pair.second / 1024.0f);
         } else {
-            snprintf(buff, sizeof(buff), "%dMB", pair.second);
+            snprintf(buff, sizeof(buff), "%zdMB", pair.second);
         }
         procRamUsages.emplace_back(buff);
     }

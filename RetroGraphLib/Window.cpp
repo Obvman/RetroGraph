@@ -45,7 +45,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
     // Get the Window pointer from the handle, and call the alternate WndProc
     // if it was found
-    Window* window = (Window*)GetWindowLong(hWnd, GWLP_USERDATA);
+    auto* window = reinterpret_cast<Window*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
     if (window) {
         return window->WndProc2(hWnd, msg, wParam, lParam);
     }
@@ -551,7 +551,7 @@ bool Window::createHGLRC() {
     }
 
     // Store a pointer to this Window object so we can reference members in WndProc
-    SetWindowLong(m_hWndMain, GWLP_USERDATA, (LONG)this);
+    SetWindowLongPtr(m_hWndMain, GWLP_USERDATA, (LONG_PTR)this);
 
     // Display window at the desktop layer on startup
     sendToBack();

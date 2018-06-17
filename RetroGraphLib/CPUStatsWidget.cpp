@@ -89,15 +89,15 @@ void CPUStatsWidget::drawCoreGraphs() const {
 
     glLineWidth(0.5f);
     glColor4f(GRAPHLINE_A, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
-    for (auto i = size_t{ 0U }; i < numCores; ++i) {
+    for (unsigned int i = 0U; i < numCores; ++i) {
         // Set the viewport for the current graph. The y position
         // of each graph changes as we draw more
-        const auto yOffset{ (numCores - 1) * m_coreGraphViewport.height/numCores - 
-            i*m_coreGraphViewport.height/numCores };
+        const auto yOffset{ static_cast<GLint>((numCores - 1) * m_coreGraphViewport.height/numCores - 
+            i*m_coreGraphViewport.height/numCores) };
         glViewport(m_coreGraphViewport.x, 
                    m_coreGraphViewport.y + yOffset,
                    3*m_coreGraphViewport.width/4,
-                   m_coreGraphViewport.height/numCores);
+                   m_coreGraphViewport.height / static_cast<int>(numCores));
 
         drawLineGraph(m_cpuMeasure->getPerCoreUsageData()[i]);
 
@@ -116,7 +116,7 @@ void CPUStatsWidget::drawCoreGraphs() const {
         glViewport(m_coreGraphViewport.x + 3*m_coreGraphViewport.width/4,
                    m_coreGraphViewport.y + yOffset,
                    m_coreGraphViewport.width/4,
-                   m_coreGraphViewport.height/numCores);
+                   m_coreGraphViewport.height/static_cast<GLsizei>(numCores));
         char tempBuff[6];
         snprintf(tempBuff, sizeof(tempBuff), "%.0fC", m_cpuMeasure->getTemp(i));
         m_fontManager->renderLine(RG_FONT_MUSIC_LARGE, tempBuff, 0, 0, 0, 0,

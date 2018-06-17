@@ -38,7 +38,7 @@ public:
     float getTemp(uint32_t coreNum) const { return m_ctData.fTemp[coreNum]; }
 
     /* Returns the current load of the given core as an integer from 0-100 */
-    uint32_t getLoad(uint32_t coreNum) const { return m_ctData.uiLoad[coreNum]; }
+    uint32_t getLoad(unsigned int coreNum) const { return m_ctData.uiLoad[coreNum]; }
 
     /* Returns the maximum allowable CPU temperature in degrees celsius */
     uint32_t getTjMax() const { return m_ctData.uiTjMax[0]; }

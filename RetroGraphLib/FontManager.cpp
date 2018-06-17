@@ -46,7 +46,7 @@ void FontManager::renderLine(GLfloat rasterX, GLfloat rasterY,
     glRasterPos2f(rasterX, rasterY);
 
     glListBase(m_fontBases[fontCode]);
-    glCallLists(textLen, GL_UNSIGNED_BYTE, text);
+    glCallLists(static_cast<GLsizei>(textLen), GL_UNSIGNED_BYTE, text);
 }
 
 void FontManager::renderLine(RGFONTCODE fontCode,
@@ -124,7 +124,7 @@ void FontManager::renderLine(RGFONTCODE fontCode,
         // Render in the specified font, preserving the previously selected font
         glPushAttrib(GL_LIST_BIT); {
             glListBase(m_fontBases[fontCode]);
-            glCallLists(truncTextLen, GL_UNSIGNED_BYTE, newText);
+            glCallLists(static_cast<GLsizei>(truncTextLen), GL_UNSIGNED_BYTE, newText);
         } glPopAttrib();
 
     } else {
@@ -134,7 +134,7 @@ void FontManager::renderLine(RGFONTCODE fontCode,
 
         glRasterPos2f(rasterX, rasterY);
         glListBase(m_fontBases[fontCode]);
-        glCallLists(textLen, GL_UNSIGNED_BYTE, text);
+        glCallLists(static_cast<GLsizei>(textLen), GL_UNSIGNED_BYTE, text);
 
     }
     glViewport(vp[0], vp[1], vp[2], vp[3]);
@@ -189,10 +189,10 @@ void FontManager::renderLines(RGFONTCODE fontCode,
         // Draw the string
         glRasterPos2f(rasterX, rasterY);
         glListBase(m_fontBases[fontCode]);
-        glCallLists(str.size(), GL_UNSIGNED_BYTE, str.c_str());
+        glCallLists(static_cast<GLsizei>(str.size()), GL_UNSIGNED_BYTE, str.c_str());
 
         // Set the raster position to the next line
-        rasterYPx -= rasterLineDeltaY;
+        rasterYPx -= static_cast<decltype(rasterYPx)>(rasterLineDeltaY);
     }
 
     glViewport(vp[0], vp[1], vp[2], vp[3]);

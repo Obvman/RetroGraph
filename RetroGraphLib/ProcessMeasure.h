@@ -31,7 +31,7 @@ public:
        Stops tracking any processes that have exited */
     void update(uint32_t ticks) override;
 
-    uint32_t getNumProcessesRunning() const { return m_allProcessData.size(); }
+    size_t getNumProcessesRunning() const { return m_allProcessData.size(); }
 
     int32_t getPIDFromName(const std::string& name) const;
 

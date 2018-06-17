@@ -69,7 +69,7 @@ void CPUMeasure::update(uint32_t) {
     std::rotate(m_usageData.begin(), m_usageData.begin() + 1,
                 m_usageData.end());
 
-    for (auto i = size_t{ 0U }; i < m_perCoreData.size(); ++i) {
+    for (unsigned int i = 0U; i < m_perCoreData.size(); ++i) {
         const auto coreUsage = float{ m_coreTempPlugin.getLoad(i) / 100.0f };
         m_perCoreData[i][0] = coreUsage;
         std::rotate(m_perCoreData[i].begin(),

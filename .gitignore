@@ -2,6 +2,8 @@
 .vs/
 Debug/
 Release/
+Debugx64/
+Releasex64/
 *.opendb
 *.db
 *.sln

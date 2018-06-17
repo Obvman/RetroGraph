@@ -23,6 +23,7 @@ public:
 
     /* Gets the process ID */
     DWORD getPID() const { return m_processID; }
+
     /* Gets string of the processes executable name without the full path */
     const std::string& getName() const { return m_procName; }
 

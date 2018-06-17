@@ -253,7 +253,7 @@ void Renderer::initVBOs() {
         gIndices.reserve(2 * (numVertLines + numHorizLines) );
 
         // Fill the vertex and index arrays with data for drawing grid as VBO
-        for (auto i = size_t{ 0U }; i < numVertLines; ++i) {
+        for (unsigned int i = 0U; i < numVertLines; ++i) {
             const float x{ (i)/static_cast<float>(numVertLines-1) * 2.0f - 1.0f };
             gVerts.push_back(x);
             gVerts.push_back(1.0f); // Vertical line top vert
@@ -266,8 +266,8 @@ void Renderer::initVBOs() {
         }
 
         // Offset value for the index array
-        const auto vertLineIndexCount{ gIndices.size() };
-        for (auto i = size_t{ 0U }; i < numHorizLines; ++i) {
+        const auto vertLineIndexCount{ static_cast<unsigned int>(gIndices.size()) };
+        for (unsigned int i = 0U; i < numHorizLines; ++i) {
             const float y{ static_cast<float>(i)/(numHorizLines-1) * 2.0f - 1.0f };
             gVerts.push_back(-1.0f);
             gVerts.push_back(y); // Horizontal line bottom vert
@@ -278,7 +278,7 @@ void Renderer::initVBOs() {
             gIndices.push_back(vertLineIndexCount + 2*i);
             gIndices.push_back(vertLineIndexCount + 2*i+1);
         }
-        graphIndicesSize = gIndices.size();
+        graphIndicesSize = vertLineIndexCount;
 
         // Initialise the graph grid VBO
         glGenBuffers(1, &graphGridVertsID);

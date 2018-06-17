@@ -266,10 +266,10 @@ void ProcessMeasure::populateList() {
           spi = reinterpret_cast<PSYSTEM_PROCESS_INFO>(reinterpret_cast<LPBYTE>(spi) 
                                                        + spi->NextEntryOffset)) {
 
-        const auto procID{ reinterpret_cast<DWORD>(spi->ProcessId) };
+        const auto procID{ reinterpret_cast<LONGLONG>(spi->ProcessId) };
 
         const auto pHandle{ OpenProcess(PROCESS_QUERY_INFORMATION |
-                                        PROCESS_VM_READ, false, procID) };
+                                        PROCESS_VM_READ, false, static_cast<DWORD>(procID)) };
         if (!pHandle) {
             const auto error{ GetLastError() };
             // If access is denied or the process is the system idle process,
@@ -287,7 +287,7 @@ void ProcessMeasure::populateList() {
                        spi->ImageName.Buffer, spi->ImageName.Length);
 
             m_allProcessData.emplace_back(
-                std::make_shared<ProcessData>(pHandle, procID, nameBuff)
+                std::make_shared<ProcessData>(pHandle, static_cast<DWORD>(procID), nameBuff)
             );
 
             delete[] nameBuff;
@@ -325,7 +325,7 @@ void ProcessMeasure::detectNewProcesses() {
           spi = reinterpret_cast<PSYSTEM_PROCESS_INFO>(
                     reinterpret_cast<LPBYTE>(spi) + spi->NextEntryOffset)) {
 
-        const auto procID{ reinterpret_cast<DWORD>(spi->ProcessId) };
+        const auto procID{ reinterpret_cast<LONGLONG>(spi->ProcessId) };
 
         const auto it{ std::find_if(m_allProcessData.cbegin(),
                                     m_allProcessData.cend(),
@@ -336,7 +336,7 @@ void ProcessMeasure::detectNewProcesses() {
         // If it doesn't exist, create a new ProcessData object in the list
         if (it == m_allProcessData.cend()) {
             auto pHandle{ OpenProcess(PROCESS_QUERY_INFORMATION |
-                                      PROCESS_VM_READ, false, procID) };
+                                      PROCESS_VM_READ, false, static_cast<DWORD>(procID)) };
             if (!pHandle) {
                 const auto error{ GetLastError() };
                 // If access is denied or the process is the system idle
@@ -354,14 +354,9 @@ void ProcessMeasure::detectNewProcesses() {
                 auto nameBuff{ new char[spi->ImageName.Length] };
                 wcstombs_s(&charsConverted, nameBuff, spi->ImageName.Length,
                            spi->ImageName.Buffer, spi->ImageName.Length);
-                if (pHandle == (HANDLE)0xdddddddd) {
-                    std::cout << nameBuff << ": " << procID << ": " 
-                              << pHandle << '\n';
-                }
-
 
                 m_allProcessData.emplace_back(
-                    std::make_shared<ProcessData>(pHandle, procID, nameBuff)
+                    std::make_shared<ProcessData>(pHandle, static_cast<DWORD>(procID), nameBuff)
                 );
 
                 delete[] nameBuff;

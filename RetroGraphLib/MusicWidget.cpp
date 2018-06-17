@@ -65,7 +65,7 @@ void MusicWidget::draw() const {
         glViewport(m_viewport.x, m_viewport.y,
                    m_viewport.width, m_viewport.height/4);
         m_fontManager->renderLine(-0.9f, 0.5f, RG_FONT_STANDARD, elapsedBuff, 
-                                  strlen(elapsedBuff));
+                                  static_cast<int>(strlen(elapsedBuff)));
         drawHorizontalProgressBar(0.3f, -0.9f, 0.9f,
                                   static_cast<float>(elapsed),
                                   static_cast<float>(total));
