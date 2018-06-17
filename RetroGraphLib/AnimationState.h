@@ -48,6 +48,8 @@ private:
 };
 
 class AnimationState : public Measure {
+    using CellParticleList = std::vector<const Particle*>;
+
 public:
     AnimationState();
     ~AnimationState();
@@ -75,9 +77,7 @@ private:
     // Members for spatial partitioning
     // The world space coordinates range from -1.0 to 1.0 for both x and y,
     // so we have a range of 2.0 for our world sides
-    std::array<
-        std::array<std::vector<const Particle*>, numCellsPerSide>, 
-        numCellsPerSide> m_cells;
+    std::array<std::array<CellParticleList, numCellsPerSide>, numCellsPerSide> m_cells;
 
     GLuint m_circleList;
 

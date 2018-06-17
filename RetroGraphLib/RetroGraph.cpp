@@ -9,6 +9,7 @@
 
 #include "CPUMeasure.h"
 #include "GPUMeasure.h"
+#include "D3GPUMeasure.h"
 #include "RAMMeasure.h"
 #include "NetMeasure.h"
 #include "ProcessMeasure.h"
@@ -16,6 +17,7 @@
 #include "MusicMeasure.h"
 #include "SystemMeasure.h"
 #include "AnimationState.h"
+#include "SystemInformationMeasure.h"
 
 namespace rg {
 
@@ -38,6 +40,8 @@ RetroGraph::RetroGraph(HINSTANCE hInstance) :
         { MTypes::GPU,     { Widgets::Graph } },
         { MTypes::RAM,     { Widgets::Graph } },
         { MTypes::Drive,   { Widgets::HDD } },
+        { MTypes::D3GPU,   {} },
+        { MTypes::SystemInformation, {} },
     } 
     {
 
@@ -52,6 +56,7 @@ RetroGraph::RetroGraph(HINSTANCE hInstance) :
 }
 
 RetroGraph::~RetroGraph() {
+
 }
 
 auto RetroGraph::createMeasures() -> decltype(m_measures) {
@@ -67,6 +72,8 @@ auto RetroGraph::createMeasures() -> decltype(m_measures) {
         dynamic_cast<const ProcessMeasure&>(*measureList[MTypes::Process]));
     measureList[MTypes::System] =         std::make_unique<SystemMeasure>();
     measureList[MTypes::AnimationState] = std::make_unique<AnimationState>();
+    measureList[MTypes::D3GPU] =          std::make_unique<D3GPUMeasure>();
+    measureList[MTypes::SystemInformation] = std::make_unique<SystemInformationMeasure>();
 
     return measureList;
 }
@@ -77,8 +84,8 @@ void RetroGraph::update(uint32_t ticks) {
     auto offset = uint32_t{ 0U };
     for (auto i = size_t{ 0U }; i < MTypes::NumMeasures; ++i) {
         const auto& measurePtr{ m_measures[i] };
-        if (measurePtr) {
-            measurePtr->update(ticks + ++offset);
+        if (measurePtr && measurePtr->shouldUpdate(ticks + ++offset)) {
+            measurePtr->update(ticks + offset);
         }
     }
 }
@@ -112,6 +119,9 @@ void RetroGraph::checkDependencies() {
     // Widget, we can disable it. If a disabled measure needs to be used by a widget,
     // re-enable it
     for (const auto& [measure, widgets] : m_dependencyMap) {
+        // TODO
+        if (widgets.empty()) 
+            continue;
 
         bool allDependentWidgetsDisabled{ true };
         for (const auto& w : widgets) {
@@ -157,6 +167,12 @@ void RetroGraph::checkDependencies() {
                 case MTypes::GPU:
                     measurePtr = std::make_unique<GPUMeasure>();
                     break;
+                case MTypes::D3GPU:
+                    measurePtr = std::make_unique<D3GPUMeasure>();
+                    break;
+                case MTypes::SystemInformation:
+                    measurePtr = std::make_unique<SystemInformationMeasure>();
+                    break;
                 default: // nothing
                     break;
             }
@@ -194,6 +210,13 @@ const SystemMeasure& RetroGraph::getSystemMeasure() const {
 }
 const AnimationState& RetroGraph::getAnimationState() const { 
     return dynamic_cast<const AnimationState&>(*m_measures[MTypes::AnimationState]);
+}
+const D3GPUMeasure& RetroGraph::getD3GPUMeasure() const { 
+    return dynamic_cast<const D3GPUMeasure&>(*m_measures[MTypes::D3GPU]);
+}
+
+const SystemInformationMeasure& RetroGraph::getSystemInformationMeasure() const { 
+    return dynamic_cast<const SystemInformationMeasure&>(*m_measures[MTypes::SystemInformation]);
 }
 
 

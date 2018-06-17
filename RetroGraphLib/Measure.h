@@ -15,6 +15,8 @@ enum Types : size_t {
     Music = 6U,
     System = 7U,
     AnimationState = 8U,
+    D3GPU = 9U,
+    SystemInformation = 10U,
 
     NumMeasures,
 };
@@ -26,7 +28,7 @@ using Seconds = uint32_t;
 class Measure {
 public:
     Measure() = default;
-    Measure(std::initializer_list<uint32_t> ur) : m_updateRates{ ur } {}
+    explicit Measure(std::initializer_list<uint32_t> ur) : m_updateRates{ ur } {}
     virtual ~Measure() = default;
     Measure(const Measure&) = delete;
     Measure& operator=(const Measure&) = delete;
@@ -35,11 +37,12 @@ public:
 
     virtual void update(uint32_t) = 0;
 
-protected:
     /* Must true if the Measure should update this frame */
     virtual bool shouldUpdate(uint32_t ticks) const = 0;
+protected:
 
     const std::vector<uint32_t> m_updateRates;
+
 private:
     /* Stores the update rate for each measure. If key.second is true, rate 
      * is measured in Hz, otherwise measured in seconds

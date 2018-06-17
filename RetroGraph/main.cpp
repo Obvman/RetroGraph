@@ -79,7 +79,7 @@ void mainLoop(rg::RetroGraph& retroGraph) {
         #endif
 
         // Lay off the CPU a little
-        Sleep(1);
+        Sleep(2);
     }
 }
 

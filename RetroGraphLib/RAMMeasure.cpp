@@ -26,15 +26,13 @@ RAMMeasure::RAMMeasure() :
     m_usageData.assign(dataSize, 0.0f);
 }
 
-void RAMMeasure::update(uint32_t ticks) {
-    if (shouldUpdate(ticks)) {
-        GlobalMemoryStatusEx(&m_memStatus);
+void RAMMeasure::update(uint32_t) {
+    GlobalMemoryStatusEx(&m_memStatus);
 
-        // Add value to the list of load values and shift the list left
-        m_usageData.front() = getLoadPercentagef();
-        std::rotate(m_usageData.begin(), m_usageData.begin() + 1,
-                    m_usageData.end());
-    }
+    // Add value to the list of load values and shift the list left
+    m_usageData.front() = getLoadPercentagef();
+    std::rotate(m_usageData.begin(), m_usageData.begin() + 1,
+                m_usageData.end());
 }
 
 bool RAMMeasure::shouldUpdate(uint32_t ticks) const {

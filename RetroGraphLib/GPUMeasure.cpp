@@ -66,17 +66,15 @@ GPUMeasure::~GPUMeasure() {
     NvAPI_Unload();
 }
 
-void GPUMeasure::update(uint32_t ticks) {
-    if (shouldUpdate(ticks)) {
-        //updateGpuTemp(); // High CPU usage function
-        //getClockFrequencies(); // High CPU usage function
-        //getMemInformation();
-        getGpuUsage();
+void GPUMeasure::update(uint32_t) {
+    //updateGpuTemp(); // High CPU usage function
+    //getClockFrequencies(); // High CPU usage function
+    //getMemInformation();
+    getGpuUsage();
 
-        m_usageData[0] = m_gpuUsage / 100.0f;
-        std::rotate(m_usageData.begin(), m_usageData.begin() + 1,
-                    m_usageData.end());
-    }
+    m_usageData[0] = m_gpuUsage / 100.0f;
+    std::rotate(m_usageData.begin(), m_usageData.begin() + 1,
+                m_usageData.end());
 }
 
 float GPUMeasure::getMemUsagePercent() const {

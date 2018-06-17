@@ -177,37 +177,35 @@ void NetMeasure::getDNSAndHostname() {
 }
 
 void NetMeasure::update(uint32_t ticks) {
-    if (shouldUpdate(ticks)) {
-        // Check if the best network interface has changed and update to the new
-        // one if so.
-        if (ticksMatchSeconds(ticks, m_updateRates[1])) {
-            DWORD bestIfaceIndex;
-            if (GetBestInterface(INADDR_ANY, &bestIfaceIndex) != NO_ERROR) {
-                fatalMessageBox("Failed to get best interface");
-            }
-
-            if (bestIfaceIndex != m_adapterEntry->InterfaceIndex) {
-                m_adapterEntry = &(m_table->Table[bestIfaceIndex]);
-            }
+    // Check if the best network interface has changed and update to the new
+    // one if so.
+    if (ticksMatchSeconds(ticks, m_updateRates[1])) {
+        DWORD bestIfaceIndex;
+        if (GetBestInterface(INADDR_ANY, &bestIfaceIndex) != NO_ERROR) {
+            fatalMessageBox("Failed to get best interface");
         }
 
-        const auto oldDown{ m_adapterEntry->InOctets };
-        const auto oldUp{ m_adapterEntry->OutOctets };
-
-        if (GetIfEntry2(m_adapterEntry) != NO_ERROR) {
-            fatalMessageBox("GetIfEntry2 failed");
+        if (bestIfaceIndex != m_adapterEntry->InterfaceIndex) {
+            m_adapterEntry = &(m_table->Table[bestIfaceIndex]);
         }
-
-        m_downBytes[0] = m_adapterEntry->InOctets - oldDown;
-        std::rotate(m_downBytes.begin(), m_downBytes.begin() + 1,
-                    m_downBytes.end());
-        m_downMaxVal = *std::max_element(m_downBytes.cbegin(),
-                                         m_downBytes.cend());
-
-        m_upBytes[0] = m_adapterEntry->OutOctets - oldUp;
-        std::rotate(m_upBytes.begin(), m_upBytes.begin() + 1, m_upBytes.end());
-        m_upMaxVal = *std::max_element(m_upBytes.cbegin(), m_upBytes.cend());
     }
+
+    const auto oldDown{ m_adapterEntry->InOctets };
+    const auto oldUp{ m_adapterEntry->OutOctets };
+
+    if (GetIfEntry2(m_adapterEntry) != NO_ERROR) {
+        fatalMessageBox("GetIfEntry2 failed");
+    }
+
+    m_downBytes[0] = m_adapterEntry->InOctets - oldDown;
+    std::rotate(m_downBytes.begin(), m_downBytes.begin() + 1,
+                m_downBytes.end());
+    m_downMaxVal = *std::max_element(m_downBytes.cbegin(),
+                                     m_downBytes.cend());
+
+    m_upBytes[0] = m_adapterEntry->OutOctets - oldUp;
+    std::rotate(m_upBytes.begin(), m_upBytes.begin() + 1, m_upBytes.end());
+    m_upMaxVal = *std::max_element(m_upBytes.cbegin(), m_upBytes.cend());
 }
 
 bool NetMeasure::isConnected() const {

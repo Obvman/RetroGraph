@@ -52,7 +52,7 @@ DriveMeasure::DriveMeasure() :
 }
 
 void DriveMeasure::update(uint32_t ticks) {
-    if (shouldUpdate(ticks)) {
+    if (ticksMatchSeconds(ticks, m_updateRates.front())) {
         /* Refresh drive statistics. We won't consider drives being
          * added/removed since these are fixed drives and the program shouldn't
          * be running in those events
@@ -91,8 +91,9 @@ void DriveMeasure::update(uint32_t ticks) {
     }
 }
 
-bool DriveMeasure::shouldUpdate(uint32_t ticks) const {
-    return ticksMatchSeconds(ticks, m_updateRates.front());
+bool DriveMeasure::shouldUpdate(uint32_t) const {
+    return true;
+    // return ticksMatchSeconds(ticks, m_updateRates.front());
 }
 
 }

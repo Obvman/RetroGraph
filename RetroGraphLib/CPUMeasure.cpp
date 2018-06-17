@@ -44,38 +44,36 @@ CPUMeasure::CPUMeasure() :
     }
 }
 
-void CPUMeasure::update(uint32_t ticks) {
-    if (shouldUpdate(ticks)) {
-        m_coreTempPlugin.update();
+void CPUMeasure::update(uint32_t) {
+    m_coreTempPlugin.update();
 
-        /* If the coretemp program was started in the last frame, reset usage
-         * vectors and resize them to the number of cores provided by coretemp
-         */
-        if (m_coreTempPlugin.coreTempWasStarted())
-            resetData();
+    /* If the coretemp program was started in the last frame, reset usage
+     * vectors and resize them to the number of cores provided by coretemp
+     */
+    if (m_coreTempPlugin.coreTempWasStarted())
+        resetData();
 
-        m_uptime = std::chrono::milliseconds(GetTickCount64());
+    m_uptime = std::chrono::milliseconds(GetTickCount64());
 
-        // Fill CPU name if CoreTemp interfacing was successful 
-        // TODO code duplication
-        if (m_cpuName.empty() && m_coreTempPlugin.getCoreTempInfoSuccess()) {
-            m_cpuName = "CPU: ";
-            m_cpuName.append(m_coreTempPlugin.getCPUName());
-        }
+    // Fill CPU name if CoreTemp interfacing was successful 
+    // TODO code duplication
+    if (m_cpuName.empty() && m_coreTempPlugin.getCoreTempInfoSuccess()) {
+        m_cpuName = "CPU: ";
+        m_cpuName.append(m_coreTempPlugin.getCPUName());
+    }
 
-        const auto totalLoad{ getCPULoad() };
-        // Add to the usageData vector by overwriting the oldest value and
-        // shifting the elements in the vector
-        m_usageData[0] = totalLoad;
-        std::rotate(m_usageData.begin(), m_usageData.begin() + 1,
-                    m_usageData.end());
+    const auto totalLoad{ getCPULoad() };
+    // Add to the usageData vector by overwriting the oldest value and
+    // shifting the elements in the vector
+    m_usageData[0] = totalLoad;
+    std::rotate(m_usageData.begin(), m_usageData.begin() + 1,
+                m_usageData.end());
 
-        for (auto i = size_t{ 0U }; i < m_perCoreData.size(); ++i) {
-            const auto coreUsage = float{ m_coreTempPlugin.getLoad(i) / 100.0f };
-            m_perCoreData[i][0] = coreUsage;
-            std::rotate(m_perCoreData[i].begin(),
-                        m_perCoreData[i].begin() + 1, m_perCoreData[i].end());
-        }
+    for (auto i = size_t{ 0U }; i < m_perCoreData.size(); ++i) {
+        const auto coreUsage = float{ m_coreTempPlugin.getLoad(i) / 100.0f };
+        m_perCoreData[i][0] = coreUsage;
+        std::rotate(m_perCoreData[i].begin(),
+                    m_perCoreData[i].begin() + 1, m_perCoreData[i].end());
     }
 }
 

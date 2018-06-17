@@ -21,30 +21,28 @@ MusicMeasure::MusicMeasure(const ProcessMeasure& procMeasure) :
 }
 
 void MusicMeasure::update(uint32_t ticks) {
-    if (shouldUpdate(ticks)) {
-        const auto oldTitle{ m_playerWindowTitle };
+    const auto oldTitle{ m_playerWindowTitle };
 
-        // Get the window class name for the player if it hasn't yet been set
-        // Encode the this pointer into lParam so the proc can access members
-        if (ticksMatchSeconds(ticks, m_updateRates[1]) &&
-            m_playerWindowClassName.empty()) {
-            EnumWindows(MusicMeasure::EnumWindowsProc,
-                        reinterpret_cast<LPARAM>(this));
-        }
+    // Get the window class name for the player if it hasn't yet been set
+    // Encode the this pointer into lParam so the proc can access members
+    if (ticksMatchSeconds(ticks, m_updateRates[1]) &&
+        m_playerWindowClassName.empty()) {
+        EnumWindows(MusicMeasure::EnumWindowsProc,
+                    reinterpret_cast<LPARAM>(this));
+    }
 
-        // Check if the player window is currently open by matching the class name
-        // We must validate existence of window every time before we scrape
-        // title information
-        m_playerHandle = FindWindow(m_playerWindowClassName.c_str(), nullptr);
-        if (!m_playerHandle) {
-            m_playerRunning = false;
-        } else {
-            m_playerRunning = true;
-            updateTitleString();
+    // Check if the player window is currently open by matching the class name
+    // We must validate existence of window every time before we scrape
+    // title information
+    m_playerHandle = FindWindow(m_playerWindowClassName.c_str(), nullptr);
+    if (!m_playerHandle) {
+        m_playerRunning = false;
+    } else {
+        m_playerRunning = true;
+        updateTitleString();
 
-            if (oldTitle != m_playerWindowTitle) {
-                scrapeInfoFromTitle();
-            }
+        if (oldTitle != m_playerWindowTitle) {
+            scrapeInfoFromTitle();
         }
     }
 }
@@ -125,11 +123,7 @@ void MusicMeasure::scrapeInfoFromTitle() {
         m_album = tokens[2];
     }
 
-    if (tokens[3] == "Playing") {
-        m_isPlaying = true;
-    } else {
-        m_isPlaying = false;
-    }
+    m_isPlaying = bool{ tokens[3] == "Playing" };
 
     auto& timeProgress{ tokens[4] };
     const char* elapsed = strtok_s(&timeProgress[0], ",", &nextToken);
@@ -147,13 +141,14 @@ BOOL CALLBACK MusicMeasure::EnumWindowsProc(HWND hwnd, LPARAM lParam) {
     auto This{ reinterpret_cast<MusicMeasure*>(lParam) };
 
     char title[256];
-    char windowClass[256];
-    GetClassName(hwnd, windowClass, sizeof(windowClass));
     GetWindowText(hwnd, title, sizeof(title));
 
     std::string windowTitle{ title };
     if (windowTitle.find(This->m_playerTitlePattern) != std::string::npos) {
+        char windowClass[256];
+        GetClassName(hwnd, windowClass, sizeof(windowClass));
         This->m_playerWindowClassName = std::string{ windowClass };
+
         This->m_playerHandle = hwnd;
         This->m_playerRunning = true;
         This->m_playerWindowTitle = windowTitle;

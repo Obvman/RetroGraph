@@ -18,21 +18,9 @@
 #include "ProcessData.h"
 #include "UserSettings.h"
 #include "utils.h"
+#include "NtDefs.h"
 
 namespace rg {
-
-typedef struct _SYSTEM_PROCESS_INFO {
-    ULONG                   NextEntryOffset;
-    ULONG                   NumberOfThreads;
-    LARGE_INTEGER           Reserved[3];
-    LARGE_INTEGER           CreateTime;
-    LARGE_INTEGER           UserTime;
-    LARGE_INTEGER           KernelTime;
-    UNICODE_STRING          ImageName;
-    ULONG                   BasePriority;
-    HANDLE                  ProcessId;
-    HANDLE                  InheritedFromProcessId;
-} SYSTEM_PROCESS_INFO, *PSYSTEM_PROCESS_INFO;
 
 ProcessMeasure::ProcessMeasure() :
     Measure{ 2U, 10U, 5U },
@@ -68,7 +56,7 @@ void ProcessMeasure::update(uint32_t ticks) {
         detectNewProcesses();
     }
 
-    if (shouldUpdate(ticks)) {
+    if (ticksMatchSeconds(ticks, m_updateRates.front())) {
         // Track iterator outside while scope for std::erase
         auto it{ m_allProcessData.begin() };
         while (it != m_allProcessData.end()) {
@@ -135,8 +123,9 @@ int32_t ProcessMeasure::getPIDFromName(const std::string& name) const {
     }
 }
 
-bool ProcessMeasure::shouldUpdate(uint32_t ticks) const {
-    return ticksMatchSeconds(ticks, m_updateRates.front());
+bool ProcessMeasure::shouldUpdate(uint32_t) const {
+    return true;
+    // return ticksMatchSeconds(ticks, m_updateRates.front());
 }
 
 bool ProcessMeasure::setDebugPrivileges(HANDLE hToken, LPCTSTR privilege,

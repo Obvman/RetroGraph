@@ -23,6 +23,8 @@ class DriveMeasure;
 class MusicMeasure;
 class SystemMeasure;
 class AnimationState;
+class D3GPUMeasure;
+class SystemInformationMeasure;
 
 
 class RetroGraph {
@@ -49,7 +51,9 @@ public:
     const DriveMeasure& getDriveMeasure() const;
     const MusicMeasure& getMusicMeasure() const;
     const SystemMeasure& getSystemMeasure() const;
+    const SystemInformationMeasure& getSystemInformationMeasure() const;
     const AnimationState& getAnimationState() const;
+    const D3GPUMeasure& getD3GPUMeasure() const;
 
     bool isRunning() const { return m_window.isRunning(); }
 

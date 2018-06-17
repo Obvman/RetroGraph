@@ -1,3 +1,8 @@
+move d3dkmt.h to external folder
+
+BIG HITCHES EVERY 5 SECONDS
+	Music measure EnumWindows() every 5 seconds if the classname for the fubar title hasn't been set
+
 Enforce position restrictions on FPS/Graph/Main/CPUStats widgets
 
 fix the waiting on network connection thread when the network measure is destructed

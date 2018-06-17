@@ -30,6 +30,13 @@ constexpr float particleMaxPos{ 0.998f };
 constexpr float particleMinSpeed{ 0.01f };
 constexpr float particleMaxSpeed{ 0.1f };
 
+// TODO Debug values
+//constexpr float particleMinSpeed{ 0.3f };
+//constexpr float particleMaxSpeed{ 0.6f };
+//constexpr float particleMinSize{ 0.012f };
+//constexpr float particleMaxSize{ 0.036f };
+
+
 AnimationState::AnimationState() :
         Measure{ std::get<uint32_t>(
                     UserSettings::inst().getVal("Widgets-Main.FPS")
@@ -90,14 +97,14 @@ void AnimationState::drawParticles() const {
 
         // We check four neighbouring cells since some collisions may 
         // occur across cell boundaries
-        const auto neighbouringCells = {
+        const std::array<const CellParticleList*, 4> neighbouringCells = {
             &(m_cells[p.cellX][nextY]),
             &(m_cells[nextX][p.cellY]),
             &(m_cells[nextX][prevY]),
             &(m_cells[nextX][nextY]),
         };
 
-        for (const auto cell : neighbouringCells) {
+        for (const auto* cell : neighbouringCells) {
             for (const auto neighbour : *cell) {
                 drawParticleConnection(&p, neighbour);
             }
@@ -144,26 +151,24 @@ void AnimationState::drawParticleConnection(const Particle* const p1,
     }
 }
 
-void AnimationState::update(uint32_t ticks) {
-    if (shouldUpdate(ticks)) {
-        using namespace std::chrono;
-        using clock = std::chrono::high_resolution_clock;
-        static auto time_start = clock::now();
+void AnimationState::update(uint32_t) {
+    using namespace std::chrono;
+    using clock = std::chrono::high_resolution_clock;
+    static auto time_start = clock::now();
 
-        auto time_end = clock::now();
-        const auto deltaTimeStep{ time_end - time_start };
-        time_start = clock::now();
-        auto dt{ duration_cast<duration<float>>(deltaTimeStep).count() };
+    auto time_end = clock::now();
+    const auto deltaTimeStep{ time_end - time_start };
+    time_start = clock::now();
+    auto dt{ duration_cast<duration<float>>(deltaTimeStep).count() };
 
-        // If a lot of time has passed, set dt to a small value so we don't have
-        // one large jump
-        if (dt > 1.0f) {
-            dt = 0.016f;
-        }
+    // If a lot of time has passed, set dt to a small value so we don't have
+    // one large jump
+    if (dt > 1.0f) {
+        dt = 0.016f;
+    }
 
-        for (auto& p : m_particles) {
-            p.update(*this, dt);
-        }
+    for (auto& p : m_particles) {
+        p.update(*this, dt);
     }
 }
 
@@ -184,43 +189,26 @@ Particle::Particle() :
     cellY{ static_cast<uint32_t>((y + 1.0f) / cellSize) } {
 }
 
+// TODO this is bugged, particles get stuck in the corners of the window
 void Particle::update(AnimationState& as, float dt) {
     x += speed * dirX * dt;
     y += speed * dirY * dt;
-
-    uint8_t timesTeleported{ 0U };
 
     // If we move off the screen, wrap the particle around to the other side
     if (x < particleMinPos) {
         x = particleMaxPos;
         y = -y;
-        ++timesTeleported;
     } else if (x > particleMaxPos) {
         x = particleMinPos;
         y = -y;
-        ++timesTeleported;
     } 
     if (y < particleMinPos) {
         x = -x;
         y = particleMaxPos;
-        ++timesTeleported;
     } else if (y > particleMaxPos) {
         x = -x;
         y = particleMinPos;
-        ++timesTeleported;
     }
-
-    // This occurs when the particle has moved from one corner to
-    // the opposite, and then it's moved back to the original corner,
-    // so the particle is forever stuck. We just shift it a little to
-    // keep it moving.
-    /*if (timesTeleported == 2) {
-        if (x > 0.0f) {
-            x -= 0.1f;
-        } else {
-            x += 0.1f;
-        }
-    }*/
 
     const uint32_t newCellX{ static_cast<uint32_t>((x + 1.0f) / cellSize) };
     const uint32_t newCellY{ static_cast<uint32_t>((y + 1.0f) / cellSize) };
@@ -232,7 +220,7 @@ void Particle::update(AnimationState& as, float dt) {
         cell.erase(std::remove(cell.begin(), cell.end(), this), cell.end());
 
         // add to new cell
-        as.m_cells[newCellX][newCellY].push_back(this); // still fukn bugged
+        as.m_cells[newCellX][newCellY].push_back(this);
 
         cellX = newCellX;
         cellY = newCellY;
