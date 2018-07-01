@@ -65,6 +65,8 @@ public:
     void drawParticles() const;
 
     uint32_t getAnimationFPS() const { return m_updateRates.front(); };
+
+    void setCircleList(GLuint circleList) { m_circleList = circleList; }
 private:
     bool shouldUpdate(uint32_t ticks) const override;
 

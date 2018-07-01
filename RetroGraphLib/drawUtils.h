@@ -14,6 +14,8 @@ typedef int GLint;
 
 namespace rg {
 
+constexpr auto circleLines = int32_t{ 10 };
+
 constexpr float serifLen{ 0.05f };
 
 /* Minimum distance from the edge of the screen to draw each object (in pixels) */

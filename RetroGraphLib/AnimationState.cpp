@@ -14,12 +14,12 @@
 
 #include "units.h"
 #include "utils.h"
+#include "drawUtils.h"
 #include "UserSettings.h"
 
 namespace rg {
 
 constexpr size_t numParticles{ 100U };
-constexpr auto circleLines = int32_t{ 10 };
 constexpr auto numVerticesPerCircle{ circleLines + 2 };
 constexpr auto numCoordsPerCircle{ numVerticesPerCircle * 2 };
 
@@ -41,8 +41,7 @@ AnimationState::AnimationState() :
         Measure{ std::get<uint32_t>(
                     UserSettings::inst().getVal("Widgets-Main.FPS")
         ) },
-        m_particles{ },
-        m_circleList{ glGenLists(1) } {
+        m_particles{ } {
 
     // Generate particles and populate the cell particle observer lists.
     std::srand(static_cast<uint32_t>(time(nullptr)));
@@ -52,24 +51,9 @@ AnimationState::AnimationState() :
     for (const auto& p : m_particles) {
         m_cells[p.cellX][p.cellY].push_back(&p);
     }
-
-    // Create a static circle used to draw each particle.
-    glNewList(m_circleList, GL_COMPILE);
-    glBegin(GL_TRIANGLE_FAN); {
-        glVertex2f(0.0f, 0.0f);
-        for (int i = 0; i < circleLines; ++i) {
-            const auto theta{ 2.0f * 3.1415926f * static_cast<float>(i) /
-                static_cast<float>(circleLines - 1) };
-            glVertex2f(cosf(theta), sinf(theta));
-        }
-    } glEnd();
-    glEndList();
-
-
 }
 
 AnimationState::~AnimationState() {
-    glDeleteLists(m_circleList, 1);
 }
 
 void AnimationState::drawParticles() const {

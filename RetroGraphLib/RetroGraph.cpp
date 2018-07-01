@@ -47,6 +47,8 @@ RetroGraph::RetroGraph(HINSTANCE hInstance) :
     } 
     {
 
+    dynamic_cast<AnimationState*>(m_measures[MTypes::AnimationState].get())->setCircleList(m_renderer->getCircleList());
+
     for (auto i = size_t{ 0U }; i < Widgets::NumWidgets; ++i) {
         m_widgetVisibilities[i] = UserSettings::inst().isVisible(static_cast<Widgets>(i));
     }
