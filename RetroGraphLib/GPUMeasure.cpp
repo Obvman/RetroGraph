@@ -18,9 +18,9 @@ using NvAPI_GPU_GetUsages_t = int (*)(NvPhysicalGpuHandle handle, NvU32* usages)
 NvAPI_QueryInterface_t NvAPI_QueryInterface{ nullptr };
 NvAPI_GPU_GetUsages_t NvAPI_GPU_GetUsages{ nullptr };
 
-GPUMeasure::GPUMeasure() :
-        Measure{ 2U },
-        dataSize{ std::get<uint32_t>(
+GPUMeasure::GPUMeasure()
+        : Measure{ 2U }
+        , dataSize{ std::get<uint32_t>(
                       UserSettings::inst().getVal("Widgets-Graphs-GPU.NumUsageSamples")
                   ) } {
 
@@ -49,6 +49,8 @@ GPUMeasure::GPUMeasure() :
     NvAPI_GPU_GetPhysicalFrameBufferSize(m_gpuHandle, &m_frameBufferSize);
     NvAPI_GPU_GetFullName(m_gpuHandle, gpuName);
     m_gpuName = gpuName;
+
+    m_gpuDescription = "GPU: NVIDIA" + m_gpuName + " (" + m_driverVersion + ")";
 
     // Initialise updating member structs
     m_thermalSettings.version = NV_GPU_THERMAL_SETTINGS_VER;

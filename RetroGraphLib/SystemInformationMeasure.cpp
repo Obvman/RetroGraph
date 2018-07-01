@@ -15,18 +15,18 @@ SystemInformationMeasure::SystemInformationMeasure() :
 }
 
 void SystemInformationMeasure::update(uint32_t) {
-    static LONGLONG prev;
+    //static LONGLONG prev;
 
-    SYSTEM_PERFORMANCE_INFORMATION spi;
-    NtQuerySystemInformation(SystemPerformanceInformation, &spi, sizeof(spi), nullptr);
+    //SYSTEM_PERFORMANCE_INFORMATION spi;
+    //NtQuerySystemInformation(SystemPerformanceInformation, &spi, sizeof(spi), nullptr);
 
-    auto curr = spi.IoWriteTransferCount.QuadPart;
-    auto delta = curr - prev;
-    std::cout << "prev: " << prev << '\n';
-    std::cout << "curr: " << curr << '\n';
-    std::cout << "delta: " << delta << '\n';
+    //auto curr = spi.IoWriteTransferCount.QuadPart;
+    //auto delta = curr - prev;
+    //std::cout << "prev: " << prev << '\n';
+    //std::cout << "curr: " << curr << '\n';
+    //std::cout << "delta: " << delta << '\n';
 
-    prev = curr;
+    //prev = curr;
 }
 
 bool SystemInformationMeasure::shouldUpdate(uint32_t ticks) const {

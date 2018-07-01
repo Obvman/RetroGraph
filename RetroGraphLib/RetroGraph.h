@@ -25,6 +25,7 @@ class SystemMeasure;
 class AnimationState;
 class D3GPUMeasure;
 class SystemInformationMeasure;
+class DisplayMeasure;
 
 
 class RetroGraph {
@@ -41,8 +42,6 @@ public:
 
     void updateWindowSize(int32_t width, int32_t height);
 
-    void needsRedraw() const;
-
     const CPUMeasure& getCPUMeasure() const;
     const GPUMeasure& getGPUMeasure() const;
     const RAMMeasure& getRAMMeasure() const;
@@ -54,6 +53,7 @@ public:
     const SystemInformationMeasure& getSystemInformationMeasure() const;
     const AnimationState& getAnimationState() const;
     const D3GPUMeasure& getD3GPUMeasure() const;
+    const DisplayMeasure& getDisplayMeasure() const;
 
     bool isRunning() const { return m_window.isRunning(); }
 
@@ -61,8 +61,6 @@ public:
 
 private:
     void checkDependencies(); // Disables any measures that aren't currently used TODO rename this
-
-    Window m_window;
 
     // Measures are shared among widgets so we need these so we know to disable
     // a measure only when there are no widgets using it.
@@ -73,6 +71,8 @@ private:
      * measures by destroying/creating the objects
      */
     std::vector<std::unique_ptr<Measure>> m_measures;
+
+    Window m_window;
 
     std::unique_ptr<Renderer> m_renderer;
 

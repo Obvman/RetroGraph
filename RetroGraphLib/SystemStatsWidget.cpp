@@ -10,13 +10,15 @@
 #include "FontManager.h"
 #include "SystemMeasure.h"
 #include "CPUMeasure.h"
-#include "NetMeasure.h"
+#include "GPUMeasure.h"
 #include "RetroGraph.h"
 
 namespace rg {
+
 SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
-                                     const RetroGraph& rg, bool visible) :
-    Widget{ fontManager, visible } {
+                                     const RetroGraph& rg, bool visible)
+    : Widget{ fontManager, visible }
+    , m_gpuMeasure{ &rg.getGPUMeasure() } {
 
     const auto& sysInfo{ rg.getSystemMeasure() };
     const auto& cpuMeasure{ rg.getCPUMeasure() };
@@ -32,8 +34,12 @@ SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
     else
         m_statsStrings.emplace_back(sysInfo.getCPUDescription());
 
-    m_statsStrings.emplace_back(sysInfo.getGPUDescription());
+    m_statsStrings.emplace_back(m_gpuMeasure->getGpuDescription());
     m_statsStrings.emplace_back(sysInfo.getRAMDescription());
+}
+
+void SystemStatsWidget::updateObservers(const RetroGraph& rg) {
+    m_gpuMeasure = &rg.getGPUMeasure();
 }
 
 void SystemStatsWidget::draw() const {
@@ -53,9 +59,6 @@ void SystemStatsWidget::draw() const {
                                m_viewport.width, m_viewport.height,
                                RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL,
                                15, 10);
-
-    // TODO remove?
-    m_needsRedraw = false;
 }
 
 }

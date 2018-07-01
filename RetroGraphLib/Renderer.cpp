@@ -118,13 +118,6 @@ void Renderer::draw(uint32_t ticks, const Window& window, uint32_t totalFPS) con
 void Renderer::updateWindowSize(int32_t newWidth, int32_t newHeight) {
     setViewports(newWidth, newHeight);
     m_fontManager.refreshFonts(newHeight);
-
-    needsRedraw();
-}
-
-void Renderer::needsRedraw() const {
-    auto& sysWidget = dynamic_cast<SystemStatsWidget&>(*m_widgets[Widgets::SystemStats]);
-    sysWidget.needsRedraw();
 }
 
 void Renderer::setWidgetVisibility(Widgets w, bool v) {

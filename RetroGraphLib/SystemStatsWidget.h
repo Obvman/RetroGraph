@@ -11,8 +11,7 @@
 namespace rg {
 
 class SystemMeasure;
-class CPUMeasure;
-class NetMeasure;
+class GPUMeasure;
 
 class SystemStatsWidget : public Widget {
 public:
@@ -24,14 +23,12 @@ public:
     SystemStatsWidget(SystemStatsWidget&&) = delete;
     SystemStatsWidget& operator=(SystemStatsWidget&&) = delete;
 
-    void updateObservers(const RetroGraph&) override { /* Empty */ }
+    void updateObservers(const RetroGraph&) override;
     void draw() const override;
-
-    void needsRedraw() const { m_needsRedraw = true; }
 private:
     std::vector<std::string> m_statsStrings{ };
 
-    mutable bool m_needsRedraw{ true };
+    const GPUMeasure* m_gpuMeasure;
 };
 
 } // namespace rg

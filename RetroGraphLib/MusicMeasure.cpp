@@ -17,7 +17,7 @@ MusicMeasure::MusicMeasure(const ProcessMeasure& procMeasure) :
     Measure{ 1U, 5U },
     m_processMeasure{ &procMeasure } {
 
-    update(0);
+    force_update();
 }
 
 void MusicMeasure::update(uint32_t ticks) {

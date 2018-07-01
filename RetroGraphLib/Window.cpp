@@ -15,6 +15,7 @@
 
 #include "RetroGraph.h"
 #include "MusicMeasure.h"
+#include "DisplayMeasure.h"
 #include "resource.h"
 #include "utils.h"
 #include "colors.h"
@@ -94,13 +95,13 @@ void Window::runTest() {
 Window::Window(RetroGraph* rg_, HINSTANCE hInstance, int32_t startupMonitor,
                bool clickthrough) : 
     m_clickthrough{ clickthrough },
-    m_monitors{ },
+    m_monitors{ rg_->getDisplayMeasure().getMonitors() },
     m_retroGraph{ rg_ },
     m_currMonitor{ startupMonitor },
-    m_width{ m_monitors.getWidth(m_currMonitor) },
-    m_height{ m_monitors.getHeight(m_currMonitor) },
-    m_startPosX{ m_monitors.getX(m_currMonitor) },
-    m_startPosY{ m_monitors.getY(m_currMonitor) },
+    m_width{ m_monitors->getWidth(m_currMonitor) },
+    m_height{ m_monitors->getHeight(m_currMonitor) },
+    m_startPosX{ m_monitors->getX(m_currMonitor) },
+    m_startPosY{ m_monitors->getY(m_currMonitor) },
     m_hInstance{ (createWindow(), hInstance) } {
 
     createTrayIcon();
@@ -144,14 +145,13 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
                     break;
                 }
                 case ID_RESET_POSITION: {
-                    const auto& md{ m_monitors.getMonitorData()[m_currMonitor] };
+                    const auto& md{ m_monitors->getMonitorData()[m_currMonitor] };
                     SetWindowPos(hWnd, HWND_TOPMOST, md.x, md.y,
                                  md.width, md.height, 0);
                     break;
                 }
                 case ID_SET_WIDGET_BG: {
                     UserSettings::inst().toggleWidgetBackgroundVisible();
-                    m_retroGraph->needsRedraw();
                     break;
                 }
                 default:
@@ -291,8 +291,8 @@ void Window::createRClickMenu(HWND hWnd) {
                ID_TOGGLE_FPS_WIDGET, "FPS Widget");
 
     // Create an option for each monitor for multi-monitor systems
-    const auto& md{ m_monitors.getMonitorData() };
-    if (m_monitors.getNumMonitors() > 1) {
+    const auto& md{ m_monitors->getMonitorData() };
+    if (m_monitors->getNumMonitors() > 1) {
         for (auto i = size_t{ 0U }; i < md.size(); ++i) {
             char optionName[] = "Move to display 0";
             optionName[16] = '0' + static_cast<char>(i);
@@ -319,7 +319,6 @@ void Window::createRClickMenu(HWND hWnd) {
         }
         case ID_SET_WIDGET_BG:
             UserSettings::inst().toggleWidgetBackgroundVisible();
-            m_retroGraph->needsRedraw();
             break;
         case ID_TEST:
             runTest();
@@ -391,12 +390,12 @@ void Window::changeMonitor(HWND hWnd, uint32_t monIndex) {
     // Check monitor selection is in range and the monitor isn't
     // the currently selected one
     if (monIndex >= 0 &&
-        monIndex < m_monitors.getNumMonitors() &&
+        monIndex < m_monitors->getNumMonitors() &&
         monIndex != static_cast<uint32_t>(m_currMonitor)) {
 
         m_currMonitor = monIndex;
 
-        const auto& md{ m_monitors.getMonitorData()[m_currMonitor] };
+        const auto& md{ m_monitors->getMonitorData()[m_currMonitor] };
 
         updateSize(md.width, md.height);
         SetWindowPos(hWnd, HWND_TOP, md.x, md.y, md.width, md.height, 0);

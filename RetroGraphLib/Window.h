@@ -7,7 +7,9 @@
 #endif
 
 #include <Windows.h>
+
 #include <vector>
+#include <memory>
 
 #include "Monitors.h"
 
@@ -89,7 +91,7 @@ private:
     bool m_running{ true };
     bool m_clickthrough{ true };
 
-    Monitors m_monitors;
+    const Monitors* m_monitors;
     RetroGraph* m_retroGraph;
 
     HWND m_hWndMain{ nullptr };

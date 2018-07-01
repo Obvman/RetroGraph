@@ -18,17 +18,18 @@
 #include "SystemMeasure.h"
 #include "AnimationState.h"
 #include "SystemInformationMeasure.h"
+#include "DisplayMeasure.h"
 
 namespace rg {
 
 using MTypes = Measures::Types;
 
 RetroGraph::RetroGraph(HINSTANCE hInstance) :
+    m_measures( createMeasures() ),
     m_window{ this, hInstance, 
               std::get<int32_t>(UserSettings::inst().getVal("Window.Monitor")), 
               std::get<bool>(UserSettings::inst().getVal("Window.ClickThrough")) },
     m_widgetVisibilities( Widgets::NumWidgets ),
-    m_measures( createMeasures() ),
     m_renderer{ std::make_unique<Renderer>(m_window, *this) },
     m_dependencyMap{
         { MTypes::AnimationState, { Widgets::Main } },
@@ -40,8 +41,9 @@ RetroGraph::RetroGraph(HINSTANCE hInstance) :
         { MTypes::GPU,     { Widgets::Graph } },
         { MTypes::RAM,     { Widgets::Graph } },
         { MTypes::Drive,   { Widgets::HDD } },
-        { MTypes::D3GPU,   {} },
+        { MTypes::D3GPU,   {} }, // Empty Widget lists ensure existence of the measure
         { MTypes::SystemInformation, {} },
+        { MTypes::Display, { /*Widgets::SystemStats*/ } },
     } 
     {
 
@@ -56,7 +58,7 @@ RetroGraph::RetroGraph(HINSTANCE hInstance) :
 }
 
 RetroGraph::~RetroGraph() {
-
+    // Default constructor. Must be declared here to allow destruction of unique_ptrs
 }
 
 auto RetroGraph::createMeasures() -> decltype(m_measures) {
@@ -74,6 +76,7 @@ auto RetroGraph::createMeasures() -> decltype(m_measures) {
     measureList[MTypes::AnimationState] = std::make_unique<AnimationState>();
     measureList[MTypes::D3GPU] =          std::make_unique<D3GPUMeasure>();
     measureList[MTypes::SystemInformation] = std::make_unique<SystemInformationMeasure>();
+    measureList[MTypes::Display] =        std::make_unique<DisplayMeasure>(nullptr);
 
     return measureList;
 }
@@ -104,10 +107,6 @@ void RetroGraph::updateWindowSize(int32_t width, int32_t height) {
     m_renderer->updateWindowSize(width, height);
 }
 
-void RetroGraph::needsRedraw() const {
-     m_renderer->needsRedraw();
-}
-
 void RetroGraph::toggleWidget(Widgets w) {
     m_widgetVisibilities[w] = !m_widgetVisibilities[w];
     checkDependencies();
@@ -119,7 +118,7 @@ void RetroGraph::checkDependencies() {
     // Widget, we can disable it. If a disabled measure needs to be used by a widget,
     // re-enable it
     for (const auto& [measure, widgets] : m_dependencyMap) {
-        // TODO
+        // Measure with no widget dependencies will always exist.
         if (widgets.empty()) 
             continue;
 
@@ -173,6 +172,9 @@ void RetroGraph::checkDependencies() {
                 case MTypes::SystemInformation:
                     measurePtr = std::make_unique<SystemInformationMeasure>();
                     break;
+                case MTypes::Display:
+                    measurePtr = std::make_unique<DisplayMeasure>(nullptr);
+                    break;
                 default: // nothing
                     break;
             }
@@ -213,6 +215,10 @@ const AnimationState& RetroGraph::getAnimationState() const {
 }
 const D3GPUMeasure& RetroGraph::getD3GPUMeasure() const { 
     return dynamic_cast<const D3GPUMeasure&>(*m_measures[MTypes::D3GPU]);
+}
+
+const DisplayMeasure & RetroGraph::getDisplayMeasure() const {
+    return dynamic_cast<const DisplayMeasure&>(*m_measures[MTypes::Display]);
 }
 
 const SystemInformationMeasure& RetroGraph::getSystemInformationMeasure() const { 

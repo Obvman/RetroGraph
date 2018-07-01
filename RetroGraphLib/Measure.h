@@ -17,6 +17,7 @@ enum Types : size_t {
     AnimationState = 8U,
     D3GPU = 9U,
     SystemInformation = 10U,
+    Display = 11U,
 
     NumMeasures,
 };
@@ -41,9 +42,14 @@ public:
     virtual bool shouldUpdate(uint32_t ticks) const = 0;
 protected:
 
+    // Updates the measure so it *should* bypass checks against ticks 
+    // that may prevent an update
+    inline void force_update() { update(0); }
+
     const std::vector<uint32_t> m_updateRates;
 
 private:
+
     /* Stores the update rate for each measure. If key.second is true, rate 
      * is measured in Hz, otherwise measured in seconds
      */

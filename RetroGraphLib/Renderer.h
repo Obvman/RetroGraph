@@ -32,8 +32,6 @@ public:
 
     void updateWindowSize(int32_t newWidth, int32_t newHeight);
 
-    void needsRedraw() const;
-
     void setWidgetVisibility(Widgets w, bool v);
 
     void updateObservers(const RetroGraph& rg);

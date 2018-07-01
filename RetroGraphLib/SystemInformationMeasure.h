@@ -4,6 +4,10 @@
 
 namespace rg {
 
+// I forgot why I made this class... performance testing or something?
+// Maybe it was meant to be a proper measure for SystemStatsWidget...
+
+// I remember! I was doing this to get NtQueryInformation data for stuff (mainly HDD usage)
 class SystemInformationMeasure : public Measure {
 public:
     SystemInformationMeasure();

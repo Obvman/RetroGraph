@@ -19,7 +19,6 @@ SystemMeasure::SystemMeasure() {
     getOSVersionInfo();
     getCPUInfo();
     getRAMInfo();
-    updateGPUDescription();
 
     // Get the current computer name
     char uNameBuf[MAX_COMPUTERNAME_LENGTH+1];
@@ -107,22 +106,4 @@ void SystemMeasure::getRAMInfo() {
              memStatus.ullTotalPhys/static_cast<float>(GB));
     m_ramDescription = buff;
 }
-
-void SystemMeasure::updateGPUDescription() {
-    // Use a stringstream because glGetString() returns GLubyte* which is messy
-    // to deal with otherwise
-    const auto gpuRenderer{ glGetString(GL_RENDERER) };
-
-    if (!gpuRenderer) {
-        fatalMessageBox("Failed to query GPU information from OpenGL\n");
-    }
-
-    std::stringstream ss; // use a stream because OpenGL strings are weird
-    ss << gpuRenderer;
-    m_gpuDescription = std::string{ "GPU: " + ss.str() };
-}
-
-void SystemMeasure::getGPUInfo() {
-}
-
 }

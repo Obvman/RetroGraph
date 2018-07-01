@@ -44,6 +44,7 @@ public:
     int32_t getCurrentTempC() const { return m_currentTemp; }
     const std::string& getDriverVersion() const { return m_driverVersion; }
     const std::string& getGpuName() const { return m_gpuName; }
+    const std::string& getGpuDescription() const { return m_gpuDescription; }
     const std::vector<float>& getUsageData() const { return m_usageData; }
 private:
     NvPhysicalGpuHandle getGpuHandle() const;
@@ -58,6 +59,7 @@ private:
 
     std::string m_driverVersion{ "" };
     std::string m_gpuName{ "" };
+    std::string m_gpuDescription{ "" };
 
     // NvAPI members
     NvPhysicalGpuHandle m_gpuHandle{ nullptr };
