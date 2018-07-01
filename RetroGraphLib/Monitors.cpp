@@ -18,7 +18,7 @@ void Monitors::fillMonitorData() {
 
 BOOL CALLBACK Monitors::MonitorCallback2(HMONITOR hMonitor, HDC, LPRECT, 
                                          LPARAM dwData) {
-    const auto This{ (Monitors*)dwData };
+    const auto This{ reinterpret_cast<Monitors*>(dwData) };
     static int32_t monitorCount{ 0 };
 
     MONITORINFO mi;

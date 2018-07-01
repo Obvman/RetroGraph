@@ -84,6 +84,8 @@ UserSettings::UserSettings() {
                 propTree.get<bool>("Widgets-Graphs.Visible");
             m_widgetVisibilities[Widgets::FPS] =
                 propTree.get<bool>("Widgets-FPS.Visible");
+            m_widgetVisibilities[Widgets::NetStats] =
+                propTree.get<bool>("Widgets-NetStats.Visible");
 
             m_widgetPositions[Widgets::ProcessCPU] =
                     m_posMap.at(propTree.get<std::string>(
@@ -115,6 +117,9 @@ UserSettings::UserSettings() {
             m_widgetPositions[Widgets::FPS] = 
                     m_posMap.at(propTree.get<std::string>(
                                     "Widgets-FPS.Position"));
+            m_widgetPositions[Widgets::NetStats] = 
+                    m_posMap.at(propTree.get<std::string>(
+                                    "Widgets-NetStats.Position"));
         }
 
     } catch (const pt::ptree_bad_path& e) {
@@ -208,6 +213,7 @@ void UserSettings::generateDefaultFile(boost::property_tree::ptree& propTree) {
     propTree.put("Widgets-Drives.Visible",       isVisible(Widgets::HDD));
     propTree.put("Widgets-Graphs.Visible",       isVisible(Widgets::Graph));
     propTree.put("Widgets-FPS.Visible",          isVisible(Widgets::FPS));
+    propTree.put("Widgets-NetStats.Visible",     isVisible(Widgets::NetStats));
 
     // Widget Positions
     propTree.put("Widgets-Time.Position",         "top-left");
@@ -220,6 +226,7 @@ void UserSettings::generateDefaultFile(boost::property_tree::ptree& propTree) {
     propTree.put("Widgets-Drives.Position",       "top-right");
     propTree.put("Widgets-Graphs.Position",       "middle-left");
     propTree.put("Widgets-FPS.Position",          "top-left");
+    propTree.put("Widgets-NetStats.Position",     "top-middle");
 
     m_widgetPositions[Widgets::ProcessCPU] = 
         m_posMap.at(propTree.get<std::string>("Widgets-ProcessesCPU.Position"));
@@ -241,6 +248,8 @@ void UserSettings::generateDefaultFile(boost::property_tree::ptree& propTree) {
         m_posMap.at(propTree.get<std::string>("Widgets-Graphs.Position"));
     m_widgetPositions[Widgets::FPS] = 
         m_posMap.at(propTree.get<std::string>("Widgets-FPS.Position"));
+    m_widgetPositions[Widgets::NetStats] = 
+        m_posMap.at(propTree.get<std::string>("Widgets-NetStats.Position"));
 
     boost::property_tree::ini_parser::write_ini(iniPath, propTree);
 }

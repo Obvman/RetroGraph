@@ -16,6 +16,7 @@
 #include "MainWidget.h"
 #include "MusicWidget.h"
 #include "FPSWidget.h"
+#include "NetStatsWidget.h"
 
 #include "colors.h"
 #include "utils.h"
@@ -72,6 +73,9 @@ auto Renderer::createWidgets(const RetroGraph& _rg) -> decltype(m_widgets) {
     );
     widgetList[Widgets::FPS] = std::make_unique<FPSWidget>(
         &m_fontManager, s.isVisible(Widgets::FPS)
+    );
+    widgetList[Widgets::NetStats] = std::make_unique<NetStatsWidget>(
+        &m_fontManager, _rg, s.isVisible(Widgets::NetStats)
     );
 
     return widgetList;

@@ -20,7 +20,6 @@ SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
 
     const auto& sysInfo{ rg.getSystemMeasure() };
     const auto& cpuMeasure{ rg.getCPUMeasure() };
-    const auto& netMeasure{ rg.getNetMeasure() };
 
     // Just create stats string here since we expect it not to change during
     // the lifetime of the program
@@ -35,10 +34,6 @@ SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
 
     m_statsStrings.emplace_back(sysInfo.getGPUDescription());
     m_statsStrings.emplace_back(sysInfo.getRAMDescription());
-    m_statsStrings.emplace_back("DNS: " + netMeasure.getDNS());
-    m_statsStrings.emplace_back("Hostname: " + netMeasure.getHostname());
-    m_statsStrings.emplace_back("MAC: " + netMeasure.getAdapterMAC());
-    m_statsStrings.emplace_back("LAN IP: " + netMeasure.getAdapterIP());
 }
 
 void SystemStatsWidget::draw() const {
@@ -59,6 +54,7 @@ void SystemStatsWidget::draw() const {
                                RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL,
                                15, 10);
 
+    // TODO remove?
     m_needsRedraw = false;
 }
 

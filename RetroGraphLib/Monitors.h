@@ -2,18 +2,23 @@
 
 #include "stdafx.h"
 
-#include <vector>
-#include <cstdint>
 #include <Windows.h>
+
+#include <vector>
+
+#include <cstdint>
 
 namespace rg {
 
 struct MonitorData {
     MonitorData(int32_t _index, HMONITOR _handle, 
-                int32_t _width, int32_t _height, int32_t _x, int32_t _y) : 
-        index{ _index }, width{ _width }, height{ _height }, x{ _x }, y{ _y },
-        handle{ _handle } { /* Empty */
-    }
+                int32_t _width, int32_t _height, int32_t _x, int32_t _y)
+        : index{ _index }
+        , width{ _width }
+        , height{ _height }
+        , x{ _x }
+        , y{ _y }
+        , handle{ _handle } { /* Empty */ }
 
     ~MonitorData() noexcept = default;
     MonitorData(const MonitorData&) = default;
@@ -50,7 +55,6 @@ private:
 
     static BOOL CALLBACK MonitorCallback2(HMONITOR hMonitor, 
             HDC, LPRECT, LPARAM dwData);
-
 
     std::vector<MonitorData> m_monitors{ };
 };

@@ -35,7 +35,7 @@ RetroGraph::RetroGraph(HINSTANCE hInstance) :
         { MTypes::Music,   { Widgets::Music } },
         { MTypes::Process, { Widgets::Music, Widgets::ProcessCPU, Widgets::ProcessRAM } },
         { MTypes::System,  { Widgets::SystemStats } },
-        { MTypes::Net,     { Widgets::Graph, Widgets::Time, Widgets::SystemStats } },
+        { MTypes::Net,     { Widgets::Graph, Widgets::Time, Widgets::NetStats } },
         { MTypes::CPU,     { Widgets::CPUStats, Widgets::Graph, Widgets::SystemStats, Widgets::Time } },
         { MTypes::GPU,     { Widgets::Graph } },
         { MTypes::RAM,     { Widgets::Graph } },

@@ -29,6 +29,7 @@ enum Widgets : size_t { // Must be consecutive integers!
     Main = 7U,
     Graph = 8U,
     FPS = 9U,
+    NetStats = 10U,
     
     NumWidgets,
 };
