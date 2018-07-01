@@ -15,7 +15,7 @@ public:
     ProcessCPUWidget(const FontManager* fontManager,
                      const RetroGraph& rg,
                      bool visible) :
-        Widget{ fontManager, visible }, 
+        Widget{ fontManager, visible },
         m_procMeasure{ &rg.getProcessMeasure() } {}
 
     ~ProcessCPUWidget() noexcept = default;

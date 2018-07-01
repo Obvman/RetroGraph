@@ -14,7 +14,7 @@ class AnimationState;
 
 class MainWidget : public Widget {
 public:
-    MainWidget(const FontManager* fontManager, 
+    MainWidget(const FontManager* fontManager,
                const RetroGraph& rg, bool visible) :
         Widget{ fontManager, visible }, m_animationState{ &rg.getAnimationState() } { }
     ~MainWidget() noexcept = default;

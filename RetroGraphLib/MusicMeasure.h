@@ -31,8 +31,8 @@ public:
      */
     void update(uint32_t ticks) override;
 
-    /* Checks click coordinates for collision with media controls, returns true 
-     * if a media key was successfully clicked 
+    /* Checks click coordinates for collision with media controls, returns true
+     * if a media key was successfully clicked
      */
     bool handleClick(int32_t clickX, int32_t clickY) const;
 
@@ -49,7 +49,7 @@ private:
     bool shouldUpdate(uint32_t ticks) const override;
 
     /* Called for each window running in the operating system. Tries to find
-     * the music player by matching against the window title. If found, 
+     * the music player by matching against the window title. If found,
      * sets the player class name member
      */
     static BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam);

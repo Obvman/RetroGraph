@@ -10,7 +10,7 @@
 
 namespace rg {
 
-DisplayMeasure::DisplayMeasure(const Monitors* )
+DisplayMeasure::DisplayMeasure()
     : Measure{ 2U }
     , m_monitors{} {
 

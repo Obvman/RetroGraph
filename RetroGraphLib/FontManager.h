@@ -66,12 +66,12 @@ public:
     void renderLine(GLfloat rasterX, GLfloat rasterY, RGFONTCODE fontCode,
                     const char* text, size_t textLen) const ;
 
-    /* Renders a line within the given area. 
+    /* Renders a line within the given area.
      *     fontCode specifies the font to draw the line in
      *     text is the raw text to draw
-     *     areaX, areaY, areaWidth, areaHeight specifies a viewport for the 
+     *     areaX, areaY, areaWidth, areaHeight specifies a viewport for the
      *         alignment rules for the text. areaX and areaY are relative to the
-     *         current glViewport. If all area values are 0, the current 
+     *         current glViewport. If all area values are 0, the current
      *         glViewport is used.
      *     alignFlags specify the alignment rules. If two conflicting flags are
      *         provided (e.g. two different vertical alignment options), only one
@@ -115,7 +115,7 @@ private:
     void setFontCharacteristics(RGFONTCODE c, HDC hdc);
     uint32_t calculateStringWidth(const char* text, size_t textLen,
                                  RGFONTCODE c) const;
-    float getRasterXAlignment(int32_t alignFlags, uint32_t strWidthPx, 
+    float getRasterXAlignment(int32_t alignFlags, uint32_t strWidthPx,
                               uint32_t areaWidth, uint32_t alignMargin) const;
 
     HWND m_hWnd{ nullptr };

@@ -43,7 +43,7 @@ RetroGraph::RetroGraph(HINSTANCE hInstance) :
         { MTypes::Drive,   { Widgets::HDD } },
         { MTypes::D3GPU,   {} }, // Empty Widget lists ensure existence of the measure
         { MTypes::SystemInformation, {} },
-        { MTypes::Display, { /*Widgets::SystemStats*/ } },
+        { MTypes::Display, {} }, // Does have dependent widgets, but must not be destroyed
     } 
     {
 
@@ -78,7 +78,7 @@ auto RetroGraph::createMeasures() -> decltype(m_measures) {
     measureList[MTypes::AnimationState] = std::make_unique<AnimationState>();
     measureList[MTypes::D3GPU] =          std::make_unique<D3GPUMeasure>();
     measureList[MTypes::SystemInformation] = std::make_unique<SystemInformationMeasure>();
-    measureList[MTypes::Display] =        std::make_unique<DisplayMeasure>(nullptr);
+    measureList[MTypes::Display] =        std::make_unique<DisplayMeasure>();
 
     return measureList;
 }
@@ -175,7 +175,7 @@ void RetroGraph::checkDependencies() {
                     measurePtr = std::make_unique<SystemInformationMeasure>();
                     break;
                 case MTypes::Display:
-                    measurePtr = std::make_unique<DisplayMeasure>(nullptr);
+                    measurePtr = std::make_unique<DisplayMeasure>();
                     break;
                 default: // nothing
                     break;

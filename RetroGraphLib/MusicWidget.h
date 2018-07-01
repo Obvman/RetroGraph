@@ -16,7 +16,7 @@ class MusicWidget : public Widget {
 public:
     MusicWidget(const FontManager* fontManager,
                 const RetroGraph& rg, bool visible) :
-        Widget{ fontManager, visible }, 
+        Widget{ fontManager, visible },
         m_musicMeasure{ &rg.getMusicMeasure() } {}
 
     ~MusicWidget() noexcept = default;

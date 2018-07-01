@@ -15,7 +15,7 @@ class GPUMeasure;
 
 class GraphWidget : public Widget {
 public:
-    GraphWidget(const FontManager* fontManager, 
+    GraphWidget(const FontManager* fontManager,
                 const RetroGraph& rg, bool visible) :
         Widget{ fontManager, visible },
         m_cpuMeasure{ &rg.getCPUMeasure() }, m_ramMeasure{ &rg.getRAMMeasure() },

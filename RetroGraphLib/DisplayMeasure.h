@@ -13,7 +13,7 @@ class RetroGraph;
 // Edit the dependency map to prevent destruction!!!!!!
 class DisplayMeasure : public Measure {
 public:
-    DisplayMeasure(const Monitors* monitors); // TODO remove monitors
+    DisplayMeasure();
     ~DisplayMeasure() noexcept = default;
     DisplayMeasure(const DisplayMeasure&) = delete;
     DisplayMeasure& operator=(const DisplayMeasure&) = delete;

@@ -12,13 +12,13 @@ class FontManager;
 class CPUMeasure;
 
 /* Responsible for drawing widget containing CPU voltage, frequency and temperature
- * obtained from CoreTemp 
+ * obtained from CoreTemp
  */
 class CPUStatsWidget : public Widget {
 public:
     CPUStatsWidget(const FontManager* fontManager, const RetroGraph& rg,
                    bool visible) :
-        Widget{ fontManager, visible }, 
+        Widget{ fontManager, visible },
         m_cpuMeasure{ &rg.getCPUMeasure() } {}
 
     ~CPUStatsWidget() noexcept = default;

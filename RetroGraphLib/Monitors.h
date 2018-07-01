@@ -11,13 +11,16 @@
 namespace rg {
 
 struct MonitorData {
-    MonitorData(int32_t _index, HMONITOR _handle, 
-                int32_t _width, int32_t _height, int32_t _x, int32_t _y)
+    MonitorData(int32_t _index, HMONITOR _handle, int32_t _realWidth, int32_t _realHeight,
+                int32_t _width, int32_t _height, int32_t _x, int32_t _y, int32_t _refreshRate)
         : index{ _index }
+        , realWidth{ _realWidth }
+        , realHeight{ _realHeight }
         , width{ _width }
         , height{ _height }
         , x{ _x }
         , y{ _y }
+        , refreshRate{ _refreshRate }
         , handle{ _handle } { /* Empty */ }
 
     ~MonitorData() noexcept = default;
@@ -27,10 +30,20 @@ struct MonitorData {
     MonitorData& operator=(MonitorData&&) = default;
 
     int32_t index;
+
+    // Total pixels
+    int32_t realWidth;
+    int32_t realHeight;
+
+    // Work area (not including taskbar)
     int32_t width;
     int32_t height;
+
     int32_t x;
     int32_t y;
+
+    int32_t refreshRate;
+
     HMONITOR handle;
 };
 
@@ -53,7 +66,7 @@ public:
 private:
     void fillMonitorData();
 
-    static BOOL CALLBACK MonitorCallback2(HMONITOR hMonitor, 
+    static BOOL CALLBACK MonitorCallback2(HMONITOR hMonitor,
             HDC, LPRECT, LPARAM dwData);
 
     std::vector<MonitorData> m_monitors{ };

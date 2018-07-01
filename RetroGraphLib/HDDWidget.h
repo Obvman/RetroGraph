@@ -12,9 +12,9 @@ class DriveMeasure;
 
 class HDDWidget : public Widget {
 public:
-    HDDWidget(const FontManager* fontManager, 
+    HDDWidget(const FontManager* fontManager,
               const RetroGraph& rg, bool visible) :
-        Widget{ fontManager, visible }, 
+        Widget{ fontManager, visible },
         m_driveMeasure{ &rg.getDriveMeasure() } { }
 
     ~HDDWidget() noexcept = default;

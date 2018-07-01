@@ -14,5 +14,5 @@ deps/
 *packages*
 *.vcxproj.user
 *.psess
-RetroGraph/.ycm_extra_conf.py
+*.ycm_extra_conf.py
 *tags
