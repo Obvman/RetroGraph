@@ -10,10 +10,11 @@
 #include <icmpapi.h>
 #include <Ws2tcpip.h>
 
+#include <algorithm>
+#include <chrono>
+#include <iomanip>
 #include <iostream>
 #include <sstream>
-#include <iomanip>
-#include <algorithm>
 
 #include "UserSettings.h"
 #include "utils.h"
@@ -71,22 +72,25 @@ NetMeasure::NetMeasure() :
     getMACAndLocalIP();
 
     // Start thread that periodically checks connection to internet.
+    using namespace std::chrono_literals;
+
     m_threadRunning.store(true);
     m_netConnectionThread = std::thread{ [this]() {
         while (m_threadRunning.load()) {
-            // !! is to convert Win32 BOOL to bool without compiler warning :/
-            setIsConnected(!!InternetCheckConnectionA(
-                m_pingServer.c_str(), FLAG_ICC_FORCE_CONNECTION, 0));
-            Sleep(1000 * m_pingFreqMs);
+            std::unique_lock<std::mutex> lg{ m };
+            setIsConnected(static_cast<bool>(
+                InternetCheckConnectionA(m_pingServer.c_str(), FLAG_ICC_FORCE_CONNECTION, 0)
+            ));
+
+            cv.wait_for(lg, 1000ms * m_pingFreqMs, [&]() { return !m_threadRunning.load(); });
         }
-        std::cout << "Exiting network thread\n";
     }};
 }
 
 NetMeasure::~NetMeasure() {
     // End the background thread
-    // TODO this hangs the program until the thread is done sleeping!
     m_threadRunning.store(false);
+    cv.notify_all();
     m_netConnectionThread.join();
 }
 

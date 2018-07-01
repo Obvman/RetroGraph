@@ -7,6 +7,8 @@
 #include <vector>
 #include <thread>
 #include <atomic>
+#include <mutex>
+#include <condition_variable>
 
 #include "units.h"
 #include "Measure.h"
@@ -54,10 +56,13 @@ private:
     std::string m_mainAdapterIP{ "0.0.0.0" };
 
     std::string m_pingServer{ "" };
+    uint32_t m_pingFreqMs{ 0U };
+
+    std::condition_variable cv;
+    std::mutex m;
     std::atomic<bool> m_isConnected{ false };
     std::atomic<bool> m_threadRunning{ false };
     std::thread m_netConnectionThread{ };
-    uint32_t m_pingFreqMs{ 0U };
 
     uint64_t m_downMaxVal{ 10U * GB };
     uint64_t m_upMaxVal{ 10U * GB };
