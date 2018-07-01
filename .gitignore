@@ -10,9 +10,9 @@ Releasex64/
 *.swp
 *.aps
 *.rc
-*.vcxproj*
 deps/
 *packages*
+*.vcxproj.user
 *.psess
 RetroGraph/.ycm_extra_conf.py
 *tags
