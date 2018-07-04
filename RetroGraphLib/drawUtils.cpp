@@ -37,18 +37,6 @@ void scissorClear(GLint x, GLint y, GLint w, GLint h) {
     glDisable(GL_SCISSOR_TEST);
 }
 
-void drawCircle(GLfloat x, GLfloat y, GLfloat radius) {
-    constexpr float dToR{ 3.151592f / 180.0f };
-
-    glBegin(GL_LINE_LOOP); {
-        for (auto i = size_t{ 0U }; i < 20; ++i) {
-            const auto degreesR = float{ i * dToR };
-            glVertex2f(x + std::cos(degreesR) * radius,
-                       y + std::sin(degreesR) * radius);
-        }
-    } glEnd();
-}
-
 void drawFilledGraph(const std::vector<float>& data) {
     glBegin(GL_QUADS); {
         glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.7f);

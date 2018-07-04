@@ -28,18 +28,15 @@ namespace rg {
 Renderer::Renderer(const Window& w, const RetroGraph& _rg) :
     m_renderTargetHandle{ w.getHwnd() },
     m_fontManager{ w.getHwnd(), w.getHeight() },
-    m_widgets{ createWidgets(_rg) },
-    m_circleList{ glGenLists(1)} {
+    m_widgets{ createWidgets(_rg) } {
 
     setViewports(w.getWidth(), w.getHeight());
 
-    initLists();
     initVBOs();
     initShaders();
 }
 
 Renderer::~Renderer() {
-    glDeleteLists(m_circleList, 1);
 }
 
 auto Renderer::createWidgets(const RetroGraph& _rg) -> decltype(m_widgets) {
@@ -296,20 +293,6 @@ void Renderer::initVBOs() {
     // Unbind buffers
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-}
-
-void Renderer::initLists() {
-    // Create a static circle used to draw each particle.
-    glNewList(m_circleList, GL_COMPILE);
-    glBegin(GL_TRIANGLE_FAN); {
-        glVertex2f(0.0f, 0.0f);
-        for (int i = 0; i < circleLines; ++i) {
-            const auto theta{ 2.0f * 3.1415926f * static_cast<float>(i) /
-                static_cast<float>(circleLines - 1) };
-            glVertex2f(cosf(theta), sinf(theta));
-        }
-    } glEnd();
-    glEndList();
 }
 
 void Renderer::initShaders() {

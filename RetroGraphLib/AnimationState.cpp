@@ -16,6 +16,7 @@
 #include "utils.h"
 #include "drawUtils.h"
 #include "UserSettings.h"
+#include "GLListContainer.h"
 
 namespace rg {
 
@@ -62,7 +63,8 @@ void AnimationState::drawParticles() const {
         glPushMatrix();
         glTranslatef(p.x, p.y, 0.0f);
         glScalef(p.size, p.size, 1.0f);
-        glCallList(m_circleList);
+
+        GLListContainer::inst().drawCircle();
         glPopMatrix();
     }
 

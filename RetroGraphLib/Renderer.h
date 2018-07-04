@@ -35,8 +35,6 @@ public:
     void setWidgetVisibility(Widgets w, bool v);
 
     void updateObservers(const RetroGraph& rg);
-
-    GLuint getCircleList() const { return m_circleList; }
 private:
     void setViewports(int32_t windowWidth, int32_t windowHeight);
     Viewport calcViewport(WidgetPosition pos,
@@ -45,8 +43,6 @@ private:
     Viewport calcFPSViewport(WidgetPosition pos, int32_t windowWidth,
                              int32_t windowHeight);
 
-    /* Create any glLists */
-    void initLists();
     /* Fill VBOs with intial vertex data */
     void initVBOs();
     /* Compiles and retrieves uniform locations */
@@ -57,8 +53,6 @@ private:
     FontManager m_fontManager;
 
     std::vector<std::unique_ptr<Widget>> m_widgets;
-
-    GLuint m_circleList;
 
     // Shaders
     GLuint m_cpuGraphShader{ 0U };
