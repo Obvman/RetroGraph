@@ -10,6 +10,7 @@
 #include "FontManager.h"
 #include "ProcessMeasure.h"
 #include "RetroGraph.h"
+#include "ListContainer.h"
 
 namespace rg {
 
@@ -26,8 +27,7 @@ void ProcessRAMWidget::draw() const {
 
     glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
     glLineWidth(0.5f);
-    drawTopSerifLine(-1.0f, 1.0f);
-    drawBottomSerifLine(-1.0f, 1.0f);
+    ListContainer::inst().drawTopAndBottomSerifs();
 
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 

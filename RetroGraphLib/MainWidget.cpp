@@ -14,6 +14,7 @@
 #include "FontManager.h"
 #include "AnimationState.h"
 #include "RetroGraph.h"
+#include "ListContainer.h"
 
 namespace rg {
 
@@ -41,8 +42,7 @@ void MainWidget::draw() const {
     drawWidgetBackground();
 
     glColor4f(DIVIDER_R, DIVIDER_G, DIVIDER_B, DIVIDER_A);
-    drawTopSerifLine(-1.0f, 1.0f);
-    drawBottomSerifLine(-1.0f, 1.0f);
+    ListContainer::inst().drawTopAndBottomSerifs();
 
     glColor4f(PARTICLE_R, PARTICLE_G, PARTICLE_B, PARTICLE_A);
 

@@ -12,6 +12,7 @@
 #include "CPUMeasure.h"
 #include "NetMeasure.h"
 #include "RetroGraph.h"
+#include "ListContainer.h"
 
 namespace rg {
 
@@ -35,8 +36,7 @@ void TimeWidget::draw() const {
     constexpr float midDivY{ -0.3f };
     const auto midDivYPx{ vpCoordsToPixels(midDivY, m_viewport.height) };
 
-    drawTopSerifLine(-1.0f, 1.0f);
-    drawBottomSerifLine(-1.0f, 1.0f);
+    ListContainer::inst().drawTopAndBottomSerifs();
     drawSerifLine(-0.9f, 0.9f, midDivY);
 
     glBegin(GL_LINES); {

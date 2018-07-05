@@ -10,6 +10,7 @@
 #include "FontManager.h"
 #include "MusicMeasure.h"
 #include "RetroGraph.h"
+#include "ListContainer.h"
 
 namespace rg {
 
@@ -27,8 +28,7 @@ void MusicWidget::draw() const {
     drawWidgetBackground();
 
     glColor4f(DIVIDER_R, DIVIDER_G, DIVIDER_B, DIVIDER_A);
-    drawTopSerifLine(-1.0f, 1.0f);
-    drawBottomSerifLine(-1.0f, 1.0f);
+    ListContainer::inst().drawTopAndBottomSerifs();
 
     if (m_musicMeasure->isPlayerRunning()) {
         glViewport(m_viewport.x, m_viewport.y + m_viewport.height/4,

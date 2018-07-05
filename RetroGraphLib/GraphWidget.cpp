@@ -13,6 +13,7 @@
 #include "NetMeasure.h"
 #include "GPUMeasure.h"
 #include "RetroGraph.h"
+#include "ListContainer.h"
 
 namespace rg {
 
@@ -63,7 +64,7 @@ void GraphWidget::draw() const {
 void GraphWidget::drawCpuGraph() const {
     glViewport(m_cpuGraphVP.x, m_cpuGraphVP.y,
                m_cpuGraphVP.width, m_cpuGraphVP.height);
-    drawBorder();
+    ListContainer::inst().drawBorder();
 
     // Set the viewport for the graph to be left section
     glViewport(m_cpuGraphVP.x, m_cpuGraphVP.y,
@@ -96,7 +97,7 @@ void GraphWidget::drawCpuGraph() const {
 void GraphWidget::drawRamGraph() const {
     glViewport(m_ramGraphVP.x, m_ramGraphVP.y,
                m_ramGraphVP.width , m_ramGraphVP.height);
-    drawBorder();
+    ListContainer::inst().drawBorder();
 
     // Set the viewport for the graph itself to be left section
     glViewport(m_ramGraphVP.x, m_ramGraphVP.y,
@@ -130,7 +131,7 @@ void GraphWidget::drawRamGraph() const {
 void GraphWidget::drawNetGraph() const {
     glViewport(m_netGraphVP.x, m_netGraphVP.y,
                m_netGraphVP.width , m_netGraphVP.height);
-    drawBorder();
+    ListContainer::inst().drawBorder();
 
     // Set the viewport for the graph to be left section
     glViewport(m_netGraphVP.x, m_netGraphVP.y,
@@ -245,7 +246,7 @@ void GraphWidget::drawNetGraph() const {
 void GraphWidget::drawGpuGraph() const {
     glViewport(m_gpuGraphVP.x, m_gpuGraphVP.y,
                m_gpuGraphVP.width , m_gpuGraphVP.height);
-    drawBorder();
+    ListContainer::inst().drawBorder();
 
     // Set the viewport for the graph to be left section
     glViewport(m_gpuGraphVP.x, m_gpuGraphVP.y,

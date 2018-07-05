@@ -191,7 +191,7 @@
     <ClInclude Include="FontManager.h" />
     <ClInclude Include="FPSLimiter.h" />
     <ClInclude Include="FPSWidget.h" />
-    <ClInclude Include="GLListContainer.h" />
+    <ClInclude Include="ListContainer.h" />
     <ClInclude Include="GLShaders.h" />
     <ClInclude Include="GPUMeasure.h" />
     <ClInclude Include="GraphWidget.h" />
@@ -236,7 +236,7 @@
     <ClCompile Include="FontManager.cpp" />
     <ClCompile Include="FPSLimiter.cpp" />
     <ClCompile Include="FPSWidget.cpp" />
-    <ClCompile Include="GLListContainer.cpp" />
+    <ClCompile Include="ListContainer.cpp" />
     <ClCompile Include="GLShaders.cpp" />
     <ClCompile Include="GPUMeasure.cpp" />
     <ClCompile Include="GraphWidget.cpp" />

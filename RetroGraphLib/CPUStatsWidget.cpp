@@ -11,6 +11,7 @@
 #include "FontManager.h"
 #include "CPUMeasure.h"
 #include "RetroGraph.h"
+#include "ListContainer.h"
 
 namespace rg {
 
@@ -44,8 +45,7 @@ void CPUStatsWidget::draw() const {
 
 void CPUStatsWidget::drawNoInfoState() const {
     glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
-    drawTopSerifLine(-1.0f, 1.0f);
-    drawBottomSerifLine(-1.0f, 1.0f);
+    ListContainer::inst().drawTopAndBottomSerifs();
 
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
     m_fontManager->renderLine(RG_FONT_TIME, "No Data", 0, 0, 0, 0,
@@ -57,8 +57,7 @@ void CPUStatsWidget::drawStats() const {
                m_statsViewport.width, m_statsViewport.height);
 
     glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
-    drawTopSerifLine(-1.0f, 1.0f);
-    drawBottomSerifLine(-1.0f, 1.0f);
+    ListContainer::inst().drawTopAndBottomSerifs();
 
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
     const auto fontHeight{ m_fontManager->getFontCharHeight(RG_FONT_STANDARD) };
@@ -102,7 +101,7 @@ void CPUStatsWidget::drawCoreGraphs() const {
         drawLineGraph(m_cpuMeasure->getPerCoreUsageData()[i]);
 
         // Draw the border for this core graph
-        drawBorder();
+        ListContainer::inst().drawBorder();
         drawGraphGrid();
 
         // Draw a label for the core graph

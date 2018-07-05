@@ -14,6 +14,7 @@
 #include "DisplayMeasure.h"
 #include "Monitors.h"
 #include "RetroGraph.h"
+#include "ListContainer.h"
 
 namespace rg {
 
@@ -76,8 +77,7 @@ void SystemStatsWidget::draw() const {
 
     glColor4f(DIVIDER_R, DIVIDER_G, DIVIDER_B, DIVIDER_A);
     glLineWidth(0.5f);
-    drawTopSerifLine(-1.0f, 1.0f);
-    drawBottomSerifLine(-1.0f, 1.0f);
+    ListContainer::inst().drawTopAndBottomSerifs();
 
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
     m_fontManager->renderLines(RG_FONT_STANDARD, m_statsStrings, 0, 0,

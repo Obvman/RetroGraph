@@ -7,6 +7,7 @@
 #include <cmath>
 
 #include "UserSettings.h"
+#include "ListContainer.h"
 #include "colors.h"
 
 namespace rg {
@@ -80,58 +81,10 @@ void drawGraphGrid() {
     });
 }
 
-void drawBorder() {
-    glColor4f(BORDER_R, BORDER_G, BORDER_B, BORDER_A);
-    glLineWidth(0.5f);
-    glBegin(GL_LINE_STRIP); {
-        glVertex2f(-1.0f, 1.0f);
-        glVertex2f(1.0f, 1.0f);
-        glVertex2f(1.0f, -1.0f);
-        glVertex2f(-1.0f, -1.0f);
-        glVertex2f(-1.0f, 1.0f);
-    } glEnd();
-}
-
 void drawWidgetBackground() {
     if (std::get<bool>(UserSettings::inst().getVal("Window.WidgetBackground"))) {
-        glColor4f(WBG_R, WBG_G, WBG_B, WBG_A);
-        glBegin(GL_QUADS); {
-            glVertex2f(-1.0f,  1.0f);
-            glVertex2f( 1.0f,  1.0f);
-            glVertex2f( 1.0f, -1.0f);
-            glVertex2f(-1.0f, -1.0f);
-        } glEnd();
+        ListContainer::inst().drawWidgetBackground();
     }
-}
-
-void drawViewportBorder() {
-    float color[4];
-    glGetFloatv(GL_CURRENT_COLOR, color);
-
-    glColor3f(DEBUG_BORDER_R, DEBUG_BORDER_G, DEBUG_BORDER_B);
-
-    // Preserve initial line width
-    GLfloat lineWidth;
-    glGetFloatv(GL_LINE_WIDTH, &lineWidth);
-
-    glLineWidth(5.0f);
-
-    glBegin(GL_LINES); {
-        glVertex2f(-1.0f, -1.0f);
-        glVertex2f(-1.0f,  1.0f);
-
-        glVertex2f(-1.0f,  1.0f);
-        glVertex2f( 1.0f,  1.0f);
-
-        glVertex2f( 1.0f,  1.0f);
-        glVertex2f( 1.0f, -1.0f);
-
-        glVertex2f( 1.0f, -1.0f);
-        glVertex2f(-1.0f, -1.0f);
-    } glEnd();
-
-    glColor4f(color[0], color[1], color[2], color[3]);
-    glLineWidth(lineWidth);
 }
 
 void drawVerticalProgressBar(float barWidth, float startY, float endY,
@@ -192,32 +145,6 @@ void drawSerifLine(GLfloat x1, GLfloat x2, GLfloat y) {
 
         glVertex2f(x2, y-serifLen);
         glVertex2f(x2, y+serifLen);
-    } glEnd();
-}
-
-void drawTopSerifLine(GLfloat x1, GLfloat x2) {
-    glBegin(GL_LINES); {
-        glVertex2f(x1, 1.0f);
-        glVertex2f(x2, 1.0f);
-
-        glVertex2f(x1, 1.0f-serifLen);
-        glVertex2f(x1, 1.0f);
-
-        glVertex2f(x2, 1.0f-serifLen);
-        glVertex2f(x2, 1.0f);
-    } glEnd();
-}
-
-void drawBottomSerifLine(GLfloat x1, GLfloat x2) {
-    glBegin(GL_LINES); {
-        glVertex2f(x1, -1.0f);
-        glVertex2f(x2, -1.0f);
-
-        glVertex2f(x1, -1.0f);
-        glVertex2f(x1, -1.0f + serifLen);
-
-        glVertex2f(x2, -1.0f);
-        glVertex2f(x2, -1.0f + serifLen);
     } glEnd();
 }
 

@@ -5,6 +5,7 @@
 #include "colors.h"
 #include "FontManager.h"
 #include "NetMeasure.h"
+#include "ListContainer.h"
 
 namespace rg {
 
@@ -27,8 +28,7 @@ void NetStatsWidget::draw() const {
 
     glColor4f(DIVIDER_R, DIVIDER_G, DIVIDER_B, DIVIDER_A);
     glLineWidth(0.5f);
-    drawTopSerifLine(-1.0f, 1.0f);
-    drawBottomSerifLine(-1.0f, 1.0f);
+    ListContainer::inst().drawTopAndBottomSerifs();
 
     auto statsStrings{ m_statsStrings };
     std::string state{ (m_netMeasure->isConnected() ? "Up" : "Down") };

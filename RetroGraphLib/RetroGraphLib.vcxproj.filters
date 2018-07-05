@@ -150,7 +150,7 @@
     <ClInclude Include="DisplayMeasure.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GLListContainer.h">
+    <ClInclude Include="ListContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -266,7 +266,7 @@
     <ClCompile Include="DisplayMeasure.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GLListContainer.cpp">
+    <ClCompile Include="ListContainer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
