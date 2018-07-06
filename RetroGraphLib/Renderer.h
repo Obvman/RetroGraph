@@ -43,8 +43,6 @@ private:
     Viewport calcFPSViewport(WidgetPosition pos, int32_t windowWidth,
                              int32_t windowHeight);
 
-    /* Fill VBOs with intial vertex data */
-    void initVBOs();
     /* Compiles and retrieves uniform locations */
     void initShaders();
 

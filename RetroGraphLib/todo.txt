@@ -1,3 +1,5 @@
+config file path relative to executable, not program launch directory
+
 Build batch script
 
 move d3dkmt.h to external folder

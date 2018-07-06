@@ -12,25 +12,6 @@
 
 namespace rg {
 
-GLuint graphGridVertsID;
-GLuint graphGridIndicesID;
-GLsizei graphIndicesSize;
-
-// Automatically binds/unbinds given VBOs and executes the function given
-template<typename F>
-void vboDrawScope(GLuint vertID, GLuint indexID, F f) {
-    glBindBuffer(GL_ARRAY_BUFFER, vertID);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexID);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(2, GL_FLOAT, 0, nullptr);
-
-    f();
-
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-}
-
 void scissorClear(GLint x, GLint y, GLint w, GLint h) {
     glEnable(GL_SCISSOR_TEST);
     glScissor(x, y, w, h);
@@ -70,15 +51,6 @@ void drawLineGraph(const std::vector<float>& data) {
             glVertex2f(x, y);
         }
     } glEnd();
-}
-
-void drawGraphGrid() {
-    // Draw the background grid for the graph
-    vboDrawScope(graphGridVertsID, graphGridIndicesID, []() {
-        glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.2f);
-        glLineWidth(0.5f);
-        glDrawElements(GL_LINES, graphIndicesSize, GL_UNSIGNED_INT, nullptr);
-    });
 }
 
 void drawWidgetBackground() {

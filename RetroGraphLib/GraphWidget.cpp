@@ -14,8 +14,23 @@
 #include "GPUMeasure.h"
 #include "RetroGraph.h"
 #include "ListContainer.h"
+#include "VBOController.h"
 
 namespace rg {
+
+GraphWidget::GraphWidget(const FontManager* fontManager,
+                         const RetroGraph& rg, bool visible)
+    : Widget{ fontManager, visible }
+    , m_cpuMeasure{ &rg.getCPUMeasure() }, m_ramMeasure{ &rg.getRAMMeasure() }
+    , m_netMeasure{ &rg.getNetMeasure() }, m_gpuMeasure{ &rg.getGPUMeasure() }
+    , m_cpuVBO{ VBOController::inst().createGraphLineVBO(m_cpuMeasure->getUsageData().size()) }
+    , m_ramVBO{ VBOController::inst().createGraphLineVBO(m_ramMeasure->getUsageData().size()) }
+    , m_netUpVBO{ VBOController::inst().createGraphLineVBO(m_netMeasure->getUpData().size()) }
+    , m_netDownVBO{ VBOController::inst().createGraphLineVBO(m_netMeasure->getDownData().size()) }
+    , m_gpuVBO{ VBOController::inst().createGraphLineVBO(m_gpuMeasure->getUsageData().size()) } {
+
+}
+
 
 void GraphWidget::setViewport(Viewport vp) { 
     m_viewport = vp;
@@ -70,9 +85,12 @@ void GraphWidget::drawCpuGraph() const {
     glViewport(m_cpuGraphVP.x, m_cpuGraphVP.y,
                (m_cpuGraphVP.width * 4)/5, m_cpuGraphVP.height);
 
-    drawGraphGrid();
+    VBOController::inst().drawGraphGrid();
+
+    glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
     glLineWidth(0.5f);
-    drawLineGraph(m_cpuMeasure->getUsageData());
+    VBOController::inst().updateGraphLines(m_cpuVBO, m_cpuMeasure->getUsageData());
+    VBOController::inst().drawGraphLines(m_cpuVBO);
 
     // Text
     glViewport(m_cpuGraphVP.x + (4 * m_cpuGraphVP.width) / 5, m_cpuGraphVP.y,
@@ -104,9 +122,12 @@ void GraphWidget::drawRamGraph() const {
                (m_ramGraphVP.width*4)/5 , m_ramGraphVP.height);
 
     // Draw the background grid for the graph
-    drawGraphGrid();
+    VBOController::inst().drawGraphGrid();
 
-    drawLineGraph(m_ramMeasure->getUsageData());
+    glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
+    glLineWidth(0.5f);
+    VBOController::inst().updateGraphLines(m_ramVBO, m_ramMeasure->getUsageData());
+    VBOController::inst().drawGraphLines(m_ramVBO);
 
     // Set viewport for text drawing
     glViewport(m_ramGraphVP.x + (4 * m_ramGraphVP.width) / 5, m_ramGraphVP.y,
@@ -136,7 +157,7 @@ void GraphWidget::drawNetGraph() const {
     // Set the viewport for the graph to be left section
     glViewport(m_netGraphVP.x, m_netGraphVP.y,
                (m_netGraphVP.width*4)/5 , m_netGraphVP.height);
-    drawGraphGrid();
+    VBOController::inst().drawGraphGrid();
 
     {// Draw the line graph
         glLineWidth(0.5f);
@@ -149,6 +170,7 @@ void GraphWidget::drawNetGraph() const {
 
         const auto maxValMB{ std::max(maxUpValMB, maxDownValMB) };
 
+        // TODO VBO these!
         // Draw the download graph
         glBegin(GL_LINE_STRIP); {
             glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.7f);
@@ -251,11 +273,14 @@ void GraphWidget::drawGpuGraph() const {
     // Set the viewport for the graph to be left section
     glViewport(m_gpuGraphVP.x, m_gpuGraphVP.y,
                (m_gpuGraphVP.width*4)/5 , m_gpuGraphVP.height);
-    drawGraphGrid();
-    glLineWidth(0.5f);
+    VBOController::inst().drawGraphGrid();
 
     if (m_gpuMeasure->isEnabled()) {
-        drawLineGraph(m_gpuMeasure->getUsageData());
+        glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
+        glLineWidth(0.5f);
+
+        VBOController::inst().updateGraphLines(m_gpuVBO, m_gpuMeasure->getUsageData());
+        VBOController::inst().drawGraphLines(m_gpuVBO);
     }
 
     // Set viewport for text drawing

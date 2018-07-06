@@ -30,7 +30,6 @@ private:
 
     GLuint m_listStart;
 
-    // std::vector<GLuint> lists;
     GLuint m_vpBorderList;
     GLuint m_borderList;
     GLuint m_serifList;

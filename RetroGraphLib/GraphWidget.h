@@ -6,6 +6,8 @@
 #include "Widget.h"
 #include "RetroGraph.h"
 
+// #include <GL/GL.h>
+
 namespace rg {
 
 class CPUMeasure;
@@ -16,10 +18,7 @@ class GPUMeasure;
 class GraphWidget : public Widget {
 public:
     GraphWidget(const FontManager* fontManager,
-                const RetroGraph& rg, bool visible) :
-        Widget{ fontManager, visible },
-        m_cpuMeasure{ &rg.getCPUMeasure() }, m_ramMeasure{ &rg.getRAMMeasure() },
-        m_netMeasure{ &rg.getNetMeasure() }, m_gpuMeasure{ &rg.getGPUMeasure() } {}
+                const RetroGraph& rg, bool visible);
 
     ~GraphWidget() noexcept = default;
     GraphWidget(const GraphWidget&) = delete;
@@ -46,6 +45,12 @@ private:
     const RAMMeasure* m_ramMeasure{ nullptr };
     const NetMeasure* m_netMeasure{ nullptr };
     const GPUMeasure* m_gpuMeasure{ nullptr };
+
+    int m_cpuVBO;
+    int m_ramVBO;
+    int m_netUpVBO;
+    int m_netDownVBO;
+    int m_gpuVBO;
 };
 
 } // namespace rg

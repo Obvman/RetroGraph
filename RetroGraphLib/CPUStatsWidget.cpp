@@ -12,6 +12,7 @@
 #include "CPUMeasure.h"
 #include "RetroGraph.h"
 #include "ListContainer.h"
+#include "VBOController.h"
 
 namespace rg {
 
@@ -102,7 +103,7 @@ void CPUStatsWidget::drawCoreGraphs() const {
 
         // Draw the border for this core graph
         ListContainer::inst().drawBorder();
-        drawGraphGrid();
+        VBOController::inst().drawGraphGrid();
 
         // Draw a label for the core graph
         glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);

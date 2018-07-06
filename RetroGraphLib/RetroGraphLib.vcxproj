@@ -221,6 +221,7 @@
     <ClInclude Include="units.h" />
     <ClInclude Include="UserSettings.h" />
     <ClInclude Include="utils.h" />
+    <ClInclude Include="VBOController.h" />
     <ClInclude Include="Widget.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
@@ -271,6 +272,7 @@
     <ClCompile Include="TimeWidget.cpp" />
     <ClCompile Include="UserSettings.cpp" />
     <ClCompile Include="utils.cpp" />
+    <ClCompile Include="VBOController.cpp" />
     <ClCompile Include="Widget.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>

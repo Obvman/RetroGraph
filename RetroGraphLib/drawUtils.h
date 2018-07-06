@@ -45,7 +45,6 @@ void scissorClear(GLint x, GLint y, GLint w, GLint h);
 
 void drawFilledGraph(const std::vector<float>& data);
 void drawLineGraph(const std::vector<float>& data);
-void drawGraphGrid();
 void drawWidgetBackground();
 
 /* Draws a vertical bar that is centerred horizontally in the current viewport */
@@ -59,8 +58,6 @@ void drawHorizontalProgressBar(float barWidth, float startX, float endX,
 
 // Primitive drawing
 void drawSerifLine(GLfloat x1, GLfloat x2, GLfloat y);
-void drawTopSerifLine(GLfloat x1, GLfloat x2);
-void drawBottomSerifLine(GLfloat x1, GLfloat x2);
 
 // Given a pixel value (x or y) and the current viewport width/height in pixels,
 // converts the pixel value to the corresponding viewport ordinate
