@@ -1,5 +1,3 @@
-config file path relative to executable, not program launch directory
-
 convert to unicode?
 
 Build batch script

@@ -17,6 +17,7 @@
 #include "drawUtils.h"
 #include "UserSettings.h"
 #include "ListContainer.h"
+#include "VBOController.h"
 
 namespace rg {
 
@@ -37,18 +38,11 @@ constexpr float particleMaxSpeed{ 0.1f };
 //constexpr float particleMinSize{ 0.012f };
 //constexpr float particleMaxSize{ 0.036f };
 
+AnimationState::AnimationState()
+    : Measure{ std::get<uint32_t>(UserSettings::inst().getVal("Widgets-Main.FPS")) }
+    , m_particles( createParticles() ) {
+    //, m_vboID{ VBOController::inst().createVBO(m_particles.size()) } {
 
-AnimationState::AnimationState() :
-        Measure{ std::get<uint32_t>(
-                    UserSettings::inst().getVal("Widgets-Main.FPS")
-        ) },
-        m_particles{ } {
-
-    // Generate particles and populate the cell particle observer lists.
-    std::srand(static_cast<uint32_t>(time(nullptr)));
-    for (auto i = size_t{ 0U }; i < numParticles; ++i) {
-        m_particles.emplace_back();
-    }
     for (const auto& p : m_particles) {
         m_cells[p.cellX][p.cellY].push_back(&p);
     }
@@ -60,12 +54,11 @@ AnimationState::~AnimationState() {
 void AnimationState::drawParticles() const {
     // Draw the particle itself
     for (const auto& p : m_particles) {
-        glPushMatrix();
-        glTranslatef(p.x, p.y, 0.0f);
-        glScalef(p.size, p.size, 1.0f);
-
-        ListContainer::inst().drawCircle();
-        glPopMatrix();
+        glPushMatrix(); {
+            glTranslatef(p.x, p.y, 0.0f);
+            glScalef(p.size, p.size, 1.0f);
+            ListContainer::inst().drawCircle();
+        } glPopMatrix();
     }
 
     //  draw lines to particles in neighbouring cells
@@ -135,6 +128,16 @@ void AnimationState::drawParticleConnection(const Particle* const p1,
             glVertex2f(p2->x, p2->y);
         } glEnd();
     }
+}
+
+auto AnimationState::createParticles() -> decltype(m_particles) {
+    decltype(m_particles) particleList;
+
+    std::srand(static_cast<uint32_t>(time(nullptr)));
+    for (auto i = size_t{ 0U }; i < numParticles; ++i) {
+        particleList.emplace_back();
+    }
+    return particleList;
 }
 
 void AnimationState::update(uint32_t) {

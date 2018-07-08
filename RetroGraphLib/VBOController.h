@@ -38,8 +38,8 @@ void vboDrawScope(GLuint vertID, F f) {
 
 // Container for standard VBO data (no element array)
 struct VBOContainer {
-    VBOContainer()
-        : VBOContainer{ 0 } { }
+    VBOContainer() : VBOContainer{ 0 } { }
+
     VBOContainer(GLsizei size_)
         : id{ 0 }
         , size{ size_ }
@@ -50,6 +50,8 @@ struct VBOContainer {
     std::vector<GLfloat> data;
 };
 
+class VBOID;
+
 class VBOController {
 public:
     static VBOController & inst() { static VBOController i; return i; }
@@ -57,10 +59,12 @@ public:
 
     void drawGraphGrid() const;
 
-    void updateGraphLines(int vboID, const std::vector<GLfloat>& values);
-    void drawGraphLines(int vboID) const;
+    // Assumes values are floating percentages between 0 and 100
+    void updateGraphLines(const VBOID& vboID, const std::vector<GLfloat>& values);
+    void drawGraphLines(const VBOID& vboID) const;
 
-    int createGraphLineVBO(size_t numValues);
+    VBOID createGraphLineVBO(size_t numValues);
+    VBOID createVBO(size_t numValues);
 
 private:
     VBOController();
@@ -68,11 +72,41 @@ private:
     void initVBOs();
     void initGraphGridVBO();
 
+    void destroyVBO(const VBOID& vboIdx);
+
     GLuint m_graphGridVertsID;
     GLuint m_graphGridIndicesID;
     GLsizei m_graphGridIndicesSize;
 
     std::vector<VBOContainer> m_graphLineVBOData;
+
+    friend class VBOID;
+};
+
+// Used to index VBOController::m_graphLineVBOData
+// not to be confused with id member of VBOContainer, which contains the openGL
+// provided id of the VBO
+class VBOID {
+public:
+    VBOID() : m_id{ -1 } {}
+    VBOID(int id) : m_id{ id } {}
+    VBOID(size_t id) : m_id{ static_cast<int>(id) } {}
+    ~VBOID() {
+        VBOController::inst().destroyVBO(*this);
+    }
+
+    // Very important that we never copy!
+    VBOID(const VBOID&) = delete;
+    VBOID& operator=(const VBOID&) = delete;
+    VBOID(VBOID&&);
+    VBOID& operator=(VBOID&&);
+
+    // Conversion to int
+    explicit operator int() const { return m_id; }
+    operator bool() const { return m_id != -1; }
+
+private:
+    int m_id;
 };
 
 

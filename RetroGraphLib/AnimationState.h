@@ -7,6 +7,7 @@
 #include <array>
 
 #include "Measure.h"
+#include "VBOController.h"
 
 #ifndef __GL_H__
 typedef unsigned int GLuint;
@@ -76,12 +77,15 @@ private:
 
     std::vector<Particle> m_particles{ };
 
+    auto createParticles() -> decltype(m_particles);
+
     // Members for spatial partitioning
     // The world space coordinates range from -1.0 to 1.0 for both x and y,
     // so we have a range of 2.0 for our world sides
     std::array<std::array<CellParticleList, numCellsPerSide>, numCellsPerSide> m_cells;
 
     GLuint m_circleList;
+    VBOID m_vboID;
 
     friend class Particle;
 };

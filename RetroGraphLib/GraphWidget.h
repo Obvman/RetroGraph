@@ -5,6 +5,7 @@
 #include "drawUtils.h"
 #include "Widget.h"
 #include "RetroGraph.h"
+#include "VBOController.h"
 
 // #include <GL/GL.h>
 
@@ -46,11 +47,11 @@ private:
     const NetMeasure* m_netMeasure{ nullptr };
     const GPUMeasure* m_gpuMeasure{ nullptr };
 
-    int m_cpuVBO;
-    int m_ramVBO;
-    int m_netUpVBO;
-    int m_netDownVBO;
-    int m_gpuVBO;
+    VBOID m_cpuVBO;
+    VBOID m_ramVBO;
+    VBOID m_netUpVBO;
+    VBOID m_netDownVBO;
+    VBOID m_gpuVBO;
 };
 
 } // namespace rg
