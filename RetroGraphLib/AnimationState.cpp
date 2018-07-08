@@ -14,6 +14,7 @@
 
 #include "units.h"
 #include "utils.h"
+#include "colors.h"
 #include "drawUtils.h"
 #include "UserSettings.h"
 #include "ListContainer.h"
@@ -40,26 +41,57 @@ constexpr float particleMaxSpeed{ 0.1f };
 
 AnimationState::AnimationState()
     : Measure{ std::get<uint32_t>(UserSettings::inst().getVal("Widgets-Main.FPS")) }
-    , m_particles( createParticles() ) {
-    //, m_vboID{ VBOController::inst().createVBO(m_particles.size()) } {
+    , m_particles( createParticles() )
+    , m_particleLines( numParticles * numParticles )
+    , m_numLines{ 0 } {
 
-    for (const auto& p : m_particles) {
+    for (const auto& p : m_particles)
         m_cells[p.cellX][p.cellY].push_back(&p);
-    }
 }
 
 AnimationState::~AnimationState() {
 }
 
-void AnimationState::drawParticles() const {
-    // Draw the particle itself
-    for (const auto& p : m_particles) {
-        glPushMatrix(); {
-            glTranslatef(p.x, p.y, 0.0f);
-            glScalef(p.size, p.size, 1.0f);
-            ListContainer::inst().drawCircle();
-        } glPopMatrix();
+auto AnimationState::createParticles() -> decltype(m_particles) {
+    decltype(m_particles) particleList;
+
+    std::srand(static_cast<uint32_t>(time(nullptr)));
+    for (auto i = size_t{ 0U }; i < numParticles; ++i) {
+        particleList.emplace_back();
     }
+    return particleList;
+}
+
+void AnimationState::update(uint32_t) {
+    using namespace std::chrono;
+    using clock = std::chrono::high_resolution_clock;
+
+    static auto time_start = clock::now();
+
+    auto time_end = clock::now();
+    const auto deltaTimeStep{ time_end - time_start };
+    time_start = clock::now();
+    auto dt{ duration_cast<duration<float>>(deltaTimeStep).count() };
+
+    // If a lot of time has passed, set dt to a small value so we don't have
+    // one large jump
+    if (dt > 1.0f) {
+        dt = 0.016f;
+    }
+
+    for (auto& p : m_particles) {
+        p.update(*this, dt);
+    }
+
+    updateParticleLines();
+}
+
+bool AnimationState::shouldUpdate(uint32_t ticks) const {
+    return ticksMatchRate(ticks, m_updateRates.front());
+}
+
+void AnimationState::updateParticleLines() {
+    m_numLines = 0;
 
     //  draw lines to particles in neighbouring cells
     // (but not the current cell)
@@ -85,7 +117,7 @@ void AnimationState::drawParticles() const {
 
         for (const auto* cell : neighbouringCells) {
             for (const auto neighbour : *cell) {
-                drawParticleConnection(&p, neighbour);
+                addLine(&p, neighbour);
             }
         }
     }
@@ -98,19 +130,15 @@ void AnimationState::drawParticles() const {
             for (auto i = size_t{ 0U }; i < cellParticles; ++i) {
                 // j starts at i+1 so we don't duplicate collision checks.
                 for (auto j = size_t{ i + 1 }; j < cellParticles; ++j) {
-                    drawParticleConnection(cell[i], cell[j]);
+                    addLine(cell[i], cell[j]);
                 }
             }
         }
     }
+
 }
 
-bool AnimationState::shouldUpdate(uint32_t ticks) const {
-    return ticksMatchRate(ticks, m_updateRates.front());
-}
-
-void AnimationState::drawParticleConnection(const Particle* const p1,
-                                            const Particle* const p2) const {
+void AnimationState::addLine(const Particle* const p1, const Particle* const p2) {
     if (p1 == p2) return;
 
     const auto dx{ fabs(p1->x - p2->x) };
@@ -119,47 +147,12 @@ void AnimationState::drawParticleConnection(const Particle* const p1,
                              particleConnectionDistance };
     const auto distance{ dx * dx + dy * dy };
 
-    // Draw a line to neighbouring particles. line fades the further away it is.
     if (distance < radiusSq) {
-        const float distFactor{ 1.0f - distance / radiusSq };
-        glColor4f(1.0f, 1.0f, 1.0f, distFactor);
-        glBegin(GL_LINES); {
-            glVertex2f(p1->x, p1->y);
-            glVertex2f(p2->x, p2->y);
-        } glEnd();
+        m_particleLines[m_numLines++] = ParticleLine{ p1->x, p1->y, p2->x, p2->y, 
+                                                    1.0f - distance / radiusSq };
     }
 }
 
-auto AnimationState::createParticles() -> decltype(m_particles) {
-    decltype(m_particles) particleList;
-
-    std::srand(static_cast<uint32_t>(time(nullptr)));
-    for (auto i = size_t{ 0U }; i < numParticles; ++i) {
-        particleList.emplace_back();
-    }
-    return particleList;
-}
-
-void AnimationState::update(uint32_t) {
-    using namespace std::chrono;
-    using clock = std::chrono::high_resolution_clock;
-    static auto time_start = clock::now();
-
-    auto time_end = clock::now();
-    const auto deltaTimeStep{ time_end - time_start };
-    time_start = clock::now();
-    auto dt{ duration_cast<duration<float>>(deltaTimeStep).count() };
-
-    // If a lot of time has passed, set dt to a small value so we don't have
-    // one large jump
-    if (dt > 1.0f) {
-        dt = 0.016f;
-    }
-
-    for (auto& p : m_particles) {
-        p.update(*this, dt);
-    }
-}
 
 Particle::Particle() :
     x{ particleMinPos + static_cast<float>(rand()) /

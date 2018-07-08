@@ -64,7 +64,7 @@ public:
     void drawGraphLines(const VBOID& vboID) const;
 
     VBOID createGraphLineVBO(size_t numValues);
-    VBOID createVBO(size_t numValues);
+    VBOID createVBO(size_t numVerts);
 
 private:
     VBOController();

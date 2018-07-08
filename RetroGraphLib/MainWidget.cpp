@@ -47,10 +47,33 @@ void MainWidget::draw() const {
 
     float aspect = static_cast<float>(m_viewport.width) /
                    static_cast<float>(m_viewport.height);
-    glPushMatrix();
-    glScalef(1.0f, aspect, 1.0f);
-        m_animationState->drawParticles();
-    glPopMatrix();
+    glPushMatrix(); {
+        glScalef(1.0f, aspect, 1.0f);
+        drawParticles();
+        drawParticleLines();
+    } glPopMatrix();
+}
+
+void MainWidget::drawParticles() const {
+    for (const auto& p : m_animationState->getParticles()) {
+        glPushMatrix(); {
+            glTranslatef(p.x, p.y, 0.0f);
+            glScalef(p.size, p.size, 1.0f);
+            ListContainer::inst().drawCircle();
+        } glPopMatrix();
+    }
+}
+
+void MainWidget::drawParticleLines() const {
+    glBegin(GL_LINES); {
+        for (int i = 0; i < m_animationState->getNumLines(); ++i) {
+            const auto& line{ m_animationState->getLine(i) };
+
+            glColor4f(WHITE_R, WHITE_G, WHITE_B, line.alpha);
+            glVertex2f(line.x1, line.y1);
+            glVertex2f(line.x2, line.y2);
+        }
+    } glEnd();
 }
 
 }

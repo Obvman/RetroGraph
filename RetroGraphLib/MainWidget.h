@@ -31,6 +31,9 @@ public:
     void updateObservers(const RetroGraph& rg) override;
     void draw() const override;
 private:
+    void drawParticles() const;
+    void drawParticleLines() const;
+
     const AnimationState* m_animationState;
 
     VBOID m_vboID;

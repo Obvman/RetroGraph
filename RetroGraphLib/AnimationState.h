@@ -30,9 +30,9 @@ const int32_t numCellsPerSide{ 10 };
 
 class AnimationState;
 
-class Particle {
-public:
+struct Particle {
     Particle();
+    ~Particle() = default;
 
     void update(AnimationState& as, float dt);
 
@@ -45,7 +45,23 @@ public:
 
     uint32_t cellX{ 0 };
     uint32_t cellY{ 0 };
-private:
+};
+
+struct ParticleLine {
+    ParticleLine() = default;
+    ParticleLine(float x1_, float y1_, float x2_, float y2_, float alpha_)
+        : x1{ x1_ }
+        , y1{ y1_ }
+        , x2{ x2_ }
+        , y2{ y2_ }
+        , alpha{ alpha_ } { }
+    ~ParticleLine() = default;
+
+    float x1;
+    float y1;
+    float x2;
+    float y2;
+    float alpha;
 };
 
 class AnimationState : public Measure {
@@ -62,20 +78,23 @@ public:
     /* Updates the positions of all particles */
     void update(uint32_t ticks) override;
 
-    /* Draws each particle */
-    void drawParticles() const;
-
     uint32_t getAnimationFPS() const { return m_updateRates.front(); };
 
     void setCircleList(GLuint circleList) { m_circleList = circleList; }
+
+    const ParticleLine& getLine(int i) const { return m_particleLines[i]; }
+    const std::vector<Particle>& getParticles() const { return m_particles; }
+    int getNumLines() const { return m_numLines; }
 private:
     bool shouldUpdate(uint32_t ticks) const override;
 
-    /* Draws the connecting line between particles that are close together */
-    void drawParticleConnection(const Particle* p1,
-                                const Particle* p2) const;
+    void updateParticleLines();
+    void addLine(const Particle* const p1, const Particle* const p2);
+
 
     std::vector<Particle> m_particles{ };
+    std::vector<ParticleLine> m_particleLines;
+    int m_numLines;
 
     auto createParticles() -> decltype(m_particles);
 
@@ -85,9 +104,8 @@ private:
     std::array<std::array<CellParticleList, numCellsPerSide>, numCellsPerSide> m_cells;
 
     GLuint m_circleList;
-    VBOID m_vboID;
 
-    friend class Particle;
+    friend struct Particle;
 };
 
 
