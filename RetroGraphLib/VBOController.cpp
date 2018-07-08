@@ -16,7 +16,11 @@ VBOController::VBOController()
 
 
 VBOController::~VBOController() {
-    // TODO glDeleteBuffers()
+    glDeleteBuffers(1, &m_graphGridVertsID);
+    glDeleteVertexArrays(1, &m_graphGridIndicesID);
+
+    for (const auto& vbo : m_graphLineVBOData)
+        glDeleteBuffers(1, &vbo.id);
 }
 
 void VBOController::drawGraphGrid() const {
@@ -33,41 +37,38 @@ void VBOController::drawGraphLines(int vboID) const {
     });
 }
 
-int VBOController::createGraphLineVBO(GLsizei numValues) {
+int VBOController::createGraphLineVBO(size_t numValues) {
+    m_graphLineVBOData.emplace_back(static_cast<GLsizei>(numValues));
+    auto& vboContainer{ m_graphLineVBOData.back() };
+    auto& verts{ vboContainer.data };
     std::vector<GLfloat> values( numValues, 0.0f );
-    std::vector<GLfloat> verts( numValues * 2 );
 
     for (int i = 0; i < values.size(); ++i) {
         verts[2 * i]     = (static_cast<GLfloat>(i) / (values.size() - 1)) * 2.0f - 1.0f;
         verts[2 * i + 1] = values[i] * 2.0f - 1.0f;
     }
-    m_graphLineVBOData.emplace_back(numValues);
 
-    glGenBuffers(1, &m_graphLineVBOData.back().id);
-    glBindBuffer(GL_ARRAY_BUFFER, m_graphLineVBOData.back().id);
+    glGenBuffers(1, &vboContainer.id);
+    glBindBuffer(GL_ARRAY_BUFFER, vboContainer.id);
     glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(GLfloat), verts.data(), GL_DYNAMIC_DRAW);
 
-    return m_graphLineVBOData.size() - 1;
+    return static_cast<int>(m_graphLineVBOData.size() - 1);
 }
 
-void VBOController::updateGraphLines(int vboID, const std::vector<GLfloat>& values) const {
-    // TODO cache verts so we don't need to allocate every time.
+void VBOController::updateGraphLines(int vboID, const std::vector<GLfloat>& values) {
+    auto& vboContainer{ m_graphLineVBOData[vboID] };
+    auto& verts{ vboContainer.data };
 
-    std::vector<GLfloat> verts(values.size() * 2);
     for (int i = 0; i < values.size(); ++i) {
         verts[2 * i] = (static_cast<GLfloat>(i) / (values.size() - 1)) * 2.0f - 1.0f;
         verts[2 * i + 1] = values[i] * 2.0f - 1.0f;
     }
-    glBindBuffer(GL_ARRAY_BUFFER, m_graphLineVBOData[vboID].id);
+    glBindBuffer(GL_ARRAY_BUFFER, vboContainer.id);
     glBufferSubData(GL_ARRAY_BUFFER, 0, verts.size() * sizeof(GLfloat), verts.data());
 }
 
 void VBOController::initVBOs() {
-    const auto& settings{ UserSettings::inst() };
-
     initGraphGridVBO();
-
-    // initGraphLineVBO(std::get<uint32_t>(settings.getVal("Widgets-Graphs-GPU.NumUsageSamples")));
 }
 
 void VBOController::initGraphGridVBO() {

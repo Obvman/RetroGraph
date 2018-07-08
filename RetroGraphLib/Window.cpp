@@ -423,6 +423,15 @@ void Window::sendToBack() const {
     SetWindowPos(m_hWndMain, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
 }
 
+void GLAPIENTRY Window::GLMessageCallback(GLenum source, GLenum type, GLuint /*id*/,
+                                          GLenum severity, GLsizei /*length*/,
+                                          const GLchar * message, const void * /*userParam*/) {
+    //fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
+    fprintf(stderr, "GL CALLBACK: %s source = %d, type = %d, severity = %xd message = %s\n",
+        (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
+            source, type, severity, message);
+}
+
 void Window::updateSize(int32_t width, int32_t height) {
     m_width = width;
     m_height = height;
@@ -487,6 +496,12 @@ void Window::initOpenGL() {
     int gargc{ 1 };
     glutInit(&gargc, gargv);
 
+    // Enable debug info
+#if _DEBUG
+    glEnable(GL_DEBUG_OUTPUT);
+    glDebugMessageCallback(GLMessageCallback, reinterpret_cast<void*>(this));
+#endif
+
     glEnable(GL_ALPHA_TEST);
     glEnable(GL_MULTISAMPLE_ARB);
     glEnable(GL_BLEND); // Alpha blending needed for transparency
@@ -495,6 +510,8 @@ void Window::initOpenGL() {
 
     std::cout << "Opengl version: " << glGetString(GL_VERSION) << '\n';
     std::cout << glGetString(GL_VENDOR) << ' ' << glGetString(GL_RENDERER) << '\n';
+
+    
 }
 
 bool Window::createHGLRC() {

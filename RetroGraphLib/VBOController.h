@@ -36,17 +36,18 @@ void vboDrawScope(GLuint vertID, F f) {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
+// Container for standard VBO data (no element array)
 struct VBOContainer {
     VBOContainer()
         : VBOContainer{ 0 } { }
     VBOContainer(GLsizei size_)
         : id{ 0 }
         , size{ size_ }
-        , data{}  { }
+        , data( size_ * 2)  { }
 
     GLuint id;
-    GLsizei size;
-    std::vector<float> data;
+    GLsizei size; // Num vertices
+    std::vector<GLfloat> data;
 };
 
 class VBOController {
@@ -56,20 +57,16 @@ public:
 
     void drawGraphGrid() const;
 
-    void updateGraphLines(int vboID, const std::vector<GLfloat>& values) const;
+    void updateGraphLines(int vboID, const std::vector<GLfloat>& values);
     void drawGraphLines(int vboID) const;
 
-    int createGraphLineVBO(GLsizei numValues);
+    int createGraphLineVBO(size_t numValues);
 
 private:
     VBOController();
 
     void initVBOs();
-
     void initGraphGridVBO();
-
-    // TODO 
-    // void updateGraphLineVBO(const std::vector<float>& values);
 
     GLuint m_graphGridVertsID;
     GLuint m_graphGridIndicesID;

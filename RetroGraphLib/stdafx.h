@@ -13,6 +13,7 @@
 #include <tchar.h>
 #include <TlHelp32.h>
 #include <winternl.h>
+#include <pathcch.h>
 
 #include <cstdint>
 #include <cassert>

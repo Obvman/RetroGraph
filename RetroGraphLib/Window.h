@@ -88,6 +88,11 @@ private:
     /* Sends the window to the background layer (i.e. on the desktop) */
     void sendToBack() const;
 
+    // Passes Window this pointer via userParam
+    static void GLAPIENTRY GLMessageCallback(GLenum source, GLenum type, GLuint id,
+                                             GLenum severity, GLsizei length,
+                                             const GLchar* message, const void* userParam);
+
     bool m_running{ true };
     bool m_clickthrough{ true };
 

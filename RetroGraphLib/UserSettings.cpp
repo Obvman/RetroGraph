@@ -6,15 +6,28 @@
 #include <string>
 #include <boost/property_tree/ini_parser.hpp>
 #include <Windows.h>
+#include <pathcch.h>
 #include <map>
 
 #include "utils.h"
 
+#pragma comment(lib, "Pathcch.lib")
+
 namespace rg {
 
-const std::string iniPath{ ((IsDebuggerPresent()) ? 
-                            "resources\\config.ini" :
-                            R"(..\RetroGraph\resources\config.ini)") };
+std::string getExePath();
+
+const std::string iniPath{ getExePath() + R"(\..\RetroGraph\resources\config.ini)" };
+
+std::string getExePath() {
+    WCHAR fBuff[MAX_PATH];
+    GetModuleFileNameW(nullptr, fBuff, sizeof(fBuff));
+    PathCchRemoveFileSpec(fBuff, sizeof(fBuff));
+
+    std::wstring path{ fBuff };
+    return wstrToStr(path);
+}
+
 
 UserSettings::UserSettings() {
     namespace po = boost::program_options;

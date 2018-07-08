@@ -1,5 +1,7 @@
 config file path relative to executable, not program launch directory
 
+convert to unicode?
+
 Build batch script
 
 move d3dkmt.h to external folder
@@ -65,6 +67,8 @@ Immediate Mode vs VBO performance:
 
 IM: Renderer::Draw() (with animation running) = 33.51%
 IM: Renderer::Draw() (without animation running) = 30.15%
+IM: AnimationState ON = ~2% GPU usage in task manager
+IM: AnimationState OFF = ~.1% GPU usage in task manager
 
 Github README:
 	Images of retrograph
