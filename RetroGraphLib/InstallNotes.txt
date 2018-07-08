@@ -1,0 +1,14 @@
+
+Fonts:
+Should install Lato and United fonts to C:\Windows\Fonts
+
+Run on startup - add registry key:
+	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run
+
+	Add String with path to RetroGraph.exe
+
+CPUStatsWidget - requires CoreTemp1.0r9 or greater to be installed and running in order to function
+
+MusicWidget - requires foobar2000 with correct title format - %title% | [%album artist%] | [%album%[ CD%discnumber%][ #%tracknumber%]] | $if(%ispaused%,Paused,Playing) | [%_time_elapsed_seconds%, %_time_total_seconds%] | "
+
+GPU information will not work without an NVIDIA GPU.

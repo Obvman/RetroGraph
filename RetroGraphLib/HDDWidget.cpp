@@ -25,8 +25,6 @@ void HDDWidget::draw() const {
 
     drawWidgetBackground();
 
-    glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
-    glLineWidth(0.5f);
     ListContainer::inst().drawTopAndBottomSerifs();
 
     // Draw each drive status section

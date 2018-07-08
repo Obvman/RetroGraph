@@ -26,8 +26,6 @@ void NetStatsWidget::draw() const {
     clear();
     drawWidgetBackground();
 
-    glColor4f(DIVIDER_R, DIVIDER_G, DIVIDER_B, DIVIDER_A);
-    glLineWidth(0.5f);
     ListContainer::inst().drawTopAndBottomSerifs();
 
     auto statsStrings{ m_statsStrings };

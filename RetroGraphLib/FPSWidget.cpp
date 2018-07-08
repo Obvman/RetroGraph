@@ -18,7 +18,6 @@ void FPSWidget::draw() const {
 
     drawWidgetBackground();
 
-    glColor4f(DIVIDER_R, DIVIDER_G, DIVIDER_B, DIVIDER_A);
     ListContainer::inst().drawTopAndBottomSerifs();
 
     const auto fps{ FPSLimiter::inst().getFPS() };

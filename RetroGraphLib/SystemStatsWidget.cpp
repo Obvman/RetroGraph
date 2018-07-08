@@ -75,8 +75,6 @@ void SystemStatsWidget::draw() const {
 
     drawWidgetBackground();
 
-    glColor4f(DIVIDER_R, DIVIDER_G, DIVIDER_B, DIVIDER_A);
-    glLineWidth(0.5f);
     ListContainer::inst().drawTopAndBottomSerifs();
 
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);

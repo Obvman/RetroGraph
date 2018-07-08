@@ -41,7 +41,6 @@ void MainWidget::draw() const {
 
     drawWidgetBackground();
 
-    glColor4f(DIVIDER_R, DIVIDER_G, DIVIDER_B, DIVIDER_A);
     ListContainer::inst().drawTopAndBottomSerifs();
 
     glColor4f(PARTICLE_R, PARTICLE_G, PARTICLE_B, PARTICLE_A);

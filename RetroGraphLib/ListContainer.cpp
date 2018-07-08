@@ -91,6 +91,8 @@ void ListContainer::initBorderList() const {
 
 void ListContainer::initSerifList() const {
     glNewList(m_serifList, GL_COMPILE); {
+        glColor4f(DIVIDER_R, DIVIDER_G, DIVIDER_B, DIVIDER_A);
+        glLineWidth(0.5f);
         glBegin(GL_LINES); {
             glVertex2f(-1.0f, 1.0f);
             glVertex2f(1.0f, 1.0f);

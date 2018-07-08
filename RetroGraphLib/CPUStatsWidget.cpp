@@ -45,7 +45,6 @@ void CPUStatsWidget::draw() const {
 }
 
 void CPUStatsWidget::drawNoInfoState() const {
-    glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
     ListContainer::inst().drawTopAndBottomSerifs();
 
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
@@ -57,7 +56,6 @@ void CPUStatsWidget::drawStats() const {
     glViewport(m_statsViewport.x, m_statsViewport.y,
                m_statsViewport.width, m_statsViewport.height);
 
-    glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
     ListContainer::inst().drawTopAndBottomSerifs();
 
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);

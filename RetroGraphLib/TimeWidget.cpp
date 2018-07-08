@@ -30,7 +30,6 @@ void TimeWidget::draw() const {
 
     glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
     glLineWidth(0.5f);
-
     constexpr float leftDivX{ -0.33f };
     constexpr float rightDivX{ 0.33f };
     constexpr float midDivY{ -0.3f };
@@ -50,7 +49,7 @@ void TimeWidget::draw() const {
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
     // Draw the big system time and the date below
     {
-        time_t now = time(0);
+        time_t now = time(nullptr);
         tm t;
         char timeBuff[10];
         localtime_s(&t, &now);

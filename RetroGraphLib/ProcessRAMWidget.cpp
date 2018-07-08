@@ -25,8 +25,6 @@ void ProcessRAMWidget::draw() const {
 
     drawWidgetBackground();
 
-    glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
-    glLineWidth(0.5f);
     ListContainer::inst().drawTopAndBottomSerifs();
 
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);

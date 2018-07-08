@@ -27,7 +27,6 @@ void MusicWidget::draw() const {
 
     drawWidgetBackground();
 
-    glColor4f(DIVIDER_R, DIVIDER_G, DIVIDER_B, DIVIDER_A);
     ListContainer::inst().drawTopAndBottomSerifs();
 
     if (m_musicMeasure->isPlayerRunning()) {

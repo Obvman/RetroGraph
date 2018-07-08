@@ -1,3 +1,5 @@
+Figure out which DLLs are required
+
 convert to unicode?
 
 Build batch script
