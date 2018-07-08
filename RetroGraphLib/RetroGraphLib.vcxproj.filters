@@ -132,12 +132,6 @@
     <ClInclude Include="D3GPUMeasure.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="d3dkmt.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="phbasesup.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SystemInformationMeasure.h">
       <Filter>Header Files</Filter>
     </ClInclude>

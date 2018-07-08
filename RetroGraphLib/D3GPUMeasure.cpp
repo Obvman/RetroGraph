@@ -2,7 +2,7 @@
 
 #include "D3GPUMeasure.h"
 
-#include "d3dkmt.h"
+// #include "d3dkmt.h"
 // #include "phbasesup.h"
 #include <iostream>
 

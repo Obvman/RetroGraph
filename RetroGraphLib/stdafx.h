@@ -57,5 +57,3 @@
 #include <GL/freeglut.h>
 #include <GL/wglew.h>
 #include <GL/gl.h>
-
-#include "d3dkmt.h"

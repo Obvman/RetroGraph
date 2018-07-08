@@ -183,7 +183,6 @@
     <ClInclude Include="CPUMeasure.h" />
     <ClInclude Include="CPUPlugin.h" />
     <ClInclude Include="CPUStatsWidget.h" />
-    <ClInclude Include="d3dkmt.h" />
     <ClInclude Include="D3GPUMeasure.h" />
     <ClInclude Include="DisplayMeasure.h" />
     <ClInclude Include="drawUtils.h" />
@@ -204,7 +203,6 @@
     <ClInclude Include="NetMeasure.h" />
     <ClInclude Include="NetStatsWidget.h" />
     <ClInclude Include="NtDefs.h" />
-    <ClInclude Include="phbasesup.h" />
     <ClInclude Include="ProcessCPUWidget.h" />
     <ClInclude Include="ProcessData.h" />
     <ClInclude Include="ProcessMeasure.h" />
