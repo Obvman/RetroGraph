@@ -15,10 +15,8 @@ typedef unsigned int GLuint;
 
 namespace rg {
 
-constexpr float PARTICLE_R{ 0.8f };
-constexpr float PARTICLE_G{ 0.8f };
-constexpr float PARTICLE_B{ 0.8f };
-constexpr float PARTICLE_A{ 0.5f };
+constexpr size_t numParticles{ 100U };
+constexpr size_t maxLines{ numParticles * numParticles };
 
 // TODO alter this value based on size
 constexpr float particleConnectionDistance{ 0.2f };
@@ -31,6 +29,7 @@ const int32_t numCellsPerSide{ 10 };
 class AnimationState;
 
 struct Particle {
+    // Initialises members with random values. Should seed before constructing.
     Particle();
     ~Particle() = default;
 
@@ -49,19 +48,17 @@ struct Particle {
 
 struct ParticleLine {
     ParticleLine() = default;
-    ParticleLine(float x1_, float y1_, float x2_, float y2_, float alpha_)
+    ParticleLine(float x1_, float y1_, float x2_, float y2_)
         : x1{ x1_ }
         , y1{ y1_ }
         , x2{ x2_ }
-        , y2{ y2_ }
-        , alpha{ alpha_ } { }
+        , y2{ y2_ } { }
     ~ParticleLine() = default;
 
     float x1;
     float y1;
     float x2;
     float y2;
-    float alpha;
 };
 
 class AnimationState : public Measure {
@@ -79,12 +76,11 @@ public:
     void update(uint32_t ticks) override;
 
     uint32_t getAnimationFPS() const { return m_updateRates.front(); };
-
-    void setCircleList(GLuint circleList) { m_circleList = circleList; }
-
-    const ParticleLine& getLine(int i) const { return m_particleLines[i]; }
+    const std::array<ParticleLine, maxLines>& getLines() const { return m_particleLines; }
+    const std::array<float, maxLines>& getLineColours() const { return m_lineColors; }
     const std::vector<Particle>& getParticles() const { return m_particles; }
     int getNumLines() const { return m_numLines; }
+
 private:
     bool shouldUpdate(uint32_t ticks) const override;
 
@@ -93,8 +89,11 @@ private:
 
 
     std::vector<Particle> m_particles{ };
-    std::vector<ParticleLine> m_particleLines;
-    int m_numLines;
+
+    // Static buffer set to the maximum possible number of lines in worst case scenario (all particles are in neighbouring cells)
+    std::array<ParticleLine, maxLines> m_particleLines;
+    std::array<float, maxLines> m_lineColors;
+    int m_numLines; // Tracks actual number of lines
 
     auto createParticles() -> decltype(m_particles);
 
@@ -102,8 +101,6 @@ private:
     // The world space coordinates range from -1.0 to 1.0 for both x and y,
     // so we have a range of 2.0 for our world sides
     std::array<std::array<CellParticleList, numCellsPerSide>, numCellsPerSide> m_cells;
-
-    GLuint m_circleList;
 
     friend struct Particle;
 };

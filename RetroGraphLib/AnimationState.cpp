@@ -22,7 +22,6 @@
 
 namespace rg {
 
-constexpr size_t numParticles{ 100U };
 constexpr auto numVerticesPerCircle{ circleLines + 2 };
 constexpr auto numCoordsPerCircle{ numVerticesPerCircle * 2 };
 
@@ -42,7 +41,7 @@ constexpr float particleMaxSpeed{ 0.1f };
 AnimationState::AnimationState()
     : Measure{ std::get<uint32_t>(UserSettings::inst().getVal("Widgets-Main.FPS")) }
     , m_particles( createParticles() )
-    , m_particleLines( numParticles * numParticles )
+    , m_particleLines{}
     , m_numLines{ 0 } {
 
     for (const auto& p : m_particles)
@@ -148,8 +147,8 @@ void AnimationState::addLine(const Particle* const p1, const Particle* const p2)
     const auto distance{ dx * dx + dy * dy };
 
     if (distance < radiusSq) {
-        m_particleLines[m_numLines++] = ParticleLine{ p1->x, p1->y, p2->x, p2->y, 
-                                                    1.0f - distance / radiusSq };
+        m_particleLines[m_numLines] = ParticleLine{ p1->x, p1->y, p2->x, p2->y };
+        m_lineColors[m_numLines++] = 1.0f - distance / radiusSq;
     }
 }
 

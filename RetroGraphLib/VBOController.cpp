@@ -3,6 +3,8 @@
 
 #include "colors.h"
 #include "UserSettings.h"
+#include "AnimationState.h"
+#include "GLShaders.h"
 
 #include <variant>
 
@@ -10,6 +12,13 @@ namespace rg {
 
 VBOController::VBOController()
     : m_graphLineVBOData{} {
+
+    // TODO rename files
+    m_lineShader = loadShader("test.vert", "test.frag");
+
+    if (m_lineShader == -1) {
+       std::cout << "Failed to get uniform location for \'lineAlpha\'\n";
+    }
 
     initVBOs();
 }
@@ -22,6 +31,8 @@ VBOController::~VBOController() {
     for (const auto& vbo : m_graphLineVBOData)
         if (vbo.id != UINT_MAX)
             glDeleteBuffers(1, &vbo.id);
+
+    // TODO clean up shaders
 }
 
 void VBOController::drawGraphGrid() const {
@@ -38,10 +49,29 @@ void VBOController::drawGraphLines(const VBOID& vboID) const {
     });
 }
 
-VBOID VBOController::createGraphLineVBO(size_t numValues) {
-    m_graphLineVBOData.emplace_back(static_cast<GLsizei>(numValues));
+void VBOController::drawAnimationVBO(const VBOID & vboID, int size) const {
+    // TODO colors!
+    glBindBuffer(GL_ARRAY_BUFFER, m_graphLineVBOData[static_cast<int>(vboID)].id);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(2, GL_FLOAT, 0, nullptr);
 
-    auto& vboContainer{ m_graphLineVBOData.back() };
+    //glBindBuffer(GL_ARRAY_BUFFER, m_animColors);
+    //glVertexAttribPointer(1U, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
+    //glEnableVertexAttribArray(1U);
+
+    //glUseProgram(m_lineShader);
+
+    //glColor4f(PARTICLE_R, PARTICLE_G, PARTICLE_B, 1.0f);
+    glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(size));
+
+    //glUseProgram(0);
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+VBOID VBOController::createGraphLineVBO(size_t numValues) {
+    auto& vboContainer{ m_graphLineVBOData.emplace_back(static_cast<GLsizei>(numValues)) };
     auto& verts{ vboContainer.data };
     std::vector<GLfloat> values(numValues, 0.0f);
 
@@ -57,8 +87,21 @@ VBOID VBOController::createGraphLineVBO(size_t numValues) {
     return VBOID{ m_graphLineVBOData.size() - 1 };
 }
 
-VBOID VBOController::createVBO(size_t numValues) {
-    m_graphLineVBOData.emplace_back(static_cast<GLsizei>(numValues));
+VBOID VBOController::createAnimationVBO(size_t numLines) {
+    // Each line has 2 vertices...
+    auto& vboContainer{ m_graphLineVBOData.emplace_back(static_cast<GLsizei>(numLines * 2)) };
+    auto& verts{ vboContainer.data };
+
+    // TODO create color buffer
+
+    glGenBuffers(1, &vboContainer.id);
+    glBindBuffer(GL_ARRAY_BUFFER, vboContainer.id);
+    glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(GLfloat), verts.data(), GL_DYNAMIC_DRAW);
+
+    //std::vector<GLfloat> colors(verts.size() * 2, 1.0f); // 4 color components vs 2 coords = double size
+    //glGenBuffers(1, &m_animColors);
+    //glBindBuffer(GL_ARRAY_BUFFER, m_animColors);
+    //glBufferData(GL_ARRAY_BUFFER, colors.size() * sizeof(GLfloat), colors.data(), GL_DYNAMIC_DRAW);
 
     return VBOID{ m_graphLineVBOData.size() - 1 };
 }
@@ -88,6 +131,24 @@ void VBOController::updateGraphLines(const VBOID& vboID, const std::vector<GLflo
     }
     glBindBuffer(GL_ARRAY_BUFFER, vboContainer.id);
     glBufferSubData(GL_ARRAY_BUFFER, 0, verts.size() * sizeof(GLfloat), verts.data());
+}
+
+void VBOController::updateAnimationVBO(const VBOID& vboID, const AnimationState & as) {
+    auto& vboContainer{ m_graphLineVBOData[static_cast<int>(vboID)] };
+    auto& verts{ vboContainer.data };
+
+    const auto numLines{ as.getNumLines() };
+
+    for (int i = 0; i < numLines; ++i) {
+        const auto& line{ as.getLines()[i] };
+        verts[4 * i]     = line.x1;
+        verts[4 * i + 1] = line.y1;
+        verts[4 * i + 2] = line.x2;
+        verts[4 * i + 3] = line.y2;
+    }
+
+    glBindBuffer(GL_ARRAY_BUFFER, vboContainer.id);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, numLines * sizeof(ParticleLine), verts.data());
 }
 
 void VBOController::initVBOs() {

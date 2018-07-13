@@ -9,6 +9,8 @@
 
 namespace rg {
 
+class AnimationState;
+
 // Automatically binds/unbinds given VBOs and executes the function given
 template<typename F>
 void vboElemArrayDrawScope(GLuint vertID, GLuint indexID, F f) {
@@ -50,6 +52,7 @@ struct VBOContainer {
     std::vector<GLfloat> data;
 };
 
+
 class VBOID;
 
 class VBOController {
@@ -57,15 +60,16 @@ public:
     static VBOController & inst() { static VBOController i; return i; }
     ~VBOController();
 
-    void drawGraphGrid() const;
+    VBOID createGraphLineVBO(size_t numValues);
+    VBOID createAnimationVBO(size_t numLines);
 
     // Assumes values are floating percentages between 0 and 100
     void updateGraphLines(const VBOID& vboID, const std::vector<GLfloat>& values);
+    void updateAnimationVBO(const VBOID& vboID, const AnimationState& as);
+
+    void drawGraphGrid() const;
     void drawGraphLines(const VBOID& vboID) const;
-
-    VBOID createGraphLineVBO(size_t numValues);
-    VBOID createVBO(size_t numVerts);
-
+    void drawAnimationVBO(const VBOID & vboID, int size) const;
 private:
     VBOController();
 
@@ -78,7 +82,12 @@ private:
     GLuint m_graphGridIndicesID;
     GLsizei m_graphGridIndicesSize;
 
+    // TODO make shader object
+    GLuint m_lineShader;
+
     std::vector<VBOContainer> m_graphLineVBOData;
+
+    GLuint m_animColors;
 
     friend class VBOID;
 };

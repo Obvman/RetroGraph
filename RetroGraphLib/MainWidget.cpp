@@ -18,6 +18,11 @@
 
 namespace rg {
 
+MainWidget::MainWidget(const FontManager* fontManager, const RetroGraph& rg, bool visible)
+    : Widget{ fontManager, visible }
+    , m_animationState{ &rg.getAnimationState() }
+    , m_vboID{ VBOController::inst().createAnimationVBO(maxLines) }  { }
+
 bool MainWidget::needsDraw(uint32_t ticks) const {
     // Only draw if visible and we need to draw to keep
     // up with the animation framerate
@@ -40,11 +45,9 @@ void MainWidget::draw() const {
     clear();
 
     drawWidgetBackground();
-
     ListContainer::inst().drawTopAndBottomSerifs();
 
-    glColor4f(PARTICLE_R, PARTICLE_G, PARTICLE_B, PARTICLE_A);
-
+    // Scale by the aspect ratio of the viewport so circles aren't skewed
     float aspect = static_cast<float>(m_viewport.width) /
                    static_cast<float>(m_viewport.height);
     glPushMatrix(); {
@@ -65,11 +68,14 @@ void MainWidget::drawParticles() const {
 }
 
 void MainWidget::drawParticleLines() const {
+    //VBOController::inst().updateAnimationVBO(m_vboID, *m_animationState);
+    //VBOController::inst().drawAnimationVBO(m_vboID, m_animationState->getNumLines() * sizeof(ParticleLine));
+
     glBegin(GL_LINES); {
         for (int i = 0; i < m_animationState->getNumLines(); ++i) {
-            const auto& line{ m_animationState->getLine(i) };
+            const auto& line{ m_animationState->getLines()[i] };
 
-            glColor4f(WHITE_R, WHITE_G, WHITE_B, line.alpha);
+            glColor4f(WHITE_R, WHITE_G, WHITE_B, m_animationState->getLineColours()[i]);
             glVertex2f(line.x1, line.y1);
             glVertex2f(line.x2, line.y2);
         }

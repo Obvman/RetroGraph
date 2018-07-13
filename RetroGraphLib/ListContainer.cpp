@@ -33,6 +33,7 @@ ListContainer::~ListContainer() {
 
 void ListContainer::initCircleList() const {
     glNewList(m_circleList, GL_COMPILE); {
+        glColor4f(PARTICLE_R, PARTICLE_G, PARTICLE_B, PARTICLE_A);
         glBegin(GL_TRIANGLE_FAN); {
             glVertex2f(0.0f, 0.0f);
             for (int i = 0; i < circleLines; ++i) {

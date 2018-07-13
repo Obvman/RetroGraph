@@ -95,4 +95,10 @@ constexpr float BARFREE_R{ GREY_R };
 constexpr float BARFREE_G{ GREY_G };
 constexpr float BARFREE_B{ GREY_B };
 
+constexpr float PARTICLE_R{ 0.8f };
+constexpr float PARTICLE_G{ 0.8f };
+constexpr float PARTICLE_B{ 0.8f };
+constexpr float PARTICLE_A{ 0.5f };
+
+
 }
