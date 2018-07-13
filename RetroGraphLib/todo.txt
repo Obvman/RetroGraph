@@ -1,5 +1,7 @@
 Build batch script
 
+Add solution file to repo - test cloning the repo and building
+
 move d3dkmt.h to external folder
 
 BIG HITCHES EVERY 5 SECONDS
