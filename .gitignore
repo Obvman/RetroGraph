@@ -6,7 +6,6 @@ Debugx64/
 Releasex64/
 *.opendb
 *.db
-*.sln
 *.swp
 *.aps
 *.rc
