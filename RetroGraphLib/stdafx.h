@@ -40,9 +40,7 @@
 #include <atomic>
 #include <utility>
 
-#include <boost/program_options.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/ini_parser.hpp>
+// #include <inih/INIReader.h>
 
 #include <CoreTempSDK/GetCoreTempInfo.h>
 

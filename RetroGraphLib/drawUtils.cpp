@@ -54,7 +54,7 @@ void drawLineGraph(const std::vector<float>& data) {
 }
 
 void drawWidgetBackground() {
-    if (std::get<bool>(UserSettings::inst().getVal("Window.WidgetBackground"))) {
+    if (UserSettings::inst().getVal<bool>("Window.WidgetBackground")) {
         ListContainer::inst().drawWidgetBackground();
     }
 }

@@ -23,15 +23,9 @@ unsigned long long FileTimeToInt64(const FILETIME & ft) {
 
 CPUMeasure::CPUMeasure() :
     Measure{ 2 },
-    dataSize{ std::get<uint32_t>(
-                  UserSettings::inst().getVal("Widgets-Graphs-CPU.NumUsageSamples")
-              ) } {
+    dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-Graphs-CPU.NumUsageSamples") } {
 
-    // Fill CPU name if CoreTemp interfacing was successful
-    if (m_cpuName.empty() && m_coreTempPlugin.getCoreTempInfoSuccess()) {
-        m_cpuName = "CPU: ";
-        m_cpuName.append(m_coreTempPlugin.getCPUName());
-    }
+    updateCPUName();
 
     // fill vector with default values
     m_usageData.assign(dataSize, 0.0f);
@@ -55,12 +49,7 @@ void CPUMeasure::update(uint32_t) {
 
     m_uptime = std::chrono::milliseconds(GetTickCount64());
 
-    // Fill CPU name if CoreTemp interfacing was successful 
-    // TODO code duplication
-    if (m_cpuName.empty() && m_coreTempPlugin.getCoreTempInfoSuccess()) {
-        m_cpuName = "CPU: ";
-        m_cpuName.append(m_coreTempPlugin.getCPUName());
-    }
+    updateCPUName();
 
     const auto totalLoad{ getCPULoad() };
     // Add to the usageData vector by overwriting the oldest value and
@@ -75,6 +64,14 @@ void CPUMeasure::update(uint32_t) {
         std::rotate(m_perCoreData[i].begin(),
                     m_perCoreData[i].begin() + 1, m_perCoreData[i].end());
     }
+}
+
+void CPUMeasure::updateCPUName() {
+    if (m_cpuName.empty() && m_coreTempPlugin.getCoreTempInfoSuccess()) {
+        m_cpuName = "CPU: ";
+        m_cpuName.append(m_coreTempPlugin.getCPUName());
+    }
+
 }
 
 float CPUMeasure::getCPULoad() {

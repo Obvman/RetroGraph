@@ -74,6 +74,9 @@ public:
 private:
     bool shouldUpdate(uint32_t ticks) const override;
 
+    /* Fill CPU name if CoreTemp interfacing was successful */
+    void updateCPUName();
+
     /* Calculates the total CPU load with the given tick information */
     float calculateCPULoad(uint64_t idleTicks, uint64_t totalTicks);
 

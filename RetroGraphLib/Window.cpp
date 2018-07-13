@@ -386,12 +386,12 @@ void Window::handleClick(DWORD clickX, DWORD clickY) {
     }
 }
 
-void Window::changeMonitor(HWND hWnd, uint32_t monIndex) {
+void Window::changeMonitor(HWND hWnd, int32_t monIndex) {
     // Check monitor selection is in range and the monitor isn't
     // the currently selected one
     if (monIndex >= 0 &&
         monIndex < m_monitors->getNumMonitors() &&
-        monIndex != static_cast<uint32_t>(m_currMonitor)) {
+        monIndex != m_currMonitor) {
 
         m_currMonitor = monIndex;
 

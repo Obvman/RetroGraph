@@ -2,41 +2,47 @@
 
 #include "stdafx.h"
 
-#ifndef _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING
-#define _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING
-#endif
-
-#ifndef _SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING
-#define _SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING
-#endif
-
 #include <cstdint>
 #include <string>
 #include <vector>
 #include <map>
 #include <variant>
-#include <boost/program_options.hpp>
-#include <boost/property_tree/ptree.hpp>
 
 #include "Widget.h"
+#include "utils.h"
+
+class INIReader;
 
 namespace rg {
 
-using settingVariant = std::variant<int32_t, uint32_t, bool, float, std::string>;
+using settingVariant = std::variant<int, bool, double, std::string>;
 
 class UserSettings {
 public:
-    static UserSettings& inst() {
-        static UserSettings i;
-        return i;
-    }
+    static UserSettings& inst() { static UserSettings i; return i; }
+
     ~UserSettings() noexcept = default;
     UserSettings(const UserSettings&) = delete;
     UserSettings& operator=(const UserSettings&) = delete;
     UserSettings(UserSettings&&) = delete;
     UserSettings& operator=(UserSettings&&) = delete;
 
-    settingVariant getVal(const std::string& settingName) const;
+    template<typename T, typename CastType = T>
+    CastType getVal(const std::string& settingName) const {
+        if (m_settings.count(settingName) == 0) {
+            fatalMessageBox("Failed to find setting " + settingName);
+        }
+        return static_cast<CastType>(std::get<T>(m_settings.at(settingName)));
+    }
+
+    // String specialization - returns reference
+    template<>
+    const std::string& getVal<std::string>(const std::string& settingName) const {
+        if (m_settings.count(settingName) == 0) {
+            fatalMessageBox("Failed to find setting " + settingName);
+        }
+        return std::get<std::string>(m_settings.at(settingName));
+    }
 
     bool isVisible(Widgets w) const { return m_widgetVisibilities[w]; }
     WidgetPosition getWidgetPosition(Widgets w) const { return m_widgetPositions[w]; }
@@ -47,7 +53,8 @@ public:
 private:
     UserSettings();
 
-    void generateDefaultFile(boost::property_tree::ptree& propTree);
+    // Initialises member values from ini reader
+    void readMembers(const INIReader& reader);
 
     std::map<std::string, settingVariant> m_settings;
 

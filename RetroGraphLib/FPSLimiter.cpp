@@ -35,15 +35,15 @@ namespace rg {
     }
 }*/
 
-FPSLimiter::FPSLimiter() : 
-    m_maxFPS{ std::get<uint32_t>(
-        UserSettings::inst().getVal("Widgets-Main.FPS")) } {
-    QueryPerformanceFrequency((LARGE_INTEGER*)&m_freq);
+FPSLimiter::FPSLimiter()
+    : m_maxFPS{ UserSettings::inst().getVal<int, uint32_t>("Widgets-Main.FPS") } {
+
+    QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&m_freq));
 }
 
 
 void FPSLimiter::begin() {
-    QueryPerformanceCounter((LARGE_INTEGER*)&m_startTicks);
+    QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&m_startTicks));
 }
 
 void FPSLimiter::end() {

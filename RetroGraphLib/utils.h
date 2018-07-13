@@ -87,4 +87,6 @@ void printTimeToExecuteHighRes(F f) {
     printTimeToExecuteHighRes("Function", f);
 }
 
+const std::string getExePath();
+
 } // namespace rg

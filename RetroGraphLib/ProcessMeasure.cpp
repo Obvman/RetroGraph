@@ -22,16 +22,10 @@
 
 namespace rg {
 
-ProcessMeasure::ProcessMeasure() :
-    Measure{ 2U, 10U, 5U },
-    m_numCPUProcessesToDisplay{ std::get<uint32_t>(
-                                UserSettings::inst().getVal(
-                                    "Widgets-ProcessesCPU.NumProcessesDisplayed")
-                                ) },
-    m_numRAMProcessesToDisplay{ std::get<uint32_t>(
-                                UserSettings::inst().getVal(
-                                    "Widgets-ProcessesRAM.NumProcessesDisplayed")
-                                ) } {
+ProcessMeasure::ProcessMeasure()
+    : Measure{ 2U, 10U, 5U }
+    , m_numCPUProcessesToDisplay{ UserSettings::inst().getVal<int, uint32_t>("Widgets-ProcessesCPU.NumProcessesDisplayed") }
+    , m_numRAMProcessesToDisplay{ UserSettings::inst().getVal<int, uint32_t>("Widgets-ProcessesRAM.NumProcessesDisplayed") } {
 
 #if !_DEBUG
     // Set the debug privilege in order to gain access to system processes

@@ -20,9 +20,7 @@ NvAPI_GPU_GetUsages_t NvAPI_GPU_GetUsages{ nullptr };
 
 GPUMeasure::GPUMeasure()
         : Measure{ 2U }
-        , dataSize{ std::get<uint32_t>(
-                      UserSettings::inst().getVal("Widgets-Graphs-GPU.NumUsageSamples")
-                  ) } {
+        , dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-Graphs-GPU.NumUsageSamples") } {
 
     m_usageData.assign(dataSize, 0.0f);
 

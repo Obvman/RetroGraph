@@ -49,7 +49,6 @@
     <None Include="resources\config.ini">
       <Filter>resources</Filter>
     </None>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

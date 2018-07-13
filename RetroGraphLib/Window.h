@@ -54,7 +54,7 @@ private:
     /* Moves the window to the specified monitor and resizes elements to fit
      * the monitor
      */
-    void changeMonitor(HWND hWnd, uint32_t monIndex);
+    void changeMonitor(HWND hWnd, int32_t monIndex);
 
     /* Initialises OpenGL settings and renderer */
     void initOpenGL();

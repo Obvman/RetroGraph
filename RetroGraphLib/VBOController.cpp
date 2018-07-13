@@ -75,7 +75,7 @@ VBOID VBOController::createGraphLineVBO(size_t numValues) {
     auto& verts{ vboContainer.data };
     std::vector<GLfloat> values(numValues, 0.0f);
 
-    for (int i = 0; i < values.size(); ++i) {
+    for (size_t i = 0; i < values.size(); ++i) {
         verts[2 * i] = (static_cast<GLfloat>(i) / (values.size() - 1)) * 2.0f - 1.0f;
         verts[2 * i + 1] = values[i] * 2.0f - 1.0f;
     }
@@ -125,7 +125,7 @@ void VBOController::updateGraphLines(const VBOID& vboID, const std::vector<GLflo
     auto& vboContainer{ m_graphLineVBOData[static_cast<int>(vboID)] };
     auto& verts{ vboContainer.data };
 
-    for (int i = 0; i < values.size(); ++i) {
+    for (size_t i = 0; i < values.size(); ++i) {
         verts[2 * i] = (static_cast<GLfloat>(i) / (values.size() - 1)) * 2.0f - 1.0f;
         verts[2 * i + 1] = values[i] * 2.0f - 1.0f;
     }

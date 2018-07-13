@@ -62,4 +62,13 @@ uint64_t subtractTimes(const FILETIME& ftA, const FILETIME& ftB) {
      return a.QuadPart - b.QuadPart;
 }
 
+const std::string getExePath() {
+    WCHAR fBuff[MAX_PATH];
+    GetModuleFileNameW(nullptr, fBuff, sizeof(fBuff));
+    PathCchRemoveFileSpec(fBuff, sizeof(fBuff));
+
+    std::wstring path{ fBuff };
+    return wstrToStr(path);
+}
+
 }

@@ -15,9 +15,7 @@ namespace rg {
 
 RAMMeasure::RAMMeasure() :
     Measure{ 2 },
-    dataSize{ std::get<uint32_t>(
-                  UserSettings::inst().getVal("Widgets-Graphs-RAM.NumUsageSamples")
-              ) } {
+    dataSize{ UserSettings::inst().getVal<int, uint32_t>("Widgets-Graphs-RAM.NumUsageSamples") } {
 
     // Fill the memory stat struct with system information
     m_memStatus.dwLength = sizeof(m_memStatus);

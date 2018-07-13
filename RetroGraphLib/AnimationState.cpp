@@ -39,7 +39,7 @@ constexpr float particleMaxSpeed{ 0.1f };
 //constexpr float particleMaxSize{ 0.036f };
 
 AnimationState::AnimationState()
-    : Measure{ std::get<uint32_t>(UserSettings::inst().getVal("Widgets-Main.FPS")) }
+    : Measure{ UserSettings::inst().getVal<int, uint32_t>("Widgets-Main.FPS") }
     , m_particles( createParticles() )
     , m_particleLines{}
     , m_numLines{ 0 } {
