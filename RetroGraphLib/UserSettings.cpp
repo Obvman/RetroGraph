@@ -17,6 +17,7 @@
 namespace rg {
 
 const std::string iniPath{ getExePath() + R"(\..\..\resources\config.ini)" };
+const std::string fallbackIniPath{ getExePath() + R"(\..\..\resources\default_config.ini)" };
 
 
 UserSettings::UserSettings()
@@ -25,7 +26,12 @@ UserSettings::UserSettings()
 
     INIReader reader{ iniPath };
     if (reader.ParseError() < 0) {
-        fatalMessageBox("Failed to load config file from " + iniPath);
+        showMessageBox("Failed to load config file from " + iniPath + "\nUsing default_config.ini");
+        reader = INIReader{ fallbackIniPath };
+
+        if (reader.ParseError() < 0) {
+            fatalMessageBox("Failed to load default config file.");
+        }
     }
 
     try {
