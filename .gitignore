@@ -5,6 +5,7 @@ deps/include/inih/
 deps/include/tweeny/
 deps/include/glm
 RetroGraph/resources/config.ini
+Package/
 *.opendb
 *.db
 *.swp
