@@ -12,7 +12,7 @@
 
 @SET PKGDIR=Package\
 @SET RSRCDIR=%PKGDIR%resources\
-@SET BINDIR=%PKGDIR%bin\
+@SET BINDIR=%PKGDIR%bin\x64\
 @SET DEVENVCOM="C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\devenv.com"
 
 @IF [%1]==[rebuild] GOTO :build
@@ -52,9 +52,9 @@ GOTO :start_build
 @ECHO Copying resource directory files
 @ECHO ========================================================================
 
-@XCOPY /Q /E /I "RetroGraph\resources\fonts" "Package\resources\fonts" >NUL || goto :error
-@XCOPY /Q /E /I "RetroGraph\resources\shaders" "Package\resources\shaders" >NUL || goto :error
-@COPY  "RetroGraph\resources\default_config.ini" "Package\resources\config.ini" >NUL || goto :error
+@XCOPY /Q /E /I "resources\fonts" "Package\resources\fonts" >NUL || goto :error
+@XCOPY /Q /E /I "resources\shaders" "Package\resources\shaders" >NUL || goto :error
+@COPY  "resources\default_config.ini" "Package\resources\config.ini" >NUL || goto :error
 
 :success
 @ECHO.

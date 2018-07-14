@@ -16,7 +16,7 @@
 
 namespace rg {
 
-const std::string iniPath{ getExePath() + R"(\..\..\RetroGraph\resources\config.ini)" };
+const std::string iniPath{ getExePath() + R"(\..\..\resources\config.ini)" };
 
 
 UserSettings::UserSettings()
