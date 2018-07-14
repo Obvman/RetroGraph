@@ -1,8 +1,8 @@
+package fonts so user doesn't have to install them to system32
+
+Build script take platform/configuration arguments
+
 make particle line shader. for each vertex, send the position of that vertex's partner. Calculate position + transparency.
-
-try moving VBO updates to update()
-
-Build batch script
 
 move d3dkmt.h to external folder
 
