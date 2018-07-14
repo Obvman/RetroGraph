@@ -1,21 +1,13 @@
-package fonts so user doesn't have to install them to system32
-
 Build script take platform/configuration arguments
 
 make particle line shader. for each vertex, send the position of that vertex's partner. Calculate position + transparency.
-
-move d3dkmt.h to external folder
 
 BIG HITCHES EVERY 5 SECONDS
 	Music measure EnumWindows() every 5 seconds if the classname for the fubar title hasn't been set
 
 Enforce position restrictions on FPS/Graph/Main/CPUStats widgets
 
-fix the waiting on network connection thread when the network measure is destructed
-
 implement 30 min work/rest timer
-
-use gl lists to draw things like graph grids
 
 high-performance mode - switch between low and high FPS for main widget, graphs
 
@@ -50,13 +42,9 @@ hdd read/write usage
 
 3D effects on graph
 
-have config options for polling intervals of individual measures
-
 separate net traffic graphs
 
 have an average ping time display
-
-test suite
 
 
 NOTES:
