@@ -101,8 +101,7 @@ void CPUStatsWidget::drawCoreGraphs() const {
     glLineWidth(0.5f);
     glColor4f(GRAPHLINE_A, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
     for (unsigned int i = 0U; i < numCores; ++i) {
-        // Set the viewport for the current graph. The y position
-        // of each graph changes as we draw more
+        // Set the viewport for the current graph. Draws top to bottom
         const auto yOffset{ static_cast<GLint>((numCores - 1) * m_coreGraphViewport.height/numCores - 
             i*m_coreGraphViewport.height/numCores) };
         glViewport(m_coreGraphViewport.x, 

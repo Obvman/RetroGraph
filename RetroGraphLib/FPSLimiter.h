@@ -37,7 +37,7 @@ private:
     void calculateFPS();
 
     float m_fps;
-    uint32_t m_maxFPS;
+    int m_maxFPS;
     float m_frameTime;
     int64_t m_startTicks;
     int64_t m_freq;

@@ -27,7 +27,7 @@ public:
     CPUMeasure& operator=(CPUMeasure&&) = delete;
 
     /* Updates the total system's CPU usage statistics */
-    void update(uint32_t ticks) override;
+    void update(int ticks) override;
 
     /* Returns the current system CPU load as a percentage */
     float getCPULoad();
@@ -37,7 +37,7 @@ public:
     std::string getUptimeStr() const;
 
     /* Returns the number of physical cores in the CPU */
-    uint32_t getNumCores() const { return m_coreTempPlugin.getNumCores(); }
+    int getNumCores() const { return m_coreTempPlugin.getNumCores(); }
 
     /* Returns the current CPU clock speed in Megahertz */
     float getClockSpeed() const { return m_coreTempPlugin.getClockSpeed(); }
@@ -46,12 +46,12 @@ public:
     float getVoltage() const { return m_coreTempPlugin.getVoltage(); }
 
     /* Returns the temperature of the specified core */
-    float getTemp(uint32_t coreNum) const {
+    float getTemp(int coreNum) const {
         return m_coreTempPlugin.getTemp(coreNum);
     }
 
     /* Returns the maximum allowable CPU temperature in degrees celsius */
-    uint32_t getTjMax() const { return m_coreTempPlugin.getTjMax(); }
+    int getTjMax() const { return m_coreTempPlugin.getTjMax(); }
 
     /* Gets description of the CPU model */
     const std::string& getCPUName() const { return m_cpuName; }
@@ -72,7 +72,7 @@ public:
     }
 
 private:
-    bool shouldUpdate(uint32_t ticks) const override;
+    bool shouldUpdate(int ticks) const override;
 
     /* Fill CPU name if CoreTemp interfacing was successful */
     void updateCPUName();

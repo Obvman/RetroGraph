@@ -23,7 +23,7 @@ public:
     MainWidget& operator=(MainWidget&&) = delete;
 
     /* Checks if the widget should draw to maintain the target FPS */
-    bool needsDraw(uint32_t ticks) const;
+    bool needsDraw(int ticks) const;
     void updateObservers(const RetroGraph& rg) override;
     void draw() const override;
 private:

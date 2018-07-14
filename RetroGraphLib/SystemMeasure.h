@@ -18,7 +18,7 @@ public:
     SystemMeasure(SystemMeasure&&) = delete;
     SystemMeasure& operator=(SystemMeasure&&) = delete;
 
-    void update(uint32_t ticks) override;
+    void update(int ticks) override;
 
     /* Returns string of current operating system version/build number */
     const std::string& getOSInfoStr() const { return m_osInfoStr; }
@@ -36,7 +36,7 @@ public:
     const std::string& getComputerName() const { return m_computerName; }
 
 private:
-    bool shouldUpdate(uint32_t /*ticks*/) const override { return false; }
+    bool shouldUpdate(int /*ticks*/) const override { return false; }
 
     /* Sets the contents of m_osInfoStr. Only needs to be called once */
     void getOSVersionInfo();

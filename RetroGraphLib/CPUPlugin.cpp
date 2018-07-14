@@ -17,9 +17,7 @@ CPUPlugin::CPUPlugin() {
     }
 
     // Get the address of the GetCoreTempInfo function from the DLL
-    GetCoreTempInfo = (myGetCoreTempInfo)GetProcAddress(
-        m_libHandle, "fnGetCoreTempInfoAlt"
-    );
+    GetCoreTempInfo = (myGetCoreTempInfo)GetProcAddress(m_libHandle, "fnGetCoreTempInfoAlt");
     if (!GetCoreTempInfo) {
         fatalMessageBox("Could not get function address from GetCoreTempInfo.dll");
     }

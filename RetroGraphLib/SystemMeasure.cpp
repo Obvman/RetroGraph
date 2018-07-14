@@ -33,7 +33,7 @@ SystemMeasure::SystemMeasure() {
     m_computerName.append(cNameBuf);
 }
 
-void SystemMeasure::update(uint32_t ticks) {
+void SystemMeasure::update(int ticks) {
     (void)ticks;
 }
 
@@ -77,12 +77,12 @@ void SystemMeasure::getCPUInfo() {
 
     // Credit to bsruth -
     // http://stackoverflow.com/questions/850774/how-to-determine-the-hardware-cpu-and-ram-on-a-machine
-    int32_t CPUInfo[4] = {-1};
+    int CPUInfo[4] = {-1};
     // Get the information associated with each extended ID.
     __cpuid(CPUInfo, 0x80000000);
     const auto nExIds{ CPUInfo[0] };
     char CPUBrandString[0x40];
-    for (int32_t i = 0x80000000; i <= nExIds; ++i) {
+    for (int i = 0x80000000; i <= nExIds; ++i) {
         __cpuid(CPUInfo, i);
         // Interpret CPU brand string
         if  (i == 0x80000002)

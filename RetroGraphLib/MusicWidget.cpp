@@ -14,7 +14,7 @@
 
 namespace rg {
 
-void createFormattedTimeStr(char* buffer, size_t buffSize, uint32_t seconds);
+void createFormattedTimeStr(char* buffer, size_t buffSize, int seconds);
 
 void MusicWidget::updateObservers(const RetroGraph & rg) {
     m_musicMeasure = &rg.getMusicMeasure();
@@ -75,7 +75,7 @@ void MusicWidget::draw() const {
     }
 }
 
-void createFormattedTimeStr(char* buffer, size_t buffSize, uint32_t seconds) {
+void createFormattedTimeStr(char* buffer, size_t buffSize, int seconds) {
     if (seconds > 60 * 59) {
         const auto S{ seconds % 60 };
         const auto M{ seconds / 60 };

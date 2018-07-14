@@ -9,8 +9,6 @@ namespace rg {
 class FontManager;
 class RetroGraph;
 
-// TODO the WINDOW is dependant on this measure! it should NEVER be destroyed!!!!!!!!
-// Edit the dependency map to prevent destruction!!!!!!
 class DisplayMeasure : public Measure {
 public:
     DisplayMeasure();
@@ -20,12 +18,12 @@ public:
     DisplayMeasure(DisplayMeasure&&) = delete;
     DisplayMeasure& operator=(DisplayMeasure&&) = delete;
 
-    void update(uint32_t ticks) override;
+    void update(int ticks) override;
 
     const Monitors* getMonitors() const { return &m_monitors; }
 
 private:
-    bool shouldUpdate(uint32_t ticks) const override;
+    bool shouldUpdate(int ticks) const override;
 
     Monitors m_monitors;
 };

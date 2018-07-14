@@ -98,8 +98,8 @@ private:
 class VBOID {
 public:
     VBOID() : m_id{ -1 } {}
-    VBOID(int id) : m_id{ id } {}
-    VBOID(size_t id) : m_id{ static_cast<int>(id) } {}
+    explicit VBOID(int id) : m_id{ id } {}
+    explicit VBOID(size_t id) : m_id{ static_cast<int>(id) } {}
     ~VBOID() {
         VBOController::inst().destroyVBO(*this);
     }

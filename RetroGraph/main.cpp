@@ -37,7 +37,7 @@ void mainLoop(rg::RetroGraph& retroGraph) {
         system_clock::now().time_since_epoch()
         ).count() };
 
-    auto ticks = uint32_t{ 1 };
+    auto ticks = int{ 1 };
     auto lastTick{ ticks };
 
     // Enter main update/draw loop

@@ -9,10 +9,10 @@
 
 namespace rg {
 
-constexpr uint32_t NVAPI_MAX_USAGES_PER_GPU{ 34 };
-constexpr uint32_t NVAPI_GPU_UTILIZATION_DOMAIN_GPU{ 0U };
+constexpr int NVAPI_MAX_USAGES_PER_GPU{ 34 };
+constexpr int NVAPI_GPU_UTILIZATION_DOMAIN_GPU{ 0U };
 
-using NvAPI_QueryInterface_t = int *(*)(uint32_t offset);
+using NvAPI_QueryInterface_t = int *(*)(unsigned int offset);
 using NvAPI_GPU_GetUsages_t = int (*)(NvPhysicalGpuHandle handle, NvU32* usages);
 
 NvAPI_QueryInterface_t NvAPI_QueryInterface{ nullptr };
@@ -66,7 +66,7 @@ GPUMeasure::~GPUMeasure() {
     NvAPI_Unload();
 }
 
-void GPUMeasure::update(uint32_t) {
+void GPUMeasure::update(int) {
     //updateGpuTemp(); // High CPU usage function
     //getClockFrequencies(); // High CPU usage function
     //getMemInformation();
@@ -138,7 +138,7 @@ void GPUMeasure::getGpuUsage() {
     m_gpuUsage = m_pStateInfo.utilization[NVAPI_GPU_UTILIZATION_DOMAIN_GPU].percentage;
 }
 
-bool GPUMeasure::shouldUpdate(uint32_t ticks) const {
+bool GPUMeasure::shouldUpdate(int ticks) const {
     return m_isEnabled && ticksMatchRate(ticks, m_updateRates.front());
 }
 

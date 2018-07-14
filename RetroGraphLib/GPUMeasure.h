@@ -26,22 +26,22 @@ public:
     GPUMeasure& operator=(GPUMeasure&&) = delete;
 
     /* Get latest GPU stats from OpenGL or nvapi and updates dynamic members */
-    void update(uint32_t ticks) override;
+    void update(int ticks) override;
 
     /* Returns true if the measure successfully initialized and is getting data,
      * And false if it failed to initialise
      */
     bool isEnabled() const { return m_isEnabled; }
 
-    uint32_t getFrameBufferSizeKB() const { return m_frameBufferSize; }
-    uint32_t getCoreCount() const { return m_gpuCoreCount; }
-    uint32_t getMemoryClockHz() const { return m_memoryClock; }
-    uint32_t getGraphicsClockHz() const { return m_graphicsClock; }
-    uint32_t getCurrAvailableMemoryKB() const { return m_currAvailableMemory; }
-    uint32_t getTotalMemoryKB() const { return m_totalMemory; }
-    uint32_t getGpuUsage() const { return m_gpuUsage; }
+    int getFrameBufferSizeKB() const { return m_frameBufferSize; }
+    int getCoreCount() const { return m_gpuCoreCount; }
+    int getMemoryClockHz() const { return m_memoryClock; }
+    int getGraphicsClockHz() const { return m_graphicsClock; }
+    int getCurrAvailableMemoryKB() const { return m_currAvailableMemory; }
+    int getTotalMemoryKB() const { return m_totalMemory; }
+    int getGpuUsage() const { return m_gpuUsage; }
     float getMemUsagePercent() const;
-    int32_t getCurrentTempC() const { return m_currentTemp; }
+    int getCurrentTempC() const { return m_currentTemp; }
     const std::string& getDriverVersion() const { return m_driverVersion; }
     const std::string& getGpuName() const { return m_gpuName; }
     const std::string& getGpuDescription() const { return m_gpuDescription; }
@@ -53,7 +53,7 @@ private:
     void getMemInformation();
     void getGpuUsage();
 
-    bool shouldUpdate(uint32_t ticks) const override;
+    bool shouldUpdate(int ticks) const override;
 
     bool m_isEnabled{ true };
 

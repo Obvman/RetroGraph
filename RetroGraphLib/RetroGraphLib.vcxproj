@@ -188,7 +188,6 @@
     <ClInclude Include="CPUMeasure.h" />
     <ClInclude Include="CPUPlugin.h" />
     <ClInclude Include="CPUStatsWidget.h" />
-    <ClInclude Include="D3GPUMeasure.h" />
     <ClInclude Include="DisplayMeasure.h" />
     <ClInclude Include="drawUtils.h" />
     <ClInclude Include="DriveMeasure.h" />
@@ -233,7 +232,6 @@
     <ClCompile Include="CPUMeasure.cpp" />
     <ClCompile Include="CPUPlugin.cpp" />
     <ClCompile Include="CPUStatsWidget.cpp" />
-    <ClCompile Include="D3GPUMeasure.cpp" />
     <ClCompile Include="DisplayMeasure.cpp" />
     <ClCompile Include="drawUtils.cpp" />
     <ClCompile Include="DriveMeasure.cpp" />

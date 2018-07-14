@@ -12,7 +12,7 @@
 #include "drawUtils.h"
 
 namespace rg {
-FontManager::FontManager(HWND hWnd, uint32_t windowHeight) :
+FontManager::FontManager(HWND hWnd, int windowHeight) :
     m_hWnd{ hWnd } {
 
     initFonts(windowHeight);
@@ -30,34 +30,34 @@ void FontManager::release() {
     }
 }
 
-void FontManager::refreshFonts(uint32_t newWindowHeight) {
+void FontManager::refreshFonts(int newWindowHeight) {
     release();
     initFonts(newWindowHeight);
 }
 
 void FontManager::renderLine(GLfloat rasterX, GLfloat rasterY,
                              RGFONTCODE fontCode, const char* text) const {
-    renderLine(rasterX, rasterY, fontCode, text, strlen(text));
+    renderLine(rasterX, rasterY, fontCode, text, static_cast<int>(strlen(text)));
 }
 
 void FontManager::renderLine(GLfloat rasterX, GLfloat rasterY,
                              RGFONTCODE fontCode, const char* text,
-                             size_t textLen) const {
+                             int textLen) const {
     glRasterPos2f(rasterX, rasterY);
 
     glListBase(m_fontBases[fontCode]);
-    glCallLists(static_cast<GLsizei>(textLen), GL_UNSIGNED_BYTE, text);
+    glCallLists(textLen, GL_UNSIGNED_BYTE, text);
 }
 
 void FontManager::renderLine(RGFONTCODE fontCode,
                              const char* text,
-                             uint32_t areaX,
-                             uint32_t areaY,
-                             uint32_t areaWidth,
-                             uint32_t areaHeight,
-                             int32_t alignFlags,
-                             uint32_t alignMarginX,
-                             uint32_t alignMarginY) const {
+                             int areaX,
+                             int areaY,
+                             int areaWidth,
+                             int areaHeight,
+                             int alignFlags,
+                             int alignMarginX /*=10U*/,
+                             int alignMarginY /*=10U*/) const {
     GLint vp[4];
     glGetIntegerv(GL_VIEWPORT, vp);
 
@@ -94,7 +94,7 @@ void FontManager::renderLine(RGFONTCODE fontCode,
         char newText[256];
 
         // Copy char by char into the new buffer while there is enough width
-        auto newStrWidthPx = uint32_t{ 0U };
+        auto newStrWidthPx = int{ 0U };
         for (auto i = size_t{ 0U }; i < textLen; ++i) {
             newText[i] = text[i];
             newStrWidthPx += m_fontCharWidths[fontCode][newText[i]];
@@ -143,13 +143,13 @@ void FontManager::renderLine(RGFONTCODE fontCode,
 
 void FontManager::renderLines(RGFONTCODE fontCode,
                               const std::vector<std::string>& lines,
-                              uint32_t areaX,
-                              uint32_t areaY,
-                              uint32_t areaWidth,
-                              uint32_t areaHeight,
-                              int32_t alignFlags,
-                              uint32_t alignMarginX,
-                              uint32_t alignMarginY) const {
+                              int areaX,
+                              int areaY,
+                              int areaWidth,
+                              int areaHeight,
+                              int alignFlags,
+                              int alignMarginX /*=10U*/,
+                              int alignMarginY /*=10U*/) const {
     GLint vp[4];
     glGetIntegerv(GL_VIEWPORT, vp);
 
@@ -168,7 +168,7 @@ void FontManager::renderLines(RGFONTCODE fontCode,
     const auto rasterLineDeltaY{ (renderHeight-fontHeight)/(lines.size()-1) };
 
     // Start at top, render downwards
-    auto rasterYPx = uint32_t{ areaHeight - alignMarginY - fontHeight };
+    auto rasterYPx = int{ areaHeight - alignMarginY - fontHeight };
     if (alignFlags & RG_ALIGN_CENTERED_VERTICAL) {
         // Default behaviour
     } else if (alignFlags & RG_ALIGN_TOP) {
@@ -198,7 +198,7 @@ void FontManager::renderLines(RGFONTCODE fontCode,
     glViewport(vp[0], vp[1], vp[2], vp[3]);
 }
 
-void FontManager::initFonts(uint32_t windowHeight) {
+void FontManager::initFonts(int windowHeight) {
     /* List of fonts for quick experimentation */
     const char* const typefaces[] = {
         "Courier New",
@@ -231,7 +231,7 @@ void FontManager::initFonts(uint32_t windowHeight) {
     glListBase(m_fontBases[RG_FONT_STANDARD]);
 }
 
-void FontManager::createFont(uint32_t fontHeight, int32_t weight,
+void FontManager::createFont(int fontHeight, int weight,
                              const char* typeface, RGFONTCODE code) {
     const auto hdc{ GetDC(m_hWnd) };
 
@@ -262,9 +262,9 @@ void FontManager::setFontCharacteristics(RGFONTCODE c, HDC hdc) {
     m_fontCharInternalLeadings[c] = tm.tmInternalLeading;
 }
 
-uint32_t FontManager::calculateStringWidth(const char* text, size_t textLen, 
+int FontManager::calculateStringWidth(const char* text, size_t textLen, 
                                           RGFONTCODE c) const {
-    auto strWidthPx = int32_t{ 0 };
+    auto strWidthPx = int{ 0 };
     for (auto i = size_t{ 0U }; i < textLen; ++i) {
         // Make sure the character is in range, if not, add default value
         if (text[i] > RG_NUM_CHARS_IN_FONT || text[i] < 0) {
@@ -276,9 +276,9 @@ uint32_t FontManager::calculateStringWidth(const char* text, size_t textLen,
     return strWidthPx;
 }
 
-float FontManager::getRasterXAlignment(int32_t alignFlags, uint32_t strWidthPx,
-                                       uint32_t areaWidth,
-                                       uint32_t alignMargin) const {
+float FontManager::getRasterXAlignment(int alignFlags, int strWidthPx,
+                                       int areaWidth,
+                                       int alignMargin) const {
     if (alignFlags & RG_ALIGN_CENTERED_HORIZONTAL) {
         const auto drawXPx{ (areaWidth - strWidthPx) / 2};
         return pixelsToVPCoords(drawXPx, areaWidth);

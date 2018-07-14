@@ -23,7 +23,7 @@ public:
     void update();
 
     /* Returns the number of cores in the system's CPU */
-    uint32_t getNumCores() const { return m_ctData.uiCoreCnt; }
+    int getNumCores() const { return m_ctData.uiCoreCnt; }
 
     /* Returns the voltage running into the CPU in volts */
     float getVoltage() const { return m_ctData.fVID; }
@@ -35,13 +35,13 @@ public:
     const char* getCPUName() const { return m_ctData.sCPUName; }
 
     /* Returns the current temperature of the given CPU core (Celsius) */
-    float getTemp(uint32_t coreNum) const { return m_ctData.fTemp[coreNum]; }
+    float getTemp(int coreNum) const { return m_ctData.fTemp[coreNum]; }
 
     /* Returns the current load of the given core as an integer from 0-100 */
-    uint32_t getLoad(unsigned int coreNum) const { return m_ctData.uiLoad[coreNum]; }
+    int getLoad(unsigned int coreNum) const { return m_ctData.uiLoad[coreNum]; }
 
     /* Returns the maximum allowable CPU temperature in degrees celsius */
-    uint32_t getTjMax() const { return m_ctData.uiTjMax[0]; }
+    int getTjMax() const { return m_ctData.uiTjMax[0]; }
 
     /* Returns true if the latest update managed to successfully fill the
        CORE_TEMP_SHARED_DATA struct */
@@ -52,8 +52,9 @@ public:
 private:
     HMODULE m_libHandle{ nullptr };
     CORE_TEMP_SHARED_DATA m_ctData{};
-    mutable bool m_getCoreTempInfoSuccess{ false };
     bool m_coreTempWasStarted{ false };
+
+    mutable bool m_getCoreTempInfoSuccess{ false };
 };
 
 } // namespace rg

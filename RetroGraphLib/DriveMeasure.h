@@ -11,7 +11,7 @@
 
 namespace rg {
 
-constexpr auto maxVolumeNameSize = uint32_t{ 64U };
+constexpr auto maxVolumeNameSize = int{ 64U };
 
 /* Per drive data storage container */
 class DriveInfo {
@@ -62,7 +62,7 @@ public:
     DriveMeasure& operator=(DriveMeasure&&) = delete;
 
     /* Updates each drive with new values */
-    void update(uint32_t ticks) override;
+    void update(int ticks) override;
 
     /* Returns the number of fixed drives active in the system */
     size_t getNumDrives() const { return m_drives.size(); }
@@ -71,7 +71,7 @@ public:
     const std::vector<std::unique_ptr<DriveInfo>>& getDrives() const { return m_drives; }
 
 private:
-    bool shouldUpdate(uint32_t ticks) const override;
+    bool shouldUpdate(int ticks) const override;
 
     std::vector<std::string> m_drivePaths{ };
     std::vector<std::unique_ptr<DriveInfo>> m_drives{ };

@@ -29,7 +29,7 @@ public:
     NetMeasure(NetMeasure&&) = delete;
     NetMeasure& operator=(NetMeasure&&) = delete;
 
-    void update(uint32_t ticks) override;
+    void update(int ticks) override;
 
     uint64_t getMaxDownValue() const { return m_downMaxVal; }
     uint64_t getMaxUpValue() const { return m_upMaxVal; }
@@ -42,7 +42,7 @@ public:
     bool isConnected() const;
     void setIsConnected(bool b);
 private:
-    bool shouldUpdate(uint32_t ticks) const override;
+    bool shouldUpdate(int ticks) const override;
 
     void getDNSAndHostname();
     void getMACAndLocalIP();
@@ -56,7 +56,7 @@ private:
     std::string m_mainAdapterIP{ "0.0.0.0" };
 
     std::string m_pingServer{ "" };
-    uint32_t m_pingFreqMs{ 0U };
+    int m_pingFreqMs{ 0U };
 
     std::condition_variable cv;
     std::mutex m;

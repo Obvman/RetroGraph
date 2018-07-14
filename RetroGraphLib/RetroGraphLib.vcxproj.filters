@@ -126,9 +126,6 @@
     <ClInclude Include="Measure.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="D3GPUMeasure.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SystemInformationMeasure.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -246,9 +243,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="D3GPUMeasure.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SystemInformationMeasure.cpp">

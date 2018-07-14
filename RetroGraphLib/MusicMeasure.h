@@ -29,12 +29,12 @@ public:
      * to find it. If the class name is set, then searches windows with the
      * class name as a key to determine if the window is still open or not
      */
-    void update(uint32_t ticks) override;
+    void update(int ticks) override;
 
     /* Checks click coordinates for collision with media controls, returns true
      * if a media key was successfully clicked
      */
-    bool handleClick(int32_t clickX, int32_t clickY) const;
+    bool handleClick(int clickX, int clickY) const;
 
     /* Returns true if the music player window is currently running */
     bool isPlayerRunning() const { return m_playerRunning; }
@@ -43,10 +43,10 @@ public:
     const std::string& getTrackName() const { return m_trackName; }
     const std::string& getArtist() const { return m_artist; }
     const std::string& getAlbum() const { return m_album; }
-    uint32_t getElapsedTime() const { return m_elapsedTime; }
-    uint32_t getTotalTime() const { return m_totalTime; }
+    int getElapsedTime() const { return m_elapsedTime; }
+    int getTotalTime() const { return m_totalTime; }
 private:
-    bool shouldUpdate(uint32_t ticks) const override;
+    bool shouldUpdate(int ticks) const override;
 
     /* Called for each window running in the operating system. Tries to find
      * the music player by matching against the window title. If found,
@@ -73,7 +73,7 @@ private:
     std::string m_trackName{ "" };
     std::string m_artist{ "" };
     std::string m_album{ "" };
-    uint32_t m_elapsedTime{ 0U };
-    uint32_t m_totalTime{ 0U };
+    int m_elapsedTime{ 0U };
+    int m_totalTime{ 0U };
 };
 } // namespace rg

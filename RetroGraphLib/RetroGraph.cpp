@@ -9,7 +9,6 @@
 
 #include "CPUMeasure.h"
 #include "GPUMeasure.h"
-#include "D3GPUMeasure.h"
 #include "RAMMeasure.h"
 #include "NetMeasure.h"
 #include "ProcessMeasure.h"
@@ -41,7 +40,6 @@ RetroGraph::RetroGraph(HINSTANCE hInstance) :
         { MTypes::GPU,     { Widgets::Graph } },
         { MTypes::RAM,     { Widgets::Graph } },
         { MTypes::Drive,   { Widgets::HDD } },
-        { MTypes::D3GPU,   {} }, // Empty Widget lists ensure existence of the measure
         { MTypes::SystemInformation, {} },
         { MTypes::Display, {} }, // Does have dependent widgets, but must not be destroyed
     } 
@@ -58,7 +56,7 @@ RetroGraph::RetroGraph(HINSTANCE hInstance) :
 }
 
 RetroGraph::~RetroGraph() {
-    // Default constructor. Must be declared here to allow destruction of unique_ptrs
+    // Default constructor. Must be declared in source file to allow destruction of unique_ptrs
 }
 
 auto RetroGraph::createMeasures() -> decltype(m_measures) {
@@ -71,20 +69,20 @@ auto RetroGraph::createMeasures() -> decltype(m_measures) {
     measureList[MTypes::Process] =        std::make_unique<ProcessMeasure>();
     measureList[MTypes::Drive] =          std::make_unique<DriveMeasure>();
     measureList[MTypes::Music] =          std::make_unique<MusicMeasure>(
-        dynamic_cast<const ProcessMeasure&>(*measureList[MTypes::Process]));
+        dynamic_cast<const ProcessMeasure&>(*measureList[MTypes::Process])
+    );
     measureList[MTypes::System] =         std::make_unique<SystemMeasure>();
     measureList[MTypes::AnimationState] = std::make_unique<AnimationState>();
-    measureList[MTypes::D3GPU] =          std::make_unique<D3GPUMeasure>();
     measureList[MTypes::SystemInformation] = std::make_unique<SystemInformationMeasure>();
     measureList[MTypes::Display] =        std::make_unique<DisplayMeasure>();
 
     return measureList;
 }
 
-void RetroGraph::update(uint32_t ticks) {
+void RetroGraph::update(int ticks) {
     // Update with a tick offset so all measures don't update in the same
     // cycle and spike the CPU
-    auto offset = uint32_t{ 0U };
+    auto offset = int{ 0U };
     for (auto i = size_t{ 0U }; i < MTypes::NumMeasures; ++i) {
         const auto& measurePtr{ m_measures[i] };
         if (measurePtr && measurePtr->shouldUpdate(ticks + ++offset)) {
@@ -93,17 +91,17 @@ void RetroGraph::update(uint32_t ticks) {
     }
 }
 
-void RetroGraph::draw(uint32_t ticks) const {
+void RetroGraph::draw(int ticks) const {
     // If the main widget is running, draw at it's target FPS,
     // Otherwise, we don't have to waste cycles swapping buffers when
     // the other measures update twice a second, so just draw at 2 FPS
-    const auto framesPerSecond = uint32_t{ (m_widgetVisibilities[Widgets::Main]) ? 
-       getAnimationState().getAnimationFPS() : 2U };
+    const auto framesPerSecond = int{ (m_widgetVisibilities[Widgets::Main]) ? 
+       getAnimationState().getAnimationFPS() : 2 };
 
     m_renderer->draw(ticks, m_window, framesPerSecond);
 }
 
-void RetroGraph::updateWindowSize(int32_t width, int32_t height) {
+void RetroGraph::updateWindowSize(int width, int height) {
     m_renderer->updateWindowSize(width, height);
 }
 
@@ -166,9 +164,6 @@ void RetroGraph::checkDependencies() {
                 case MTypes::GPU:
                     measurePtr = std::make_unique<GPUMeasure>();
                     break;
-                case MTypes::D3GPU:
-                    measurePtr = std::make_unique<D3GPUMeasure>();
-                    break;
                 case MTypes::SystemInformation:
                     measurePtr = std::make_unique<SystemInformationMeasure>();
                     break;
@@ -212,9 +207,6 @@ const SystemMeasure& RetroGraph::getSystemMeasure() const {
 }
 const AnimationState& RetroGraph::getAnimationState() const { 
     return dynamic_cast<const AnimationState&>(*m_measures[MTypes::AnimationState]);
-}
-const D3GPUMeasure& RetroGraph::getD3GPUMeasure() const { 
-    return dynamic_cast<const D3GPUMeasure&>(*m_measures[MTypes::D3GPU]);
 }
 
 const DisplayMeasure & RetroGraph::getDisplayMeasure() const {

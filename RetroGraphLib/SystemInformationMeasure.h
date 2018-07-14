@@ -13,9 +13,9 @@ public:
     SystemInformationMeasure();
     ~SystemInformationMeasure() = default;
 
-    void update(uint32_t ticks) override;
+    void update(int ticks) override;
 
-    bool shouldUpdate(uint32_t ticks) const override;
+    bool shouldUpdate(int ticks) const override;
 };
 
 }

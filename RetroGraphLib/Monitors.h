@@ -11,8 +11,8 @@
 namespace rg {
 
 struct MonitorData {
-    MonitorData(int32_t _index, HMONITOR _handle, int32_t _realWidth, int32_t _realHeight,
-                int32_t _width, int32_t _height, int32_t _x, int32_t _y, int32_t _refreshRate)
+    MonitorData(int _index, HMONITOR _handle, int _realWidth, int _realHeight,
+                int _width, int _height, int _x, int _y, int _refreshRate)
         : index{ _index }
         , realWidth{ _realWidth }
         , realHeight{ _realHeight }
@@ -29,20 +29,20 @@ struct MonitorData {
     MonitorData(MonitorData&&) = default;
     MonitorData& operator=(MonitorData&&) = default;
 
-    int32_t index;
+    int index;
 
     // Total pixels
-    int32_t realWidth;
-    int32_t realHeight;
+    int realWidth;
+    int realHeight;
 
     // Work area (not including taskbar)
-    int32_t width;
-    int32_t height;
+    int width;
+    int height;
 
-    int32_t x;
-    int32_t y;
+    int x;
+    int y;
 
-    int32_t refreshRate;
+    int refreshRate;
 
     HMONITOR handle;
 };
@@ -59,10 +59,10 @@ public:
     const std::vector<MonitorData>& getMonitorData() const { return m_monitors; }
     int getNumMonitors() const { return static_cast<int>(m_monitors.size()); }
 
-    int32_t getWidth(size_t i) const { return m_monitors[i].width; }
-    int32_t getHeight(size_t i) const { return m_monitors[i].height; }
-    int32_t getX(size_t i) const { return m_monitors[i].x; }
-    int32_t getY(size_t i) const { return m_monitors[i].y; }
+    int getWidth(size_t i) const { return m_monitors[i].width; }
+    int getHeight(size_t i) const { return m_monitors[i].height; }
+    int getX(size_t i) const { return m_monitors[i].x; }
+    int getY(size_t i) const { return m_monitors[i].y; }
 private:
     void fillMonitorData();
 

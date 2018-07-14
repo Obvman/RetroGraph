@@ -27,7 +27,15 @@ public:
     UserSettings(UserSettings&&) = delete;
     UserSettings& operator=(UserSettings&&) = delete;
 
-    template<typename T, typename CastType = T>
+    template<typename T>
+    T getVal(const std::string& settingName) const {
+        if (m_settings.count(settingName) == 0) {
+            fatalMessageBox("Failed to find setting " + settingName);
+        }
+        return std::get<T>(m_settings.at(settingName));
+    }
+
+    template<typename T, typename CastType>
     CastType getVal(const std::string& settingName) const {
         if (m_settings.count(settingName) == 0) {
             fatalMessageBox("Failed to find setting " + settingName);

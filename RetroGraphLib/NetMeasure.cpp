@@ -33,7 +33,7 @@ namespace rg {
 NetMeasure::NetMeasure() :
     Measure{ 2U, 30U },
     m_pingServer{ UserSettings::inst().getVal<std::string>("Network.PingServer") },
-    m_pingFreqMs{ UserSettings::inst().getVal<int, uint32_t>("Network.PingFrequency") },
+    m_pingFreqMs{ UserSettings::inst().getVal<int>("Network.PingFrequency") },
     dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-Graphs-Network.NumUsageSamples") } {
 
     // Fill data vectors with default values
@@ -178,7 +178,7 @@ void NetMeasure::getDNSAndHostname() {
     free(pFixedInfo);
 }
 
-void NetMeasure::update(uint32_t ticks) {
+void NetMeasure::update(int ticks) {
     // Check if the best network interface has changed and update to the new
     // one if so.
     if (ticksMatchSeconds(ticks, m_updateRates[1])) {
@@ -218,7 +218,7 @@ void NetMeasure::setIsConnected(bool b) {
     m_isConnected.store(b);
 }
 
-bool NetMeasure::shouldUpdate(uint32_t ticks) const {
+bool NetMeasure::shouldUpdate(int ticks) const {
     return ticksMatchRate(ticks, m_updateRates.front());
 }
 

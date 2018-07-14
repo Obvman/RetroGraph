@@ -78,7 +78,7 @@ auto Renderer::createWidgets(const RetroGraph& _rg) -> decltype(m_widgets) {
     return widgetList;
 }
 
-void Renderer::draw(uint32_t ticks, const Window& window, uint32_t totalFPS) const {
+void Renderer::draw(int ticks, const Window& window, int totalFPS) const {
     const auto& mainWidget{ dynamic_cast<MainWidget&>(*m_widgets[Widgets::Main]) };
 
     // Render the bulk of widgets at a low FPS to keep light on resources
@@ -112,7 +112,7 @@ void Renderer::draw(uint32_t ticks, const Window& window, uint32_t totalFPS) con
 
 }
 
-void Renderer::updateWindowSize(int32_t newWidth, int32_t newHeight) {
+void Renderer::updateWindowSize(int newWidth, int newHeight) {
     setViewports(newWidth, newHeight);
     m_fontManager.refreshFonts(newHeight);
 }
@@ -128,11 +128,11 @@ void Renderer::updateObservers(const RetroGraph& rg) {
 
 /********************* Private Functions ********************/
 
-void Renderer::setViewports(int32_t windowWidth, int32_t windowHeight) {
+void Renderer::setViewports(int windowWidth, int windowHeight) {
     // For positions that can contain multiple widgets, track how many widgets
     // will fill that position. Currently on the horizontal center positions
     // can contain multiple widgets
-    std::vector<int32_t> positionFills( 2, 0 );
+    std::vector<int> positionFills( 2, 0 );
 
     const auto& s{ UserSettings::inst() };
 
@@ -157,8 +157,7 @@ void Renderer::setViewports(int32_t windowWidth, int32_t windowHeight) {
     }
 }
 
-Viewport Renderer::calcFPSViewport(WidgetPosition pos, int32_t windowWidth,
-                                   int32_t windowHeight) {
+Viewport Renderer::calcFPSViewport(WidgetPosition pos, int windowWidth, int windowHeight) {
     const auto widgetW{ windowWidth / 24 };
     const auto widgetH{ windowHeight / 24 };
 
@@ -181,9 +180,8 @@ Viewport Renderer::calcFPSViewport(WidgetPosition pos, int32_t windowWidth,
     return Viewport{};
 }
 
-Viewport Renderer::calcViewport(WidgetPosition pos,
-                                int32_t windowWidth, int32_t windowHeight,
-                                std::vector<int32_t>& positionFills) {
+Viewport Renderer::calcViewport(WidgetPosition pos, int windowWidth, int windowHeight,
+                                std::vector<int>& positionFills) {
     const auto widgetW{ windowWidth / 5 };
     const auto widgetH{ windowHeight / 6 };
     const auto sideWidgetH{ windowHeight / 2 };

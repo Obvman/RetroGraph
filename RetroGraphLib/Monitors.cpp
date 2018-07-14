@@ -18,7 +18,7 @@ void Monitors::fillMonitorData() {
 
 BOOL CALLBACK Monitors::MonitorCallback2(HMONITOR hMonitor, HDC, LPRECT,
                                          LPARAM dwData) {
-    static int32_t monitorCount{ 0 };
+    static auto monitorCount = int{ 0 };
 
     auto* This{ reinterpret_cast<Monitors*>(dwData) };
 
@@ -28,7 +28,7 @@ BOOL CALLBACK Monitors::MonitorCallback2(HMONITOR hMonitor, HDC, LPRECT,
 
     DEVMODE dm;
     dm.dmSize = sizeof(dm);
-    int32_t refresh{ 0 };
+    auto refresh = int{ 0 };
     if (EnumDisplaySettings(mi.szDevice, ENUM_CURRENT_SETTINGS, &dm)) {
         refresh = dm.dmDisplayFrequency;
     }

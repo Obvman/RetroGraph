@@ -23,24 +23,24 @@
 
 namespace rg {
 
-constexpr int32_t WM_NOTIFY_RG_TRAY{ 3141 };
+constexpr int WM_NOTIFY_RG_TRAY{ 3141 };
 
-constexpr int32_t ID_EXIT{ 1 };
-constexpr int32_t ID_SEND_TO_BACK{ 2 };
-constexpr int32_t ID_RESET_POSITION{ 3 };
-constexpr int32_t ID_SET_WIDGET_BG{ 4 };
-constexpr int32_t ID_TEST{ 5 };
-constexpr int32_t ID_TOGGLE_TIME_WIDGET{ 6 };
-constexpr int32_t ID_TOGGLE_HDD_WIDGET{ 7 };
-constexpr int32_t ID_TOGGLE_CPUSTATS_WIDGET{ 8 };
-constexpr int32_t ID_TOGGLE_PROCESS_CPU_WIDGET{ 9 };
-constexpr int32_t ID_TOGGLE_PROCESS_RAM_WIDGET{ 10 };
-constexpr int32_t ID_TOGGLE_GRAPH_WIDGET{ 11 };
-constexpr int32_t ID_TOGGLE_SYSTEMSTATS_WIDGET{ 12 };
-constexpr int32_t ID_TOGGLE_MAIN_WIDGET{ 13 };
-constexpr int32_t ID_TOGGLE_MUSIC_WIDGET{ 14 };
-constexpr int32_t ID_TOGGLE_FPS_WIDGET{ 15 };
-constexpr int32_t ID_CHANGE_DISPLAY_MONITOR{ 16 };
+constexpr int ID_EXIT{ 1 };
+constexpr int ID_SEND_TO_BACK{ 2 };
+constexpr int ID_RESET_POSITION{ 3 };
+constexpr int ID_SET_WIDGET_BG{ 4 };
+constexpr int ID_TEST{ 5 };
+constexpr int ID_TOGGLE_TIME_WIDGET{ 6 };
+constexpr int ID_TOGGLE_HDD_WIDGET{ 7 };
+constexpr int ID_TOGGLE_CPUSTATS_WIDGET{ 8 };
+constexpr int ID_TOGGLE_PROCESS_CPU_WIDGET{ 9 };
+constexpr int ID_TOGGLE_PROCESS_RAM_WIDGET{ 10 };
+constexpr int ID_TOGGLE_GRAPH_WIDGET{ 11 };
+constexpr int ID_TOGGLE_SYSTEMSTATS_WIDGET{ 12 };
+constexpr int ID_TOGGLE_MAIN_WIDGET{ 13 };
+constexpr int ID_TOGGLE_MUSIC_WIDGET{ 14 };
+constexpr int ID_TOGGLE_FPS_WIDGET{ 15 };
+constexpr int ID_CHANGE_DISPLAY_MONITOR{ 16 };
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
@@ -92,7 +92,7 @@ void Window::runTest() {
     system(R"("C:\Program Files\foobar2000\foobar2000.exe" /playpause)");
 }
 
-Window::Window(RetroGraph* rg_, HINSTANCE hInstance, int32_t startupMonitor,
+Window::Window(RetroGraph* rg_, HINSTANCE hInstance, int startupMonitor,
                bool clickthrough) : 
     m_clickthrough{ clickthrough },
     m_monitors{ rg_->getDisplayMeasure().getMonitors() },
@@ -161,8 +161,8 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
                      break;
             }
         case WM_CONTEXTMENU: {
-            int32_t contextSpawnX{ LOWORD(lParam) };
-            int32_t contextSpawnY{ HIWORD(lParam) };
+            int contextSpawnX{ LOWORD(lParam) };
+            int contextSpawnY{ HIWORD(lParam) };
             // The lParam we receive is an unsigned int, but we can open
             // the context menu on a monitor with a negative x or y value,
             // so check if the value is greater than a signed short, if so
@@ -258,37 +258,22 @@ void Window::createRClickMenu(HWND hWnd) {
     auto hPopupMenu{ CreatePopupMenu() };
     auto widgetSubmenu{ CreatePopupMenu() };
 
-    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_EXIT,
-               "Exit");
-    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
-               ID_SEND_TO_BACK, "Send to back");
-    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
-               ID_SET_WIDGET_BG, "Toggle Widget Background");
-    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
-               ID_TEST, "Test");
-    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING | MF_POPUP, 
-               (UINT_PTR)widgetSubmenu, "Toggle Widgets");
+    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_EXIT, "Exit");
+    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_SEND_TO_BACK, "Send to back");
+    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_SET_WIDGET_BG, "Toggle Widget Background");
+    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_TEST, "Test");
+    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)widgetSubmenu, "Toggle Widgets");
 
-    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
-               ID_TOGGLE_MAIN_WIDGET, "Main Widget");
-    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
-               ID_TOGGLE_TIME_WIDGET, "Time Widget");
-    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
-               ID_TOGGLE_HDD_WIDGET, "HDD Widget");
-    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
-               ID_TOGGLE_CPUSTATS_WIDGET, "CPU Stats Widget");
-    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
-               ID_TOGGLE_PROCESS_CPU_WIDGET, "Cpu Process Widget");
-    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
-               ID_TOGGLE_PROCESS_RAM_WIDGET, "Ram Process Widget");
-    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
-               ID_TOGGLE_GRAPH_WIDGET, "Graph Widget");
-    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
-               ID_TOGGLE_SYSTEMSTATS_WIDGET, "System Stats Widget");
-    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
-               ID_TOGGLE_MUSIC_WIDGET, "Music Widget");
-    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING,
-               ID_TOGGLE_FPS_WIDGET, "FPS Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_TIME_WIDGET, "Time Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_HDD_WIDGET, "HDD Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_CPUSTATS_WIDGET, "CPU Stats Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_PROCESS_CPU_WIDGET, "Cpu Process Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_PROCESS_RAM_WIDGET, "Ram Process Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_GRAPH_WIDGET, "Graph Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_SYSTEMSTATS_WIDGET, "System Stats Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_MUSIC_WIDGET, "Music Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_FPS_WIDGET, "FPS Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_MAIN_WIDGET, "Main Widget");
 
     // Create an option for each monitor for multi-monitor systems
     const auto& md{ m_monitors->getMonitorData() };
@@ -302,7 +287,7 @@ void Window::createRClickMenu(HWND hWnd) {
     }
 
     // Display menu and wait for user's selection
-    const int32_t selection{ TrackPopupMenuEx(hPopupMenu, TPM_TOPALIGN
+    const int selection{ TrackPopupMenuEx(hPopupMenu, TPM_TOPALIGN
                                               | TPM_LEFTALIGN |
                                               TPM_RIGHTBUTTON |
                                               TPM_RETURNCMD, p.x, p.y,
@@ -386,7 +371,7 @@ void Window::handleClick(DWORD clickX, DWORD clickY) {
     }
 }
 
-void Window::changeMonitor(HWND hWnd, int32_t monIndex) {
+void Window::changeMonitor(HWND hWnd, int monIndex) {
     // Check monitor selection is in range and the monitor isn't
     // the currently selected one
     if (monIndex >= 0 &&
@@ -432,7 +417,7 @@ void GLAPIENTRY Window::GLMessageCallback(GLenum source, GLenum type, GLuint /*i
             source, type, severity, message);
 }
 
-void Window::updateSize(int32_t width, int32_t height) {
+void Window::updateSize(int width, int height) {
     m_width = width;
     m_height = height;
     m_retroGraph->updateWindowSize(width, height);
@@ -616,7 +601,7 @@ bool Window::createHGLRC() {
     // On the first run, create a regular window with the previous pfd
     // If multisampling is supported on the second run, use the alternate
     // pfd to create an anti-aliased window
-    int32_t PixelFormat;
+    int PixelFormat;
     if (!m_arbMultisampleSupported) {
         PixelFormat = ChoosePixelFormat(m_hdc, &pfd);
         if (PixelFormat == 0) {
@@ -727,19 +712,12 @@ bool Window::initMultisample() {
         return false;
     }
 
-    // Get Our Current Device Context
-    HDC hDC = GetDC(m_hWndMain);
-    int32_t pixelFormat;
-    int32_t valid;
-    uint32_t numFormats;
-    float fAttributes[] = { 0, 0 };
-
     // These Attributes Are The Bits We Want To Test For In Our Sample
     // Everything Is Pretty Standard, The Only One We Want To
     // Really Focus On Is The SAMPLE BUFFERS ARB And WGL SAMPLES
     // These Two Are Going To Do The Main Testing For Whether Or Not
     // We Support Multisampling On This Hardware.
-    int32_t iAttributes[] = {
+    int iAttributes[] = {
         WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
         WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
         WGL_ACCELERATION_ARB, WGL_FULL_ACCELERATION_ARB,
@@ -752,6 +730,12 @@ bool Window::initMultisample() {
         WGL_SAMPLES_ARB, m_aaSamples,
         0, 0
     };
+
+    HDC hDC = GetDC(m_hWndMain);
+    int pixelFormat;
+    int valid;
+    unsigned int numFormats;
+    float fAttributes[] = { 0, 0 };
 
     // First We Check To See If We Can Get A Pixel Format For 8 Samples
     valid = wglChoosePixelFormatARB(hDC, iAttributes, fAttributes, 1,

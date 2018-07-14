@@ -70,8 +70,6 @@ public:
     /* Updates memory status struct with current process memory stats */
     void updateMemCounters();
 
-    //int64_t getLastSystemTime() const { return m_lastSystemTime; }
-
 private:
     HANDLE m_pHandle{ nullptr };
     DWORD m_processID{ 0 };

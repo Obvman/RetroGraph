@@ -17,11 +17,11 @@ DisplayMeasure::DisplayMeasure()
     force_update();
 }
 
-void DisplayMeasure::update(uint32_t ticks) {
+void DisplayMeasure::update(int ticks) {
     (void)ticks;
 }
 
-bool rg::DisplayMeasure::shouldUpdate(uint32_t ticks) const {
+bool rg::DisplayMeasure::shouldUpdate(int ticks) const {
     return ticksMatchSeconds(ticks, m_updateRates.front());
 }
 

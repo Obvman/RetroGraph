@@ -28,20 +28,19 @@ public:
     Renderer& operator=(Renderer&&) = delete;
 
     /* Draws scene to the window */
-    void draw(uint32_t ticks, const Window& window, uint32_t totalFPS) const;
+    void draw(int ticks, const Window& window, int totalFPS) const;
 
-    void updateWindowSize(int32_t newWidth, int32_t newHeight);
+    void updateWindowSize(int newWidth, int newHeight);
 
     void setWidgetVisibility(Widgets w, bool v);
 
     void updateObservers(const RetroGraph& rg);
 private:
-    void setViewports(int32_t windowWidth, int32_t windowHeight);
+    void setViewports(int windowWidth, int windowHeight);
     Viewport calcViewport(WidgetPosition pos,
-                          int32_t windowWidth, int32_t windowHeight,
-                          std::vector<int32_t>& positionFills);
-    Viewport calcFPSViewport(WidgetPosition pos, int32_t windowWidth,
-                             int32_t windowHeight);
+                          int windowWidth, int windowHeight,
+                          std::vector<int>& positionFills);
+    Viewport calcFPSViewport(WidgetPosition pos, int windowWidth, int windowHeight);
 
     HWND m_renderTargetHandle{ nullptr };
 

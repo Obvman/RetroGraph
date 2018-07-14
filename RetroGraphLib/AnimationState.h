@@ -19,12 +19,12 @@ constexpr size_t numParticles{ 100U };
 constexpr size_t maxLines{ numParticles * numParticles };
 
 // TODO alter this value based on size
-constexpr float particleConnectionDistance{ 0.2f };
+constexpr auto particleConnectionDistance = float{ 0.2f };
 
 // NOTE: numCellsPerSide == (2.0 / cellSize)
 // cellSize should be no smaller than particleConnectionDistance
-constexpr float cellSize{ particleConnectionDistance };
-const int32_t numCellsPerSide{ 10 };
+constexpr auto cellSize = float{ particleConnectionDistance };
+constexpr auto numCellsPerSide = int{ 10 };
 
 class AnimationState;
 
@@ -42,8 +42,8 @@ struct Particle {
     float size{ 0.0f };
     float speed{ 0.0f };
 
-    uint32_t cellX{ 0 };
-    uint32_t cellY{ 0 };
+    int cellX{ 0 };
+    int cellY{ 0 };
 };
 
 struct ParticleLine {
@@ -73,16 +73,16 @@ public:
     AnimationState& operator=(AnimationState&&) = delete;
 
     /* Updates the positions of all particles */
-    void update(uint32_t ticks) override;
+    void update(int ticks) override;
 
-    uint32_t getAnimationFPS() const { return m_updateRates.front(); };
+    int getAnimationFPS() const { return m_updateRates.front(); };
     const std::array<ParticleLine, maxLines>& getLines() const { return m_particleLines; }
     const std::array<float, maxLines>& getLineColours() const { return m_lineColors; }
     const std::vector<Particle>& getParticles() const { return m_particles; }
     int getNumLines() const { return m_numLines; }
 
 private:
-    bool shouldUpdate(uint32_t ticks) const override;
+    bool shouldUpdate(int ticks) const override;
 
     void updateParticleLines();
     void addLine(const Particle* const p1, const Particle* const p2);

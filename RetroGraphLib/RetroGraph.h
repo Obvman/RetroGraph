@@ -23,10 +23,8 @@ class DriveMeasure;
 class MusicMeasure;
 class SystemMeasure;
 class AnimationState;
-class D3GPUMeasure;
 class SystemInformationMeasure;
 class DisplayMeasure;
-
 
 class RetroGraph {
 public:
@@ -37,10 +35,10 @@ public:
     RetroGraph(RetroGraph&&) = delete;
     RetroGraph& operator=(RetroGraph&&) = delete;
 
-    void update(uint32_t ticks);
-    void draw(uint32_t ticks) const;
+    void update(int ticks);
+    void draw(int ticks) const;
 
-    void updateWindowSize(int32_t width, int32_t height);
+    void updateWindowSize(int width, int height);
 
     const CPUMeasure& getCPUMeasure() const;
     const GPUMeasure& getGPUMeasure() const;
@@ -52,7 +50,6 @@ public:
     const SystemMeasure& getSystemMeasure() const;
     const SystemInformationMeasure& getSystemInformationMeasure() const;
     const AnimationState& getAnimationState() const;
-    const D3GPUMeasure& getD3GPUMeasure() const;
     const DisplayMeasure& getDisplayMeasure() const;
 
     bool isRunning() const { return m_window.isRunning(); }

@@ -19,7 +19,7 @@ class RetroGraph;
 
 class Window {
 public:
-    Window(RetroGraph* rg_, HINSTANCE hInstance, int32_t startupMonitor,
+    Window(RetroGraph* rg_, HINSTANCE hInstance, int startupMonitor,
            bool clickthrough);
     ~Window() noexcept;
     Window(const Window&) = delete;
@@ -31,13 +31,13 @@ public:
     void runTest();
 
     /* Updates the OpenGL viewport when the window size changes */
-    void updateSize(int32_t width, int32_t height);
+    void updateSize(int width, int height);
 
     /* Window Proc that has access to this window class's members via lParam */
     LRESULT CALLBACK WndProc2(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-    int32_t getWidth() const { return m_width; }
-    int32_t getHeight() const { return m_height; }
+    int getWidth() const { return m_width; }
+    int getHeight() const { return m_height; }
     HWND getHwnd() const { return m_hWndMain; }
     HGLRC getHGLRC() const { return m_hrc; }
 
@@ -54,7 +54,7 @@ private:
     /* Moves the window to the specified monitor and resizes elements to fit
      * the monitor
      */
-    void changeMonitor(HWND hWnd, int32_t monIndex);
+    void changeMonitor(HWND hWnd, int monIndex);
 
     /* Initialises OpenGL settings and renderer */
     void initOpenGL();
@@ -105,14 +105,14 @@ private:
 
     NOTIFYICONDATA m_tray{ };
     bool m_dragging{ false };
-    int32_t m_currMonitor{ 0 };
-    int32_t m_width{ 0 };
-    int32_t m_height{ 0 };
-    int32_t m_startPosX{ 0 };
-    int32_t m_startPosY{ 0 };
+    int m_currMonitor{ 0 };
+    int m_width{ 0 };
+    int m_height{ 0 };
+    int m_startPosX{ 0 };
+    int m_startPosY{ 0 };
     bool m_arbMultisampleSupported{ false };
-    int32_t m_arbMultisampleFormat{ 0 };
-    int32_t m_aaSamples{ 8 };
+    int m_arbMultisampleFormat{ 0 };
+    int m_aaSamples{ 8 };
     HINSTANCE m_hInstance{ nullptr };
 };
 

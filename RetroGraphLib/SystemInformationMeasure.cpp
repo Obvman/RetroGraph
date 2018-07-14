@@ -14,7 +14,7 @@ SystemInformationMeasure::SystemInformationMeasure() :
     Measure{ 2 } {
 }
 
-void SystemInformationMeasure::update(uint32_t) {
+void SystemInformationMeasure::update(int) {
     //static LONGLONG prev;
 
     //SYSTEM_PERFORMANCE_INFORMATION spi;
@@ -29,7 +29,7 @@ void SystemInformationMeasure::update(uint32_t) {
     //prev = curr;
 }
 
-bool SystemInformationMeasure::shouldUpdate(uint32_t ticks) const {
+bool SystemInformationMeasure::shouldUpdate(int ticks) const {
     return ticksMatchSeconds(ticks, m_updateRates.front());
 }
 

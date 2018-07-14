@@ -41,13 +41,13 @@ constexpr inline float lerp(float x1, float x2, float t) {
 
 /* Checks if the current tick is in line with the frequency given
    Use this if you want to perform an action [hz] times per second */
-constexpr inline bool ticksMatchRate(uint32_t ticks, uint32_t hz) {
-    return (ticks % static_cast<uint32_t>(static_cast<float>(rg::ticksPerSecond)/hz + 0.5)) == 0;
+constexpr inline bool ticksMatchRate(int ticks, int hz) {
+    return (ticks % static_cast<int>(static_cast<float>(rg::ticksPerSecond)/hz + 0.5)) == 0;
 }
 
 /* Checks if the current tick is in line with the number of seconds given
    Use this if you want to perform an action every [s] seconds */
-constexpr inline bool ticksMatchSeconds(uint32_t ticks, uint32_t s) {
+constexpr inline bool ticksMatchSeconds(int ticks, int s) {
     return (ticks % (rg::ticksPerSecond * s)) == 0;
 }
 

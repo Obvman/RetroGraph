@@ -15,7 +15,7 @@ namespace rg {
 
 RAMMeasure::RAMMeasure() :
     Measure{ 2 },
-    dataSize{ UserSettings::inst().getVal<int, uint32_t>("Widgets-Graphs-RAM.NumUsageSamples") } {
+    dataSize{ UserSettings::inst().getVal<int>("Widgets-Graphs-RAM.NumUsageSamples") } {
 
     // Fill the memory stat struct with system information
     m_memStatus.dwLength = sizeof(m_memStatus);
@@ -24,7 +24,7 @@ RAMMeasure::RAMMeasure() :
     m_usageData.assign(dataSize, 0.0f);
 }
 
-void RAMMeasure::update(uint32_t) {
+void RAMMeasure::update(int) {
     GlobalMemoryStatusEx(&m_memStatus);
 
     // Add value to the list of load values and shift the list left
@@ -33,7 +33,7 @@ void RAMMeasure::update(uint32_t) {
                 m_usageData.end());
 }
 
-bool RAMMeasure::shouldUpdate(uint32_t ticks) const {
+bool RAMMeasure::shouldUpdate(int ticks) const {
     return ticksMatchRate(ticks, m_updateRates.front());
 }
 

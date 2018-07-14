@@ -28,7 +28,7 @@ void FPSWidget::draw() const {
                                   RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_CENTERED_VERTICAL);
     } else {
         m_fontManager->renderLine(RG_FONT_STANDARD_BOLD, 
-                                  std::to_string(static_cast<uint32_t>(fps)).c_str(),
+                                  std::to_string(static_cast<int>(fps)).c_str(),
                                   0, 0, 0, 0,
                                   RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_CENTERED_VERTICAL);
     }

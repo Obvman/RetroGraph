@@ -24,8 +24,8 @@ namespace rg {
 
 ProcessMeasure::ProcessMeasure()
     : Measure{ 2U, 10U, 5U }
-    , m_numCPUProcessesToDisplay{ UserSettings::inst().getVal<int, uint32_t>("Widgets-ProcessesCPU.NumProcessesDisplayed") }
-    , m_numRAMProcessesToDisplay{ UserSettings::inst().getVal<int, uint32_t>("Widgets-ProcessesRAM.NumProcessesDisplayed") } {
+    , m_numCPUProcessesToDisplay{ UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesCPU.NumProcessesDisplayed") }
+    , m_numRAMProcessesToDisplay{ UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesRAM.NumProcessesDisplayed") } {
 
 #if !_DEBUG
     // Set the debug privilege in order to gain access to system processes
@@ -44,7 +44,7 @@ ProcessMeasure::ProcessMeasure()
     fillRAMData();
 }
 
-void ProcessMeasure::update(uint32_t ticks) {
+void ProcessMeasure::update(int ticks) {
     // Update the process list vector every 10 seconds
     if (ticksMatchSeconds(ticks, m_updateRates[1])) {
         detectNewProcesses();
@@ -102,7 +102,7 @@ void ProcessMeasure::update(uint32_t ticks) {
     }
 }
 
-int32_t ProcessMeasure::getPIDFromName(const std::string& name) const {
+int ProcessMeasure::getPIDFromName(const std::string& name) const {
     const auto it{ std::find_if(m_allProcessData.cbegin(),
                                 m_allProcessData.cend(),
             [&name](const auto& sp) {
@@ -117,7 +117,7 @@ int32_t ProcessMeasure::getPIDFromName(const std::string& name) const {
     }
 }
 
-bool ProcessMeasure::shouldUpdate(uint32_t) const {
+bool ProcessMeasure::shouldUpdate(int) const {
     return true;
     // return ticksMatchSeconds(ticks, m_updateRates.front());
 }
@@ -175,30 +175,26 @@ void ProcessMeasure::fillCPUData() {
     // Update the strings to be drawn
     m_procCPUListData.clear();
     for (const auto& ppd : m_allProcessData) {
-
         m_procCPUListData.emplace_back(ppd->getName(), ppd->getCpuUsage());
 
-        if (m_procCPUListData.size() >= m_numCPUProcessesToDisplay) {
+        if (m_procCPUListData.size() >= m_numCPUProcessesToDisplay)
             break;
-        }
     }
 }
 
 void ProcessMeasure::fillRAMData() {
     // Now sort the list in terms of memory usage and build strings for that
     std::sort(m_allProcessData.begin(), m_allProcessData.end(),
-    [](const auto& ppd1, const auto& ppd2) {
-        return ppd1->getWorkingSetSizeMB() > ppd2->getWorkingSetSizeMB();
-    });
+        [](const auto& ppd1, const auto& ppd2) {
+            return ppd1->getWorkingSetSizeMB() > ppd2->getWorkingSetSizeMB();
+        });
 
     m_procRAMListData.clear();
     for (const auto& ppd : m_allProcessData) {
-        m_procRAMListData.emplace_back(ppd->getName(),
-                                       ppd->getWorkingSetSizeMB());
+        m_procRAMListData.emplace_back(ppd->getName(), ppd->getWorkingSetSizeMB());
 
-        if (m_procRAMListData.size() >= m_numRAMProcessesToDisplay) {
+        if (m_procRAMListData.size() >= m_numRAMProcessesToDisplay)
             break;
-        }
     }
 }
 

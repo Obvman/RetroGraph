@@ -38,7 +38,7 @@ CPUMeasure::CPUMeasure() :
     }
 }
 
-void CPUMeasure::update(uint32_t) {
+void CPUMeasure::update(int) {
     m_coreTempPlugin.update();
 
     /* If the coretemp program was started in the last frame, reset usage
@@ -103,7 +103,7 @@ std::string CPUMeasure::getUptimeStr() const {
     return std::string{ buff };
 }
 
-bool CPUMeasure::shouldUpdate(uint32_t ticks) const {
+bool CPUMeasure::shouldUpdate(int ticks) const {
     return ticksMatchRate(ticks, m_updateRates.front());
 }
 

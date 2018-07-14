@@ -20,7 +20,7 @@ MusicMeasure::MusicMeasure(const ProcessMeasure& procMeasure) :
     force_update();
 }
 
-void MusicMeasure::update(uint32_t ticks) {
+void MusicMeasure::update(int ticks) {
     const auto oldTitle{ m_playerWindowTitle };
 
     // Get the window class name for the player if it hasn't yet been set
@@ -47,7 +47,7 @@ void MusicMeasure::update(uint32_t ticks) {
     }
 }
 
-bool MusicMeasure::handleClick(int32_t clickX, int32_t clickY) const {
+bool MusicMeasure::handleClick(int clickX, int clickY) const {
     // TODO
     (void)clickX;
     (void)clickY;
@@ -133,7 +133,7 @@ void MusicMeasure::scrapeInfoFromTitle() {
 
 }
 
-bool MusicMeasure::shouldUpdate(uint32_t ticks) const {
+bool MusicMeasure::shouldUpdate(int ticks) const {
     return ticksMatchSeconds(ticks, m_updateRates.front());
 }
 

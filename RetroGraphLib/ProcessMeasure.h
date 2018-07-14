@@ -29,11 +29,11 @@ public:
 
     /* Updates the currently tracked processes and their CPU usage.
        Stops tracking any processes that have exited */
-    void update(uint32_t ticks) override;
+    void update(int ticks) override;
 
     size_t getNumProcessesRunning() const { return m_allProcessData.size(); }
 
-    int32_t getPIDFromName(const std::string& name) const;
+    int getPIDFromName(const std::string& name) const;
 
     /* Gets vector containing top CPU using processes and their CPU usage */
     const std::vector<std::pair<std::string, double>>& getProcCPUData() const {
@@ -45,7 +45,7 @@ public:
         return m_procRAMListData;
     }
 private:
-    bool shouldUpdate(uint32_t ticks) const override;
+    bool shouldUpdate(int ticks) const override;
 
     /* Sets the debug privileges of the programs to allow reading of system
      * processes */
@@ -71,8 +71,8 @@ private:
 
     std::vector<std::shared_ptr<ProcessData>> m_allProcessData;
 
-    uint32_t m_numCPUProcessesToDisplay{ 10U };
-    uint32_t m_numRAMProcessesToDisplay{ 10U };
+    unsigned int m_numCPUProcessesToDisplay{ 10U };
+    unsigned int m_numRAMProcessesToDisplay{ 10U };
     std::vector<std::pair<std::string, double>> 
         m_procCPUListData{ m_numCPUProcessesToDisplay };
     std::vector<std::pair<std::string, size_t>> 

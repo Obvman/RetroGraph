@@ -23,7 +23,7 @@ MainWidget::MainWidget(const FontManager* fontManager, const RetroGraph& rg, boo
     , m_animationState{ &rg.getAnimationState() }
     , m_vboID{ VBOController::inst().createAnimationVBO(maxLines) }  { }
 
-bool MainWidget::needsDraw(uint32_t ticks) const {
+bool MainWidget::needsDraw(int ticks) const {
     // Only draw if visible and we need to draw to keep
     // up with the animation framerate
     if (!isVisible() || 

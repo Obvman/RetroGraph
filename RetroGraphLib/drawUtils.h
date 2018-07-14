@@ -14,13 +14,13 @@ typedef int GLint;
 
 namespace rg {
 
-constexpr auto circleLines = int32_t{ 10 };
+constexpr auto circleLines = int{ 10 };
 
-constexpr float serifLen{ 0.05f };
+constexpr auto serifLen = float{ 0.05f };
 
 /* Minimum distance from the edge of the screen to draw each object (in pixels) */
-constexpr int32_t marginX{ 16 };
-constexpr int32_t marginY{ 10 };
+constexpr auto marginX = int{ 16 };
+constexpr auto marginY = int{ 10 };
 
 struct Viewport {
     GLint x{ 0 };
@@ -56,14 +56,14 @@ void drawSerifLine(GLfloat x1, GLfloat x2, GLfloat y);
 
 // Given a pixel value (x or y) and the current viewport width/height in pixels,
 // converts the pixel value to the corresponding viewport ordinate
-constexpr inline float pixelsToVPCoords(uint32_t p, uint32_t vpWidth) {
+constexpr inline float pixelsToVPCoords(int p, int vpWidth) {
     return (static_cast<float>(p) / vpWidth) * 2.0f - 1.0f;
 }
 
 // Given a viewport ordinate (x or y) and the viewport width/height in pixels,
 // converts the ordinate into a pixel value relative to the viewport origin
-constexpr inline uint32_t vpCoordsToPixels(float vpCoord, uint32_t vpWidth) {
-    return static_cast<uint32_t>(((vpCoord + 1.0f) / 2.0f) * vpWidth);
+constexpr inline int vpCoordsToPixels(float vpCoord, int vpWidth) {
+    return static_cast<int>(((vpCoord + 1.0f) / 2.0f) * vpWidth);
 }
 
 } // namespace rg

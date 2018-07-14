@@ -33,7 +33,7 @@ constexpr float particleMinSpeed{ 0.01f };
 constexpr float particleMaxSpeed{ 0.1f };
 
 AnimationState::AnimationState()
-    : Measure{ UserSettings::inst().getVal<int, uint32_t>("Widgets-Main.FPS") }
+    : Measure{ UserSettings::inst().getVal<int>("Widgets-Main.FPS") }
     , m_particles( createParticles() )
     , m_particleLines{}
     , m_numLines{ 0 } {
@@ -48,14 +48,14 @@ AnimationState::~AnimationState() {
 auto AnimationState::createParticles() -> decltype(m_particles) {
     decltype(m_particles) particleList;
 
-    std::srand(static_cast<uint32_t>(time(nullptr)));
+    std::srand(static_cast<unsigned int>(time(nullptr)));
     for (auto i = size_t{ 0U }; i < numParticles; ++i) {
         particleList.emplace_back();
     }
     return particleList;
 }
 
-void AnimationState::update(uint32_t) {
+void AnimationState::update(int) {
     using namespace std::chrono;
     using clock = std::chrono::high_resolution_clock;
 
@@ -79,7 +79,7 @@ void AnimationState::update(uint32_t) {
     updateParticleLines();
 }
 
-bool AnimationState::shouldUpdate(uint32_t ticks) const {
+bool AnimationState::shouldUpdate(int ticks) const {
     return ticksMatchRate(ticks, m_updateRates.front());
 }
 
@@ -89,9 +89,9 @@ void AnimationState::updateParticleLines() {
     //  draw lines to particles in neighbouring cells
     // (but not the current cell)
     for (const auto& p : m_particles) {
-        auto nextX = uint32_t{ p.cellX + 1 };
-        auto nextY = uint32_t{ p.cellY + 1};
-        auto prevY = int32_t{ static_cast<int32_t>(p.cellY) - 1}; // can be negative
+        auto nextX = int{ p.cellX + 1 };
+        auto nextY = int{ p.cellY + 1};
+        auto prevY = int{ static_cast<int>(p.cellY) - 1}; // can be negative
         if (nextX >= numCellsPerSide)
             nextX = 0;
         if (nextY >= numCellsPerSide)
@@ -148,20 +148,14 @@ void AnimationState::addLine(const Particle* const p1, const Particle* const p2)
 
 
 Particle::Particle() :
-    x{ particleMinPos + static_cast<float>(rand()) /
-       (static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos))) },
-    y{ particleMinPos + static_cast<float>(rand()) /
-       (static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos))) },
-    dirX{ particleMinPos + static_cast<float>(rand()) /
-          (static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos))) },
-    dirY{ particleMinPos + static_cast<float>(rand()) /
-          (static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos))) },
-    size{ particleMinSize + static_cast<float>(rand()) /
-          (static_cast<float>(RAND_MAX/(particleMaxSize-particleMinSize))) },
-    speed{ particleMinSpeed + static_cast<float>(rand()) /
-           (static_cast<float>(RAND_MAX/(particleMaxSpeed-particleMinSpeed))) },
-    cellX{ static_cast<uint32_t>((x + 1.0f) / cellSize) },
-    cellY{ static_cast<uint32_t>((y + 1.0f) / cellSize) } {
+    x{ particleMinPos + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos))) },
+    y{ particleMinPos + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos))) },
+    dirX{ particleMinPos + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos))) },
+    dirY{ particleMinPos + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos))) },
+    size{ particleMinSize + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(particleMaxSize-particleMinSize))) },
+    speed{ particleMinSpeed + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(particleMaxSpeed-particleMinSpeed))) },
+    cellX{ static_cast<int>((x + 1.0f) / cellSize) },
+    cellY{ static_cast<int>((y + 1.0f) / cellSize) } {
 }
 
 // TODO this is bugged, particles get stuck in the corners of the window
@@ -185,8 +179,8 @@ void Particle::update(AnimationState& as, float dt) {
         y = particleMinPos;
     }
 
-    const uint32_t newCellX{ static_cast<uint32_t>((x + 1.0f) / cellSize) };
-    const uint32_t newCellY{ static_cast<uint32_t>((y + 1.0f) / cellSize) };
+    const int newCellX{ static_cast<int>((x + 1.0f) / cellSize) };
+    const int newCellY{ static_cast<int>((y + 1.0f) / cellSize) };
 
     // If we've shifted into a new cell, we have to update the cell's particle list
     if (newCellX != cellX || newCellY != cellY) {
