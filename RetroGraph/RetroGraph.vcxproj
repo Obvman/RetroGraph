@@ -200,8 +200,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\RetroGraphLib\InstallNotes.txt" />
-    <Text Include="..\RetroGraphLib\todo.txt" />
+    <Text Include="InstallNotes.txt" />
+    <Text Include="todo.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
