@@ -1,14 +1,6 @@
-fix link error LNK4020
-
-add dependencies to git repo
-
 make particle line shader. for each vertex, send the position of that vertex's partner. Calculate position + transparency.
 
 try moving VBO updates to update()
-
-Figure out which DLLs are required
-
-convert to unicode?
 
 Build batch script
 
