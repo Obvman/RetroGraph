@@ -13,11 +13,11 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="shaders">
-      <UniqueIdentifier>{82c048dd-ec38-4a6a-8654-c3586ad1bee1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="resources">
       <UniqueIdentifier>{04c3c6ff-192a-4676-a2b9-6cd8a1d97513}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\shaders">
+      <UniqueIdentifier>{82c048dd-ec38-4a6a-8654-c3586ad1bee1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -34,19 +34,22 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\test.frag">
-      <Filter>shaders</Filter>
+    <None Include="..\resources\shaders\cpuGraph.frag">
+      <Filter>resources\shaders</Filter>
     </None>
-    <None Include="shaders\test.vert">
-      <Filter>shaders</Filter>
+    <None Include="..\resources\shaders\cpuGraph.vert">
+      <Filter>resources\shaders</Filter>
     </None>
-    <None Include="shaders\cpuGraph.frag">
-      <Filter>shaders</Filter>
+    <None Include="..\resources\shaders\test.frag">
+      <Filter>resources\shaders</Filter>
     </None>
-    <None Include="shaders\cpuGraph.vert">
-      <Filter>shaders</Filter>
+    <None Include="..\resources\shaders\test.vert">
+      <Filter>resources\shaders</Filter>
     </None>
-    <None Include="resources\config.ini">
+    <None Include="..\resources\config.ini">
+      <Filter>resources</Filter>
+    </None>
+    <None Include="..\resources\default_config.ini">
       <Filter>resources</Filter>
     </None>
   </ItemGroup>

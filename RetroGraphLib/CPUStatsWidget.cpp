@@ -16,12 +16,23 @@
 
 namespace rg {
 
-void CPUStatsWidget::setViewport(Viewport vp) { 
-    m_viewport = vp; 
-    m_coreGraphViewport = Viewport{ m_viewport.x, m_viewport.y,
-        m_viewport.width, m_viewport.height/2 };
-    m_statsViewport = Viewport{ m_viewport.x, m_viewport.y + m_viewport.height/2,
-        m_viewport.width, m_viewport.height/2 };
+void CPUStatsWidget::setViewport(const Viewport& vp) { 
+    m_viewport = vp;
+
+    // Hack to fix rounding issue
+    const auto coreY{ static_cast<GLint>(std::floor(m_viewport.height / 2.0)) };
+    m_coreGraphViewport = Viewport{ 
+        m_viewport.x,
+        m_viewport.y,
+        m_viewport.width,
+        coreY
+    };
+    m_statsViewport = Viewport{ 
+        m_viewport.x,
+        m_viewport.y + coreY,
+        m_viewport.width,
+        static_cast<GLint>(std::ceil(m_viewport.height/2.0))
+    };
 };
 
 
@@ -79,6 +90,8 @@ void CPUStatsWidget::drawStats() const {
 void CPUStatsWidget::drawCoreGraphs() const {
     glViewport(m_coreGraphViewport.x, m_coreGraphViewport.y,
                m_coreGraphViewport.width, m_coreGraphViewport.height);
+
+    ListContainer::inst().drawTopAndBottomSerifs();
 
     // Draw x rows of core graphs, with 2 graphs per row until all graphs
     // are drawn

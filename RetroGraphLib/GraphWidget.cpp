@@ -32,29 +32,29 @@ GraphWidget::GraphWidget(const FontManager* fontManager,
 }
 
 
-void GraphWidget::setViewport(Viewport vp) { 
+void GraphWidget::setViewport(const Viewport& vp) { 
     m_viewport = vp;
 
     m_cpuGraphVP = Viewport{
                      vp.x,
                      vp.y + 3*vp.height/4,
                      vp.width,
-                     vp.height/4 };
+                     static_cast<GLint>(std::ceil(vp.height / 4.0)) }; // Hack to fix rounding issue.
     m_ramGraphVP = Viewport{
                      vp.x,
                      vp.y + 0*vp.height/4,
                      vp.width,
-                     vp.height/4 };
+                     vp.height / 4 };
     m_netGraphVP = Viewport{
                      vp.x,
                      vp.y + 1*vp.height/4,
                      vp.width,
-                     vp.height/4 };
+                     vp.height / 4 };
     m_gpuGraphVP = Viewport{
                      vp.x,
                      vp.y + 2*vp.height/4,
                      vp.width,
-                     vp.height/4 };
+                     vp.height / 4 };
 }
 
 void GraphWidget::updateObservers(const RetroGraph & rg) {

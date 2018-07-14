@@ -11,13 +11,11 @@
 namespace rg {
 
 VBOController::VBOController()
-    : m_graphLineVBOData{} {
+    : m_graphLineVBOData{}
+    , m_particleLineShader{ "test" } {
 
-    // TODO rename files
-    m_lineShader = loadShader("test.vert", "test.frag");
-
-    if (m_lineShader == -1) {
-       std::cout << "Failed to get uniform location for \'lineAlpha\'\n";
+    if (!m_particleLineShader) {
+        fatalMessageBox("Failed to init shader\n");
     }
 
     initVBOs();
@@ -31,8 +29,65 @@ VBOController::~VBOController() {
     for (const auto& vbo : m_graphLineVBOData)
         if (vbo.id != UINT_MAX)
             glDeleteBuffers(1, &vbo.id);
+}
 
-    // TODO clean up shaders
+void VBOController::initVBOs() {
+    initGraphGridVBO();
+}
+
+void VBOController::initGraphGridVBO() {
+    constexpr auto numVertLines = size_t{ 14U };
+    constexpr auto numHorizLines = size_t{ 7U };
+
+    auto gVerts = std::vector<GLfloat>{};
+    auto gIndices = std::vector<GLuint>{};
+    gVerts.reserve(4 * (numVertLines + numHorizLines));
+    gIndices.reserve(2 * (numVertLines + numHorizLines));
+
+    // Fill the vertex and index arrays with data for drawing grid as VBO
+    for (unsigned int i = 0U; i < numVertLines; ++i) {
+        const float x{ (i) / static_cast<float>(numVertLines - 1) * 2.0f - 1.0f };
+        gVerts.push_back(x);
+        gVerts.push_back(1.0f); // Vertical line top vert
+
+        gVerts.push_back(x);
+        gVerts.push_back(-1.0f); // Vertical line bottom vert
+
+        gIndices.push_back(2 * i);
+        gIndices.push_back(2 * i + 1);
+    }
+
+    // Offset value for the index array
+    const auto vertLineIndexCount{ static_cast<unsigned int>(gIndices.size()) };
+    for (unsigned int i = 0U; i < numHorizLines; ++i) {
+        const float y{ static_cast<float>(i) / (numHorizLines - 1) * 2.0f - 1.0f };
+        gVerts.push_back(-1.0f);
+        gVerts.push_back(y); // Horizontal line left vert
+
+        gVerts.push_back(1.0f);
+        gVerts.push_back(y); // Horizontal line right vert
+
+        gIndices.push_back(vertLineIndexCount + 2 * i);
+        gIndices.push_back(vertLineIndexCount + 2 * i + 1);
+    }
+    m_graphGridIndicesSize = static_cast<GLsizei>(gIndices.size());
+
+
+    // Initialise the graph grid VBO
+    glGenBuffers(1, &m_graphGridVertsID);
+    glBindBuffer(GL_ARRAY_BUFFER, m_graphGridVertsID);
+    glBufferData(GL_ARRAY_BUFFER, gVerts.size() * sizeof(GLfloat),
+                 gVerts.data(), GL_STATIC_DRAW);
+
+    // Initialise graph grid index array
+    glGenBuffers(1, &m_graphGridIndicesID);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_graphGridIndicesID);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, gIndices.size() * sizeof(GLuint),
+                 gIndices.data(), GL_STATIC_DRAW);
+
+    // Unbind buffers
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void VBOController::drawGraphGrid() const {
@@ -59,7 +114,7 @@ void VBOController::drawAnimationVBO(const VBOID & vboID, int size) const {
     //glVertexAttribPointer(1U, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
     //glEnableVertexAttribArray(1U);
 
-    //glUseProgram(m_lineShader);
+    //glUseProgram(particleLineShader);
 
     //glColor4f(PARTICLE_R, PARTICLE_G, PARTICLE_B, 1.0f);
     glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(size));
@@ -151,64 +206,6 @@ void VBOController::updateAnimationVBO(const VBOID& vboID, const AnimationState 
     glBufferSubData(GL_ARRAY_BUFFER, 0, numLines * sizeof(ParticleLine), verts.data());
 }
 
-void VBOController::initVBOs() {
-    initGraphGridVBO();
-}
-
-void VBOController::initGraphGridVBO() {
-    constexpr auto numVertLines = size_t{ 14U };
-    constexpr auto numHorizLines = size_t{ 7U };
-
-    auto gVerts = std::vector<GLfloat>{};
-    auto gIndices = std::vector<GLuint>{};
-    gVerts.reserve(4 * (numVertLines + numHorizLines));
-    gIndices.reserve(2 * (numVertLines + numHorizLines));
-
-    // Fill the vertex and index arrays with data for drawing grid as VBO
-    for (unsigned int i = 0U; i < numVertLines; ++i) {
-        const float x{ (i) / static_cast<float>(numVertLines - 1) * 2.0f - 1.0f };
-        gVerts.push_back(x);
-        gVerts.push_back(1.0f); // Vertical line top vert
-
-        gVerts.push_back(x);
-        gVerts.push_back(-1.0f); // Vertical line bottom vert
-
-        gIndices.push_back(2 * i);
-        gIndices.push_back(2 * i + 1);
-    }
-
-    // Offset value for the index array
-    const auto vertLineIndexCount{ static_cast<unsigned int>(gIndices.size()) };
-    for (unsigned int i = 0U; i < numHorizLines; ++i) {
-        const float y{ static_cast<float>(i) / (numHorizLines - 1) * 2.0f - 1.0f };
-        gVerts.push_back(-1.0f);
-        gVerts.push_back(y); // Horizontal line bottom vert
-
-        gVerts.push_back(1.0f);
-        gVerts.push_back(y); // Horizontal line top vert
-
-        gIndices.push_back(vertLineIndexCount + 2 * i);
-        gIndices.push_back(vertLineIndexCount + 2 * i + 1);
-    }
-    m_graphGridIndicesSize = vertLineIndexCount;
-
-
-    // Initialise the graph grid VBO
-    glGenBuffers(1, &m_graphGridVertsID);
-    glBindBuffer(GL_ARRAY_BUFFER, m_graphGridVertsID);
-    glBufferData(GL_ARRAY_BUFFER, gVerts.size() * sizeof(GLfloat),
-                 gVerts.data(), GL_STATIC_DRAW);
-
-    // Initialise graph grid index array
-    glGenBuffers(1, &m_graphGridIndicesID);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_graphGridIndicesID);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, gIndices.size() * sizeof(GLuint),
-                 gIndices.data(), GL_STATIC_DRAW);
-
-    // Unbind buffers
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-}
 
 VBOID::VBOID(VBOID&& other) {
     m_id = other.m_id;

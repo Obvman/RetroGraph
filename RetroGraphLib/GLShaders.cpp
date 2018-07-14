@@ -16,7 +16,7 @@ const std::string shaderPath{ getExePath() + R"(\..\..\resources\shaders\)" };
 
 std::string readShaderFile(const std::string& filePath);
 
-GLuint loadShader(const std::string& vFile, const std::string& fFile) {
+GLuint GLShader::loadShader(const std::string& vFile, const std::string& fFile) {
     const auto vShader{ glCreateShader(GL_VERTEX_SHADER) };
     const auto fShader{ glCreateShader(GL_FRAGMENT_SHADER) };
 

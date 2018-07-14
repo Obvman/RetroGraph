@@ -29,7 +29,7 @@ public:
 
     void updateObservers(const RetroGraph& rg) override;
     void draw() const override;
-    void setViewport(Viewport vp) override;
+    void setViewport(const Viewport& vp) override;
 
 private:
     void drawCoreGraphs() const;

@@ -185,11 +185,12 @@
     <Image Include="icon1.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\config.ini" />
-    <None Include="shaders\cpuGraph.frag" />
-    <None Include="shaders\cpuGraph.vert" />
-    <None Include="shaders\test.frag" />
-    <None Include="shaders\test.vert" />
+    <None Include="..\resources\config.ini" />
+    <None Include="..\resources\default_config.ini" />
+    <None Include="..\resources\shaders\cpuGraph.frag" />
+    <None Include="..\resources\shaders\cpuGraph.vert" />
+    <None Include="..\resources\shaders\test.frag" />
+    <None Include="..\resources\shaders\test.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

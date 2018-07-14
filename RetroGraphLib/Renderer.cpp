@@ -31,8 +31,6 @@ Renderer::Renderer(const Window& w, const RetroGraph& _rg) :
     m_widgets{ createWidgets(_rg) } {
 
     setViewports(w.getWidth(), w.getHeight());
-
-    initShaders();
 }
 
 Renderer::~Renderer() {
@@ -234,16 +232,6 @@ Viewport Renderer::calcViewport(WidgetPosition pos,
         default:
             return Viewport{};
     }
-}
-
-void Renderer::initShaders() {
-     // m_cpuGraphShader = loadShader("cpuGraph.vert", "cpuGraph.frag");
-
-     // m_graphAlphaLoc = glGetUniformLocation(m_cpuGraphShader, "lineAlpha");
-
-     //if (m_graphAlphaLoc == -1) {
-     //   std::cout << "Failed to get uniform location for \'lineAlpha\'\n";
-     //}
 }
 
 }

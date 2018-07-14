@@ -3,6 +3,7 @@
 #include <GL/GL.h>
 
 #include "drawUtils.h"
+#include "GLShaders.h"
 
 #include <vector>
 #include <utility>
@@ -82,8 +83,7 @@ private:
     GLuint m_graphGridIndicesID;
     GLsizei m_graphGridIndicesSize;
 
-    // TODO make shader object
-    GLuint m_lineShader;
+    GLShader m_particleLineShader;
 
     std::vector<VBOContainer> m_graphLineVBOData;
 

@@ -22,11 +22,6 @@ constexpr float serifLen{ 0.05f };
 constexpr int32_t marginX{ 16 };
 constexpr int32_t marginY{ 10 };
 
-// TODO remove these globals
-extern GLuint graphGridVertsID;
-extern GLuint graphGridIndicesID;
-extern GLsizei graphIndicesSize;
-
 struct Viewport {
     GLint x{ 0 };
     GLint y{ 0 };

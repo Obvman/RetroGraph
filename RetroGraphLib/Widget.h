@@ -51,7 +51,7 @@ public:
 
     /* Sets the viewport for the entire widget. Should be overriden
        for widgets with sub-viewports */
-    virtual void setViewport(Viewport vp) { m_viewport = vp; }
+    virtual void setViewport(const Viewport& vp) { m_viewport = vp; }
     
     /* Sets the observer pointers of the widget */
     virtual void updateObservers(const RetroGraph& rg) = 0;

@@ -32,12 +32,6 @@ constexpr float particleMaxPos{ 0.998f };
 constexpr float particleMinSpeed{ 0.01f };
 constexpr float particleMaxSpeed{ 0.1f };
 
-// TODO Debug values
-//constexpr float particleMinSpeed{ 0.3f };
-//constexpr float particleMaxSpeed{ 0.6f };
-//constexpr float particleMinSize{ 0.012f };
-//constexpr float particleMaxSize{ 0.036f };
-
 AnimationState::AnimationState()
     : Measure{ UserSettings::inst().getVal<int, uint32_t>("Widgets-Main.FPS") }
     , m_particles( createParticles() )

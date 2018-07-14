@@ -43,20 +43,11 @@ private:
     Viewport calcFPSViewport(WidgetPosition pos, int32_t windowWidth,
                              int32_t windowHeight);
 
-    /* Compiles and retrieves uniform locations */
-    void initShaders();
-
     HWND m_renderTargetHandle{ nullptr };
 
     FontManager m_fontManager;
 
     std::vector<std::unique_ptr<Widget>> m_widgets;
-
-    // Shaders
-    GLuint m_cpuGraphShader{ 0U };
-
-    // Uniform location (UL) variables
-    GLint m_graphAlphaLoc{ -1 };
 
     auto createWidgets(const RetroGraph& _rg) -> decltype(m_widgets);
 };
