@@ -10,10 +10,7 @@ class FontManager;
 
 class FPSLimiter {
 public:
-    static FPSLimiter& inst() {
-        static FPSLimiter i;
-        return i;
-    }
+    static FPSLimiter& inst() { static FPSLimiter i; return i; }
 
     ~FPSLimiter() noexcept = default;
     FPSLimiter(const FPSLimiter&) = delete;
@@ -28,6 +25,8 @@ public:
     void end();
 
     float getFPS() const { return m_fps;  }
+
+    void setMaxFPS(int maxFPS) { m_maxFPS = maxFPS; }
 private:
     FPSLimiter();
 

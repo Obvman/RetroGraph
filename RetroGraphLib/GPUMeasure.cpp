@@ -77,6 +77,15 @@ void GPUMeasure::update(int) {
                 m_usageData.end());
 }
 
+void GPUMeasure::refreshSettings() {
+    const size_t newDataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-Graphs-GPU.NumUsageSamples") };
+    if (dataSize == newDataSize)
+        return;
+
+    m_usageData.assign(newDataSize, 0.0f);
+    dataSize = newDataSize;
+}
+
 float GPUMeasure::getMemUsagePercent() const {
     return 100.0f -
         (static_cast<float>(m_currAvailableMemory) / m_totalMemory) * 100.0f;

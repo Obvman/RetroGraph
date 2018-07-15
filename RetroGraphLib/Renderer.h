@@ -35,8 +35,10 @@ public:
     void setWidgetVisibility(Widgets w, bool v);
 
     void updateObservers(const RetroGraph& rg);
-private:
+
     void setViewports(int windowWidth, int windowHeight);
+
+private:
     Viewport calcViewport(WidgetPosition pos,
                           int windowWidth, int windowHeight,
                           std::vector<int>& positionFills);

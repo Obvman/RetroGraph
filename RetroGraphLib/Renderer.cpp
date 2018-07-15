@@ -126,8 +126,6 @@ void Renderer::updateObservers(const RetroGraph& rg) {
         widget->updateObservers(rg);
 }
 
-/********************* Private Functions ********************/
-
 void Renderer::setViewports(int windowWidth, int windowHeight) {
     // For positions that can contain multiple widgets, track how many widgets
     // will fill that position. Currently on the horizontal center positions
@@ -144,8 +142,7 @@ void Renderer::setViewports(int windowWidth, int windowHeight) {
             ));
         } else {
             m_widgets[w]->setViewport(
-                calcViewport(s.getWidgetPosition(w),
-                             windowWidth, windowHeight, positionFills)
+                calcViewport(s.getWidgetPosition(w), windowWidth, windowHeight, positionFills)
             );
         }
     }
@@ -156,6 +153,8 @@ void Renderer::setViewports(int windowWidth, int windowHeight) {
         fatalMessageBox("You put too many widgets in the bottom-middle area!");
     }
 }
+
+/********************* Private Functions ********************/
 
 Viewport Renderer::calcFPSViewport(WidgetPosition pos, int windowWidth, int windowHeight) {
     const auto widgetW{ windowWidth / 24 };
@@ -228,6 +227,7 @@ Viewport Renderer::calcViewport(WidgetPosition pos, int windowWidth, int windowH
             return Viewport{ windowWidth - widgetW - marginX,
                     marginY, widgetW, widgetH };
         default:
+            fatalMessageBox("Invalid widget position specified. Please check your config.ini file");
             return Viewport{};
     }
 }

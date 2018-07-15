@@ -29,6 +29,8 @@ public:
     /* Updates the total system's CPU usage statistics */
     void update(int ticks) override;
 
+    void refreshSettings() override;
+
     /* Returns the current system CPU load as a percentage */
     float getCPULoad();
 
@@ -85,10 +87,10 @@ private:
 
     CPUPlugin m_coreTempPlugin{};
 
-    const size_t dataSize{ 40U };
+    size_t dataSize{ 40U };
     std::vector<float> m_usageData{};
 
-    const size_t perCoreDataSize{ 20U };
+    size_t perCoreDataSize{ 80U };
     std::vector<std::vector<float>> m_perCoreData{};
 
     std::chrono::milliseconds m_uptime{ 0 };

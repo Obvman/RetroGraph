@@ -25,6 +25,7 @@ public:
 
     /* Updates the system memory status values */
     void update(int ticks) override;
+    void refreshSettings() override;
 
     /* Gets the total size of the system's physical memory in different
        byte units */

@@ -14,6 +14,8 @@
 #include <TlHelp32.h>
 #include <winternl.h>
 #include <pathcch.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include <cstdint>
 #include <cassert>

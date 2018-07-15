@@ -19,8 +19,7 @@ class RetroGraph;
 
 class Window {
 public:
-    Window(RetroGraph* rg_, HINSTANCE hInstance, int startupMonitor,
-           bool clickthrough);
+    Window(RetroGraph* rg_, HINSTANCE hInstance, int startupMonitor, bool clickthrough);
     ~Window() noexcept;
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
@@ -32,6 +31,8 @@ public:
 
     /* Updates the OpenGL viewport when the window size changes */
     void updateSize(int width, int height);
+
+    void refreshSettings();
 
     /* Window Proc that has access to this window class's members via lParam */
     LRESULT CALLBACK WndProc2(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

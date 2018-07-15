@@ -180,12 +180,27 @@ void VBOController::updateGraphLines(const VBOID& vboID, const std::vector<GLflo
     auto& vboContainer{ m_graphLineVBOData[static_cast<int>(vboID)] };
     auto& verts{ vboContainer.data };
 
-    for (size_t i = 0; i < values.size(); ++i) {
-        verts[2 * i] = (static_cast<GLfloat>(i) / (values.size() - 1)) * 2.0f - 1.0f;
-        verts[2 * i + 1] = values[i] * 2.0f - 1.0f;
+    // Value vectors can change size. In this case we only to allocate buffer data instead of just writing to it
+    if (vboContainer.size != values.size()) {
+        vboContainer.size = static_cast<GLsizei>(values.size());
+        verts.resize(vboContainer.size * 2);
+
+        for (size_t i = 0; i < values.size(); ++i) {
+            verts[2 * i] = (static_cast<GLfloat>(i) / (values.size() - 1)) * 2.0f - 1.0f;
+            verts[2 * i + 1] = values[i] * 2.0f - 1.0f;
+        }
+
+        glBindBuffer(GL_ARRAY_BUFFER, vboContainer.id);
+        glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(GLfloat), verts.data(), GL_DYNAMIC_DRAW);
+    } else {
+        for (size_t i = 0; i < values.size(); ++i) {
+            verts[2 * i] = (static_cast<GLfloat>(i) / (values.size() - 1)) * 2.0f - 1.0f;
+            verts[2 * i + 1] = values[i] * 2.0f - 1.0f;
+        }
+
+        glBindBuffer(GL_ARRAY_BUFFER, vboContainer.id);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, verts.size() * sizeof(GLfloat), verts.data());
     }
-    glBindBuffer(GL_ARRAY_BUFFER, vboContainer.id);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, verts.size() * sizeof(GLfloat), verts.data());
 }
 
 void VBOController::updateAnimationVBO(const VBOID& vboID, const AnimationState & as) {

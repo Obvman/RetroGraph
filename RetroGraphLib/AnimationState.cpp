@@ -19,6 +19,7 @@
 #include "UserSettings.h"
 #include "ListContainer.h"
 #include "VBOController.h"
+#include "FPSLimiter.h"
 
 namespace rg {
 
@@ -46,13 +47,8 @@ AnimationState::~AnimationState() {
 }
 
 auto AnimationState::createParticles() -> decltype(m_particles) {
-    decltype(m_particles) particleList;
-
     std::srand(static_cast<unsigned int>(time(nullptr)));
-    for (auto i = size_t{ 0U }; i < numParticles; ++i) {
-        particleList.emplace_back();
-    }
-    return particleList;
+    return decltype(m_particles)( numParticles );
 }
 
 void AnimationState::update(int) {
@@ -61,22 +57,24 @@ void AnimationState::update(int) {
 
     static auto time_start = clock::now();
 
-    auto time_end = clock::now();
+    const auto time_end = clock::now();
     const auto deltaTimeStep{ time_end - time_start };
     time_start = clock::now();
     auto dt{ duration_cast<duration<float>>(deltaTimeStep).count() };
 
-    // If a lot of time has passed, set dt to a small value so we don't have
-    // one large jump
-    if (dt > 1.0f) {
+    // If a lot of time has passed, set dt to a small value so we don't have one large jump
+    if (dt > 1.0f)
         dt = 0.016f;
-    }
 
-    for (auto& p : m_particles) {
+    for (auto& p : m_particles)
         p.update(*this, dt);
-    }
 
     updateParticleLines();
+}
+
+void AnimationState::refreshSettings() {
+    m_updateRates.front() = UserSettings::inst().getVal<int>("Widgets-Main.FPS");
+    FPSLimiter::inst().setMaxFPS(m_updateRates.front());
 }
 
 bool AnimationState::shouldUpdate(int ticks) const {
@@ -86,8 +84,7 @@ bool AnimationState::shouldUpdate(int ticks) const {
 void AnimationState::updateParticleLines() {
     m_numLines = 0;
 
-    //  draw lines to particles in neighbouring cells
-    // (but not the current cell)
+    // draw lines to particles in neighbouring cells (but not the current cell)
     for (const auto& p : m_particles) {
         auto nextX = int{ p.cellX + 1 };
         auto nextY = int{ p.cellY + 1};
@@ -109,9 +106,8 @@ void AnimationState::updateParticleLines() {
         };
 
         for (const auto* cell : neighbouringCells) {
-            for (const auto neighbour : *cell) {
+            for (const auto neighbour : *cell)
                 addLine(&p, neighbour);
-            }
         }
     }
 
@@ -122,9 +118,8 @@ void AnimationState::updateParticleLines() {
             const auto cellParticles{ cell.size() };
             for (auto i = size_t{ 0U }; i < cellParticles; ++i) {
                 // j starts at i+1 so we don't duplicate collision checks.
-                for (auto j = size_t{ i + 1 }; j < cellParticles; ++j) {
+                for (auto j = size_t{ i + 1 }; j < cellParticles; ++j)
                     addLine(cell[i], cell[j]);
-                }
             }
         }
     }
@@ -134,10 +129,9 @@ void AnimationState::updateParticleLines() {
 void AnimationState::addLine(const Particle* const p1, const Particle* const p2) {
     if (p1 == p2) return;
 
+    constexpr auto radiusSq{ particleConnectionDistance * particleConnectionDistance };
     const auto dx{ fabs(p1->x - p2->x) };
     const auto dy{ fabs(p1->y - p2->y) };
-    constexpr auto radiusSq{ particleConnectionDistance * 
-                             particleConnectionDistance };
     const auto distance{ dx * dx + dy * dy };
 
     if (distance < radiusSq) {

@@ -1,3 +1,5 @@
+Auto-read config changes when the file is saved. Add option to turn on/off auto-read
+
 Build script take platform/configuration arguments
 
 make particle line shader. for each vertex, send the position of that vertex's partner. Calculate position + transparency.

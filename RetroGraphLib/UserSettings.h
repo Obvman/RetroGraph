@@ -58,6 +58,11 @@ public:
     void toggleWidgetBackgroundVisible() { m_settings["Window.WidgetBackground"] = 
         !std::get<bool>(m_settings["Window.WidgetBackground"]); }
 
+    void readConfig();
+
+    static const std::string iniPath;
+    static const std::string fallbackIniPath;
+
 private:
     UserSettings();
 
@@ -70,15 +75,15 @@ private:
     std::vector<WidgetPosition> m_widgetPositions;
 
     const std::map<std::string, WidgetPosition> m_posMap = {
-        {"top-left", WidgetPosition::TOP_LEFT},
-        {"top-middle", WidgetPosition::TOP_MID},
-        {"top-right", WidgetPosition::TOP_RIGHT},
-        {"middle-left", WidgetPosition::MID_LEFT},
+        {"top-left",      WidgetPosition::TOP_LEFT},
+        {"top-middle",    WidgetPosition::TOP_MID},
+        {"top-right",     WidgetPosition::TOP_RIGHT},
+        {"middle-left",   WidgetPosition::MID_LEFT},
         {"middle-middle", WidgetPosition::MID_MID},
-        {"middle-right", WidgetPosition::MID_RIGHT},
-        {"bottom-left", WidgetPosition::BOT_LEFT},
+        {"middle-right",  WidgetPosition::MID_RIGHT},
+        {"bottom-left",   WidgetPosition::BOT_LEFT},
         {"bottom-middle", WidgetPosition::BOT_MID},
-        {"bottom-right", WidgetPosition::BOT_RIGHT},
+        {"bottom-right",  WidgetPosition::BOT_RIGHT},
     };
 };
 

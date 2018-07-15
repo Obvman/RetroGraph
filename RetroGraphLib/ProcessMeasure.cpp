@@ -102,6 +102,11 @@ void ProcessMeasure::update(int ticks) {
     }
 }
 
+void ProcessMeasure::refreshSettings() {
+    m_numCPUProcessesToDisplay = UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesCPU.NumProcessesDisplayed");
+    m_numRAMProcessesToDisplay = UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesRAM.NumProcessesDisplayed");
+}
+
 int ProcessMeasure::getPIDFromName(const std::string& name) const {
     const auto it{ std::find_if(m_allProcessData.cbegin(),
                                 m_allProcessData.cend(),
@@ -277,7 +282,7 @@ void ProcessMeasure::populateList() {
                        spi->ImageName.Buffer, spi->ImageName.Length);
 
             m_allProcessData.emplace_back(
-                std::make_shared<ProcessData>(pHandle, static_cast<DWORD>(procID), nameBuff)
+                std::make_unique<ProcessData>(pHandle, static_cast<DWORD>(procID), nameBuff)
             );
 
             delete[] nameBuff;
@@ -346,7 +351,7 @@ void ProcessMeasure::detectNewProcesses() {
                            spi->ImageName.Buffer, spi->ImageName.Length);
 
                 m_allProcessData.emplace_back(
-                    std::make_shared<ProcessData>(pHandle, static_cast<DWORD>(procID), nameBuff)
+                    std::make_unique<ProcessData>(pHandle, static_cast<DWORD>(procID), nameBuff)
                 );
 
                 delete[] nameBuff;

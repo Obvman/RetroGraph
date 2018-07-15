@@ -21,14 +21,12 @@ unsigned long long FileTimeToInt64(const FILETIME & ft) {
         | ((unsigned long long)ft.dwLowDateTime);
 }
 
-CPUMeasure::CPUMeasure() :
-    Measure{ 2 },
-    dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-Graphs-CPU.NumUsageSamples") } {
+CPUMeasure::CPUMeasure()
+    : Measure{ 2 }
+    , dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-Graphs-CPU.NumUsageSamples") }
+    , m_usageData( dataSize, 0.0f ) {
 
     updateCPUName();
-
-    // fill vector with default values
-    m_usageData.assign(dataSize, 0.0f);
 
     // Create one vector for each core in the machine, and fill each vector with
     // default core usage values
@@ -66,6 +64,15 @@ void CPUMeasure::update(int) {
     }
 }
 
+void CPUMeasure::refreshSettings() {
+    const size_t newDataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-Graphs-CPU.NumUsageSamples") };
+    if (dataSize == newDataSize)
+        return;
+
+    m_usageData.assign(newDataSize, 0.0f);
+    dataSize = newDataSize;
+}
+
 void CPUMeasure::updateCPUName() {
     if (m_cpuName.empty() && m_coreTempPlugin.getCoreTempInfoSuccess()) {
         m_cpuName = "CPU: ";
@@ -83,8 +90,7 @@ float CPUMeasure::getCPULoad() {
     }
 
     return calculateCPULoad(FileTimeToInt64(idleTime),
-                            FileTimeToInt64(kernelTime) +
-                                FileTimeToInt64(userTime));
+                            FileTimeToInt64(kernelTime) + FileTimeToInt64(userTime));
 }
 
 std::string CPUMeasure::getUptimeStr() const {

@@ -31,6 +31,8 @@ public:
 
     void update(int ticks) override;
 
+    void refreshSettings() override;
+
     uint64_t getMaxDownValue() const { return m_downMaxVal; }
     uint64_t getMaxUpValue() const { return m_upMaxVal; }
     const std::vector<uint64_t>& getDownData() const { return m_downBytes; }
@@ -43,6 +45,9 @@ public:
     void setIsConnected(bool b);
 private:
     bool shouldUpdate(int ticks) const override;
+
+    void startNetworkThread();
+    void destroyNetworkThread();
 
     void getDNSAndHostname();
     void getMACAndLocalIP();

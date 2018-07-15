@@ -20,6 +20,7 @@
 #include "utils.h"
 #include "colors.h"
 #include "Renderer.h"
+#include "UserSettings.h"
 
 namespace rg {
 
@@ -40,69 +41,29 @@ constexpr int ID_TOGGLE_SYSTEMSTATS_WIDGET{ 12 };
 constexpr int ID_TOGGLE_MAIN_WIDGET{ 13 };
 constexpr int ID_TOGGLE_MUSIC_WIDGET{ 14 };
 constexpr int ID_TOGGLE_FPS_WIDGET{ 15 };
-constexpr int ID_CHANGE_DISPLAY_MONITOR{ 16 };
+constexpr int ID_CHANGE_DISPLAY_MONITOR{ 16 }; // Should always be last ID in the list
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-
-    // Get the Window pointer from the handle, and call the alternate WndProc
-    // if it was found
+    // Get the Window pointer from the handle, and call the alternate WndProc if it was found
     auto* window = reinterpret_cast<Window*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-    if (window) {
+    if (window)
         return window->WndProc2(hWnd, msg, wParam, lParam);
-    }
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
 void Window::runTest() {
-    /* const char* windowName{ "-bash" }; */
-    /* HWND windowHandle{ FindWindow(nullptr, windowName) }; */
-
-    /* if (!windowHandle) { */
-    /*     printf("Couldn't find window %s\n", windowName); */
-    /*     return; */
-    /* } */
-
-    /* //auto style{ GetWindowLong(windowHandle, GWL_STYLE) }; */
-
-    /* LONG style = WS_POPUP; */
-
-    /* if (!SetWindowLong(windowHandle, GWL_STYLE, style)) { */
-    /*     printf("failed to set window style\n"); */
-    /* } */
-
-    /* SetWindowPos(windowHandle, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE); */
-
-    // Start a linux subsystem bash shell
-    /*STARTUPINFO si;
-    PROCESS_INFORMATION pi;
-    ZeroMemory(&si, sizeof(si));
-    si.cb = sizeof(si);
-    ZeroMemory(&pi, sizeof(pi));
-
-    LPTSTR cmd = _tcsdup(TEXT("\"D:\\ProgramFiles\\Cygwin\\bin\\mintty.exe\""));
-    if (!CreateProcess(nullptr, 
-                       cmd,
-                       nullptr, nullptr, FALSE, 0, nullptr, 
-                       nullptr, &si, &pi)) {
-
-        printf("CreateProcess failed: %d\n", GetLastError());
-    }*/
-
-    // Start foobar2000 process to allow controls
-    system(R"("C:\Program Files\foobar2000\foobar2000.exe" /playpause)");
 }
 
-Window::Window(RetroGraph* rg_, HINSTANCE hInstance, int startupMonitor,
-               bool clickthrough) : 
-    m_clickthrough{ clickthrough },
-    m_monitors{ rg_->getDisplayMeasure().getMonitors() },
-    m_retroGraph{ rg_ },
-    m_currMonitor{ startupMonitor },
-    m_width{ m_monitors->getWidth(m_currMonitor) },
-    m_height{ m_monitors->getHeight(m_currMonitor) },
-    m_startPosX{ m_monitors->getX(m_currMonitor) },
-    m_startPosY{ m_monitors->getY(m_currMonitor) },
-    m_hInstance{ (createWindow(), hInstance) } {
+Window::Window(RetroGraph* rg_, HINSTANCE hInstance, int startupMonitor, bool clickthrough)
+    : m_clickthrough{ clickthrough }
+    , m_monitors{ rg_->getDisplayMeasure().getMonitors() }
+    , m_retroGraph{ rg_ }
+    , m_currMonitor{ startupMonitor }
+    , m_width{ m_monitors->getWidth(m_currMonitor) }
+    , m_height{ m_monitors->getHeight(m_currMonitor) }
+    , m_startPosX{ m_monitors->getX(m_currMonitor) }
+    , m_startPosY{ m_monitors->getY(m_currMonitor) }
+    , m_hInstance{ (createWindow(), hInstance) } {
 
     createTrayIcon();
 }
@@ -117,8 +78,7 @@ Window::~Window() {
     PostQuitMessage(0);
 }
 
-LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
-                                  WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     static int clickX;
     static int clickY;
     static PAINTSTRUCT ps;
@@ -140,25 +100,21 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
                 case ID_EXIT:
                     SendMessage(hWnd, WM_QUIT, wParam, lParam);
                     break;
-                case ID_SEND_TO_BACK: {
+                case ID_SEND_TO_BACK:
                     sendToBack();
                     break;
-                }
                 case ID_RESET_POSITION: {
                     const auto& md{ m_monitors->getMonitorData()[m_currMonitor] };
-                    SetWindowPos(hWnd, HWND_TOPMOST, md.x, md.y,
-                                 md.width, md.height, 0);
+                    SetWindowPos(hWnd, HWND_TOPMOST, md.x, md.y, md.width, md.height, 0);
                     break;
                 }
-                case ID_SET_WIDGET_BG: {
+                case ID_SET_WIDGET_BG:
                     UserSettings::inst().toggleWidgetBackgroundVisible();
                     break;
-                }
                 default:
                     // Default case handles monitor selection list
-                     changeMonitor(hWnd, 
-                                   LOWORD(wParam) - ID_CHANGE_DISPLAY_MONITOR);
-                     break;
+                    changeMonitor(hWnd, LOWORD(wParam) - ID_CHANGE_DISPLAY_MONITOR);
+                    break;
             }
         case WM_CONTEXTMENU: {
             int contextSpawnX{ LOWORD(lParam) };
@@ -168,41 +124,14 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
             // so check if the value is greater than a signed short, if so
             // it should be a negative number
             if (LOWORD(lParam) > std::numeric_limits<int16_t>::max()) {
-                contextSpawnX = LOWORD(lParam) -
-                    std::numeric_limits<uint16_t>::max();
+                contextSpawnX = LOWORD(lParam) - std::numeric_limits<uint16_t>::max();
             }
             if (HIWORD(lParam) > std::numeric_limits<int16_t>::max()) {
-                contextSpawnY = HIWORD(lParam) -
-                    std::numeric_limits<uint16_t>::max();
+                contextSpawnY = HIWORD(lParam) - std::numeric_limits<uint16_t>::max();
             }
 
             createRClickMenu(reinterpret_cast<HWND>(wParam));
             return 0;
-        }
-        case WM_NCHITTEST: {
-            /*if (!m_dragging) {
-                POINT p;
-                p.x = LOWORD(lParam);
-                p.y = HIWORD(lParam);
-                ScreenToClient(m_hWndMain, &p);
-                p.y = m_height - p.y;
-
-                unsigned char pixels[4];
-                glReadPixels(p.x, p.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, 
-                             &pixels[0]);
-
-                // If the pixel is the background color, we don't want to drag
-                if (pixels[0] == BGCOLOR_R &&
-                    pixels[1] == BGCOLOR_B &&
-                    pixels[2] == BGCOLOR_G &&
-                    pixels[3] == BGCOLOR_A) {
-
-                    return HTTRANSPARENT;
-                } else {
-                    ;
-                }
-            }*/
-            break;
         }
         case WM_SETCURSOR:
             break;
@@ -220,22 +149,6 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
         case WM_MBUTTONUP:
             sendToBack();
             break;
-        case WM_MOUSEMOVE: {
-            if (m_dragging) {
-                // Use mouse and window location to drag the window under the cursor
-                int mouseX = LOWORD(lParam);
-                int mouseY = HIWORD(lParam);
-
-                RECT wndRect;
-                GetWindowRect(hWnd, &wndRect);
-
-                int windowX = wndRect.left + mouseX - clickX;
-                int windowY = wndRect.top + mouseY - clickY;
-
-                SetWindowPos(hWnd, nullptr, windowX, windowY, 0, 0, SWP_NOSIZE);
-            }
-            return 0;
-        }
         case WM_QUIT:
         case WM_CLOSE:
             m_running = false;
@@ -247,6 +160,14 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg,
     }
 
     return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
+void Window::refreshSettings() {
+    const auto newMonitor{ UserSettings::inst().getVal<int>("Window.Monitor") };
+    if (m_currMonitor != newMonitor)
+        changeMonitor(m_hWndMain, newMonitor);
+
+    m_clickthrough = UserSettings::inst().getVal<bool>("Window.ClickThrough");
 }
 
 void Window::createRClickMenu(HWND hWnd) {
@@ -261,19 +182,9 @@ void Window::createRClickMenu(HWND hWnd) {
     InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_EXIT, "Exit");
     InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_SEND_TO_BACK, "Send to back");
     InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_SET_WIDGET_BG, "Toggle Widget Background");
+#if _DEBUG
     InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_TEST, "Test");
-    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)widgetSubmenu, "Toggle Widgets");
-
-    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_TIME_WIDGET, "Time Widget");
-    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_HDD_WIDGET, "HDD Widget");
-    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_CPUSTATS_WIDGET, "CPU Stats Widget");
-    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_PROCESS_CPU_WIDGET, "Cpu Process Widget");
-    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_PROCESS_RAM_WIDGET, "Ram Process Widget");
-    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_GRAPH_WIDGET, "Graph Widget");
-    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_SYSTEMSTATS_WIDGET, "System Stats Widget");
-    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_MUSIC_WIDGET, "Music Widget");
-    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_FPS_WIDGET, "FPS Widget");
-    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_MAIN_WIDGET, "Main Widget");
+#endif
 
     // Create an option for each monitor for multi-monitor systems
     const auto& md{ m_monitors->getMonitorData() };
@@ -285,6 +196,19 @@ void Window::createRClickMenu(HWND hWnd) {
                        ID_CHANGE_DISPLAY_MONITOR + i, optionName);
         }
     }
+
+    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING | MF_POPUP, 
+               reinterpret_cast<UINT_PTR>(widgetSubmenu), "Toggle Widgets");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_TIME_WIDGET, "Time Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_HDD_WIDGET, "HDD Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_CPUSTATS_WIDGET, "CPU Stats Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_PROCESS_CPU_WIDGET, "Cpu Process Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_PROCESS_RAM_WIDGET, "Ram Process Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_GRAPH_WIDGET, "Graph Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_SYSTEMSTATS_WIDGET, "System Stats Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_MUSIC_WIDGET, "Music Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_FPS_WIDGET, "FPS Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_MAIN_WIDGET, "Main Widget");
 
     // Display menu and wait for user's selection
     const int selection{ TrackPopupMenuEx(hPopupMenu, TPM_TOPALIGN

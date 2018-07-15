@@ -55,8 +55,7 @@ NetMeasure::NetMeasure() :
     // Get the adapter struct that corresponds to the hard-coded adapter name
     for (auto i = size_t{ 0U }; i < m_table->NumEntries; ++i) {
         if (m_table->Table[i].InterfaceIndex == bestIfaceIndex) {
-            std::wcout << L"Using interface " << m_table->Table[i].Description
-                << '\n';
+            std::wcout << L"Using interface " << m_table->Table[i].Description << '\n';
             m_adapterEntry = &m_table->Table[i];
             break;
         }
@@ -69,27 +68,27 @@ NetMeasure::NetMeasure() :
     getDNSAndHostname();
     getMACAndLocalIP();
 
-    // Start thread that periodically checks connection to internet.
-    using namespace std::chrono_literals;
-
-    m_threadRunning.store(true);
-    m_netConnectionThread = std::thread{ [this]() {
-        while (m_threadRunning.load()) {
-            std::unique_lock<std::mutex> lg{ m };
-            setIsConnected(static_cast<bool>(
-                InternetCheckConnectionA(m_pingServer.c_str(), FLAG_ICC_FORCE_CONNECTION, 0)
-            ));
-
-            cv.wait_for(lg, 1000ms * m_pingFreqMs, [&]() { return !m_threadRunning.load(); });
-        }
-    }};
+    startNetworkThread();
 }
 
 NetMeasure::~NetMeasure() {
-    // End the background thread
-    m_threadRunning.store(false);
-    cv.notify_all();
-    m_netConnectionThread.join();
+    destroyNetworkThread();
+}
+
+void NetMeasure::refreshSettings() {
+    destroyNetworkThread();
+
+    m_pingServer = UserSettings::inst().getVal<std::string>("Network.PingServer");
+    m_pingFreqMs = UserSettings::inst().getVal<int>("Network.PingFrequency");
+
+    const size_t newDataSize = UserSettings::inst().getVal<int, size_t>("Widgets-Graphs-Network.NumUsageSamples");
+    if (dataSize != newDataSize) {
+        m_downBytes.assign(newDataSize, 0U);
+        m_upBytes.assign(newDataSize, 0U);
+        dataSize = newDataSize;
+    }
+
+    startNetworkThread();
 }
 
 void NetMeasure::getMACAndLocalIP() {
@@ -220,6 +219,31 @@ void NetMeasure::setIsConnected(bool b) {
 
 bool NetMeasure::shouldUpdate(int ticks) const {
     return ticksMatchRate(ticks, m_updateRates.front());
+}
+
+void NetMeasure::startNetworkThread() {
+    // Start thread that periodically checks connection to internet.
+    using namespace std::chrono_literals;
+
+    m_threadRunning.store(true);
+    m_netConnectionThread = std::thread{ [this]() {
+        while (m_threadRunning.load()) {
+            std::unique_lock<std::mutex> lg{ m };
+            setIsConnected(static_cast<bool>(
+                InternetCheckConnectionA(m_pingServer.c_str(), FLAG_ICC_FORCE_CONNECTION, 0)
+            ));
+
+            cv.wait_for(lg, 1000ms * m_pingFreqMs, [&]() { return !m_threadRunning.load(); });
+        }
+    }};
+
+}
+
+void NetMeasure::destroyNetworkThread() {
+    // End the background thread
+    m_threadRunning.store(false);
+    cv.notify_all();
+    m_netConnectionThread.join();
 }
 
 }

@@ -33,6 +33,15 @@ void RAMMeasure::update(int) {
                 m_usageData.end());
 }
 
+void RAMMeasure::refreshSettings() {
+    const int newDataSize{ UserSettings::inst().getVal<int>("Widgets-Graphs-RAM.NumUsageSamples") };
+    if (dataSize == newDataSize)
+        return;
+
+    m_usageData.assign(newDataSize, 0.0f);
+    dataSize = newDataSize;
+}
+
 bool RAMMeasure::shouldUpdate(int ticks) const {
     return ticksMatchRate(ticks, m_updateRates.front());
 }

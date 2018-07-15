@@ -38,7 +38,10 @@ public:
     void update(int ticks);
     void draw(int ticks) const;
 
+    void refreshConfig();
     void updateWindowSize(int width, int height);
+    void toggleWidget(Widgets w);
+    bool isRunning() const { return m_window.isRunning(); }
 
     const CPUMeasure& getCPUMeasure() const;
     const GPUMeasure& getGPUMeasure() const;
@@ -52,12 +55,10 @@ public:
     const AnimationState& getAnimationState() const;
     const DisplayMeasure& getDisplayMeasure() const;
 
-    bool isRunning() const { return m_window.isRunning(); }
-
-    void toggleWidget(Widgets w);
-
 private:
+    void checkConfigChanged(int ticks);
     void checkDependencies(); // Disables any measures that aren't currently used TODO rename this
+    void updateWidgetVisibilities();
 
     // Measures are shared among widgets so we need these so we know to disable
     // a measure only when there are no widgets using it.
@@ -72,6 +73,8 @@ private:
     Window m_window;
 
     std::unique_ptr<Renderer> m_renderer;
+
+    bool m_autoReadConfig{ true };
 
     // Specifies which widgets rely on which measures.
     // IMPORTANT: Must be updated everytime we modify widgets or their observer pointers to measures!

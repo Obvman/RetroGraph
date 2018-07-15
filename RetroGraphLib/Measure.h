@@ -40,13 +40,15 @@ public:
 
     /* Must true if the Measure should update this frame */
     virtual bool shouldUpdate(int ticks) const = 0;
+
+    virtual void refreshSettings() { } // TODO = 0
 protected:
 
     // Updates the measure so it *should* bypass checks against ticks 
     // that may prevent an update
     inline void force_update() { update(0); }
 
-    const std::vector<int> m_updateRates;
+    std::vector<int> m_updateRates;
 };
 
 }
