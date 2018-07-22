@@ -20,10 +20,6 @@ class GPUMeasure : public Measure {
 public:
     GPUMeasure();
     ~GPUMeasure() noexcept;
-    GPUMeasure(const GPUMeasure&) = delete;
-    GPUMeasure& operator=(const GPUMeasure&) = delete;
-    GPUMeasure(GPUMeasure&&) = delete;
-    GPUMeasure& operator=(GPUMeasure&&) = delete;
 
     /* Get latest GPU stats from OpenGL or nvapi and updates dynamic members */
     void update(int ticks) override;

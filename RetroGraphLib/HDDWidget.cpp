@@ -19,14 +19,6 @@ void HDDWidget::updateObservers(const RetroGraph & rg) {
 }
 
 void HDDWidget::draw() const {
-    if (!isVisible() || !m_driveMeasure) return;
-
-    clear();
-
-    drawWidgetBackground();
-
-    ListContainer::inst().drawTopAndBottomSerifs();
-
     // Draw each drive status section
     const auto& drives{ m_driveMeasure->getDrives() };
     const auto driveSize{ static_cast<GLsizei>(drives.size()) };

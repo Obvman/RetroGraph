@@ -20,10 +20,10 @@ namespace rg {
 
 SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
                                      const RetroGraph& rg, bool visible)
-    : Widget{ fontManager, visible }
-    , m_gpuMeasure{ &rg.getGPUMeasure() } {
+    : Widget{ fontManager, visible } {
 
     const auto& sysInfo{ rg.getSystemMeasure() };
+    const auto& gpuMeasure{ rg.getGPUMeasure() };
 
     // Just create stats string here since we expect it not to change during
     // the lifetime of the program
@@ -37,7 +37,7 @@ SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
     else
         m_statsStrings.emplace_back(sysInfo.getCPUDescription());
 
-    m_statsStrings.emplace_back(m_gpuMeasure->getGpuDescription());
+    m_statsStrings.emplace_back(gpuMeasure.getGpuDescription());
     m_statsStrings.emplace_back(sysInfo.getRAMDescription());
 
     // Monitor information
@@ -64,19 +64,7 @@ SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
     }
 }
 
-void SystemStatsWidget::updateObservers(const RetroGraph& rg) {
-    m_gpuMeasure = &rg.getGPUMeasure();
-}
-
 void SystemStatsWidget::draw() const {
-    if (!isVisible()) return;
-
-    clear();
-
-    drawWidgetBackground();
-
-    ListContainer::inst().drawTopAndBottomSerifs();
-
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
     m_fontManager->renderLines(RG_FONT_STANDARD, m_statsStrings, 0, 0,
                                m_viewport.width, m_viewport.height,

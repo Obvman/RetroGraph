@@ -18,17 +18,10 @@ public:
     SystemStatsWidget(const FontManager* fontManager,
                       const RetroGraph& rg, bool visible);
     ~SystemStatsWidget() noexcept = default;
-    SystemStatsWidget(const SystemStatsWidget&) = delete;
-    SystemStatsWidget& operator=(const SystemStatsWidget&) = delete;
-    SystemStatsWidget(SystemStatsWidget&&) = delete;
-    SystemStatsWidget& operator=(SystemStatsWidget&&) = delete;
 
-    void updateObservers(const RetroGraph&) override;
     void draw() const override;
 private:
     std::vector<std::string> m_statsStrings{ };
-
-    const GPUMeasure* m_gpuMeasure;
 };
 
 } // namespace rg

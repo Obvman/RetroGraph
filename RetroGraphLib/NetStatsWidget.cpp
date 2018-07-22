@@ -21,13 +21,6 @@ NetStatsWidget::NetStatsWidget(const FontManager* fontManager, const RetroGraph&
 }
 
 void NetStatsWidget::draw() const {
-    if (!isVisible()) return;
-
-    clear();
-    drawWidgetBackground();
-
-    ListContainer::inst().drawTopAndBottomSerifs();
-
     auto statsStrings{ m_statsStrings };
     std::string state{ (m_netMeasure->isConnected() ? "Up" : "Down") };
     statsStrings.emplace_back("Connection Status: " + state);

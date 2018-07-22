@@ -40,11 +40,6 @@ void MainWidget::updateObservers(const RetroGraph & rg) {
 }
 
 void MainWidget::draw() const {
-    clear();
-
-    drawWidgetBackground();
-    ListContainer::inst().drawTopAndBottomSerifs();
-
     // Scale by the aspect ratio of the viewport so circles aren't skewed
     float aspect = static_cast<float>(m_viewport.width) /
                    static_cast<float>(m_viewport.height);

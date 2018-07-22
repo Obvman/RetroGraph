@@ -56,10 +56,6 @@ class DriveMeasure : public Measure {
 public:
     DriveMeasure();
     ~DriveMeasure() noexcept = default;
-    DriveMeasure(const DriveMeasure&) = delete;
-    DriveMeasure& operator=(const DriveMeasure&) = delete;
-    DriveMeasure(DriveMeasure&&) = delete;
-    DriveMeasure& operator=(DriveMeasure&&) = delete;
 
     /* Updates each drive with new values */
     void update(int ticks) override;
@@ -70,6 +66,7 @@ public:
     /* Returns the drive list */
     const std::vector<std::unique_ptr<DriveInfo>>& getDrives() const { return m_drives; }
 
+    void refreshSettings() override { }
 private:
     bool shouldUpdate(int ticks) const override;
 

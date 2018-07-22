@@ -20,7 +20,7 @@ NvAPI_GPU_GetUsages_t NvAPI_GPU_GetUsages{ nullptr };
 
 GPUMeasure::GPUMeasure()
         : Measure{ 2U }
-        , dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-Graphs-GPU.NumUsageSamples") } {
+        , dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-GPUGraph.NumUsageSamples") } {
 
     m_usageData.assign(dataSize, 0.0f);
 
@@ -78,7 +78,7 @@ void GPUMeasure::update(int) {
 }
 
 void GPUMeasure::refreshSettings() {
-    const size_t newDataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-Graphs-GPU.NumUsageSamples") };
+    const size_t newDataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-GPUGraph.NumUsageSamples") };
     if (dataSize == newDataSize)
         return;
 

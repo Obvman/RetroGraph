@@ -19,14 +19,6 @@ void ProcessRAMWidget::updateObservers(const RetroGraph & rg) {
 }
 
 void ProcessRAMWidget::draw() const {
-    if (!isVisible()) return;
-
-    clear();
-
-    drawWidgetBackground();
-
-    ListContainer::inst().drawTopAndBottomSerifs();
-
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
     auto procNames = std::vector<std::string>{};

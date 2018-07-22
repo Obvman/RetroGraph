@@ -20,10 +20,6 @@ class MusicMeasure : public Measure {
 public:
     MusicMeasure(const ProcessMeasure& procMeasure);
     ~MusicMeasure() noexcept = default;
-    MusicMeasure(const MusicMeasure&) = delete;
-    MusicMeasure& operator=(const MusicMeasure&) = delete;
-    MusicMeasure(MusicMeasure&&) = delete;
-    MusicMeasure& operator=(MusicMeasure&&) = delete;
 
     /* If the player class name isn't yet set, enumerates all running windows
      * to find it. If the class name is set, then searches windows with the
@@ -45,6 +41,8 @@ public:
     const std::string& getAlbum() const { return m_album; }
     int getElapsedTime() const { return m_elapsedTime; }
     int getTotalTime() const { return m_totalTime; }
+
+    void refreshSettings() override { }
 private:
     bool shouldUpdate(int ticks) const override;
 

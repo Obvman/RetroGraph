@@ -23,7 +23,7 @@ unsigned long long FileTimeToInt64(const FILETIME & ft) {
 
 CPUMeasure::CPUMeasure()
     : Measure{ 2 }
-    , dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-Graphs-CPU.NumUsageSamples") }
+    , dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-CPUGraph.NumUsageSamples") }
     , m_usageData( dataSize, 0.0f ) {
 
     updateCPUName();
@@ -65,7 +65,7 @@ void CPUMeasure::update(int) {
 }
 
 void CPUMeasure::refreshSettings() {
-    const size_t newDataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-Graphs-CPU.NumUsageSamples") };
+    const size_t newDataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-CPUGraph.NumUsageSamples") };
     if (dataSize == newDataSize)
         return;
 

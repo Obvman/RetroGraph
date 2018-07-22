@@ -13,13 +13,6 @@
 namespace rg {
 
 void FPSWidget::draw() const {
-    if (!isVisible()) return;
-    clear();
-
-    drawWidgetBackground();
-
-    ListContainer::inst().drawTopAndBottomSerifs();
-
     const auto fps{ FPSLimiter::inst().getFPS() };
     if (fps < 1000.0f) {
         char fpsStr[5];

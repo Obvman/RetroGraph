@@ -15,7 +15,7 @@ namespace rg {
 
 RAMMeasure::RAMMeasure() :
     Measure{ 2 },
-    dataSize{ UserSettings::inst().getVal<int>("Widgets-Graphs-RAM.NumUsageSamples") } {
+    dataSize{ UserSettings::inst().getVal<int>("Widgets-RAMGraph.NumUsageSamples") } {
 
     // Fill the memory stat struct with system information
     m_memStatus.dwLength = sizeof(m_memStatus);
@@ -34,7 +34,7 @@ void RAMMeasure::update(int) {
 }
 
 void RAMMeasure::refreshSettings() {
-    const int newDataSize{ UserSettings::inst().getVal<int>("Widgets-Graphs-RAM.NumUsageSamples") };
+    const int newDataSize{ UserSettings::inst().getVal<int>("Widgets-RAMGraph.NumUsageSamples") };
     if (dataSize == newDataSize)
         return;
 

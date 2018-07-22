@@ -34,7 +34,7 @@ NetMeasure::NetMeasure() :
     Measure{ 2U, 30U },
     m_pingServer{ UserSettings::inst().getVal<std::string>("Network.PingServer") },
     m_pingFreqMs{ UserSettings::inst().getVal<int>("Network.PingFrequency") },
-    dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-Graphs-Network.NumUsageSamples") } {
+    dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-NetGraph.NumUsageSamples") } {
 
     // Fill data vectors with default values
     m_downBytes.assign(dataSize, 0U);
@@ -81,7 +81,7 @@ void NetMeasure::refreshSettings() {
     m_pingServer = UserSettings::inst().getVal<std::string>("Network.PingServer");
     m_pingFreqMs = UserSettings::inst().getVal<int>("Network.PingFrequency");
 
-    const size_t newDataSize = UserSettings::inst().getVal<int, size_t>("Widgets-Graphs-Network.NumUsageSamples");
+    const size_t newDataSize = UserSettings::inst().getVal<int, size_t>("Widgets-NetGraph.NumUsageSamples");
     if (dataSize != newDataSize) {
         m_downBytes.assign(newDataSize, 0U);
         m_upBytes.assign(newDataSize, 0U);

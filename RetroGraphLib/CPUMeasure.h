@@ -21,10 +21,6 @@ class CPUMeasure : public Measure {
 public:
     CPUMeasure();
     ~CPUMeasure() noexcept = default;
-    CPUMeasure(const CPUMeasure&) = delete;
-    CPUMeasure& operator=(const CPUMeasure&) = delete;
-    CPUMeasure(CPUMeasure&&) = delete;
-    CPUMeasure& operator=(CPUMeasure&&) = delete;
 
     /* Updates the total system's CPU usage statistics */
     void update(int ticks) override;

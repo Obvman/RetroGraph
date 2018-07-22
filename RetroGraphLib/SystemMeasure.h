@@ -13,10 +13,6 @@ class SystemMeasure : public Measure {
 public:
     SystemMeasure();
     ~SystemMeasure() noexcept = default;
-    SystemMeasure(const SystemMeasure&) = delete;
-    SystemMeasure& operator=(const SystemMeasure&) = delete;
-    SystemMeasure(SystemMeasure&&) = delete;
-    SystemMeasure& operator=(SystemMeasure&&) = delete;
 
     void update(int ticks) override;
 
@@ -35,6 +31,7 @@ public:
 
     const std::string& getComputerName() const { return m_computerName; }
 
+    void refreshSettings() override { }
 private:
     bool shouldUpdate(int /*ticks*/) const override { return false; }
 

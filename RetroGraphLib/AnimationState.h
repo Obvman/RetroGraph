@@ -67,10 +67,6 @@ class AnimationState : public Measure {
 public:
     AnimationState();
     ~AnimationState();
-    AnimationState(const AnimationState&) = delete;
-    AnimationState& operator=(const AnimationState&) = delete;
-    AnimationState(AnimationState&&) = delete;
-    AnimationState& operator=(AnimationState&&) = delete;
 
     /* Updates the positions of all particles */
     void update(int ticks) override;

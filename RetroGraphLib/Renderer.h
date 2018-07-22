@@ -39,18 +39,13 @@ public:
     void setViewports(int windowWidth, int windowHeight);
 
 private:
-    Viewport calcViewport(WidgetPosition pos,
-                          int windowWidth, int windowHeight,
-                          std::vector<int>& positionFills);
-    Viewport calcFPSViewport(WidgetPosition pos, int windowWidth, int windowHeight);
-
     HWND m_renderTargetHandle{ nullptr };
-
     FontManager m_fontManager;
-
     std::vector<std::unique_ptr<Widget>> m_widgets;
+    std::vector<std::unique_ptr<WidgetContainer>> m_widgetContainers;
 
     auto createWidgets(const RetroGraph& _rg) -> decltype(m_widgets);
+    auto createWidgetContainers() -> decltype(m_widgetContainers);
 };
 
 } // namespace rg

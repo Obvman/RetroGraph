@@ -24,10 +24,6 @@ class NetMeasure : public Measure {
 public:
     NetMeasure();
     ~NetMeasure() noexcept;
-    NetMeasure(const NetMeasure&) = delete;
-    NetMeasure& operator=(const NetMeasure&) = delete;
-    NetMeasure(NetMeasure&&) = delete;
-    NetMeasure& operator=(NetMeasure&&) = delete;
 
     void update(int ticks) override;
 

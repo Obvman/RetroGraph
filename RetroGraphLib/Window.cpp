@@ -36,12 +36,15 @@ constexpr int ID_TOGGLE_HDD_WIDGET{ 7 };
 constexpr int ID_TOGGLE_CPUSTATS_WIDGET{ 8 };
 constexpr int ID_TOGGLE_PROCESS_CPU_WIDGET{ 9 };
 constexpr int ID_TOGGLE_PROCESS_RAM_WIDGET{ 10 };
-constexpr int ID_TOGGLE_GRAPH_WIDGET{ 11 };
-constexpr int ID_TOGGLE_SYSTEMSTATS_WIDGET{ 12 };
-constexpr int ID_TOGGLE_MAIN_WIDGET{ 13 };
-constexpr int ID_TOGGLE_MUSIC_WIDGET{ 14 };
-constexpr int ID_TOGGLE_FPS_WIDGET{ 15 };
-constexpr int ID_CHANGE_DISPLAY_MONITOR{ 16 }; // Should always be last ID in the list
+constexpr int ID_TOGGLE_SYSTEMSTATS_WIDGET{ 11 };
+constexpr int ID_TOGGLE_MAIN_WIDGET{ 12 };
+constexpr int ID_TOGGLE_MUSIC_WIDGET{ 13 };
+constexpr int ID_TOGGLE_FPS_WIDGET{ 14 };
+constexpr int ID_TOGGLE_CPU_GRAPH_WIDGET{ 15 };
+constexpr int ID_TOGGLE_GPU_GRAPH_WIDGET{ 16 };
+constexpr int ID_TOGGLE_RAM_GRAPH_WIDGET{ 17 };
+constexpr int ID_TOGGLE_NET_GRAPH_WIDGET{ 18 };
+constexpr int ID_CHANGE_DISPLAY_MONITOR{ 19 }; // Should always be last ID in the list
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     // Get the Window pointer from the handle, and call the alternate WndProc if it was found
@@ -202,9 +205,12 @@ void Window::createRClickMenu(HWND hWnd) {
     InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_TIME_WIDGET, "Time Widget");
     InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_HDD_WIDGET, "HDD Widget");
     InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_CPUSTATS_WIDGET, "CPU Stats Widget");
-    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_PROCESS_CPU_WIDGET, "Cpu Process Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_PROCESS_CPU_WIDGET, "CPU Process Widget");
     InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_PROCESS_RAM_WIDGET, "Ram Process Widget");
-    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_GRAPH_WIDGET, "Graph Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_CPU_GRAPH_WIDGET, "CPU Graph Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_GPU_GRAPH_WIDGET, "GPU Graph Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_RAM_GRAPH_WIDGET, "RAM Graph Widget");
+    InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_NET_GRAPH_WIDGET, "Net Graph Widget");
     InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_SYSTEMSTATS_WIDGET, "System Stats Widget");
     InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_MUSIC_WIDGET, "Music Widget");
     InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_FPS_WIDGET, "FPS Widget");
@@ -250,8 +256,17 @@ void Window::createRClickMenu(HWND hWnd) {
         case ID_TOGGLE_PROCESS_RAM_WIDGET:
             m_retroGraph->toggleWidget(Widgets::ProcessRAM);
             break;
-        case ID_TOGGLE_GRAPH_WIDGET:
-            m_retroGraph->toggleWidget(Widgets::Graph);
+        case ID_TOGGLE_CPU_GRAPH_WIDGET:
+            m_retroGraph->toggleWidget(Widgets::CPUGraph);
+            break;
+        case ID_TOGGLE_GPU_GRAPH_WIDGET:
+            m_retroGraph->toggleWidget(Widgets::GPUGraph);
+            break;
+        case ID_TOGGLE_RAM_GRAPH_WIDGET:
+            m_retroGraph->toggleWidget(Widgets::RAMGraph);
+            break;
+        case ID_TOGGLE_NET_GRAPH_WIDGET:
+            m_retroGraph->toggleWidget(Widgets::NetGraph);
             break;
         case ID_TOGGLE_SYSTEMSTATS_WIDGET:
             m_retroGraph->toggleWidget(Widgets::SystemStats);

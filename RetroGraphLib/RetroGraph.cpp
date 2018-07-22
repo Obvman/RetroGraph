@@ -39,10 +39,10 @@ RetroGraph::RetroGraph(HINSTANCE hInstance)
         { MTypes::Music,   { Widgets::Music } },
         { MTypes::Process, { Widgets::Music, Widgets::ProcessCPU, Widgets::ProcessRAM } },
         { MTypes::System,  { Widgets::SystemStats } },
-        { MTypes::Net,     { Widgets::Graph, Widgets::Time, Widgets::NetStats } },
-        { MTypes::CPU,     { Widgets::CPUStats, Widgets::Graph, Widgets::SystemStats, Widgets::Time } },
-        { MTypes::GPU,     { Widgets::Graph } },
-        { MTypes::RAM,     { Widgets::Graph } },
+        { MTypes::Net,     { Widgets::Time, Widgets::NetStats, Widgets::NetGraph } },
+        { MTypes::CPU,     { Widgets::CPUStats, Widgets::CPUGraph, Widgets::SystemStats, Widgets::Time } },
+        { MTypes::GPU,     { Widgets::GPUGraph} },
+        { MTypes::RAM,     { Widgets::RAMGraph } },
         { MTypes::Drive,   { Widgets::HDD } },
         { MTypes::SystemInformation, {} },
         { MTypes::Display, {} }, // Does have dependent widgets, but must not be destroyed
@@ -64,19 +64,19 @@ RetroGraph::~RetroGraph() {
 auto RetroGraph::createMeasures() -> decltype(m_measures) {
     decltype(m_measures) measureList( Measures::Types::NumMeasures );
 
-    measureList[MTypes::CPU] =            std::make_unique<CPUMeasure>();
-    measureList[MTypes::GPU] =            std::make_unique<GPUMeasure>();
-    measureList[MTypes::RAM] =            std::make_unique<RAMMeasure>();
-    measureList[MTypes::Net] =            std::make_unique<NetMeasure>();
-    measureList[MTypes::Process] =        std::make_unique<ProcessMeasure>();
-    measureList[MTypes::Drive] =          std::make_unique<DriveMeasure>();
-    measureList[MTypes::Music] =          std::make_unique<MusicMeasure>(
+    measureList[MTypes::CPU] =               std::make_unique<CPUMeasure>();
+    measureList[MTypes::GPU] =               std::make_unique<GPUMeasure>();
+    measureList[MTypes::RAM] =               std::make_unique<RAMMeasure>();
+    measureList[MTypes::Net] =               std::make_unique<NetMeasure>();
+    measureList[MTypes::Process] =           std::make_unique<ProcessMeasure>();
+    measureList[MTypes::Drive] =             std::make_unique<DriveMeasure>();
+    measureList[MTypes::Music] =             std::make_unique<MusicMeasure>(
         dynamic_cast<const ProcessMeasure&>(*measureList[MTypes::Process])
     );
-    measureList[MTypes::System] =         std::make_unique<SystemMeasure>();
-    measureList[MTypes::AnimationState] = std::make_unique<AnimationState>();
+    measureList[MTypes::System] =            std::make_unique<SystemMeasure>();
+    measureList[MTypes::AnimationState] =    std::make_unique<AnimationState>();
     measureList[MTypes::SystemInformation] = std::make_unique<SystemInformationMeasure>();
-    measureList[MTypes::Display] =        std::make_unique<DisplayMeasure>();
+    measureList[MTypes::Display] =           std::make_unique<DisplayMeasure>();
 
     return measureList;
 }
@@ -155,7 +155,9 @@ void RetroGraph::updateWindowSize(int width, int height) {
 void RetroGraph::toggleWidget(Widgets w) {
     m_widgetVisibilities[w] = !m_widgetVisibilities[w];
     checkDependencies();
+
     m_renderer->setWidgetVisibility(w, m_widgetVisibilities[w]);
+    m_renderer->setViewports(m_window.getWidth(), m_window.getHeight());
     m_renderer->draw(0, m_window, 1);
 }
 
@@ -198,7 +200,7 @@ void RetroGraph::checkDependencies() {
     // Widget, we can disable it. If a disabled measure needs to be used by a widget,
     // re-enable it
     for (const auto& [measure, widgets] : m_dependencyMap) {
-        // Measure with no widget dependencies will always exist.
+        // Measures with no widget dependencies will always exist.
         if (widgets.empty()) 
             continue;
 

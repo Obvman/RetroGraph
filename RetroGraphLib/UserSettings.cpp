@@ -57,10 +57,10 @@ void UserSettings::readMembers(const INIReader& reader) {
     m_settings["Widgets-ProcessesCPU.HighCPUUsageThreshold"]   = reader.GetReal   ("Widgets-ProcessesCPU", "HighCPUUsageThreshold", 0.2);
     m_settings["Widgets-ProcessesRAM.NumProcessesDisplayed"]   = reader.GetInteger("Widgets-ProcessesRAM", "NumProcessesDisplayed", 10);
     m_settings["Widgets-ProcessesRAM.HighRAMUsageThresholdMB"] = reader.GetInteger("Widgets-ProcessesRAM", "HighRAMUsageThresholdMB", 1024);
-    m_settings["Widgets-Graphs-Network.NumUsageSamples"]       = reader.GetInteger("Widgets-Graphs-Network", "NumUsageSamples", 40);
-    m_settings["Widgets-Graphs-CPU.NumUsageSamples"]           = reader.GetInteger("Widgets-Graphs-CPU", "NumUsageSamples", 40);
-    m_settings["Widgets-Graphs-GPU.NumUsageSamples"]           = reader.GetInteger("Widgets-Graphs-GPU", "NumUsageSamples", 40);
-    m_settings["Widgets-Graphs-RAM.NumUsageSamples"]           = reader.GetInteger("Widgets-Graphs-RAM", "NumUsageSamples", 40);
+    m_settings["Widgets-NetGraph.NumUsageSamples"]             = reader.GetInteger("Widgets-NetGraph", "NumUsageSamples", 40);
+    m_settings["Widgets-CPUGraph.NumUsageSamples"]             = reader.GetInteger("Widgets-CPUGraph", "NumUsageSamples", 40);
+    m_settings["Widgets-GPUGraph.NumUsageSamples"]             = reader.GetInteger("Widgets-GPUGraph", "NumUsageSamples", 40);
+    m_settings["Widgets-RAMGraph.NumUsageSamples"]             = reader.GetInteger("Widgets-RAMGraph", "NumUsageSamples", 40);
     m_settings["Widgets-Main.FPS"]                             = reader.GetInteger("Widgets-Main", "FPS", 30);
 
     m_widgetVisibilities[Widgets::Time]        = reader.GetBoolean("Widgets-Time",         "Visible", true);
@@ -71,9 +71,12 @@ void UserSettings::readMembers(const INIReader& reader) {
     m_widgetVisibilities[Widgets::Music]       = reader.GetBoolean("Widgets-Music",        "Visible", true);
     m_widgetVisibilities[Widgets::Main]        = reader.GetBoolean("Widgets-Main",         "Visible", true);
     m_widgetVisibilities[Widgets::HDD]         = reader.GetBoolean("Widgets-Drives",       "Visible", true);
-    m_widgetVisibilities[Widgets::Graph]       = reader.GetBoolean("Widgets-Graphs",       "Visible", true);
     m_widgetVisibilities[Widgets::FPS]         = reader.GetBoolean("Widgets-FPS",          "Visible", true);
     m_widgetVisibilities[Widgets::NetStats]    = reader.GetBoolean("Widgets-NetStats",     "Visible", true);
+    m_widgetVisibilities[Widgets::CPUGraph]    = reader.GetBoolean("Widgets-CPUGraph",     "Visible", true);
+    m_widgetVisibilities[Widgets::RAMGraph]    = reader.GetBoolean("Widgets-RAMGraph",     "Visible", true);
+    m_widgetVisibilities[Widgets::NetGraph]    = reader.GetBoolean("Widgets-NetGraph",     "Visible", true);
+    m_widgetVisibilities[Widgets::GPUGraph]    = reader.GetBoolean("Widgets-GPUGraph",     "Visible", true);
 
     m_widgetPositions[Widgets::ProcessCPU]  = m_posMap.at(reader.Get("Widgets-ProcessesCPU", "Position", "top-middle"));
     m_widgetPositions[Widgets::ProcessRAM]  = m_posMap.at(reader.Get("Widgets-ProcessesRAM", "Position", "top-middle"));
@@ -83,9 +86,12 @@ void UserSettings::readMembers(const INIReader& reader) {
     m_widgetPositions[Widgets::CPUStats]    = m_posMap.at(reader.Get("Widgets-CPUStats",     "Position", "middle-right"));
     m_widgetPositions[Widgets::HDD]         = m_posMap.at(reader.Get("Widgets-Drives",       "Position", "top-right"));
     m_widgetPositions[Widgets::Main]        = m_posMap.at(reader.Get("Widgets-Main",         "Position", "middle-middle"));
-    m_widgetPositions[Widgets::Graph]       = m_posMap.at(reader.Get("Widgets-Graphs",       "Position", "middle-left"));
     m_widgetPositions[Widgets::FPS]         = m_posMap.at(reader.Get("Widgets-FPS",          "Position", "bottom-left"));
     m_widgetPositions[Widgets::NetStats]    = m_posMap.at(reader.Get("Widgets-NetStats",     "Position", "bottom-middle"));
+    m_widgetPositions[Widgets::CPUGraph]    = m_posMap.at(reader.Get("Widgets-CPUGraph",     "Position", "middle-left"));
+    m_widgetPositions[Widgets::RAMGraph]    = m_posMap.at(reader.Get("Widgets-RAMGraph",     "Position", "middle-left"));
+    m_widgetPositions[Widgets::NetGraph]    = m_posMap.at(reader.Get("Widgets-NetGraph",     "Position", "middle-left"));
+    m_widgetPositions[Widgets::GPUGraph]    = m_posMap.at(reader.Get("Widgets-GPUGraph",     "Position", "middle-left"));
 }
 
 }

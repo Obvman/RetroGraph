@@ -18,10 +18,6 @@ class RAMMeasure : public Measure {
 public:
     RAMMeasure();
     ~RAMMeasure() noexcept = default;
-    RAMMeasure(const RAMMeasure&) = delete;
-    RAMMeasure& operator=(const RAMMeasure&) = delete;
-    RAMMeasure(RAMMeasure&&) = delete;
-    RAMMeasure& operator=(RAMMeasure&&) = delete;
 
     /* Updates the system memory status values */
     void update(int ticks) override;

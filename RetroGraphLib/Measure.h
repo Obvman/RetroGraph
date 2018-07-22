@@ -41,7 +41,7 @@ public:
     /* Must true if the Measure should update this frame */
     virtual bool shouldUpdate(int ticks) const = 0;
 
-    virtual void refreshSettings() { } // TODO = 0
+    virtual void refreshSettings() = 0;
 protected:
 
     // Updates the measure so it *should* bypass checks against ticks 

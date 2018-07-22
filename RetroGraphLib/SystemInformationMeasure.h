@@ -16,6 +16,8 @@ public:
     void update(int ticks) override;
 
     bool shouldUpdate(int ticks) const override;
+
+    void refreshSettings() override { }
 };
 
 }

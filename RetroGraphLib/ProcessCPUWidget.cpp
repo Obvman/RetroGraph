@@ -19,14 +19,6 @@ void ProcessCPUWidget::updateObservers(const RetroGraph & rg) {
 }
 
 void ProcessCPUWidget::draw() const {
-    if (!isVisible()) return;
-
-    clear();
-
-    drawWidgetBackground();
-
-    ListContainer::inst().drawTopAndBottomSerifs();
-
     // Draw the list itself
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 

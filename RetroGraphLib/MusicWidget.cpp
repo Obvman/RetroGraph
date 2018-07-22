@@ -21,14 +21,6 @@ void MusicWidget::updateObservers(const RetroGraph & rg) {
 }
 
 void MusicWidget::draw() const {
-    if (!isVisible() || !m_musicMeasure) return;
-
-    clear();
-
-    drawWidgetBackground();
-
-    ListContainer::inst().drawTopAndBottomSerifs();
-
     if (m_musicMeasure->isPlayerRunning()) {
         glViewport(m_viewport.x, m_viewport.y + m_viewport.height/4,
                    m_viewport.width, 3*m_viewport.height/4);

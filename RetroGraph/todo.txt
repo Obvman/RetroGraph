@@ -1,4 +1,6 @@
-Auto-read config changes when the file is saved. Add option to turn on/off auto-read
+update default_config.ini
+
+UserSettings should update when changing widgets via right-click menu
 
 Build script take platform/configuration arguments
 

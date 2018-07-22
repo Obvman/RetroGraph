@@ -13,15 +13,12 @@ class DisplayMeasure : public Measure {
 public:
     DisplayMeasure();
     ~DisplayMeasure() noexcept = default;
-    DisplayMeasure(const DisplayMeasure&) = delete;
-    DisplayMeasure& operator=(const DisplayMeasure&) = delete;
-    DisplayMeasure(DisplayMeasure&&) = delete;
-    DisplayMeasure& operator=(DisplayMeasure&&) = delete;
 
     void update(int ticks) override;
 
     const Monitors* getMonitors() const { return &m_monitors; }
 
+    void refreshSettings() override { }
 private:
     bool shouldUpdate(int ticks) const override;
 

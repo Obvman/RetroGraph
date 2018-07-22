@@ -18,72 +18,60 @@
 
 namespace rg {
 
-GraphWidget::GraphWidget(const FontManager* fontManager,
-                         const RetroGraph& rg, bool visible)
-    : Widget{ fontManager, visible }
-    , m_cpuMeasure{ &rg.getCPUMeasure() }, m_ramMeasure{ &rg.getRAMMeasure() }
-    , m_netMeasure{ &rg.getNetMeasure() }, m_gpuMeasure{ &rg.getGPUMeasure() }
-    , m_cpuVBO{ VBOController::inst().createGraphLineVBO(m_cpuMeasure->getUsageData().size()) }
-    , m_ramVBO{ VBOController::inst().createGraphLineVBO(m_ramMeasure->getUsageData().size()) }
-    , m_netUpVBO{ VBOController::inst().createGraphLineVBO(m_netMeasure->getUpData().size()) }
-    , m_netDownVBO{ VBOController::inst().createGraphLineVBO(m_netMeasure->getDownData().size()) }
+GPUGraphWidget::GPUGraphWidget(const FontManager* fontManager, const RetroGraph& rg, bool visible)
+    : Widget(fontManager, visible)
+    , m_gpuMeasure(&rg.getGPUMeasure())
     , m_gpuVBO{ VBOController::inst().createGraphLineVBO(m_gpuMeasure->getUsageData().size()) } {
 
 }
 
-
-void GraphWidget::setViewport(const Viewport& vp) { 
-    m_viewport = vp;
-
-    m_cpuGraphVP = Viewport{
-                     vp.x,
-                     vp.y + 3*vp.height/4,
-                     vp.width,
-                     static_cast<GLint>(std::ceil(vp.height / 4.0)) }; // Hack to fix rounding issue.
-    m_ramGraphVP = Viewport{
-                     vp.x,
-                     vp.y + 0*vp.height/4,
-                     vp.width,
-                     vp.height / 4 };
-    m_netGraphVP = Viewport{
-                     vp.x,
-                     vp.y + 1*vp.height/4,
-                     vp.width,
-                     vp.height / 4 };
-    m_gpuGraphVP = Viewport{
-                     vp.x,
-                     vp.y + 2*vp.height/4,
-                     vp.width,
-                     vp.height / 4 };
-}
-
-void GraphWidget::updateObservers(const RetroGraph & rg) {
-    m_cpuMeasure = &rg.getCPUMeasure();
-    m_ramMeasure = &rg.getRAMMeasure();
-    m_netMeasure = &rg.getNetMeasure();
-    m_gpuMeasure = &rg.getGPUMeasure();
-}
-
-void GraphWidget::draw() const {
-    if (!isVisible()) return;
-    clear();
-
-    drawWidgetBackground();
-
-    drawCpuGraph();
-    drawRamGraph();
-    drawNetGraph();
-    drawGpuGraph();
-}
-
-void GraphWidget::drawCpuGraph() const {
-    glViewport(m_cpuGraphVP.x, m_cpuGraphVP.y,
-               m_cpuGraphVP.width, m_cpuGraphVP.height);
-    ListContainer::inst().drawBorder();
-
+void GPUGraphWidget::draw() const {
     // Set the viewport for the graph to be left section
-    glViewport(m_cpuGraphVP.x, m_cpuGraphVP.y,
-               (m_cpuGraphVP.width * 4)/5, m_cpuGraphVP.height);
+    glViewport(m_viewport.x, m_viewport.y,
+               (m_viewport.width*4)/5 , m_viewport.height);
+    ListContainer::inst().drawBorder();
+    VBOController::inst().drawGraphGrid();
+
+    if (m_gpuMeasure->isEnabled()) {
+        glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
+        glLineWidth(0.5f);
+
+        VBOController::inst().updateGraphLines(m_gpuVBO, m_gpuMeasure->getUsageData());
+        VBOController::inst().drawGraphLines(m_gpuVBO);
+    }
+
+    // Set viewport for text drawing
+    glViewport(m_viewport.x + (4 * m_viewport.width) / 5, m_viewport.y,
+               m_viewport.width / 5, m_viewport.height);
+    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
+
+    m_fontManager->renderLine(RG_FONT_SMALL, "0%",
+                             0, 0,
+                             m_viewport.width/5, m_viewport.height,
+                             RG_ALIGN_BOTTOM | RG_ALIGN_LEFT, 10);
+    m_fontManager->renderLine(RG_FONT_SMALL, "GPU Load",
+                             0, 0,
+                             m_viewport.width/5, m_viewport.height,
+                             RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT, 10);
+    m_fontManager->renderLine(RG_FONT_SMALL, "100%",
+                             0, 0,
+                             m_viewport.width/5, m_viewport.height,
+                             RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
+}
+
+
+CPUGraphWidget::CPUGraphWidget(const FontManager* fontManager, const RetroGraph& rg, bool visible)
+    : Widget(fontManager, visible)
+    , m_cpuMeasure(&rg.getCPUMeasure())
+    , m_cpuVBO{ VBOController::inst().createGraphLineVBO(m_cpuMeasure->getUsageData().size()) } {
+
+}
+
+void CPUGraphWidget::draw() const {
+    // Set the viewport for the graph to be left section
+    glViewport(m_viewport.x, m_viewport.y, (m_viewport.width * 4)/5, m_viewport.height);
+
+    ListContainer::inst().drawBorder();
 
     VBOController::inst().drawGraphGrid();
 
@@ -93,33 +81,36 @@ void GraphWidget::drawCpuGraph() const {
     VBOController::inst().drawGraphLines(m_cpuVBO);
 
     // Text
-    glViewport(m_cpuGraphVP.x + (4 * m_cpuGraphVP.width) / 5, m_cpuGraphVP.y,
-               m_cpuGraphVP.width / 5, m_cpuGraphVP.height);
-    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
+    glViewport(m_viewport.x + (4 * m_viewport.width) / 5, m_viewport.y,
+               m_viewport.width / 5, m_viewport.height);
 
+    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
     m_fontManager->renderLine(RG_FONT_SMALL, "0%",
                              0, 0,
-                             m_cpuGraphVP.width/5, m_cpuGraphVP.height,
+                             m_viewport.width/5, m_viewport.height,
                              RG_ALIGN_BOTTOM | RG_ALIGN_LEFT, 10);
     m_fontManager->renderLine(RG_FONT_SMALL, "CPU Load",
                              0, 0,
-                             m_cpuGraphVP.width/5, m_cpuGraphVP.height,
+                             m_viewport.width/5, m_viewport.height,
                              RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT, 10);
     m_fontManager->renderLine(RG_FONT_SMALL, "100%",
                              0, 0,
-                             m_cpuGraphVP.width/5, m_cpuGraphVP.height,
+                             m_viewport.width/5, m_viewport.height,
                              RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
+}
+
+RAMGraphWidget::RAMGraphWidget(const FontManager* fontManager, const RetroGraph& rg, bool visible)
+    : Widget(fontManager, visible)
+    , m_ramMeasure(&rg.getRAMMeasure())
+    , m_ramVBO{ VBOController::inst().createGraphLineVBO(m_ramMeasure->getUsageData().size()) } {
 
 }
 
-void GraphWidget::drawRamGraph() const {
-    glViewport(m_ramGraphVP.x, m_ramGraphVP.y,
-               m_ramGraphVP.width , m_ramGraphVP.height);
-    ListContainer::inst().drawBorder();
-
+void RAMGraphWidget::draw() const {
     // Set the viewport for the graph itself to be left section
-    glViewport(m_ramGraphVP.x, m_ramGraphVP.y,
-               (m_ramGraphVP.width*4)/5 , m_ramGraphVP.height);
+    glViewport(m_viewport.x, m_viewport.y, (m_viewport.width*4)/5 , m_viewport.height);
+
+    ListContainer::inst().drawBorder();
 
     // Draw the background grid for the graph
     VBOController::inst().drawGraphGrid();
@@ -130,34 +121,38 @@ void GraphWidget::drawRamGraph() const {
     VBOController::inst().drawGraphLines(m_ramVBO);
 
     // Set viewport for text drawing
-    glViewport(m_ramGraphVP.x + (4 * m_ramGraphVP.width) / 5, m_ramGraphVP.y,
-               m_ramGraphVP.width / 5, m_ramGraphVP.height);
+    glViewport(m_viewport.x + (4 * m_viewport.width) / 5, m_viewport.y,
+               m_viewport.width / 5, m_viewport.height);
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
     m_fontManager->renderLine(RG_FONT_SMALL, "0%",
                              0, 0,
-                             m_ramGraphVP.width/5, m_ramGraphVP.height,
+                             m_viewport.width/5, m_viewport.height,
                              RG_ALIGN_BOTTOM | RG_ALIGN_LEFT, 10);
     m_fontManager->renderLine(RG_FONT_SMALL, "RAM Load",
                              0, 0,
-                             m_ramGraphVP.width/5, m_ramGraphVP.height,
+                             m_viewport.width/5, m_viewport.height,
                              RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT, 10);
     m_fontManager->renderLine(RG_FONT_SMALL, "100%",
                              0, 0,
-                             m_ramGraphVP.width/5, m_ramGraphVP.height,
+                             m_viewport.width/5, m_viewport.height,
                              RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
 
 }
 
-void GraphWidget::drawNetGraph() const {
-    glViewport(m_netGraphVP.x, m_netGraphVP.y,
-               m_netGraphVP.width , m_netGraphVP.height);
-    ListContainer::inst().drawBorder();
+NetGraphWidget::NetGraphWidget(const FontManager* fontManager, const RetroGraph& rg, bool visible)
+    : Widget(fontManager, visible)
+    , m_netMeasure(&rg.getNetMeasure())
+    , m_netUpVBO{ VBOController::inst().createGraphLineVBO(m_netMeasure->getUpData().size()) }
+    , m_netDownVBO{ VBOController::inst().createGraphLineVBO(m_netMeasure->getDownData().size()) } {
 
+}
+
+void NetGraphWidget::draw() const {
     // Set the viewport for the graph to be left section
-    glViewport(m_netGraphVP.x, m_netGraphVP.y,
-               (m_netGraphVP.width*4)/5 , m_netGraphVP.height);
+    glViewport(m_viewport.x, m_viewport.y, (m_viewport.width * 4) / 5, m_viewport.height);
     VBOController::inst().drawGraphGrid();
+    ListContainer::inst().drawBorder();
 
     {// Draw the line graph
         glLineWidth(0.5f);
@@ -172,20 +167,21 @@ void GraphWidget::drawNetGraph() const {
 
         // TODO VBO these!
         // Draw the download graph
-        glBegin(GL_LINE_STRIP); {
+        glBegin(GL_LINE_STRIP);
+        {
             glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.7f);
             for (auto i = size_t{ 0U }; i < downData.size() - 1; ++i) {
                 const auto percent1 = float{ (downData[i] /
                                               static_cast<float>(MB)) /
                                               maxValMB };
-                const auto percent2 = float{ (downData[i+1] /
+                const auto percent2 = float{ (downData[i + 1] /
                                               static_cast<float>(MB)) /
                                               maxValMB };
 
                 const auto x1 = float{ (static_cast<float>(i) /
                                         (downData.size() - 1)) * 2.0f - 1.0f };
                 const auto y1 = float{ percent1 * 2.0f - 1.0f };
-                const auto x2 = float{ (static_cast<float>(i+1) /
+                const auto x2 = float{ (static_cast<float>(i + 1) /
                                         (downData.size() - 1)) * 2.0f - 1.0f };
                 const auto y2 = float{ percent2 * 2.0f - 1.0f };
 
@@ -195,19 +191,20 @@ void GraphWidget::drawNetGraph() const {
         } glEnd();
 
         // Draw the upload graph
-        glBegin(GL_LINE_STRIP); {
+        glBegin(GL_LINE_STRIP);
+        {
             glColor4f(PINK1_R, PINK1_G, PINK1_B, 0.7f);
             for (auto i = size_t{ 0U }; i < upData.size() - 1; ++i) {
                 const auto percent1 = float{ (upData[i] /
-                        static_cast<float>(MB)) / maxValMB }; 
-                const auto percent2 = float{ (upData[i+1] /
+                        static_cast<float>(MB)) / maxValMB };
+                const auto percent2 = float{ (upData[i + 1] /
                         static_cast<float>(MB)) / maxValMB };
 
                 const auto x1 = float{ (static_cast<float>(i) / (upData.size()
                             - 1)) * 2.0f - 1.0f };
                 const auto y1 = float{ percent1 * 2.0f - 1.0f };
 
-                const auto x2 = float{ (static_cast<float>(i+1) /
+                const auto x2 = float{ (static_cast<float>(i + 1) /
                         (upData.size() - 1)) * 2.0f - 1.0f };
                 const auto y2 = float{ percent2 * 2.0f - 1.0f };
 
@@ -218,8 +215,8 @@ void GraphWidget::drawNetGraph() const {
     }
 
     {// Text
-        glViewport(m_netGraphVP.x + (4 * m_netGraphVP.width) / 5, m_netGraphVP.y,
-                   m_netGraphVP.width / 5, m_netGraphVP.height);
+        glViewport(m_viewport.x + (4 * m_viewport.width) / 5, m_viewport.y,
+                   m_viewport.width / 5, m_viewport.height);
         glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
         const auto maxVal{ m_netMeasure->getMaxDownValue() };
@@ -234,72 +231,34 @@ void GraphWidget::drawNetGraph() const {
         if (suffix == "MB") {
             char buff[8];
             snprintf(buff, sizeof(buff), "%5.1fMB",
-                     maxVal/static_cast<float>(MB));
+                     maxVal / static_cast<float>(MB));
             m_fontManager->renderLine(RG_FONT_SMALL, buff, 0, 0,
-                                     m_gpuGraphVP.width/5, m_gpuGraphVP.height,
-                                     RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
+                                      m_viewport.width / 5, m_viewport.height,
+                                      RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
         } else if (suffix == "KB") {
             char buff[8];
             snprintf(buff, sizeof(buff), "%5.1fKB",
-                     maxVal/static_cast<float>(KB));
+                     maxVal / static_cast<float>(KB));
             m_fontManager->renderLine(RG_FONT_SMALL, buff, 0, 0,
-                                     m_gpuGraphVP.width/5, m_gpuGraphVP.height,
-                                     RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
+                                      m_viewport.width / 5, m_viewport.height,
+                                      RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
         } else {
             const auto top{ std::to_string(maxVal) + suffix };
             char buff[5];
             snprintf(buff, sizeof(buff), "%3lluB", maxVal);
             m_fontManager->renderLine(RG_FONT_SMALL, buff, 0, 0,
-                                     m_gpuGraphVP.width/5, m_gpuGraphVP.height,
-                                     RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
+                                      m_viewport.width / 5, m_viewport.height,
+                                      RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
         }
 
         const auto bottom = std::string{ "0" + suffix };
         m_fontManager->renderLine(RG_FONT_SMALL, bottom.c_str(), 0, 0,
-                                 m_gpuGraphVP.width/5, m_gpuGraphVP.height,
-                                 RG_ALIGN_BOTTOM | RG_ALIGN_LEFT, 10);
+                                  m_viewport.width / 5, m_viewport.height,
+                                  RG_ALIGN_BOTTOM | RG_ALIGN_LEFT, 10);
         m_fontManager->renderLine(RG_FONT_SMALL, "Down / Up", 0, 0,
-                                  m_gpuGraphVP.width/5, m_gpuGraphVP.height,
-                                  RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT,
-                                  10);
+                                  m_viewport.width / 5, m_viewport.height,
+                                  RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT, 10);
     }
-}
-
-void GraphWidget::drawGpuGraph() const {
-    glViewport(m_gpuGraphVP.x, m_gpuGraphVP.y,
-               m_gpuGraphVP.width , m_gpuGraphVP.height);
-    ListContainer::inst().drawBorder();
-
-    // Set the viewport for the graph to be left section
-    glViewport(m_gpuGraphVP.x, m_gpuGraphVP.y,
-               (m_gpuGraphVP.width*4)/5 , m_gpuGraphVP.height);
-    VBOController::inst().drawGraphGrid();
-
-    if (m_gpuMeasure->isEnabled()) {
-        glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
-        glLineWidth(0.5f);
-
-        VBOController::inst().updateGraphLines(m_gpuVBO, m_gpuMeasure->getUsageData());
-        VBOController::inst().drawGraphLines(m_gpuVBO);
-    }
-
-    // Set viewport for text drawing
-    glViewport(m_gpuGraphVP.x + (4 * m_gpuGraphVP.width) / 5, m_gpuGraphVP.y,
-               m_gpuGraphVP.width / 5, m_gpuGraphVP.height);
-    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-
-    m_fontManager->renderLine(RG_FONT_SMALL, "0%",
-                             0, 0,
-                             m_gpuGraphVP.width/5, m_gpuGraphVP.height,
-                             RG_ALIGN_BOTTOM | RG_ALIGN_LEFT, 10);
-    m_fontManager->renderLine(RG_FONT_SMALL, "GPU Load",
-                             0, 0,
-                             m_gpuGraphVP.width/5, m_gpuGraphVP.height,
-                             RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT, 10);
-    m_fontManager->renderLine(RG_FONT_SMALL, "100%",
-                             0, 0,
-                             m_gpuGraphVP.width/5, m_gpuGraphVP.height,
-                             RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
 }
 
 }

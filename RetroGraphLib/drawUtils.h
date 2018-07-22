@@ -54,6 +54,8 @@ void drawHorizontalProgressBar(float barWidth, float startX, float endX,
 // Primitive drawing
 void drawSerifLine(GLfloat x1, GLfloat x2, GLfloat y);
 
+void viewport(const Viewport& vp);
+
 // Given a pixel value (x or y) and the current viewport width/height in pixels,
 // converts the pixel value to the corresponding viewport ordinate
 constexpr inline float pixelsToVPCoords(int p, int vpWidth) {

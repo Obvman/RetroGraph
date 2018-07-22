@@ -120,4 +120,8 @@ void drawSerifLine(GLfloat x1, GLfloat x2, GLfloat y) {
     } glEnd();
 }
 
+void viewport(const Viewport& vp) {
+    glViewport(vp.x, vp.y, vp.width, vp.height);
+}
+
 }

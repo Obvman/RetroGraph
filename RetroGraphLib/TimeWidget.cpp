@@ -22,20 +22,13 @@ void TimeWidget::updateObservers(const RetroGraph & rg) {
 }
 
 void TimeWidget::draw() const {
-    if (!isVisible()) return;
-
-    clear();
-
-    drawWidgetBackground();
-
-    glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
-    glLineWidth(0.5f);
     constexpr float leftDivX{ -0.33f };
     constexpr float rightDivX{ 0.33f };
     constexpr float midDivY{ -0.3f };
     const auto midDivYPx{ vpCoordsToPixels(midDivY, m_viewport.height) };
 
-    ListContainer::inst().drawTopAndBottomSerifs();
+    glColor3f(DIVIDER_R, DIVIDER_G, DIVIDER_B);
+    glLineWidth(0.5f);
     drawSerifLine(-0.9f, 0.9f, midDivY);
 
     glBegin(GL_LINES); {
