@@ -4,6 +4,7 @@
 
 #include <cstdint>
 #include <string>
+#include <charconv>
 #include <Windows.h>
 
 #include "units.h"
@@ -88,5 +89,31 @@ void printTimeToExecuteHighRes(F f) {
 }
 
 const std::string getExePath();
+
+template<typename T>
+T strToNum(const char* str, size_t size) {
+    T val;
+    const auto ret{ std::from_chars(str, str + size, val) };
+
+    if (ret.ec == std::errc::invalid_argument)
+        throw std::invalid_argument("strToNum failed");
+    else if (ret.ec == std::errc::result_out_of_range)
+        throw std::out_of_range("strToNum failed");
+
+    return val;
+}
+
+template<typename T>
+T strToNum(const std::string& str) {
+    T val;
+    const auto ret{ std::from_chars(str.c_str(), str.c_str() + str.size(), val) };
+
+    if (ret.ec == std::errc::invalid_argument)
+        throw std::invalid_argument("strToNum failed");
+    else if (ret.ec == std::errc::result_out_of_range)
+        throw std::out_of_range("strToNum failed");
+
+    return val;
+}
 
 } // namespace rg

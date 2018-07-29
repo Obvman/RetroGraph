@@ -127,10 +127,9 @@ void MusicMeasure::scrapeInfoFromTitle() {
 
     auto& timeProgress{ tokens[4] };
     const char* elapsed = strtok_s(&timeProgress[0], ",", &nextToken);
-    const char* total = strtok_s(nullptr, ",", &nextToken);
-    m_elapsedTime = std::stoi(elapsed);
-    m_totalTime = std::stoi(total);
-
+    const char* total = strtok_s(nullptr, ", ", &nextToken);
+    m_elapsedTime = strToNum<decltype(m_elapsedTime)>(elapsed, strlen(elapsed));
+    m_totalTime = strToNum<decltype(m_totalTime)>(total, strlen(total));
 }
 
 bool MusicMeasure::shouldUpdate(int ticks) const {

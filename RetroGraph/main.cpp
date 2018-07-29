@@ -70,7 +70,7 @@ void mainLoop(rg::RetroGraph& retroGraph) {
 
         // Keep the ticks counter range 1 - maxTicks to prevent overflow
         if (ticks > rg::maxTicks) {
-            ticks = 1U;
+            ticks = 1;
         }
 
         // Force flush to stdout for Cygwin/WSL
