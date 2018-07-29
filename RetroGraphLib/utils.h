@@ -89,6 +89,7 @@ void printTimeToExecuteHighRes(F f) {
 }
 
 const std::string getExePath();
+const std::string getExpandedEnvPath(const std::string& path);
 
 template<typename T>
 T strToNum(const char* str, size_t size) {

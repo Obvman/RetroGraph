@@ -27,30 +27,17 @@ public:
     UserSettings(UserSettings&&)                 = delete;
     UserSettings& operator=(UserSettings&&)      = delete;
 
-    // #TODO refactor these specialisations to use single function with if constexpr
-    template<typename T>
-    T getVal(const std::string& settingName) const {
-        if (m_settings.count(settingName) == 0) {
+    template<typename T, typename CastT = T>
+    auto getVal(const std::string& settingName) {
+        if (m_settings.count(settingName) == 0)
             fatalMessageBox("Failed to find setting " + settingName);
-        }
-        return std::get<T>(m_settings.at(settingName));
-    }
 
-    template<typename T, typename CastType>
-    CastType getVal(const std::string& settingName) const {
-        if (m_settings.count(settingName) == 0) {
-            fatalMessageBox("Failed to find setting " + settingName);
+        // If CastT specified, do a static cast
+        if constexpr (!std::is_same_v<T, CastT>) {
+            return static_cast<CastT>(std::get<T>(m_settings.at(settingName)));
+        } else {
+            return std::get<T>(m_settings.at(settingName));
         }
-        return static_cast<CastType>(std::get<T>(m_settings.at(settingName)));
-    }
-
-    // String specialization - returns reference
-    template<>
-    const std::string& getVal<std::string>(const std::string& settingName) const {
-        if (m_settings.count(settingName) == 0) {
-            fatalMessageBox("Failed to find setting " + settingName);
-        }
-        return std::get<std::string>(m_settings.at(settingName));
     }
 
     bool isVisible(Widgets w) const { return m_widgetVisibilities[w]; }
@@ -60,6 +47,10 @@ public:
         !std::get<bool>(m_settings["Window.WidgetBackground"]); }
 
     void readConfig();
+
+    // Write to the settings storage file.
+    // Should be done after reading an ini file and on program shutdown.
+    void writeDataFile() const;
 
     static const std::string iniPath;
     static const std::string fallbackIniPath;

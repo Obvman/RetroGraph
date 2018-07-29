@@ -39,13 +39,13 @@ public:
     void setViewports(int windowWidth, int windowHeight);
 
 private:
+    auto createWidgets(const RetroGraph& _rg) const;
+    auto createWidgetContainers() const;
+
     HWND m_renderTargetHandle{ nullptr };
     FontManager m_fontManager;
     std::vector<std::unique_ptr<Widget>> m_widgets;
     std::vector<std::unique_ptr<WidgetContainer>> m_widgetContainers;
-
-    auto createWidgets(const RetroGraph& _rg) -> decltype(m_widgets);
-    auto createWidgetContainers() -> decltype(m_widgetContainers);
 };
 
 } // namespace rg

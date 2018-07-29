@@ -68,4 +68,10 @@ const std::string getExePath() {
     return wstrToStr(path);
 }
 
+const std::string getExpandedEnvPath(const std::string& path) {
+    CHAR fBuff[MAX_PATH];
+    ExpandEnvironmentStringsA(path.c_str(), fBuff, MAX_PATH);
+    return std::string{ fBuff };
+}
+
 }

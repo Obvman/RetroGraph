@@ -25,19 +25,15 @@
 
 namespace rg {
 
-Renderer::Renderer(const Window& w, const RetroGraph& _rg)
-    : m_renderTargetHandle{ w.getHwnd() }
-    , m_fontManager{ w.getHwnd(), w.getHeight() }
-    , m_widgets{ createWidgets(_rg) }
-    , m_widgetContainers{ createWidgetContainers() } {
+auto Renderer::createWidgetContainers() const {
+    decltype(m_widgetContainers) widgetContainerList;
+    for (auto i = int{ 0 }; i < WidgetPosition::NUM_POSITIONS; ++i)
+        widgetContainerList.emplace_back(std::make_unique<WidgetContainer>(static_cast<WidgetPosition>(i)));
 
-    setViewports(w.getWidth(), w.getHeight());
+    return widgetContainerList;
 }
 
-Renderer::~Renderer() {
-}
-
-auto Renderer::createWidgets(const RetroGraph& _rg) -> decltype(m_widgets) {
+auto Renderer::createWidgets(const RetroGraph& _rg) const {
     decltype(m_widgets) widgetList( Widgets::NumWidgets );
 
     const auto& s{ UserSettings::inst() };
@@ -88,12 +84,16 @@ auto Renderer::createWidgets(const RetroGraph& _rg) -> decltype(m_widgets) {
     return widgetList;
 }
 
-auto Renderer::createWidgetContainers() -> decltype(m_widgetContainers) {
-    decltype(m_widgetContainers) widgetContainerList;
-    for (auto i = int{ 0 }; i < WidgetPosition::NUM_POSITIONS; ++i)
-        widgetContainerList.emplace_back(std::make_unique<WidgetContainer>(static_cast<WidgetPosition>(i)));
+Renderer::Renderer(const Window& w, const RetroGraph& _rg)
+    : m_renderTargetHandle{ w.getHwnd() }
+    , m_fontManager{ w.getHwnd(), w.getHeight() }
+    , m_widgets{ createWidgets(_rg) }
+    , m_widgetContainers{ createWidgetContainers() } {
 
-    return widgetContainerList;
+    setViewports(w.getWidth(), w.getHeight());
+}
+
+Renderer::~Renderer() {
 }
 
 void Renderer::draw(int ticks, const Window& window, int totalFPS) const {

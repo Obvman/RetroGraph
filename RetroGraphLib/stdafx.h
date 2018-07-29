@@ -58,3 +58,11 @@
 #include <GL/freeglut.h>
 #include <GL/wglew.h>
 #include <GL/gl.h>
+
+namespace rg {
+#ifdef _DEBUG
+    constexpr auto debugMode = bool{ true };
+#else
+    constexpr auto debugMode = bool{ false };
+#endif
+}

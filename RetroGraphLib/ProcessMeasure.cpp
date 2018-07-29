@@ -27,18 +27,18 @@ ProcessMeasure::ProcessMeasure()
     , m_numCPUProcessesToDisplay{ UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesCPU.NumProcessesDisplayed") }
     , m_numRAMProcessesToDisplay{ UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesRAM.NumProcessesDisplayed") } {
 
-#if !_DEBUG
-    // Set the debug privilege in order to gain access to system processes
-    HANDLE hToken;
-    if (!OpenProcessToken(GetCurrentProcess(), 
-                TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken)) {
-        fatalMessageBox("Failed OpenThreadToken");
+    if constexpr (!debugMode) {
+        // Set the debug privilege in order to gain access to system processes
+        HANDLE hToken;
+        if (!OpenProcessToken(GetCurrentProcess(),
+                              TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken)) {
+            fatalMessageBox("Failed OpenThreadToken");
+        }
+        if (!setDebugPrivileges(hToken, SE_DEBUG_NAME, true)) {
+            CloseHandle(hToken);
+            showMessageBox("Failed to set privilege, please run as administrator to get all process data");
+        }
     }
-    if (!setDebugPrivileges(hToken, SE_DEBUG_NAME, true)) {
-        CloseHandle(hToken);
-        showMessageBox("Failed to set privilege, please run as administrator to get all process data");
-    }
-#endif
 
     populateList();
     fillRAMData();

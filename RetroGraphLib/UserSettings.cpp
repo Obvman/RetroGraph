@@ -2,11 +2,14 @@
 
 #include "UserSettings.h"
 
-#include <iostream>
-#include <string>
 #include <Windows.h>
 #include <pathcch.h>
+
+#include <filesystem>
+#include <fstream>
+#include <iostream>
 #include <map>
+#include <string>
 
 #include <inih/INIReader.h>
 
@@ -23,11 +26,14 @@ UserSettings::UserSettings()
     : m_widgetVisibilities(Widgets::NumWidgets, true)
     , m_widgetPositions(Widgets::NumWidgets) {
 
+    // TODO only read config if no settings file
     readConfig();
+
+    writeDataFile();
 }
 
 void UserSettings::readConfig() {
-    INIReader reader{ iniPath };
+    auto reader = INIReader{ iniPath };
     if (reader.ParseError() < 0) {
         showMessageBox("Failed to load config file from " + iniPath + "\nUsing default_config.ini");
         reader = INIReader{ fallbackIniPath };
@@ -91,6 +97,54 @@ void UserSettings::readMembers(const INIReader& reader) {
     m_widgetPositions[Widgets::RAMGraph]    = m_posMap.at(reader.Get("Widgets-RAMGraph",     "Position", "middle-left"));
     m_widgetPositions[Widgets::NetGraph]    = m_posMap.at(reader.Get("Widgets-NetGraph",     "Position", "middle-left"));
     m_widgetPositions[Widgets::GPUGraph]    = m_posMap.at(reader.Get("Widgets-GPUGraph",     "Position", "middle-left"));
+}
+
+void UserSettings::writeDataFile() const {
+    using namespace std::filesystem;
+
+    const auto configFilePath = []() {
+        if constexpr (debugMode) {
+            return path{ getExePath() + R"(\..\..\DEBUGSETTINGS\settingsDEBUG)" };
+        } else {
+            return path{ getExpandedEnvPath(R"(%APPDATA%\RetroGraph\settings)") };
+        }
+    }(); // Call immediately
+
+    const auto configFileDir{ configFilePath.parent_path() };
+    if (!exists(configFileDir)) {
+        create_directories(configFileDir);
+    }
+
+    std::ofstream outFile{ configFilePath };
+    if (!outFile) {
+        fatalMessageBox("Couldn't write settings to file\n");
+        return;
+    }
+
+    // Write all the options to file
+    for (const auto& [key, value] : m_settings) {
+        std::visit([&outFile, &key](auto&& arg) {
+            using T = std::decay_t<decltype(arg)>;
+            if constexpr (std::is_same_v<T, int>) {
+                outFile << key << ' ' << arg << '\n';
+            } else if constexpr (std::is_same_v<T, bool>) {
+                outFile << key << std::boolalpha << ' ' << arg << '\n';
+            } else if constexpr (std::is_same_v<T, double>) {
+                outFile << key << ' ' << arg << '\n';
+            } else if constexpr (std::is_same_v<T, std::string>) {
+                outFile << key << ' ' << arg << '\n';
+            }
+        }, value);
+    }
+
+    for (auto i = int{ 0 }; i < m_widgetVisibilities.size(); ++i) {
+        outFile << i << ' ' << m_widgetVisibilities[i] << '\n';
+    }
+
+    for (auto i = int{ 0 }; i < m_widgetPositions.size(); ++i) {
+        outFile << i << ' ' << m_widgetPositions[i] << '\n';
+    }
+
 }
 
 }

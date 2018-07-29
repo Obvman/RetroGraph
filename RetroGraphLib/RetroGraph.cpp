@@ -26,12 +26,29 @@ namespace rg {
 
 using MTypes = Measures::Types;
 
+auto RetroGraph::createMeasures() const {
+    decltype(m_measures) measureList( Measures::Types::NumMeasures );
+
+    measureList[MTypes::CPU] =               std::make_unique<CPUMeasure>();
+    measureList[MTypes::GPU] =               std::make_unique<GPUMeasure>();
+    measureList[MTypes::RAM] =               std::make_unique<RAMMeasure>();
+    measureList[MTypes::Net] =               std::make_unique<NetMeasure>();
+    measureList[MTypes::Process] =           std::make_unique<ProcessMeasure>();
+    measureList[MTypes::Drive] =             std::make_unique<DriveMeasure>();
+    measureList[MTypes::Music] =             std::make_unique<MusicMeasure>(dynamic_cast<const ProcessMeasure&>(*measureList[MTypes::Process]));
+    measureList[MTypes::System] =            std::make_unique<SystemMeasure>();
+    measureList[MTypes::AnimationState] =    std::make_unique<AnimationState>();
+    measureList[MTypes::SystemInformation] = std::make_unique<SystemInformationMeasure>();
+    measureList[MTypes::Display] =           std::make_unique<DisplayMeasure>();
+
+    return measureList;
+}
+
 RetroGraph::RetroGraph(HINSTANCE hInstance)
     : m_measures( createMeasures() )
     , m_window{ this, hInstance, UserSettings::inst().getVal<int>("Window.Monitor") }
     , m_widgetVisibilities( Widgets::NumWidgets )
     , m_renderer{ std::make_unique<Renderer>(m_window, *this) }
-    , m_autoReadConfig{ UserSettings::inst().getVal<bool>("Application.AutoReadConfig") }
     , m_dependencyMap{
         { MTypes::AnimationState, { Widgets::Main } },
         { MTypes::Music,   { Widgets::Music } },
@@ -57,26 +74,6 @@ RetroGraph::RetroGraph(HINSTANCE hInstance)
 
 RetroGraph::~RetroGraph() {
     // Default constructor. Must be declared in source file to allow destruction of unique_ptrs
-}
-
-auto RetroGraph::createMeasures() -> decltype(m_measures) {
-    decltype(m_measures) measureList( Measures::Types::NumMeasures );
-
-    measureList[MTypes::CPU] =               std::make_unique<CPUMeasure>();
-    measureList[MTypes::GPU] =               std::make_unique<GPUMeasure>();
-    measureList[MTypes::RAM] =               std::make_unique<RAMMeasure>();
-    measureList[MTypes::Net] =               std::make_unique<NetMeasure>();
-    measureList[MTypes::Process] =           std::make_unique<ProcessMeasure>();
-    measureList[MTypes::Drive] =             std::make_unique<DriveMeasure>();
-    measureList[MTypes::Music] =             std::make_unique<MusicMeasure>(
-        dynamic_cast<const ProcessMeasure&>(*measureList[MTypes::Process])
-    );
-    measureList[MTypes::System] =            std::make_unique<SystemMeasure>();
-    measureList[MTypes::AnimationState] =    std::make_unique<AnimationState>();
-    measureList[MTypes::SystemInformation] = std::make_unique<SystemInformationMeasure>();
-    measureList[MTypes::Display] =           std::make_unique<DisplayMeasure>();
-
-    return measureList;
 }
 
 void RetroGraph::update(int ticks) {
@@ -105,25 +102,27 @@ void RetroGraph::draw(int ticks) const {
 }
 
 void RetroGraph::checkConfigChanged(int ticks) {
-    if (ticksMatchSeconds(ticks, 5) && m_autoReadConfig ) {
+    static const auto autoReadConfig{ UserSettings::inst().getVal<bool>("Application.AutoReadConfig") };
+
+    if (ticksMatchSeconds(ticks, 5) && autoReadConfig ) {
         struct stat result;
         if (stat(UserSettings::iniPath.c_str(), &result) == 0) {
             auto newModTime{ result.st_mtime };
             static auto modTime{ newModTime };
 
             if (newModTime != modTime)
-                refreshConfig();
+                refreshConfig(autoReadConfig);
 
             modTime = newModTime;
         }
     }
 }
 
-void RetroGraph::refreshConfig() {
+void RetroGraph::refreshConfig(bool autoReadConfig) {
     UserSettings::inst().readConfig();
 
-    m_autoReadConfig = UserSettings::inst().getVal<bool>("Application.AutoReadConfig");
-    if (!m_autoReadConfig)
+    autoReadConfig = UserSettings::inst().getVal<bool>("Application.AutoReadConfig");
+    if (!autoReadConfig)
         return;
 
     const auto oldWidgetVisibilites{ m_widgetVisibilities };
@@ -157,6 +156,10 @@ void RetroGraph::toggleWidget(Widgets w) {
     m_renderer->setWidgetVisibility(w, m_widgetVisibilities[w]);
     m_renderer->setViewports(m_window.getWidth(), m_window.getHeight());
     m_renderer->draw(0, m_window, 1);
+}
+
+void RetroGraph::shutdown() {
+    UserSettings::inst().writeDataFile();
 }
 
 const CPUMeasure& RetroGraph::getCPUMeasure() const {

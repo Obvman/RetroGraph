@@ -61,6 +61,9 @@ private:
     void updateWidgetVisibilities();
     void refreshConfig(bool autoReadConfig);
 
+    // Initialises the measures list
+    auto createMeasures() const;
+
     // Measures are shared among widgets so we need these so we know to disable
     // a measure only when there are no widgets using it.
     std::vector<bool> m_widgetVisibilities;
@@ -78,9 +81,6 @@ private:
     // Specifies which widgets rely on which measures.
     // IMPORTANT: Must be updated everytime we modify widgets or their observer pointers to measures!
     std::map<Measures::Types, std::vector<Widgets>> m_dependencyMap;
-
-    // Initialises the measures list
-    auto createMeasures() -> decltype(m_measures);
 };
 
 } // namespace rg

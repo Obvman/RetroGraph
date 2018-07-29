@@ -1,6 +1,7 @@
-update default_config.ini
+debug asserts - replace all instances of fatalMessageBox (unless you REALLY want to kill the program in release!)
 
-UserSettings should update when changing widgets via right-click menu
+UserSettings should update when changing widgets via right-click menu. Save to settings file and read from there
+instead of .ini file.
 
 Build script take platform/configuration arguments
 

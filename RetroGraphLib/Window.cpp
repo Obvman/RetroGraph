@@ -152,6 +152,7 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPa
         case WM_QUIT:
         case WM_CLOSE:
             m_running = false;
+            m_retroGraph->shutdown();
             break;
         case WM_DESTROY:
             break;
@@ -180,9 +181,9 @@ void Window::createRClickMenu(HWND hWnd) {
     InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_EXIT, "Exit");
     InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_SEND_TO_BACK, "Send to back");
     InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_SET_WIDGET_BG, "Toggle Widget Background");
-#if _DEBUG
-    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_TEST, "Test");
-#endif
+    if constexpr (debugMode) {
+        InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_TEST, "Test");
+    }
 
     // Create an option for each monitor for multi-monitor systems
     const auto& md{ m_monitors->getMonitorData() };
@@ -393,11 +394,13 @@ void Window::createTrayIcon() {
     m_tray.hIcon = LoadIcon(m_hInstance, MAKEINTRESOURCE(IDI_ICON1));
     m_tray.hWnd = m_hWndMain;
     m_tray.uVersion = NOTIFYICON_VERSION_4;
-#if _DEBUG
-    strcpy_s(m_tray.szTip, 128, "RetroGraph (Debug)");
-#else
-    strcpy_s(m_tray.szTip, 128, "RetroGraph");
-#endif
+
+    if constexpr (debugMode) {
+        strcpy_s(m_tray.szTip, 128, "RetroGraph (Debug)");
+    } else {
+        strcpy_s(m_tray.szTip, 128, "RetroGraph");
+    }
+
     m_tray.uCallbackMessage = WM_NOTIFY_RG_TRAY;
     m_tray.uFlags = NIF_ICON | NIF_TIP | NIF_MESSAGE;
     m_tray.uID = 101;
@@ -416,10 +419,10 @@ void Window::initOpenGL() {
     glutInit(&gargc, gargv);
 
     // Enable debug info
-#if _DEBUG
-    glEnable(GL_DEBUG_OUTPUT);
-    glDebugMessageCallback(GLMessageCallback, reinterpret_cast<void*>(this));
-#endif
+    if constexpr (debugMode) {
+        glEnable(GL_DEBUG_OUTPUT);
+        glDebugMessageCallback(GLMessageCallback, reinterpret_cast<void*>(this));
+    }
 
     glEnable(GL_ALPHA_TEST);
     glEnable(GL_MULTISAMPLE_ARB);
