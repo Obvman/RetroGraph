@@ -27,17 +27,17 @@ void MusicWidget::draw() const {
         glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
         m_fontManager->renderLine(RG_FONT_MUSIC_LARGE,
-                                  m_musicMeasure->getTrackName().c_str(), 0, 0,
+                                  m_musicMeasure->getTrackName(), 0, 0,
                                   0, 0, RG_ALIGN_TOP |
                                   RG_ALIGN_CENTERED_HORIZONTAL, 10, 30);
 
         m_fontManager->renderLine(RG_FONT_STANDARD,
-                                  m_musicMeasure->getArtist().c_str(), 0, 0, 0,
+                                  m_musicMeasure->getArtist(), 0, 0, 0,
                                   0, RG_ALIGN_CENTERED_VERTICAL |
                                   RG_ALIGN_CENTERED_HORIZONTAL);
 
         m_fontManager->renderLine(RG_FONT_STANDARD_BOLD,
-                                  m_musicMeasure->getAlbum().c_str(), 0, 0, 0,
+                                  m_musicMeasure->getAlbum(), 0, 0, 0,
                                   0, RG_ALIGN_BOTTOM |
                                   RG_ALIGN_CENTERED_HORIZONTAL, 10, 30);
 

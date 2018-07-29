@@ -2,9 +2,11 @@
 
 #include "stdafx.h"
 
+#include <charconv>
 #include <cstdint>
 #include <string>
-#include <charconv>
+#include <string_view>
+
 #include <Windows.h>
 
 #include "units.h"
@@ -17,11 +19,11 @@ namespace rg {
 constexpr float bDelta{ 0.0001f };
 
 /* Displays an Error message box with the given string as a message */
-void showMessageBox(const std::string& s);
+void showMessageBox(std::string_view s);
 
 /* Displays an Error message box with the given string as a message and
    exits the program with a failure code */
-void fatalMessageBox(const std::string& s);
+void fatalMessageBox(std::string_view s);
 
 /* Converts a wchar_t string to regular char string */
 std::string wstrToStr(const std::wstring& wstr);
@@ -92,22 +94,9 @@ const std::string getExePath();
 const std::string getExpandedEnvPath(const std::string& path);
 
 template<typename T>
-T strToNum(const char* str, size_t size) {
+T strToNum(std::string_view str) {
     T val;
-    const auto ret{ std::from_chars(str, str + size, val) };
-
-    if (ret.ec == std::errc::invalid_argument)
-        throw std::invalid_argument("strToNum failed");
-    else if (ret.ec == std::errc::result_out_of_range)
-        throw std::out_of_range("strToNum failed");
-
-    return val;
-}
-
-template<typename T>
-T strToNum(const std::string& str) {
-    T val;
-    const auto ret{ std::from_chars(str.c_str(), str.c_str() + str.size(), val) };
+    const auto ret{ std::from_chars(str.data(), str.data() + str.size(), val) };
 
     if (ret.ec == std::errc::invalid_argument)
         throw std::invalid_argument("strToNum failed");

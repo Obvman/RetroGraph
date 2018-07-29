@@ -77,6 +77,7 @@ public:
      *     marginX and marginY are optional values that specify how far from
      *         the edges of the area to draw.
      */
+    // #TODO remove const char* version - only string_view
     void renderLine(RGFONTCODE fontCode,
                     const char* text,
                     int areaX,
@@ -86,6 +87,16 @@ public:
                     int alignFlags = RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_CENTERED_VERTICAL,
                     int alignMarginX = 10U,
                     int alignMarginY = 10U) const;
+    void renderLine(RGFONTCODE fontCode,
+                    std::string_view text,
+                    int areaX,
+                    int areaY,
+                    int areaWidth,
+                    int areaHeight,
+                    int alignFlags = RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_CENTERED_VERTICAL,
+                    int alignMarginX = 10U,
+                    int alignMarginY = 10U) const;
+
     /* Renders multiple lines. Assumes lines.size() > 1 */
     void renderLines(RGFONTCODE fontCode,
                      const std::vector<std::string>& lines,

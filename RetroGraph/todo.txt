@@ -1,5 +1,7 @@
 debug asserts - replace all instances of fatalMessageBox (unless you REALLY want to kill the program in release!)
 
+std::string& to string_view
+
 UserSettings should update when changing widgets via right-click menu. Save to settings file and read from there
 instead of .ini file.
 

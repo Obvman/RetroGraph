@@ -70,7 +70,7 @@ void MusicMeasure::updateTitleString() {
 }
 
 void MusicMeasure::scrapeInfoFromTitle() {
-    std::vector<std::string> tokens{};
+    m_titleTokens.clear();
 
     char title[256];
     // Copy and null-terminate
@@ -79,17 +79,18 @@ void MusicMeasure::scrapeInfoFromTitle() {
     char* nextToken{ nullptr };
     const char* whitespace{ "\n \t" };
 
-    char* token{ strtok_s(title, delim, &nextToken) };
     // Split each section (deliminated by |) of the title into the token vector
+    char* token{ strtok_s(title, delim, &nextToken) };
     while (token) {
-        auto tokenStr = std::string{ token };
+        auto tokenStr = std::string_view{ token };
+
         // Trim leading whitespace and add to the token vector
         const auto begin{ tokenStr.find_first_not_of(whitespace) };
         if (begin != std::string::npos) {
-            tokens.emplace_back(tokenStr.substr(begin, tokenStr.size()));
+            m_titleTokens.emplace_back(tokenStr.substr(begin, tokenStr.size()));
         } else {
             // Empty regions (e.g. song with no album/artist)
-            tokens.emplace_back("-");
+            m_titleTokens.emplace_back("-");
         }
 
         token = strtok_s(nullptr, delim, &nextToken);
@@ -97,10 +98,10 @@ void MusicMeasure::scrapeInfoFromTitle() {
 
     // The last element of the vector contains the player version which we don't
     // need, so pop it off
-    tokens.pop_back();
+    m_titleTokens.pop_back();
 
     // Handle case where player is open but no song is playing
-    if (tokens.empty()) {
+    if (m_titleTokens.empty()) {
         m_isPlaying = false;
         m_trackName = "-";
         m_artist = "-";
@@ -109,27 +110,28 @@ void MusicMeasure::scrapeInfoFromTitle() {
     }
 
     // token ordering of: track name, artist, album+track number, playstate
-    m_trackName = tokens[0];
+    m_trackName = m_titleTokens[0];
 
     // Handle non-existing cases for album/artist
-    if (tokens[1] == "-") {
-        m_artist.clear();
+    if (m_titleTokens[1] == "-") {
+        m_artist = "";
     } else {
-        m_artist = tokens[1];
-    }
-    if (tokens[2] == "-") {
-        m_album.clear();
-    } else {
-        m_album = tokens[2];
+        m_artist = m_titleTokens[1];
     }
 
-    m_isPlaying = bool{ tokens[3] == "Playing" };
+    if (m_titleTokens[2] == "-") {
+        m_album = "";
+    } else {
+        m_album = m_titleTokens[2];
+    }
 
-    auto& timeProgress{ tokens[4] };
-    const char* elapsed = strtok_s(&timeProgress[0], ",", &nextToken);
-    const char* total = strtok_s(nullptr, ", ", &nextToken);
-    m_elapsedTime = strToNum<decltype(m_elapsedTime)>(elapsed, strlen(elapsed));
-    m_totalTime = strToNum<decltype(m_totalTime)>(total, strlen(total));
+    m_isPlaying = bool{ m_titleTokens[3] == "Playing" };
+
+    auto& timeProgress{ m_titleTokens[4] };
+    std::string_view elapsed = strtok_s(&timeProgress[0], ",", &nextToken);
+    std::string_view total = strtok_s(nullptr, ", ", &nextToken);
+    m_elapsedTime = strToNum<decltype(m_elapsedTime)>(elapsed);
+    m_totalTime = strToNum<decltype(m_totalTime)>(total);
 }
 
 bool MusicMeasure::shouldUpdate(int ticks) const {

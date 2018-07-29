@@ -9,13 +9,13 @@
 
 namespace rg {
 
-void showMessageBox(const std::string& s) {
-    MessageBox(nullptr, s.c_str(), "Error", MB_OK | MB_ICONERROR);
+void showMessageBox(std::string_view s) {
+    MessageBox(nullptr, std::string{ s }.c_str(), "Error", MB_OK | MB_ICONERROR);
 }
 
-void fatalMessageBox(const std::string& s) {
+void fatalMessageBox(std::string_view s) {
     showMessageBox(s);
-    throw std::runtime_error(s);
+    throw std::runtime_error(std::string{ s });
 }
 
 std::string wstrToStr(const std::wstring& wstr) {

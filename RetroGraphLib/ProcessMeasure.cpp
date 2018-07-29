@@ -107,7 +107,7 @@ void ProcessMeasure::refreshSettings() {
     m_numRAMProcessesToDisplay = UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesRAM.NumProcessesDisplayed");
 }
 
-int ProcessMeasure::getPIDFromName(const std::string& name) const {
+int ProcessMeasure::getPIDFromName(std::string_view name) const {
     const auto it{ std::find_if(m_allProcessData.cbegin(),
                                 m_allProcessData.cend(),
             [&name](const auto& sp) {

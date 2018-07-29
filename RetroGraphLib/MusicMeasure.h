@@ -36,9 +36,9 @@ public:
     bool isPlayerRunning() const { return m_playerRunning; }
 
     bool isMusicPlaying() const { return m_isPlaying; }
-    const std::string& getTrackName() const { return m_trackName; }
-    const std::string& getArtist() const { return m_artist; }
-    const std::string& getAlbum() const { return m_album; }
+    std::string_view getTrackName() const { return m_trackName; }
+    std::string_view getArtist() const { return m_artist; }
+    std::string_view getAlbum() const { return m_album; }
     int getElapsedTime() const { return m_elapsedTime; }
     int getTotalTime() const { return m_totalTime; }
 
@@ -57,7 +57,7 @@ private:
     void scrapeInfoFromTitle();
 
 
-    const char* m_playerTitlePattern{ "foobar2000 v1." };
+    std::string_view m_playerTitlePattern{ "foobar2000 v1.\0" };
 
     const ProcessMeasure* m_processMeasure{ nullptr };
 
@@ -67,10 +67,12 @@ private:
     std::string m_playerWindowTitle{ "" };
 
     // Current music status
+    std::vector<std::string> m_titleTokens;
+
     bool m_isPlaying{ false };
-    std::string m_trackName{ "" };
-    std::string m_artist{ "" };
-    std::string m_album{ "" };
+    std::string_view m_trackName{ "" };
+    std::string_view m_artist{ "" };
+    std::string_view m_album{ "" };
     int m_elapsedTime{ 0U };
     int m_totalTime{ 0U };
 };

@@ -5,6 +5,8 @@
 #include <memory>
 #include <vector>
 #include <utility>
+#include <string_view>
+
 #include <Windows.h>
 #include <TlHelp32.h>
 #include <Psapi.h>
@@ -31,7 +33,7 @@ public:
 
     size_t getNumProcessesRunning() const { return m_allProcessData.size(); }
 
-    int getPIDFromName(const std::string& name) const;
+    int getPIDFromName(std::string_view name) const;
 
     /* Gets vector containing top CPU using processes and their CPU usage */
     const std::vector<std::pair<std::string, double>>& getProcCPUData() const { return m_procCPUListData; }

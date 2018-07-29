@@ -144,7 +144,6 @@ void UserSettings::writeDataFile() const {
     for (auto i = int{ 0 }; i < m_widgetPositions.size(); ++i) {
         outFile << i << ' ' << m_widgetPositions[i] << '\n';
     }
-
 }
 
 }

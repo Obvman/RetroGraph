@@ -3,10 +3,11 @@
 #include "stdafx.h"
 
 #include <cstdint>
-#include <string>
-#include <vector>
 #include <map>
+#include <string>
+#include <string_view>
 #include <variant>
+#include <vector>
 
 #include "Widget.h"
 #include "utils.h"
@@ -28,9 +29,9 @@ public:
     UserSettings& operator=(UserSettings&&)      = delete;
 
     template<typename T, typename CastT = T>
-    auto getVal(const std::string& settingName) {
+    auto getVal(std::string_view settingName) {
         if (m_settings.count(settingName) == 0)
-            fatalMessageBox("Failed to find setting " + settingName);
+            fatalMessageBox("Failed to find setting " + std::string{ settingName });
 
         // If CastT specified, do a static cast
         if constexpr (!std::is_same_v<T, CastT>) {
@@ -61,12 +62,12 @@ private:
     // Initialises member values from ini reader
     void readMembers(const INIReader& reader);
 
-    std::map<std::string, SettingVariant> m_settings;
+    std::map<std::string_view, SettingVariant> m_settings;
 
     std::vector<bool> m_widgetVisibilities;
     std::vector<WidgetPosition> m_widgetPositions;
 
-    const std::map<std::string, WidgetPosition> m_posMap = {
+    const std::map<std::string_view, WidgetPosition> m_posMap = {
         {"top-left",      WidgetPosition::TOP_LEFT},
         {"top-middle",    WidgetPosition::TOP_MID},
         {"top-right",     WidgetPosition::TOP_RIGHT},
