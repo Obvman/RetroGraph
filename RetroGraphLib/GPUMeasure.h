@@ -44,6 +44,7 @@ public:
     const std::string& getGpuName() const { return m_gpuName; }
     const std::string& getGpuDescription() const { return m_gpuDescription; }
     const std::vector<float>& getUsageData() const { return m_usageData; }
+
 private:
     NvPhysicalGpuHandle getGpuHandle() const;
     void updateGpuTemp();

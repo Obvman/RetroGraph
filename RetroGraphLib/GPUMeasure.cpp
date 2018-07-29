@@ -51,13 +51,13 @@ GPUMeasure::GPUMeasure()
     m_gpuDescription = "GPU: NVIDIA" + m_gpuName + " (" + m_driverVersion + ")";
 
     // Initialise updating member structs
-    m_thermalSettings.version = NV_GPU_THERMAL_SETTINGS_VER;
+    m_thermalSettings.version = NV_GPU_THERMAL_SETTINGS_VER_2;
     m_thermalSettings.sensor[0].target = NVAPI_THERMAL_TARGET_GPU;
     m_thermalSettings.sensor[0].controller = NVAPI_THERMAL_CONTROLLER_GPU_INTERNAL;
 
-    m_clockFreqs.version = NV_GPU_CLOCK_FREQUENCIES_VER;
+    m_clockFreqs.version = NV_GPU_CLOCK_FREQUENCIES_VER_3;
 
-    m_memInfo.version = NV_DISPLAY_DRIVER_MEMORY_INFO_VER;
+    m_memInfo.version = NV_DISPLAY_DRIVER_MEMORY_INFO_VER_3;
 
     m_pStateInfo.version = NV_GPU_DYNAMIC_PSTATES_INFO_EX_VER;
 }
@@ -73,8 +73,7 @@ void GPUMeasure::update(int) {
     getGpuUsage();
 
     m_usageData[0] = m_gpuUsage / 100.0f;
-    std::rotate(m_usageData.begin(), m_usageData.begin() + 1,
-                m_usageData.end());
+    std::rotate(m_usageData.begin(), m_usageData.begin() + 1, m_usageData.end());
 }
 
 void GPUMeasure::refreshSettings() {
@@ -138,8 +137,7 @@ void GPUMeasure::getMemInformation() {
 }
 
 void GPUMeasure::getGpuUsage() {
-    if (NvAPI_GPU_GetDynamicPstatesInfoEx(m_gpuHandle, &m_pStateInfo) !=
-        NVAPI_OK) {
+    if (NvAPI_GPU_GetDynamicPstatesInfoEx(m_gpuHandle, &m_pStateInfo) != NVAPI_OK) {
 
         printf("Failed to get GPU usage percentage\n");
         return;
