@@ -28,9 +28,7 @@ using MTypes = Measures::Types;
 
 RetroGraph::RetroGraph(HINSTANCE hInstance)
     : m_measures( createMeasures() )
-    , m_window{ this, hInstance, 
-              UserSettings::inst().getVal<int>("Window.Monitor"), 
-              UserSettings::inst().getVal<bool>("Window.ClickThrough") }
+    , m_window{ this, hInstance, UserSettings::inst().getVal<int>("Window.Monitor") }
     , m_widgetVisibilities( Widgets::NumWidgets )
     , m_renderer{ std::make_unique<Renderer>(m_window, *this) }
     , m_autoReadConfig{ UserSettings::inst().getVal<bool>("Application.AutoReadConfig") }

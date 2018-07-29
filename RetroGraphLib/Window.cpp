@@ -1,7 +1,5 @@
 #include "stdafx.h"
-
 #include "Window.h"
-
 
 // #include <GL/freeglut.h>
 // #include <GL/glew.h>
@@ -24,27 +22,27 @@
 
 namespace rg {
 
-constexpr int WM_NOTIFY_RG_TRAY{ 3141 };
+constexpr auto WM_NOTIFY_RG_TRAY = int{ 3141 };
 
-constexpr int ID_EXIT{ 1 };
-constexpr int ID_SEND_TO_BACK{ 2 };
-constexpr int ID_RESET_POSITION{ 3 };
-constexpr int ID_SET_WIDGET_BG{ 4 };
-constexpr int ID_TEST{ 5 };
-constexpr int ID_TOGGLE_TIME_WIDGET{ 6 };
-constexpr int ID_TOGGLE_HDD_WIDGET{ 7 };
-constexpr int ID_TOGGLE_CPUSTATS_WIDGET{ 8 };
-constexpr int ID_TOGGLE_PROCESS_CPU_WIDGET{ 9 };
-constexpr int ID_TOGGLE_PROCESS_RAM_WIDGET{ 10 };
-constexpr int ID_TOGGLE_SYSTEMSTATS_WIDGET{ 11 };
-constexpr int ID_TOGGLE_MAIN_WIDGET{ 12 };
-constexpr int ID_TOGGLE_MUSIC_WIDGET{ 13 };
-constexpr int ID_TOGGLE_FPS_WIDGET{ 14 };
-constexpr int ID_TOGGLE_CPU_GRAPH_WIDGET{ 15 };
-constexpr int ID_TOGGLE_GPU_GRAPH_WIDGET{ 16 };
-constexpr int ID_TOGGLE_RAM_GRAPH_WIDGET{ 17 };
-constexpr int ID_TOGGLE_NET_GRAPH_WIDGET{ 18 };
-constexpr int ID_CHANGE_DISPLAY_MONITOR{ 19 }; // Should always be last ID in the list
+constexpr auto ID_EXIT                      = int{ 1 };
+constexpr auto ID_SEND_TO_BACK              = int{ 2 };
+constexpr auto ID_RESET_POSITION            = int{ 3 };
+constexpr auto ID_SET_WIDGET_BG             = int{ 4 };
+constexpr auto ID_TEST                      = int{ 5 };
+constexpr auto ID_TOGGLE_TIME_WIDGET        = int{ 6 };
+constexpr auto ID_TOGGLE_HDD_WIDGET         = int{ 7 };
+constexpr auto ID_TOGGLE_CPUSTATS_WIDGET    = int{ 8 };
+constexpr auto ID_TOGGLE_PROCESS_CPU_WIDGET = int{ 9 };
+constexpr auto ID_TOGGLE_PROCESS_RAM_WIDGET = int{ 10 };
+constexpr auto ID_TOGGLE_SYSTEMSTATS_WIDGET = int{ 11 };
+constexpr auto ID_TOGGLE_MAIN_WIDGET        = int{ 12 };
+constexpr auto ID_TOGGLE_MUSIC_WIDGET       = int{ 13 };
+constexpr auto ID_TOGGLE_FPS_WIDGET         = int{ 14 };
+constexpr auto ID_TOGGLE_CPU_GRAPH_WIDGET   = int{ 15 };
+constexpr auto ID_TOGGLE_GPU_GRAPH_WIDGET   = int{ 16 };
+constexpr auto ID_TOGGLE_RAM_GRAPH_WIDGET   = int{ 17 };
+constexpr auto ID_TOGGLE_NET_GRAPH_WIDGET   = int{ 18 };
+constexpr auto ID_CHANGE_DISPLAY_MONITOR    = int{ 19 }; // Should always be last ID in the list
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     // Get the Window pointer from the handle, and call the alternate WndProc if it was found
@@ -57,9 +55,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 void Window::runTest() {
 }
 
-Window::Window(RetroGraph* rg_, HINSTANCE hInstance, int startupMonitor, bool clickthrough)
-    : m_clickthrough{ clickthrough }
-    , m_monitors{ rg_->getDisplayMeasure().getMonitors() }
+Window::Window(RetroGraph* rg_, HINSTANCE hInstance, int startupMonitor)
+    : m_monitors{ rg_->getDisplayMeasure().getMonitors() }
     , m_retroGraph{ rg_ }
     , m_currMonitor{ startupMonitor }
     , m_width{ m_monitors->getWidth(m_currMonitor) }
@@ -169,8 +166,6 @@ void Window::refreshSettings() {
     const auto newMonitor{ UserSettings::inst().getVal<int>("Window.Monitor") };
     if (m_currMonitor != newMonitor)
         changeMonitor(m_hWndMain, newMonitor);
-
-    m_clickthrough = UserSettings::inst().getVal<bool>("Window.ClickThrough");
 }
 
 void Window::createRClickMenu(HWND hWnd) {
@@ -443,40 +438,20 @@ bool Window::createHGLRC() {
        Colt McAnlis. Code and explanations:
        http://nehe.gamedev.net/tutorial/fullscreen_antialiasing/16008/ */
 
-#if _DEBUG
-    const char* windowName{ "RetroGraph (Debug)" };
-#else
-    const char* windowName{ "RetroGraph" };
-#endif
-
-    // TODO This is the original setup
-    /*if (m_arbMultisampleSupported) {
-        const DWORD exStyles = (m_clickthrough) ?
-            WS_EX_TRANSPARENT | WS_EX_COMPOSITED | WS_EX_TOOLWINDOW | WS_EX_LAYERED :
-            WS_EX_TRANSPARENT | WS_EX_COMPOSITED;
-
-        // Create main window with clicking through to windows underneath, 
-        // no taskbar display, and transparency
-        m_hWndMain = CreateWindowEx(exStyles, "RetroGraph", windowName,
-                WS_VISIBLE | WS_POPUP,
-                m_startPosX, m_startPosY, m_width, m_height,
-                nullptr, nullptr, m_hInstance, nullptr);
-    } else {
-        // Create test window that doesn't appear in taskbar to query
-        // anti-aliasing capabilities
-        m_hWndMain = CreateWindowEx(WS_EX_TOOLWINDOW | WS_EX_TRANSPARENT,
-                "RetroGraph", "Dummy",
-                WS_VISIBLE | WS_POPUP,
-                m_startPosX, m_startPosY, m_width, m_height,
-                nullptr, nullptr, m_hInstance, nullptr);
-    }*/
+    const auto windowName = []() {
+        if constexpr (debugMode) {
+            return std::string{ "RetroGraph (Debug)" };
+        } else {
+            return std::string{ "RetroGraph" };
+        }
+    }(); // Call immediately
 
     if (m_arbMultisampleSupported) {
         const DWORD exStyles = WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW;
 
         // Create main window with clicking through to windows underneath, 
         // no taskbar display, and transparency
-        m_hWndMain = CreateWindowEx(exStyles, "RetroGraph", windowName,
+        m_hWndMain = CreateWindowEx(exStyles, "RetroGraph", windowName.c_str(),
                 WS_VISIBLE | WS_POPUP,
                 m_startPosX, m_startPosY, m_width, m_height,
                 nullptr, nullptr, m_hInstance, nullptr);
@@ -496,9 +471,8 @@ bool Window::createHGLRC() {
     // Display window at the desktop layer on startup
     sendToBack();
 
-    if(!m_hWndMain) {
+    if(!m_hWndMain)
         fatalMessageBox("CreateWindowEx - failed");
-    }
 
     // Make window transparent via dwm
     const auto hRgn{ CreateRectRgn(0, 0, -1, -1) };
@@ -593,7 +567,6 @@ bool Window::createHGLRC() {
         }
     }
 
-
     return true;
 }
 
@@ -610,7 +583,7 @@ bool Window::wglIisExtensionSupported(const char *extension) {
 
     // If That Failed, Try Standard Opengl Extensions String
     if (!supported) {
-        supported = (char*)glGetString(GL_EXTENSIONS);
+        supported = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
     }
 
     // If That Failed Too, Must Be No Extensions Supported

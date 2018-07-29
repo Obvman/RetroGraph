@@ -19,7 +19,7 @@ class RetroGraph;
 
 class Window {
 public:
-    Window(RetroGraph* rg_, HINSTANCE hInstance, int startupMonitor, bool clickthrough);
+    Window(RetroGraph* rg_, HINSTANCE hInstance, int startupMonitor);
     ~Window() noexcept;
     Window(const Window&)            = delete;
     Window& operator=(const Window&) = delete;
@@ -95,7 +95,6 @@ private:
                                              const GLchar* message, const void* userParam);
 
     bool m_running{ true };
-    bool m_clickthrough{ true };
 
     const Monitors* m_monitors;
     RetroGraph* m_retroGraph;

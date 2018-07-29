@@ -55,7 +55,6 @@ public:
     const AnimationState& getAnimationState() const;
     const DisplayMeasure& getDisplayMeasure() const;
 
-
 private:
     void checkConfigChanged(int ticks);
     void checkDependencies(); // Disables any measures that aren't currently used TODO rename this

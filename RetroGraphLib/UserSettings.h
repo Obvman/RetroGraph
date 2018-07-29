@@ -15,18 +15,19 @@ class INIReader;
 
 namespace rg {
 
-using settingVariant = std::variant<int, bool, double, std::string>;
+using SettingVariant = std::variant<int, bool, double, std::string>;
 
 class UserSettings {
 public:
     static UserSettings& inst() { static UserSettings i; return i; }
 
     ~UserSettings() noexcept = default;
-    UserSettings(const UserSettings&) = delete;
+    UserSettings(const UserSettings&)            = delete;
     UserSettings& operator=(const UserSettings&) = delete;
-    UserSettings(UserSettings&&) = delete;
-    UserSettings& operator=(UserSettings&&) = delete;
+    UserSettings(UserSettings&&)                 = delete;
+    UserSettings& operator=(UserSettings&&)      = delete;
 
+    // #TODO refactor these specialisations to use single function with if constexpr
     template<typename T>
     T getVal(const std::string& settingName) const {
         if (m_settings.count(settingName) == 0) {
@@ -69,7 +70,7 @@ private:
     // Initialises member values from ini reader
     void readMembers(const INIReader& reader);
 
-    std::map<std::string, settingVariant> m_settings;
+    std::map<std::string, SettingVariant> m_settings;
 
     std::vector<bool> m_widgetVisibilities;
     std::vector<WidgetPosition> m_widgetPositions;
