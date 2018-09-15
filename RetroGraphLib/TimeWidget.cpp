@@ -16,6 +16,10 @@
 
 namespace rg {
 
+constexpr unsigned int maxTimeLen{ 9 }; // "13:10:10\0"
+constexpr unsigned int maxDateLen{ 13 }; // "30 September\0"
+constexpr unsigned int maxDayLen{ 10 }; // "Wednesday\0"
+
 void TimeWidget::updateObservers(const RetroGraph & rg) {
     m_cpuMeasure = &rg.getCPUMeasure();
     m_netMeasure = &rg.getNetMeasure();
@@ -44,9 +48,9 @@ void TimeWidget::draw() const {
     {
         time_t now = time(nullptr);
         tm t;
-        char timeBuff[10];
+        char timeBuff[maxTimeLen];
         localtime_s(&t, &now);
-        strftime(timeBuff, sizeof(timeBuff), "%T", &t);
+        RGVERIFY(strftime(timeBuff, sizeof(timeBuff), "%T", &t) > 0, "strftime failed");
 
         // Get font width in pixels for horizontal centering
         m_fontManager->renderLine(RG_FONT_TIME, timeBuff, 0, midDivYPx,
@@ -55,16 +59,16 @@ void TimeWidget::draw() const {
                                   RG_ALIGN_CENTERED_HORIZONTAL);
 
         // Draw the year and month and day in bottom-middle
-        char dateBuff[12];
-        strftime(dateBuff, sizeof(dateBuff), "%d %B", &t);
+        char dateBuff[maxDateLen];
+        RGVERIFY(strftime(dateBuff, sizeof(dateBuff), "%d %B", &t) > 0, "strftime failed");
         m_fontManager->renderLine(RG_FONT_STANDARD, dateBuff,
                                   vpCoordsToPixels(leftDivX, m_viewport.width),
                                   0, m_viewport.width/3, midDivYPx,
                                   RG_ALIGN_BOTTOM |
                                   RG_ALIGN_CENTERED_HORIZONTAL, 10, 15);
 
-        char dayBuff[10];
-        strftime(dayBuff, sizeof(dayBuff), "%A", &t);
+        char dayBuff[maxDayLen];
+        RGVERIFY(strftime(dayBuff, sizeof(dayBuff), "%A", &t) > 0, "strftime failed");
         m_fontManager->renderLine(RG_FONT_STANDARD_BOLD, dayBuff,
                                   vpCoordsToPixels(leftDivX, m_viewport.width),
                                   0, m_viewport.width/3, midDivYPx,
