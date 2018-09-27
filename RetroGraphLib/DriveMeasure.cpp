@@ -38,15 +38,15 @@ DriveMeasure::DriveMeasure() :
                              maxVolumeNameSize, nullptr, nullptr, nullptr,
                              nullptr, 0);
 
-        // Check the drive is a fixed HDD/SSD
+        // Only add if the drive is a fixed HDD/SSD
         const auto dType{ GetDriveType(drivePath.c_str()) };
         if (dType == DRIVE_FIXED) {
-            m_drives.emplace_back(std::make_unique<DriveInfo>( 
+            m_drives.emplace_back(
                 drivePath[0],
                 totalFreeBytes.QuadPart,
                 totalBytes.QuadPart,
                 volumeNameBuff
-            ));
+            );
         }
     }
 }
@@ -57,8 +57,8 @@ void DriveMeasure::update(int ticks) {
          * added/removed since these are fixed drives and the program shouldn't
          * be running in those events
          */
-        for (const auto& pdi : m_drives) {
-            char path[4] = { pdi->driveLetter, ':', '\\', '\0' };
+        for (auto& di : m_drives) {
+            char path[4] = { di.driveLetter, ':', '\\', '\0' };
 
             ULARGE_INTEGER freeBytesAvailable;
             ULARGE_INTEGER totalBytes;
@@ -66,26 +66,26 @@ void DriveMeasure::update(int ticks) {
             GetDiskFreeSpaceEx(path, &freeBytesAvailable,
                                &totalBytes, &totalFreeBytes);
 
-            pdi->totalFreeBytes = totalFreeBytes.QuadPart;
+            di.totalFreeBytes = totalFreeBytes.QuadPart;
 
             // Some rare cases allow a drive's max capacity to change
             // (like unlocking a bitlocked drive)
-            if (totalBytes.QuadPart != pdi->totalBytes) {
-                pdi->totalBytes = totalBytes.QuadPart;
-                pdi->updateCapacityStr();
+            if (totalBytes.QuadPart != di.totalBytes) {
+                di.totalBytes = totalBytes.QuadPart;
+                di.updateCapacityStr();
             }
         }
     }
     // Check for drive name updates every 20 minutes
     if (ticksMatchSeconds(ticks, m_updateRates[1])) {
-        for (const auto& pdi : m_drives) {
-            char path[4] = { pdi->driveLetter, ':', '\\', '\0' };
+        for (auto& di : m_drives) {
+            char path[4] = { di.driveLetter, ':', '\\', '\0' };
             char volumeNameBuff[maxVolumeNameSize];
             GetVolumeInformation(path, volumeNameBuff, maxVolumeNameSize,
                                  nullptr, nullptr, nullptr, nullptr, 0);
 
-            if (pdi->volumeName != volumeNameBuff) {
-                pdi->volumeName = std::string{ volumeNameBuff };
+            if (di.volumeName != volumeNameBuff) {
+                di.volumeName = std::string{ volumeNameBuff };
             }
         }
     }

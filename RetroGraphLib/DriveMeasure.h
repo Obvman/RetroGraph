@@ -64,14 +64,14 @@ public:
     size_t getNumDrives() const { return m_drives.size(); }
 
     /* Returns the drive list */
-    const std::vector<std::unique_ptr<DriveInfo>>& getDrives() const { return m_drives; }
+    const std::vector<DriveInfo>& getDrives() const { return m_drives; }
 
     void refreshSettings() override { }
 private:
     bool shouldUpdate(int ticks) const override;
 
     std::vector<std::string> m_drivePaths{ };
-    std::vector<std::unique_ptr<DriveInfo>> m_drives{ };
+    std::vector<DriveInfo> m_drives{ };
 };
 
 } // namespace rg
