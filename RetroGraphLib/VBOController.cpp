@@ -14,9 +14,7 @@ VBOController::VBOController()
     : m_graphLineVBOData{}
     , m_particleLineShader{ "test" } {
 
-    if (!m_particleLineShader) {
-        fatalMessageBox("Failed to init shader\n");
-    }
+    RGASSERT(m_particleLineShader, "Failed to init shader\n");
 
     initVBOs();
 }

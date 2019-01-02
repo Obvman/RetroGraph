@@ -92,58 +92,38 @@ float GPUMeasure::getMemUsagePercent() const {
 }
 
 void GPUMeasure::updateGpuTemp() {
-    const auto result{ NvAPI_GPU_GetThermalSettings(m_gpuHandle,
-                                                    NVAPI_THERMAL_TARGET_NONE,
-                                                    &m_thermalSettings) };
-    if (result != NVAPI_OK) {
-        printf("Failed to get thermal information from NVAPI: %d\n", result);
-        return;
-    }
+    const auto result{ NvAPI_GPU_GetThermalSettings(m_gpuHandle, NVAPI_THERMAL_TARGET_NONE, &m_thermalSettings) };
+    RGASSERT(result == NVAPI_OK, "Failed to get thermal information from NVAPI: " + std::to_string(result));
     m_currentTemp = m_thermalSettings.sensor[0].currentTemp;
 }
 
 NvPhysicalGpuHandle GPUMeasure::getGpuHandle() const {
     NvPhysicalGpuHandle hGpuBuff[NVAPI_MAX_LOGICAL_GPUS];
     NvU32 gpuCount;
-    if (NvAPI_EnumPhysicalGPUs(hGpuBuff, &gpuCount) != NVAPI_OK) {
-        fatalMessageBox("Failed to enumerate onboard GPUs");
-    }
-    if (gpuCount < 0) {
-        fatalMessageBox("You don't have an NVIDIA GPU! Sorry I'm going to crash now");
-    }
+
+    RGVERIFY(NvAPI_EnumPhysicalGPUs(hGpuBuff, &gpuCount) == NVAPI_OK, "Failed to enumerate onboard GPUs");
+    RGASSERT(gpuCount >= 0, "You don't have an NVIDIA GPU!");
 
     return hGpuBuff[0];
 }
 
 void GPUMeasure::getClockFrequencies() {
-    const auto result{ NvAPI_GPU_GetAllClockFrequencies(m_gpuHandle,
-                                                        &m_clockFreqs) };
-    if (result != NVAPI_OK) {
-        printf("Failed to get GPU clock frequencies %d\n", result);
-        return;
-    }
+    const auto result{ NvAPI_GPU_GetAllClockFrequencies(m_gpuHandle, &m_clockFreqs) };
+    RGASSERT(result == NVAPI_OK, "Failed to get GPU clock frequencies %d\n" + std::to_string(result));
 
     m_graphicsClock = m_clockFreqs.domain[NVAPI_GPU_PUBLIC_CLOCK_GRAPHICS].frequency;
     m_memoryClock = m_clockFreqs.domain[NVAPI_GPU_PUBLIC_CLOCK_MEMORY].frequency;
 }
 
 void GPUMeasure::getMemInformation() {
-    if (NvAPI_GPU_GetMemoryInfo(m_gpuHandle, &m_memInfo) != NVAPI_OK) {
-        printf("Failed to get GPU memory information\n");
-        return;
-    }
+    RGVERIFY(NvAPI_GPU_GetMemoryInfo(m_gpuHandle, &m_memInfo) == NVAPI_OK, "Failed to get GPU memory information");
 
     m_currAvailableMemory = m_memInfo.curAvailableDedicatedVideoMemory;
     m_totalMemory = m_memInfo.availableDedicatedVideoMemory;
 }
 
 void GPUMeasure::getGpuUsage() {
-    if (NvAPI_GPU_GetDynamicPstatesInfoEx(m_gpuHandle, &m_pStateInfo) !=
-        NVAPI_OK) {
-
-        printf("Failed to get GPU usage percentage\n");
-        return;
-    }
+    RGVERIFY(NvAPI_GPU_GetDynamicPstatesInfoEx(m_gpuHandle, &m_pStateInfo) == NVAPI_OK, "Failed to get GPU usage percentage");
     m_gpuUsage = m_pStateInfo.utilization[NVAPI_GPU_UTILIZATION_DOMAIN_GPU].percentage;
 }
 

@@ -19,6 +19,7 @@
 #include "colors.h"
 #include "Renderer.h"
 #include "UserSettings.h"
+#include "ErrorDialog.h"
 
 namespace rg {
 
@@ -53,6 +54,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 }
 
 void Window::runTest() {
+    ErrorDialog dialog{};
 }
 
 Window::Window(RetroGraph* rg_, HINSTANCE hInstance, int startupMonitor)
@@ -374,15 +376,10 @@ void Window::createWindow() {
     wc.hbrBackground = static_cast<HBRUSH>(CreateSolidBrush(0x00000000));
     wc.lpszClassName = "RetroGraph";
 
-
-    if (!RegisterClassEx(&wc)) {
-        fatalMessageBox("RegisterClassEx - failed");
-    }
+    RGVERIFY(RegisterClassEx(&wc), "RegisterClassEx - failed");
 
     /* Build the window itself*/
-    if (!createHGLRC()) {
-        fatalMessageBox("Failed to create OpenGL Window");
-    }
+    RGVERIFY(createHGLRC(), "Failed to create OpenGL Window");
 
     initOpenGL();
 
@@ -405,9 +402,7 @@ void Window::createTrayIcon() {
     m_tray.uFlags = NIF_ICON | NIF_TIP | NIF_MESSAGE;
     m_tray.uID = 101;
 
-    if (!Shell_NotifyIcon(NIM_ADD, &m_tray)) {
-        fatalMessageBox("Failed to display notification icon");
-    } 
+    RGVERIFY(Shell_NotifyIcon(NIM_ADD, &m_tray), "Failed to display notification icon");
 }
 
 void Window::initOpenGL() {
@@ -474,8 +469,7 @@ bool Window::createHGLRC() {
     // Display window at the desktop layer on startup
     sendToBack();
 
-    if(!m_hWndMain)
-        fatalMessageBox("CreateWindowEx - failed");
+    RGASSERT(m_hWndMain, "CreateWindowEx - failed");
 
     // Make window transparent via dwm
     const auto hRgn{ CreateRectRgn(0, 0, -1, -1) };
@@ -523,7 +517,7 @@ bool Window::createHGLRC() {
         if (PixelFormat == 0) {
             ReleaseDC(m_hWndMain, m_hdc);
             DestroyWindow(m_hWndMain);
-            fatalMessageBox("ChoosePixelFormat - failed");
+            RGERROR("ChoosePixelFormat - failed");
         }
     } else {
         PixelFormat = m_arbMultisampleFormat;
@@ -535,7 +529,7 @@ bool Window::createHGLRC() {
         m_hdc = nullptr;
         DestroyWindow(m_hWndMain);
         m_hWndMain = nullptr;
-        fatalMessageBox("SetPixelFormat - failed");
+        RGERROR("SetPixelFormat - failed");
     }
 
     // Create an opengl context for the window
@@ -545,7 +539,7 @@ bool Window::createHGLRC() {
         m_hdc = nullptr;
         DestroyWindow(m_hWndMain);
         m_hWndMain = nullptr;
-        fatalMessageBox("wglCreateContext - failed");
+        RGERROR("wglCreateContext - failed");
     }
 
     // Make the context the current one for the window
@@ -557,7 +551,7 @@ bool Window::createHGLRC() {
         DestroyWindow(m_hWndMain);
         m_hWndMain = nullptr;
 
-        fatalMessageBox("Failed to make current context with wglMakeCurrent");
+        RGERROR("Failed to make current context with wglMakeCurrent");
     }
 
     // Once we've created the first window and found multisampling to be
@@ -618,10 +612,7 @@ bool Window::initMultisample() {
     }
 
     // Get Our Pixel Format
-    PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB =
-        reinterpret_cast<PFNWGLCHOOSEPIXELFORMATARBPROC>(
-                wglGetProcAddress("wglChoosePixelFormatARB")
-        );
+    const auto wglChoosePixelFormatARB = reinterpret_cast<PFNWGLCHOOSEPIXELFORMATARBPROC>(wglGetProcAddress("wglChoosePixelFormatARB"));
     if (!wglChoosePixelFormatARB) {
         m_arbMultisampleSupported = false;
         return false;

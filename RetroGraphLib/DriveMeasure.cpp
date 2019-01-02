@@ -58,7 +58,7 @@ void DriveMeasure::update(int ticks) {
          * be running in those events
          */
         for (auto& di : m_drives) {
-            char path[4] = { di.driveLetter, ':', '\\', '\0' };
+            char path[] = { di.driveLetter, ':', '\\', '\0' };
 
             ULARGE_INTEGER freeBytesAvailable;
             ULARGE_INTEGER totalBytes;
@@ -79,7 +79,7 @@ void DriveMeasure::update(int ticks) {
     // Check for drive name updates every 20 minutes
     if (ticksMatchSeconds(ticks, m_updateRates[1])) {
         for (auto& di : m_drives) {
-            char path[4] = { di.driveLetter, ':', '\\', '\0' };
+            char path[] = { di.driveLetter, ':', '\\', '\0' };
             char volumeNameBuff[maxVolumeNameSize];
             GetVolumeInformation(path, volumeNameBuff, maxVolumeNameSize,
                                  nullptr, nullptr, nullptr, nullptr, 0);

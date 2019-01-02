@@ -13,7 +13,6 @@
 
 namespace rg {
 
-
 /* Lines drawn too close to the edge of the window will clip so this value
    is used to separate drawing bounds from the very edge */
 constexpr float bDelta{ 0.0001f };
@@ -24,6 +23,12 @@ void showMessageBox(std::string_view s);
 /* Displays an Error message box with the given string as a message and
    exits the program with a failure code */
 void fatalMessageBox(std::string_view s);
+
+/* Gets the directory of the executable file of this program */
+const std::string getExePath();
+
+/* Expands environment variables in path */
+const std::string getExpandedEnvPath(const std::string& path);
 
 /* Converts a wchar_t string to regular char string */
 std::string wstrToStr(const std::wstring& wstr);
@@ -61,8 +66,7 @@ void printTimeToExecuteMs(const char* funcName, F f) {
     f();
     const auto end{ clock() };
 
-    printf("%s took %f seconds\n", funcName, 
-        (static_cast<float>(end) - static_cast<float>(start)) / CLOCKS_PER_SEC);
+    printf("%s took %f seconds\n", funcName, (static_cast<float>(end) - static_cast<float>(start)) / CLOCKS_PER_SEC);
 }
 
 /* Default function name overload */
@@ -90,9 +94,6 @@ void printTimeToExecuteHighRes(F f) {
     printTimeToExecuteHighRes("Function", f);
 }
 
-const std::string getExePath();
-const std::string getExpandedEnvPath(const std::string& path);
-
 template<typename T>
 T strToNum(std::string_view str) {
     T val;
@@ -105,5 +106,34 @@ T strToNum(std::string_view str) {
 
     return val;
 }
+
+// Throws error if expr is false
+inline void rgAssert(bool expr, std::string_view str) {
+    if (!expr)
+        fatalMessageBox(str);
+}
+
+// Throws error
+inline void rgError(std::string_view str) {
+    fatalMessageBox(str);
+}
+
+// Throws error if expr is false. Always evaluates expr - even in release mode
+inline void rgVerify(bool expr [[maybe_unused]], std::string_view str[[maybe_unused]]) {
+    if constexpr (debugMode)
+        if (!expr)
+            fatalMessageBox(str);
+}
+
+// Debug Assertions
+#ifdef _DEBUG
+#define RGASSERT(expr, str) rgAssert(expr, str)
+#define RGERROR(str) rgError(str)
+#else
+#define RGASSERT(expr, str)
+#define RGERROR(str)
+#endif
+
+#define RGVERIFY(expr, str) rgVerify(expr, str)
 
 } // namespace rg

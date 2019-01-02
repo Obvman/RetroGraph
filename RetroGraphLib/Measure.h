@@ -28,7 +28,7 @@ using Seconds = int;
 class Measure {
 public:
     Measure() = default;
-    explicit Measure(const std::initializer_list<int>& ur) : m_updateRates{ ur } {}
+    explicit Measure(std::initializer_list<int> ur) : m_updateRates{ ur } {}
     virtual ~Measure() = default;
 
     Measure(const Measure&)            = delete;

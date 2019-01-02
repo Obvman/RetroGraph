@@ -50,98 +50,6 @@ void FontManager::renderLine(GLfloat rasterX, GLfloat rasterY,
 }
 
 void FontManager::renderLine(RGFONTCODE fontCode,
-                             const char* text,
-                             int areaX,
-                             int areaY,
-                             int areaWidth,
-                             int areaHeight,
-                             int alignFlags,
-                             int alignMarginX /*=10U*/,
-                             int alignMarginY /*=10U*/) const {
-    GLint vp[4];
-    glGetIntegerv(GL_VIEWPORT, vp);
-
-    // Set the area to viewport if default values are given
-    if (areaWidth == 0 && areaHeight == 0 && areaX == 0 && areaY == 0) {
-        areaWidth = vp[2];
-        areaHeight = vp[3];
-    } else {
-        glViewport(vp[0] + areaX, vp[1] + areaY, areaWidth, areaHeight);
-    }
-
-    auto rasterY = float{ 0.0f };
-    const auto fontHeightPx{ m_fontCharHeights[fontCode] };
-    const auto textLen{ strlen(text) };
-
-    // Handle vertical alignment
-    if (alignFlags & RG_ALIGN_CENTERED_VERTICAL) {
-        const auto drawYMidPx{ (areaHeight - fontHeightPx) / 2 };
-        rasterY = pixelsToVPCoords(drawYMidPx + m_fontCharDescents[fontCode], 
-                                   areaHeight);
-    } else if (alignFlags & RG_ALIGN_BOTTOM) {
-        rasterY = pixelsToVPCoords(alignMarginY + m_fontCharDescents[fontCode],
-                                   areaHeight);
-    } else if (alignFlags & RG_ALIGN_TOP) {
-        rasterY = pixelsToVPCoords(areaHeight - m_fontCharAscents[fontCode] -
-                                   alignMarginY,
-                                   areaHeight);
-    }
-
-    auto strWidthPx { calculateStringWidth(text, textLen, fontCode) };
-
-    // If the string is too large, then truncate it and add ellipses
-    if (strWidthPx > areaWidth - alignMarginX) {
-        char newText[256];
-
-        // Copy char by char into the new buffer while there is enough width
-        auto newStrWidthPx = int{ 0U };
-        for (auto i = size_t{ 0U }; i < textLen; ++i) {
-            newText[i] = text[i];
-            newStrWidthPx += m_fontCharWidths[fontCode][newText[i]];
-
-            // If we've gone over, remove last character and replace chars before
-            // with ellipses
-            if (newStrWidthPx > areaWidth - alignMarginX) {
-                // Ensure there are enough characters to put in ellipses
-                if (i > 2) {
-                    newText[i] = '\0';
-                    newText[i - 1] = '.';
-                    newText[i - 2] = '.';
-                } else {
-                    newText[i] = '\0';
-                }
-                break;
-            }
-        }
-
-        const auto truncTextLen{ strlen(newText) };
-        strWidthPx = calculateStringWidth(newText, truncTextLen, fontCode);
-
-        const auto rasterX{ getRasterXAlignment(alignFlags, strWidthPx, 
-                areaWidth, alignMarginX) };
-
-        glRasterPos2f(rasterX, rasterY);
-        // Render in the specified font, preserving the previously selected font
-        glPushAttrib(GL_LIST_BIT); {
-            glListBase(m_fontBases[fontCode]);
-            glCallLists(static_cast<GLsizei>(truncTextLen), GL_UNSIGNED_BYTE, newText);
-        } glPopAttrib();
-
-    } else {
-        // Handle horizontal alignment
-        const auto rasterX{ getRasterXAlignment(alignFlags, strWidthPx, 
-                areaWidth, alignMarginX) };
-
-        glRasterPos2f(rasterX, rasterY);
-        glListBase(m_fontBases[fontCode]);
-        glCallLists(static_cast<GLsizei>(textLen), GL_UNSIGNED_BYTE, text);
-
-    }
-    glViewport(vp[0], vp[1], vp[2], vp[3]);
-
-}
-
-void FontManager::renderLine(RGFONTCODE fontCode,
                              std::string_view text,
                              int areaX,
                              int areaY,
@@ -179,7 +87,7 @@ void FontManager::renderLine(RGFONTCODE fontCode,
                                    areaHeight);
     }
 
-    auto strWidthPx { calculateStringWidth(text.data(), textLen, fontCode) };
+    auto strWidthPx { calculateStringWidth(text, fontCode) };
 
     // If the string is too large, then truncate it and add ellipses
     if (strWidthPx > areaWidth - alignMarginX) {
@@ -270,8 +178,7 @@ void FontManager::renderLines(RGFONTCODE fontCode,
 
     for (const auto& str : lines) {
         // Handle X alignment for the string
-        const auto strWidthPx{ calculateStringWidth(str.c_str(), str.size(),
-                                                    fontCode) };
+        const auto strWidthPx{ calculateStringWidth(str.c_str(), str.size(), fontCode) };
 
         const auto rasterX{ getRasterXAlignment(alignFlags, strWidthPx,
                                                 areaWidth, alignMarginX) };
@@ -281,6 +188,62 @@ void FontManager::renderLines(RGFONTCODE fontCode,
         glRasterPos2f(rasterX, rasterY);
         glListBase(m_fontBases[fontCode]);
         glCallLists(static_cast<GLsizei>(str.size()), GL_UNSIGNED_BYTE, str.c_str());
+
+        // Set the raster position to the next line
+        rasterYPx -= static_cast<decltype(rasterYPx)>(rasterLineDeltaY);
+    }
+
+    glViewport(vp[0], vp[1], vp[2], vp[3]);
+}
+
+void FontManager::renderLines(RGFONTCODE fontCode,
+                              const std::vector<std::string_view>& lines,
+                              int areaX,
+                              int areaY,
+                              int areaWidth,
+                              int areaHeight,
+                              int alignFlags,
+                              int alignMarginX /*=10U*/,
+                              int alignMarginY /*=10U*/) const {
+    GLint vp[4];
+    glGetIntegerv(GL_VIEWPORT, vp);
+
+    /* If width and height are given default values, use the current viewport 
+       as area */
+    if (areaWidth == 0 && areaHeight == 0 && areaX == 0 && areaY == 0) {
+        areaWidth = vp[2];
+        areaHeight = vp[3];
+    } else {
+        glViewport(vp[0] + areaX, vp[1] + areaY, areaWidth, areaHeight);
+    }
+
+    // Set the Y position of the first line according to alignment rules
+    const auto renderHeight{ areaHeight - alignMarginY * 2 };
+    const auto fontHeight{ m_fontCharHeights[fontCode] };
+    const auto rasterLineDeltaY{ (renderHeight-fontHeight)/(lines.size()-1) };
+
+    // Start at top, render downwards
+    auto rasterYPx = int{ areaHeight - alignMarginY - fontHeight };
+    if (alignFlags & RG_ALIGN_CENTERED_VERTICAL) {
+        // Default behaviour
+    } else if (alignFlags & RG_ALIGN_TOP) {
+        // TODO
+    } else if (alignFlags & RG_ALIGN_BOTTOM) {
+        // TODO
+    }
+
+    for (const auto str : lines) {
+        // Handle X alignment for the string
+        const auto strWidthPx{ calculateStringWidth(str, fontCode) };
+
+        const auto rasterX{ getRasterXAlignment(alignFlags, strWidthPx,
+                                                areaWidth, alignMarginX) };
+        const auto rasterY{ pixelsToVPCoords(rasterYPx, areaHeight) };
+
+        // Draw the string
+        glRasterPos2f(rasterX, rasterY);
+        glListBase(m_fontBases[fontCode]);
+        glCallLists(static_cast<GLsizei>(str.size()), GL_UNSIGNED_BYTE, str.data());
 
         // Set the raster position to the next line
         rasterYPx -= static_cast<decltype(rasterYPx)>(rasterLineDeltaY);
@@ -357,6 +320,19 @@ int FontManager::calculateStringWidth(const char* text, size_t textLen,
                                           RGFONTCODE c) const {
     auto strWidthPx = int{ 0 };
     for (auto i = size_t{ 0U }; i < textLen; ++i) {
+        // Make sure the character is in range, if not, add default value
+        if (text[i] > RG_NUM_CHARS_IN_FONT || text[i] < 0) {
+            strWidthPx += m_fontCharWidths[c]['A'];
+        } else {
+            strWidthPx += m_fontCharWidths[c][text[i]];
+        }
+    }
+    return strWidthPx;
+}
+
+int FontManager::calculateStringWidth(std::string_view text, RGFONTCODE c) const {
+    auto strWidthPx = int{ 0 };
+    for (auto i = size_t{ 0U }; i < text.size(); ++i) {
         // Make sure the character is in range, if not, add default value
         if (text[i] > RG_NUM_CHARS_IN_FONT || text[i] < 0) {
             strWidthPx += m_fontCharWidths[c]['A'];

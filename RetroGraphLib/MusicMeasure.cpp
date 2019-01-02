@@ -57,14 +57,11 @@ bool MusicMeasure::handleClick(int clickX, int clickY) const {
 void MusicMeasure::updateTitleString() {
     // Get the title string
     const auto titleLen{ GetWindowTextLength(m_playerHandle) + 1 };
-    if ((titleLen - 1) == 0) {
-        fatalMessageBox("Failed to get player title length");
-    } 
+    RGASSERT((titleLen - 1) != 0, "Failed to get player title length");
 
     m_playerWindowTitle.resize(titleLen);
-    if (!GetWindowText(m_playerHandle, &m_playerWindowTitle[0], titleLen)) {
-        fatalMessageBox("Failed to get music player window title");
-    }
+    RGVERIFY(GetWindowText(m_playerHandle, &m_playerWindowTitle[0], titleLen), "Failed to get music player window title");
+
     // Resize to avoid double NULL terminators
     m_playerWindowTitle.resize(titleLen-1);
 }

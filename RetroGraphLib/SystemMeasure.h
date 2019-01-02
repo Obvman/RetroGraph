@@ -17,19 +17,19 @@ public:
     void update(int ticks) override;
 
     /* Returns string of current operating system version/build number */
-    const std::string& getOSInfoStr() const { return m_osInfoStr; }
+    std::string_view getOSInfoStr() const { return m_osInfoStr; }
 
     /* Returns string of CPU information: Manufacturer, model, default clock
      * speed, architecture and core count */
-    const std::string& getCPUDescription() const { return m_cpuDescription; }
+    std::string_view getCPUDescription() const { return m_cpuDescription; }
 
     /* Returns string with RAM capacity */
-    const std::string& getRAMDescription() const { return m_ramDescription; }
+    std::string_view getRAMDescription() const { return m_ramDescription; }
 
     /* Returns the windows user name of current user */
-    const std::string& getUserName() const { return m_userName; }
+    std::string_view getUserName() const { return m_userName; }
 
-    const std::string& getComputerName() const { return m_computerName; }
+    std::string_view getComputerName() const { return m_computerName; }
 
     void refreshSettings() override { }
 private:

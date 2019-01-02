@@ -57,8 +57,6 @@ private:
     void scrapeInfoFromTitle();
 
 
-    std::string_view m_playerTitlePattern{ "foobar2000 v1.\0" };
-
     const ProcessMeasure* m_processMeasure{ nullptr };
 
     bool m_playerRunning{ false };
@@ -75,5 +73,8 @@ private:
     std::string_view m_album{ "" };
     int m_elapsedTime{ 0U };
     int m_totalTime{ 0U };
+
+    static constexpr std::string_view m_playerTitlePattern{ "foobar2000 v1.\0" };
 };
+
 } // namespace rg

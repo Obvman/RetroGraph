@@ -30,8 +30,7 @@ public:
 
     template<typename T, typename CastT = T>
     auto getVal(std::string_view settingName) {
-        if (m_settings.count(settingName) == 0)
-            fatalMessageBox("Failed to find setting " + std::string{ settingName });
+        RGASSERT (m_settings.count(settingName) != 0, "Failed to find setting " + std::string{ settingName });
 
         // If CastT specified, do a static cast
         if constexpr (!std::is_same_v<T, CastT>) {

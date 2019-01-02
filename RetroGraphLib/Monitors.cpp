@@ -11,9 +11,8 @@ Monitors::Monitors() {
 }
 
 void Monitors::fillMonitorData() {
-    if (!EnumDisplayMonitors(nullptr, nullptr, MonitorCallback2, reinterpret_cast<LPARAM>(this))) {
-        fatalMessageBox("Failed to enumerate monitors");
-    }
+    RGVERIFY(EnumDisplayMonitors(nullptr, nullptr, MonitorCallback2, reinterpret_cast<LPARAM>(this)),
+             "Failed to enumerate monitors");
 }
 
 BOOL CALLBACK Monitors::MonitorCallback2(HMONITOR hMonitor, HDC, LPRECT,

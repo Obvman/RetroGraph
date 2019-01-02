@@ -1,3 +1,5 @@
+Fucking hell. resource error prevents opening of dialog
+
 debug asserts - replace all instances of fatalMessageBox (unless you REALLY want to kill the program in release!)
 
 std::string& to string_view

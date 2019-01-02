@@ -86,9 +86,7 @@ std::string readShaderFile(const std::string& filePath) {
     std::ifstream fileStream(filePath, std::ios::in);
     std::string fileContents{};
 
-    if (!fileStream.is_open()) {
-        fatalMessageBox("Failed to open shader file " + std::string{ filePath });
-    }
+    RGASSERT(fileStream.is_open(), "Failed to open shader file " + std::string{ filePath });
 
     std::string line{};
     while (!fileStream.eof()) {

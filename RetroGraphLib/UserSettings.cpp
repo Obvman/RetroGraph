@@ -38,9 +38,7 @@ void UserSettings::readConfig() {
         showMessageBox("Failed to load config file from " + iniPath + "\nUsing default_config.ini");
         reader = INIReader{ fallbackIniPath };
 
-        if (reader.ParseError() < 0) {
-            fatalMessageBox("Failed to load default config file.");
-        }
+        RGASSERT(reader.ParseError() >= 0, "Failed to load default config file.");
     }
 
     try {
@@ -48,7 +46,7 @@ void UserSettings::readConfig() {
     } catch (const std::exception& e) {
         auto errorMsg = std::string{ "Config file path error: " };
         errorMsg.append(e.what());
-        fatalMessageBox(errorMsg);
+        RGERROR(errorMsg);
     }
 }
 
@@ -116,10 +114,7 @@ void UserSettings::writeDataFile() const {
     }
 
     std::ofstream outFile{ configFilePath };
-    if (!outFile) {
-        fatalMessageBox("Couldn't write settings to file\n");
-        return;
-    }
+    RGASSERT(!!outFile, "Couldn't write settings to file");
 
     // Write all the options to file
     for (const auto& [key, value] : m_settings) {

@@ -43,20 +43,13 @@ void SystemMeasure::getOSVersionInfo() {
 
     DWORD dummy;
     const auto fileVersionInfoSize{ GetFileVersionInfoSize(filePath, &dummy) };
-    LPBYTE lpVersionInfo = new BYTE[fileVersionInfoSize];
-    if (!GetFileVersionInfo(filePath, 0, fileVersionInfoSize, lpVersionInfo)) {
-        fatalMessageBox("Could not get OS version\n");
-    }
+    auto* lpVersionInfo = new BYTE[fileVersionInfoSize];
+    RGVERIFY(GetFileVersionInfo(filePath, 0, fileVersionInfoSize, lpVersionInfo), "Could not get OS version\n");
 
     UINT uLen;
     VS_FIXEDFILEINFO* lpFfi;
-    const auto bVer{ VerQueryValue(lpVersionInfo,
-                                   "\\",
-                                   (LPVOID*)&lpFfi,
-                                   &uLen) };
-    if (!bVer || uLen == 0) {
-        fatalMessageBox("Failed to query OS value\n");
-    }
+    const auto bVer{ VerQueryValue(lpVersionInfo, "\\", (LPVOID*)&lpFfi, &uLen) };
+    RGASSERT(bVer && uLen != 0, "Failed to query OS value\n");
 
     const DWORD osVersionMS = lpFfi->dwProductVersionMS;
     const DWORD osVersionLS = lpFfi->dwProductVersionLS;

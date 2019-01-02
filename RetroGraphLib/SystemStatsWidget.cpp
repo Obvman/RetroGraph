@@ -27,8 +27,7 @@ SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
 
     // Just create stats string here since we expect it not to change during
     // the lifetime of the program
-    m_statsStrings.emplace_back(sysInfo.getUserName() + "@" +
-                                sysInfo.getComputerName());
+    m_statsStrings.emplace_back(std::string{ sysInfo.getUserName() } +"@" + std::string{ sysInfo.getComputerName() });
     m_statsStrings.emplace_back(sysInfo.getOSInfoStr());
 
     const auto& cpuMeasure{ rg.getCPUMeasure() };

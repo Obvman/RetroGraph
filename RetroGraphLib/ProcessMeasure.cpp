@@ -30,10 +30,8 @@ ProcessMeasure::ProcessMeasure()
     if constexpr (!debugMode) {
         // Set the debug privilege in order to gain access to system processes
         HANDLE hToken;
-        if (!OpenProcessToken(GetCurrentProcess(),
-                              TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken)) {
-            fatalMessageBox("Failed OpenThreadToken");
-        }
+        RGVERIFY(OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken), "Failed OpenThreadToken");
+
         if (!setDebugPrivileges(hToken, SE_DEBUG_NAME, true)) {
             CloseHandle(hToken);
             showMessageBox("Failed to set privilege, please run as administrator to get all process data");
@@ -235,23 +233,17 @@ double ProcessMeasure::calculateCPUUsage(HANDLE pHandle, ProcessData& oldData) {
 void ProcessMeasure::populateList() {
     // Allocate buffer for the process list to fill
     // We need to allocate a large buffer because the process list can be large.
-    PVOID buffer{ VirtualAlloc(nullptr, 1024*1024,
-                          MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE) }; 
+    PVOID buffer{ VirtualAlloc(nullptr, 1024*1024, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE) }; 
 
-    if(!buffer) {
-        fatalMessageBox("Error: Unable to allocate memory for process list " +
-                        std::to_string(GetLastError()) + '\n');
-    }
+    RGASSERT(buffer, "Error: Unable to allocate memory for process list " + std::to_string(GetLastError()));
 
     PSYSTEM_PROCESS_INFO spi{ static_cast<PSYSTEM_PROCESS_INFO>(buffer) };
 
     // Fill the buffer with process information structs
     NTSTATUS status;
-    if(!NT_SUCCESS(status = NtQuerySystemInformation(SystemProcessInformation,
-                                                     spi, 1024*1024, nullptr))) {
+    if(!NT_SUCCESS(status = NtQuerySystemInformation(SystemProcessInformation, spi, 1024*1024, nullptr))) {
         VirtualFree(buffer, 0, MEM_RELEASE);
-        fatalMessageBox("Error: Unable to query process list: " +
-                        std::to_string(status) + '\n');
+        RGERROR("Error: Unable to query process list: " + std::to_string(status));
     }
 
     // Loop over the process list and fill allProcessData with new ProcessData
@@ -270,20 +262,17 @@ void ProcessMeasure::populateList() {
             // If access is denied or the process is the system idle process,
             // just silently skip the process
             if (error != ERROR_ACCESS_DENIED && procID != 0) {
-                    std::cout << "Failed to open process. Code: "
-                        << std::to_string(error) << ". ProcessID: "
-                        << std::to_string(procID) << '\n';
+                std::cout << "Failed to open process. Code: "
+                          << std::to_string(error) << ". ProcessID: "
+                          << std::to_string(procID) << '\n';
             }
         } else {
             // Convert the process name from wchar* to char*
             size_t charsConverted{ 0U };
             char* nameBuff = new char[spi->ImageName.Length];
-            wcstombs_s(&charsConverted, nameBuff, spi->ImageName.Length,
-                       spi->ImageName.Buffer, spi->ImageName.Length);
+            wcstombs_s(&charsConverted, nameBuff, spi->ImageName.Length, spi->ImageName.Buffer, spi->ImageName.Length);
 
-            m_allProcessData.emplace_back(
-                std::make_unique<ProcessData>(pHandle, static_cast<DWORD>(procID), nameBuff)
-            );
+            m_allProcessData.emplace_back(std::make_unique<ProcessData>(pHandle, static_cast<DWORD>(procID), nameBuff));
 
             delete[] nameBuff;
         }
@@ -296,29 +285,21 @@ void ProcessMeasure::detectNewProcesses() {
     // We need to allocate a large buffer because the process list can be large.
     PVOID buffer{ VirtualAlloc(nullptr, 1024*1024,
                         MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE) };
-
-    if(!buffer) {
-        std::cout << "Error: Unable to allocate memory for process list "
-                  << GetLastError() << '\n';
-        return;
-    }
+    RGASSERT(buffer, "Unable to allocate memory for process list " + GetLastError());
 
     PSYSTEM_PROCESS_INFO spi{ static_cast<PSYSTEM_PROCESS_INFO>(buffer) };
 
     // Fill the buffer with process information structs
     NTSTATUS status;
-    if(!NT_SUCCESS(status = NtQuerySystemInformation(SystemProcessInformation,
-                                                     spi, 1024*1024, nullptr))) {
-        std::cout << "Error: Unable to query process list " << status << '\n';
-        VirtualFree(buffer,0,MEM_RELEASE);
-        return;
+    if(!NT_SUCCESS(status = NtQuerySystemInformation(SystemProcessInformation, spi, 1024*1024, nullptr))) {
+        VirtualFree(buffer, 0, MEM_RELEASE);
+        RGERROR("Error: Unable to query process list " + std::to_string(status));
     }
 
     // Loop over the process list for any new processes
     for ( ;
           spi->NextEntryOffset;
-          spi = reinterpret_cast<PSYSTEM_PROCESS_INFO>(
-                    reinterpret_cast<LPBYTE>(spi) + spi->NextEntryOffset)) {
+          spi = reinterpret_cast<PSYSTEM_PROCESS_INFO>(reinterpret_cast<LPBYTE>(spi) + spi->NextEntryOffset)) {
 
         const auto procID{ reinterpret_cast<LONGLONG>(spi->ProcessId) };
 
@@ -330,14 +311,12 @@ void ProcessMeasure::detectNewProcesses() {
 
         // If it doesn't exist, create a new ProcessData object in the list
         if (it == m_allProcessData.cend()) {
-            auto pHandle{ OpenProcess(PROCESS_QUERY_INFORMATION |
-                                      PROCESS_VM_READ, false, static_cast<DWORD>(procID)) };
+            auto pHandle{ OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, false, static_cast<DWORD>(procID)) };
             if (!pHandle) {
                 const auto error{ GetLastError() };
                 // If access is denied or the process is the system idle
                 // process, just silently skip the process
-                if (error != ERROR_ACCESS_DENIED &&
-                    procID != 0) {
+                if (error != ERROR_ACCESS_DENIED && procID != 0) {
 
                     std::cout << "Failed to open process. Code: "
                         << std::to_string(error) << ". ProcessID: "

@@ -45,17 +45,11 @@ void GPUGraphWidget::draw() const {
                m_viewport.width / 5, m_viewport.height);
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
-    m_fontManager->renderLine(RG_FONT_SMALL, "0%",
-                             0, 0,
-                             m_viewport.width/5, m_viewport.height,
+    m_fontManager->renderLine(RG_FONT_SMALL, "0%", 0, 0, m_viewport.width/5, m_viewport.height,
                              RG_ALIGN_BOTTOM | RG_ALIGN_LEFT, 10);
-    m_fontManager->renderLine(RG_FONT_SMALL, "GPU Load",
-                             0, 0,
-                             m_viewport.width/5, m_viewport.height,
+    m_fontManager->renderLine(RG_FONT_SMALL, "GPU Load", 0, 0, m_viewport.width/5, m_viewport.height,
                              RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT, 10);
-    m_fontManager->renderLine(RG_FONT_SMALL, "100%",
-                             0, 0,
-                             m_viewport.width/5, m_viewport.height,
+    m_fontManager->renderLine(RG_FONT_SMALL, "100%", 0, 0, m_viewport.width/5, m_viewport.height,
                              RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
 }
 
@@ -85,17 +79,11 @@ void CPUGraphWidget::draw() const {
                m_viewport.width / 5, m_viewport.height);
 
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-    m_fontManager->renderLine(RG_FONT_SMALL, "0%",
-                             0, 0,
-                             m_viewport.width/5, m_viewport.height,
+    m_fontManager->renderLine(RG_FONT_SMALL, "0%", 0, 0, m_viewport.width/5, m_viewport.height,
                              RG_ALIGN_BOTTOM | RG_ALIGN_LEFT, 10);
-    m_fontManager->renderLine(RG_FONT_SMALL, "CPU Load",
-                             0, 0,
-                             m_viewport.width/5, m_viewport.height,
+    m_fontManager->renderLine(RG_FONT_SMALL, "CPU Load", 0, 0, m_viewport.width/5, m_viewport.height,
                              RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT, 10);
-    m_fontManager->renderLine(RG_FONT_SMALL, "100%",
-                             0, 0,
-                             m_viewport.width/5, m_viewport.height,
+    m_fontManager->renderLine(RG_FONT_SMALL, "100%", 0, 0, m_viewport.width/5, m_viewport.height,
                              RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
 }
 
@@ -125,17 +113,11 @@ void RAMGraphWidget::draw() const {
                m_viewport.width / 5, m_viewport.height);
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
-    m_fontManager->renderLine(RG_FONT_SMALL, "0%",
-                             0, 0,
-                             m_viewport.width/5, m_viewport.height,
+    m_fontManager->renderLine(RG_FONT_SMALL, "0%", 0, 0, m_viewport.width/5, m_viewport.height,
                              RG_ALIGN_BOTTOM | RG_ALIGN_LEFT, 10);
-    m_fontManager->renderLine(RG_FONT_SMALL, "RAM Load",
-                             0, 0,
-                             m_viewport.width/5, m_viewport.height,
+    m_fontManager->renderLine(RG_FONT_SMALL, "RAM Load", 0, 0, m_viewport.width/5, m_viewport.height,
                              RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT, 10);
-    m_fontManager->renderLine(RG_FONT_SMALL, "100%",
-                             0, 0,
-                             m_viewport.width/5, m_viewport.height,
+    m_fontManager->renderLine(RG_FONT_SMALL, "100%", 0, 0, m_viewport.width/5, m_viewport.height,
                              RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
 
 }
@@ -165,7 +147,7 @@ void NetGraphWidget::draw() const {
 
         const auto maxValMB{ std::max(maxUpValMB, maxDownValMB) };
 
-        // TODO VBO these!
+        // #TODO VBO these!
         // Draw the download graph
         glBegin(GL_LINE_STRIP);
         {
@@ -220,44 +202,40 @@ void NetGraphWidget::draw() const {
         glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
         const auto maxVal{ m_netMeasure->getMaxDownValue() };
-        std::string suffix{ "B" };
-        if (maxVal > 1000 * 1000) {
-            suffix = "MB";
-        } else if (maxVal > 1000) {
-            suffix = "KB";
-        }
+
+        const std::string_view suffix = [maxVal]() {
+            if (maxVal > 1000 * 1000)
+                return "MB";
+            else if (maxVal > 1000)
+                return "KB";
+            else
+                return "B";
+        }(); // Call immediately
 
         /* Print the maximum throughput as the scale at the top of the graph */
         if (suffix == "MB") {
             char buff[8];
             snprintf(buff, sizeof(buff), "%5.1fMB",
                      maxVal / static_cast<float>(MB));
-            m_fontManager->renderLine(RG_FONT_SMALL, buff, 0, 0,
-                                      m_viewport.width / 5, m_viewport.height,
-                                      RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
+            m_fontManager->renderLine(RG_FONT_SMALL, buff, 0, 0, m_viewport.width / 5, m_viewport.height,
+                                      RG_ALIGN_TOP | RG_ALIGN_LEFT);
         } else if (suffix == "KB") {
             char buff[8];
             snprintf(buff, sizeof(buff), "%5.1fKB",
                      maxVal / static_cast<float>(KB));
-            m_fontManager->renderLine(RG_FONT_SMALL, buff, 0, 0,
-                                      m_viewport.width / 5, m_viewport.height,
-                                      RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
+            m_fontManager->renderLine(RG_FONT_SMALL, buff, 0, 0, m_viewport.width / 5, m_viewport.height,
+                                      RG_ALIGN_TOP | RG_ALIGN_LEFT);
         } else {
-            const auto top{ std::to_string(maxVal) + suffix };
             char buff[5];
             snprintf(buff, sizeof(buff), "%3lluB", maxVal);
-            m_fontManager->renderLine(RG_FONT_SMALL, buff, 0, 0,
-                                      m_viewport.width / 5, m_viewport.height,
-                                      RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
+            m_fontManager->renderLine(RG_FONT_SMALL, buff, 0, 0, m_viewport.width / 5, m_viewport.height,
+                                      RG_ALIGN_TOP | RG_ALIGN_LEFT);
         }
 
-        const auto bottom = std::string{ "0" + suffix };
-        m_fontManager->renderLine(RG_FONT_SMALL, bottom.c_str(), 0, 0,
-                                  m_viewport.width / 5, m_viewport.height,
-                                  RG_ALIGN_BOTTOM | RG_ALIGN_LEFT, 10);
-        m_fontManager->renderLine(RG_FONT_SMALL, "Down / Up", 0, 0,
-                                  m_viewport.width / 5, m_viewport.height,
-                                  RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT, 10);
+        m_fontManager->renderLine(RG_FONT_SMALL, "Down / Up", 0, 0, m_viewport.width / 5, m_viewport.height,
+                                  RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT);
+        m_fontManager->renderLine(RG_FONT_SMALL, "0B", 0, 0, m_viewport.width / 5, m_viewport.height,
+                                  RG_ALIGN_BOTTOM | RG_ALIGN_LEFT);
     }
 }
 

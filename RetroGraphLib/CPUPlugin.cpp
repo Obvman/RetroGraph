@@ -12,15 +12,11 @@ myGetCoreTempInfo GetCoreTempInfo;
 CPUPlugin::CPUPlugin() {
     m_libHandle = LoadLibrary("GetCoreTempInfo.dll");
 
-    if (!m_libHandle) {
-        fatalMessageBox("Could not load GetCoreTempInfo.dll");
-    }
+    RGASSERT(m_libHandle, "Could not load GetCoreTempInfo.dll");
 
     // Get the address of the GetCoreTempInfo function from the DLL
     GetCoreTempInfo = (myGetCoreTempInfo)GetProcAddress(m_libHandle, "fnGetCoreTempInfoAlt");
-    if (!GetCoreTempInfo) {
-        fatalMessageBox("Could not get function address from GetCoreTempInfo.dll");
-    }
+    RGASSERT(GetCoreTempInfo, "Could not get function address from GetCoreTempInfo.dll");
 
     // Fill the CORE_TEMP_SHARED_DATA struct with CPU stats from CoreTemp's
     // shared memory

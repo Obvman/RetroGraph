@@ -34,11 +34,8 @@ ProcessData::ProcessData(HANDLE pHandle, DWORD pID, const char* name) :
     updateMemCounters();
 
     // Get CPU time information for the process
-    if (!GetProcessTimes(m_pHandle, &m_creationTime, &m_exitTime,
-                         &m_kernelTime, &m_userTime)) {
-
-        fatalMessageBox("Failed to get process times.");
-    }
+    RGVERIFY(GetProcessTimes(m_pHandle, &m_creationTime, &m_exitTime, &m_kernelTime, &m_userTime),
+             "Failed to get process times.");
 
 }
 
@@ -58,13 +55,8 @@ void ProcessData::setTimes(const FILETIME& cTime, const FILETIME& eTime,
 }
 
 void ProcessData::updateMemCounters() {
-    if (!GetProcessMemoryInfo(m_pHandle, &m_memCounters,
-                              sizeof(decltype(m_memCounters)))) {
-
-        auto error{ GetLastError() };
-        fatalMessageBox("Failed to get process memory information. Error: " +
-                        std::to_string(error));
-    }
+    RGVERIFY(GetProcessMemoryInfo(m_pHandle, &m_memCounters, sizeof(m_memCounters)),
+             "Failed to get process memory information. Error: " + std::to_string(GetLastError()));
 }
 
 }

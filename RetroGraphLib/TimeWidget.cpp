@@ -52,38 +52,28 @@ void TimeWidget::draw() const {
         localtime_s(&t, &now);
         RGVERIFY(strftime(timeBuff, sizeof(timeBuff), "%T", &t) > 0, "strftime failed");
 
-        // Get font width in pixels for horizontal centering
-        m_fontManager->renderLine(RG_FONT_TIME, timeBuff, 0, midDivYPx,
-                                  m_viewport.width, m_viewport.height -
-                                  midDivYPx, RG_ALIGN_CENTERED_VERTICAL |
-                                  RG_ALIGN_CENTERED_HORIZONTAL);
+        m_fontManager->renderLine(RG_FONT_TIME, timeBuff, 0, midDivYPx, m_viewport.width, m_viewport.height - midDivYPx,
+                                  RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_CENTERED_HORIZONTAL);
 
         // Draw the year and month and day in bottom-middle
         char dateBuff[maxDateLen];
         RGVERIFY(strftime(dateBuff, sizeof(dateBuff), "%d %B", &t) > 0, "strftime failed");
         m_fontManager->renderLine(RG_FONT_STANDARD, dateBuff,
-                                  vpCoordsToPixels(leftDivX, m_viewport.width),
-                                  0, m_viewport.width/3, midDivYPx,
-                                  RG_ALIGN_BOTTOM |
-                                  RG_ALIGN_CENTERED_HORIZONTAL, 10, 15);
+                                  vpCoordsToPixels(leftDivX, m_viewport.width), 0, m_viewport.width/3, midDivYPx,
+                                  RG_ALIGN_BOTTOM | RG_ALIGN_CENTERED_HORIZONTAL, 10, 15);
 
         char dayBuff[maxDayLen];
         RGVERIFY(strftime(dayBuff, sizeof(dayBuff), "%A", &t) > 0, "strftime failed");
         m_fontManager->renderLine(RG_FONT_STANDARD_BOLD, dayBuff,
-                                  vpCoordsToPixels(leftDivX, m_viewport.width),
-                                  0, m_viewport.width/3, midDivYPx,
-                                  RG_ALIGN_TOP | RG_ALIGN_CENTERED_HORIZONTAL,
-                                  10, 15);
+                                  vpCoordsToPixels(leftDivX, m_viewport.width), 0, m_viewport.width/3, midDivYPx,
+                                  RG_ALIGN_TOP | RG_ALIGN_CENTERED_HORIZONTAL, 10, 15);
     }
 
     // Draw the uptime in bottom-left
     m_fontManager->renderLine(RG_FONT_STANDARD_BOLD, "Uptime", 0, 0,
-                              m_viewport.width/3, midDivYPx, RG_ALIGN_RIGHT |
-                              RG_ALIGN_TOP, 10, 15);
-    m_fontManager->renderLine(RG_FONT_STANDARD,
-                              m_cpuMeasure->getUptimeStr().c_str(), 0, 0,
-                              m_viewport.width/3, midDivYPx, RG_ALIGN_RIGHT |
-                              RG_ALIGN_BOTTOM, 10, 15);
+                              m_viewport.width/3, midDivYPx, RG_ALIGN_RIGHT | RG_ALIGN_TOP, 10, 15);
+    m_fontManager->renderLine(RG_FONT_STANDARD, m_cpuMeasure->getUptimeStr().c_str(),
+                              0, 0, m_viewport.width/3, midDivYPx, RG_ALIGN_RIGHT | RG_ALIGN_BOTTOM, 10, 15);
 
     // Draw network connection status in bottom-right
     {
@@ -93,18 +83,15 @@ void TimeWidget::draw() const {
         const auto renderWidth{ m_viewport.width - renderX };
         const auto renderHeight{ vpCoordsToPixels(midDivY, m_viewport.height) };
 
-        m_fontManager->renderLine(RG_FONT_STANDARD_BOLD, "Network", renderX,
-                                 renderY, renderWidth, renderHeight,
-                                 RG_ALIGN_LEFT | RG_ALIGN_TOP, 10, 15);
+        m_fontManager->renderLine(RG_FONT_STANDARD_BOLD, "Network", renderX, renderY, renderWidth, renderHeight,
+                                  RG_ALIGN_LEFT | RG_ALIGN_TOP, 10, 15);
 
         if (m_netMeasure->isConnected()) {
-            m_fontManager->renderLine(RG_FONT_STANDARD, "UP", renderX,
-                                     renderY, renderWidth, renderHeight,
-                                     RG_ALIGN_LEFT | RG_ALIGN_BOTTOM, 10, 15);
+            m_fontManager->renderLine(RG_FONT_STANDARD, "UP", renderX, renderY, renderWidth, renderHeight,
+                                      RG_ALIGN_LEFT | RG_ALIGN_BOTTOM, 10, 15);
         } else {
-            m_fontManager->renderLine(RG_FONT_STANDARD, "DOWN", renderX,
-                                     renderY, renderWidth, renderHeight,
-                                     RG_ALIGN_LEFT | RG_ALIGN_BOTTOM, 10, 15);
+            m_fontManager->renderLine(RG_FONT_STANDARD, "DOWN", renderX, renderY, renderWidth, renderHeight,
+                                      RG_ALIGN_LEFT | RG_ALIGN_BOTTOM, 10, 15);
         }
     }
 

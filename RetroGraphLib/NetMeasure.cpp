@@ -40,17 +40,13 @@ NetMeasure::NetMeasure() :
     m_downBytes.assign(dataSize, 0U);
     m_upBytes.assign(dataSize, 0U);
 
-    if (GetIfTable2(&m_table) != NO_ERROR) {
-        fatalMessageBox("GetIfTable failed");
-    }
+    RGVERIFY(GetIfTable2(&m_table) == NO_ERROR, "GetIfTable failed");
 
     /* Find and keep track of the entry for the most appropriate local network
      * interface
      */
     DWORD bestIfaceIndex;
-    if (GetBestInterface(INADDR_ANY, &bestIfaceIndex) != NO_ERROR) {
-        fatalMessageBox("Failed to get best interface");
-    }
+    RGVERIFY(GetBestInterface(INADDR_ANY, &bestIfaceIndex) == NO_ERROR, "Failed to get best interface");
 
     // Get the adapter struct that corresponds to the hard-coded adapter name
     for (auto i = size_t{ 0U }; i < m_table->NumEntries; ++i) {
@@ -61,9 +57,7 @@ NetMeasure::NetMeasure() :
         }
     }
 
-    if (!m_adapterEntry) {
-        fatalMessageBox("Failed to find adapter");
-    }
+    RGASSERT(m_adapterEntry, "Failed to find adapter");
 
     getDNSAndHostname();
     getMACAndLocalIP();
@@ -101,9 +95,8 @@ void NetMeasure::getMACAndLocalIP() {
         free(pAdapterInfo);
         pAdapterInfo = (IP_ADAPTER_INFO*)malloc(ulOutBufLen);
     }
-    if (GetAdaptersInfo(pAdapterInfo, &ulOutBufLen) != NO_ERROR) {
-        fatalMessageBox("Failed to get adapters info");
-    }
+
+    RGVERIFY(GetAdaptersInfo(pAdapterInfo, &ulOutBufLen) == NO_ERROR, "Failed to get adapters info");
 
     // Get the MAC address and LAN IP address of the main adapter
     if (GetAdaptersInfo(pAdapterInfo, &ulOutBufLen) == NO_ERROR) {
@@ -140,32 +133,27 @@ void NetMeasure::getMACAndLocalIP() {
             }
         }
     } else {
-        fatalMessageBox("GetAdaptersInfo failed");
+        RGERROR("GetAdaptersInfo failed");
     }
     free(pAdapterInfo);
 }
 
 void NetMeasure::getDNSAndHostname() {
     // Get DNS and Hostname
-    auto pFixedInfo{ (FIXED_INFO*)malloc(sizeof(FIXED_INFO)) };
-    if (!pFixedInfo) {
-        printf("Error allocating memory needed to call GetNetworkParams\n");
-    }
+    auto pFixedInfo{ static_cast<FIXED_INFO*>(malloc(sizeof(FIXED_INFO))) };
+    RGASSERT(pFixedInfo, "Error allocating memory needed to call GetNetworkParams\n");
+
     auto ulOutBufLen = ULONG{ sizeof(FIXED_INFO) };
 
     // Make an initial call to GetNetworkParams to get
     // the necessary size into the ulOutBufLen variable
     if (GetNetworkParams(pFixedInfo, &ulOutBufLen) == ERROR_BUFFER_OVERFLOW) {
         free(pFixedInfo);
-        pFixedInfo = (FIXED_INFO*)malloc(ulOutBufLen);
-        if (!pFixedInfo) {
-            fatalMessageBox("Error allocating memory needed to call GetNetworkParams\n");
-        }
+        pFixedInfo = static_cast<FIXED_INFO*>(malloc(ulOutBufLen));
+        RGASSERT(pFixedInfo, "Error allocating memory needed to call GetNetworkParams\n");
     }
 
-    if (GetNetworkParams(pFixedInfo, &ulOutBufLen) != NO_ERROR) {
-        fatalMessageBox("Failed to get network parameters");
-    }
+    RGVERIFY(GetNetworkParams(pFixedInfo, &ulOutBufLen) == NO_ERROR, "Failed to get network parameters");
 
     m_DNSIP = std::string{ pFixedInfo->DnsServerList.IpAddress.String };
     if (pFixedInfo->DnsServerList.Next) {
@@ -182,9 +170,7 @@ void NetMeasure::update(int ticks) {
     // one if so.
     if (ticksMatchSeconds(ticks, m_updateRates[1])) {
         DWORD bestIfaceIndex;
-        if (GetBestInterface(INADDR_ANY, &bestIfaceIndex) != NO_ERROR) {
-            fatalMessageBox("Failed to get best interface");
-        }
+        RGVERIFY(GetBestInterface(INADDR_ANY, &bestIfaceIndex) == NO_ERROR, "Failed to get best interface");
 
         if (bestIfaceIndex != m_adapterEntry->InterfaceIndex) {
             m_adapterEntry = &(m_table->Table[bestIfaceIndex]);
@@ -194,9 +180,7 @@ void NetMeasure::update(int ticks) {
     const auto oldDown{ m_adapterEntry->InOctets };
     const auto oldUp{ m_adapterEntry->OutOctets };
 
-    if (GetIfEntry2(m_adapterEntry) != NO_ERROR) {
-        fatalMessageBox("GetIfEntry2 failed");
-    }
+    RGVERIFY(GetIfEntry2(m_adapterEntry) == NO_ERROR, "GetIfEntry2 failed");
 
     m_downBytes[0] = m_adapterEntry->InOctets - oldDown;
     std::rotate(m_downBytes.begin(), m_downBytes.begin() + 1,

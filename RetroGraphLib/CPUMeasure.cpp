@@ -74,11 +74,8 @@ void CPUMeasure::refreshSettings() {
 }
 
 void CPUMeasure::updateCPUName() {
-    if (m_cpuName.empty() && m_coreTempPlugin.getCoreTempInfoSuccess()) {
-        m_cpuName = "CPU: ";
-        m_cpuName.append(m_coreTempPlugin.getCPUName());
-    }
-
+    if (m_cpuName.empty() && m_coreTempPlugin.getCoreTempInfoSuccess())
+        m_cpuName = "CPU: " + std::string{ m_coreTempPlugin.getCPUName() };
 }
 
 float CPUMeasure::getCPULoad() {
@@ -100,11 +97,9 @@ std::string CPUMeasure::getUptimeStr() const {
     const auto uptimeD{ (m_uptime / (1000 * 60 * 60 * 24)) };
 
     char buff[12];
-    if (snprintf(buff, sizeof(buff), "%02lld:%02lld:%02lld:%02lld",
-                 uptimeD.count(), uptimeH.count(), uptimeM.count(),
-                 uptimeS.count()) < 0) {
-        fatalMessageBox("snprintf() failed to copy uptime string");
-    }
+    RGVERIFY(snprintf(buff, sizeof(buff), "%02lld:%02lld:%02lld:%02lld",
+                      uptimeD.count(), uptimeH.count(), uptimeM.count(), uptimeS.count()) >= 0
+             , "snprintf() failed to copy uptime string");
 
     return std::string{ buff };
 }

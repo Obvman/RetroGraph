@@ -173,17 +173,15 @@ void WidgetContainer::setChildViewports(const Viewport & vp, WidgetPosition pos)
                 break;
             }
             case ContainerType::Single:
-                if (numWidgets > 1)
-                    fatalMessageBox("Attempting to place too many widgets in the same position");
+                RGASSERT(numWidgets <= 1, "Attempting to place too many widgets in the same position");
                 m_children[i]->setViewport(m_viewport);
                 break;
             case ContainerType::Mini:
-                if (numWidgets > 1)
-                    fatalMessageBox("Attempting to place too many widgets in the same position");
+                RGASSERT(numWidgets <= 1, "Attempting to place too many widgets in the same position");
                 m_children[i]->setViewport(getMiniViewport(pos));
                 break;
             default:
-                fatalMessageBox("Invalid ContainerType specified");
+                RGERROR("Invalid ContainerType specified");
                 break;
         }
     }
@@ -215,9 +213,9 @@ Viewport WidgetContainer::getMiniViewport(WidgetPosition pos) const {
                      miniWidgetWidth,
                      miniWidgetHeight };
         default:
-            fatalMessageBox("Invalid mini viewport position");
-            return m_viewport;
+            RGERROR("Invalid mini viewport position");
     }
+    return Viewport{};
 }
 
 ContainerType WidgetContainer::getFillTypeFromPosition(WidgetPosition p) const {

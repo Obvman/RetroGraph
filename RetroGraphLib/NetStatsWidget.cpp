@@ -21,15 +21,16 @@ NetStatsWidget::NetStatsWidget(const FontManager* fontManager, const RetroGraph&
 }
 
 void NetStatsWidget::draw() const {
-    auto statsStrings{ m_statsStrings };
-    std::string state{ (m_netMeasure->isConnected() ? "Up" : "Down") };
-    statsStrings.emplace_back("Connection Status: " + state);
+    std::vector<std::string_view> statsStrings{};
+    for (const auto& str : m_statsStrings)
+        statsStrings.push_back(str);
+
+    const auto state = std::string{ "Connection Status: " } + (m_netMeasure->isConnected() ? "Up" : "Down");
+    statsStrings.push_back(state);
 
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-    m_fontManager->renderLines(RG_FONT_STANDARD, statsStrings, 0, 0,
-                               m_viewport.width, m_viewport.height,
-                               RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL,
-                               15, 10);
+    m_fontManager->renderLines(RG_FONT_STANDARD, statsStrings, 0, 0, m_viewport.width, m_viewport.height,
+                               RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL, 15, 10);
 }
 
 }

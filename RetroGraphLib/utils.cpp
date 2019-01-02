@@ -15,6 +15,8 @@ void showMessageBox(std::string_view s) {
 
 void fatalMessageBox(std::string_view s) {
     showMessageBox(s);
+    if constexpr (debugMode)
+        DebugBreak();
     throw std::runtime_error(std::string{ s });
 }
 
