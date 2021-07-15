@@ -52,6 +52,7 @@ void UserSettings::readConfig() {
 
 void UserSettings::readMembers(const INIReader& reader) {
     m_settings["Application.AutoReadConfig"]                   = reader.GetBoolean("Application",          "AutoReadConfig", true);
+    m_settings["Application.EnableWebClient"]                  = reader.GetBoolean("Application",          "EnableWebClient", false);
     m_settings["Window.Monitor"]                               = reader.GetInteger("Window",               "Monitor", 0);
     m_settings["Window.WidgetBackground"]                      = reader.GetBoolean("Window",               "WidgetBackground", true);
     m_settings["Network.PingServer"]                           = reader.Get       ("Network",              "PingServer", "http://www.google.com/");

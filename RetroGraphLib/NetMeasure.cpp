@@ -30,15 +30,15 @@
 
 namespace rg {
 
-NetMeasure::NetMeasure() :
-    Measure{ 2U, 30U },
-    m_pingServer{ UserSettings::inst().getVal<std::string>("Network.PingServer") },
-    m_pingFreqMs{ UserSettings::inst().getVal<int>("Network.PingFrequency") },
-    dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-NetGraph.NumUsageSamples") } {
+NetMeasure::NetMeasure()
+    : Measure{ 2, 30 }
+    , m_pingServer{ UserSettings::inst().getVal<std::string>("Network.PingServer") }
+    , m_pingFreqSec{ UserSettings::inst().getVal<int>("Network.PingFrequency") }
+    , dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-NetGraph.NumUsageSamples") } {
 
     // Fill data vectors with default values
-    m_downBytes.assign(dataSize, 0U);
-    m_upBytes.assign(dataSize, 0U);
+    m_downBytes.assign(dataSize, 0);
+    m_upBytes.assign(dataSize, 0);
 
     RGVERIFY(GetIfTable2(&m_table) == NO_ERROR, "GetIfTable failed");
 
@@ -73,7 +73,7 @@ void NetMeasure::refreshSettings() {
     destroyNetworkThread();
 
     m_pingServer = UserSettings::inst().getVal<std::string>("Network.PingServer");
-    m_pingFreqMs = UserSettings::inst().getVal<int>("Network.PingFrequency");
+    m_pingFreqSec = UserSettings::inst().getVal<int>("Network.PingFrequency");
 
     const size_t newDataSize = UserSettings::inst().getVal<int, size_t>("Widgets-NetGraph.NumUsageSamples");
     if (dataSize != newDataSize) {
@@ -86,7 +86,7 @@ void NetMeasure::refreshSettings() {
 }
 
 void NetMeasure::getMACAndLocalIP() {
-    auto pAdapterInfo{ (IP_ADAPTER_INFO*)malloc(sizeof(IP_ADAPTER_INFO)) };
+    auto pAdapterInfo{ static_cast<IP_ADAPTER_INFO*>(malloc(sizeof(IP_ADAPTER_INFO))) };
     auto ulOutBufLen = ULONG{ sizeof(IP_ADAPTER_INFO) };
 
     // Make initial call to find the required buffer size, then reallocate
@@ -140,7 +140,7 @@ void NetMeasure::getMACAndLocalIP() {
 
 void NetMeasure::getDNSAndHostname() {
     // Get DNS and Hostname
-    auto pFixedInfo{ static_cast<FIXED_INFO*>(malloc(sizeof(FIXED_INFO))) };
+    auto * pFixedInfo{ static_cast<FIXED_INFO*>(malloc(sizeof(FIXED_INFO))) };
     RGASSERT(pFixedInfo, "Error allocating memory needed to call GetNetworkParams\n");
 
     auto ulOutBufLen = ULONG{ sizeof(FIXED_INFO) };
@@ -170,7 +170,10 @@ void NetMeasure::update(int ticks) {
     // one if so.
     if (ticksMatchSeconds(ticks, m_updateRates[1])) {
         DWORD bestIfaceIndex;
-        RGVERIFY(GetBestInterface(INADDR_ANY, &bestIfaceIndex) == NO_ERROR, "Failed to get best interface");
+        if (GetBestInterface(INADDR_ANY, &bestIfaceIndex) != NO_ERROR) {
+            RGERROR("Failed to get best interface");
+            return;
+        }
 
         if (bestIfaceIndex != m_adapterEntry->InterfaceIndex) {
             m_adapterEntry = &(m_table->Table[bestIfaceIndex]);
@@ -217,7 +220,7 @@ void NetMeasure::startNetworkThread() {
                 InternetCheckConnectionA(m_pingServer.c_str(), FLAG_ICC_FORCE_CONNECTION, 0)
             ));
 
-            cv.wait_for(lg, 1000ms * m_pingFreqMs, [&]() { return !m_threadRunning.load(); });
+            cv.wait_for(lg, 1000ms * m_pingFreqSec, [&]() { return !m_threadRunning.load(); });
         }
     }};
 

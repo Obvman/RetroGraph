@@ -49,6 +49,7 @@ RetroGraph::RetroGraph(HINSTANCE hInstance)
     , m_window{ this, hInstance, UserSettings::inst().getVal<int>("Window.Monitor") }
     , m_widgetVisibilities( Widgets::NumWidgets )
     , m_renderer{ std::make_unique<Renderer>(m_window, *this) }
+    , m_dataClient{}
     , m_dependencyMap{
         { MTypes::AnimationState, { Widgets::Main } },
         { MTypes::Music,   { Widgets::Music } },
@@ -61,8 +62,10 @@ RetroGraph::RetroGraph(HINSTANCE hInstance)
         { MTypes::Drive,   { Widgets::HDD } },
         { MTypes::SystemInformation, {} },
         { MTypes::Display, {} }, // Does have dependent widgets, but must not be destroyed
-    } 
-    {
+    } {
+
+    if (UserSettings::inst().getVal<bool>("Application.EnableWebClient"))
+        m_dataClient.emplace(DataClient{});
 
     updateWidgetVisibilities();
 
@@ -73,7 +76,7 @@ RetroGraph::RetroGraph(HINSTANCE hInstance)
 }
 
 RetroGraph::~RetroGraph() {
-    // Default constructor. Must be declared in source file to allow destruction of unique_ptrs
+    // Default destructor. Must be declared in source file to allow destruction of unique_ptrs
 }
 
 void RetroGraph::update(int ticks) {

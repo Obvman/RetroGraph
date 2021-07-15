@@ -63,7 +63,7 @@ uint64_t subtractTimes(const FILETIME& ftA, const FILETIME& ftB) {
 
 const std::string getExePath() {
     WCHAR fBuff[MAX_PATH];
-    GetModuleFileNameW(nullptr, fBuff, sizeof(fBuff));
+    GetModuleFileNameW(nullptr, fBuff, MAX_PATH);
     PathCchRemoveFileSpec(fBuff, sizeof(fBuff));
 
     std::wstring path{ fBuff };

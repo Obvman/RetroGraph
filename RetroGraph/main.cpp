@@ -41,7 +41,7 @@ void mainLoop(rg::RetroGraph& retroGraph) {
     auto lastTick{ ticks };
 
     // Enter main update/draw loop
-    while(retroGraph.isRunning()) {
+    while (retroGraph.isRunning()) {
         const auto currTime{ duration_cast<milliseconds>(
                                   system_clock::now().time_since_epoch()
                              ).count() };
@@ -68,7 +68,7 @@ void mainLoop(rg::RetroGraph& retroGraph) {
             ++ticks;
         }
 
-        // Keep the ticks counter range 1 - maxTicks to prevent overflow
+        // Keep the ticks counter in range [1, maxTicks] to prevent overflow
         if (ticks > rg::maxTicks)
             ticks = 1;
 

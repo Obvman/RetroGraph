@@ -6,11 +6,14 @@
 #include <memory>
 #include <map>
 #include <string>
+#include <optional>
 
 #include "Window.h"
 #include "Measure.h"
 #include "UserSettings.h"
 #include "FPSLimiter.h"
+#include "DataClient.h"
+
 namespace rg {
 
 class Renderer;
@@ -77,6 +80,8 @@ private:
     Window m_window;
 
     std::unique_ptr<Renderer> m_renderer;
+
+    std::optional<DataClient> m_dataClient;
 
     // Specifies which widgets rely on which measures.
     // IMPORTANT: Must be updated everytime we modify widgets or their observer pointers to measures!

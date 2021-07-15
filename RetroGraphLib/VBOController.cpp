@@ -12,7 +12,8 @@ namespace rg {
 
 VBOController::VBOController()
     : m_graphLineVBOData{}
-    , m_particleLineShader{ "test" } {
+    , m_particleLineShader{ "test" }
+    , m_graphGridIndicesID{ 0 } {
 
     RGASSERT(m_particleLineShader, "Failed to init shader\n");
 

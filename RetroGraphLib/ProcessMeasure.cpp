@@ -283,9 +283,9 @@ void ProcessMeasure::populateList() {
 
 void ProcessMeasure::detectNewProcesses() {
     // We need to allocate a large buffer because the process list can be large.
-    PVOID buffer{ VirtualAlloc(nullptr, 1024*1024,
-                        MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE) };
-    RGASSERT(buffer, "Unable to allocate memory for process list " + GetLastError());
+    // #TODO this can throw an access violation ??
+    PVOID buffer{ VirtualAlloc(nullptr, 1024*1024, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE) };
+    RGASSERT(buffer, std::string{ "Unable to allocate memory for process list " } + std::to_string(GetLastError()));
 
     PSYSTEM_PROCESS_INFO spi{ static_cast<PSYSTEM_PROCESS_INFO>(buffer) };
 

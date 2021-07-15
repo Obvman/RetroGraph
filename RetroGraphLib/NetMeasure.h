@@ -29,10 +29,10 @@ public:
 
     void refreshSettings() override;
 
-    uint64_t getMaxDownValue() const { return m_downMaxVal; }
-    uint64_t getMaxUpValue() const { return m_upMaxVal; }
-    const std::vector<uint64_t>& getDownData() const { return m_downBytes; }
-    const std::vector<uint64_t>& getUpData() const { return m_upBytes; }
+    int64_t getMaxDownValue() const { return m_downMaxVal; }
+    int64_t getMaxUpValue() const { return m_upMaxVal; }
+    const std::vector<int64_t>& getDownData() const { return m_downBytes; }
+    const std::vector<int64_t>& getUpData() const { return m_upBytes; }
     const std::string& getDNS() const { return m_DNSIP; }
     const std::string& getHostname() const { return m_hostname; }
     const std::string& getAdapterMAC() const { return m_mainAdapterMAC; }
@@ -57,7 +57,7 @@ private:
     std::string m_mainAdapterIP{ "0.0.0.0" };
 
     std::string m_pingServer{ "" };
-    int m_pingFreqMs{ 0U };
+    int m_pingFreqSec{ 0U };
 
     std::condition_variable cv;
     std::mutex m;
@@ -65,11 +65,11 @@ private:
     std::atomic<bool> m_threadRunning{ false };
     std::thread m_netConnectionThread{ };
 
-    uint64_t m_downMaxVal{ 10U * GB };
-    uint64_t m_upMaxVal{ 10U * GB };
+    int64_t m_downMaxVal{ 10U * GB };
+    int64_t m_upMaxVal{ 10U * GB };
     size_t dataSize{ 40U };
-    std::vector<uint64_t> m_downBytes{ };
-    std::vector<uint64_t> m_upBytes{ };
+    std::vector<int64_t> m_downBytes{ };
+    std::vector<int64_t> m_upBytes{ };
 };
 
 } // namespace rg

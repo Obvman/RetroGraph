@@ -9,22 +9,26 @@ namespace rg {
 typedef bool (WINAPI *myGetCoreTempInfo)(CORE_TEMP_SHARED_DATA* pData);
 myGetCoreTempInfo GetCoreTempInfo;
 
-CPUPlugin::CPUPlugin() {
-    m_libHandle = LoadLibrary("GetCoreTempInfo.dll");
+CPUPlugin::CPUPlugin() : m_libHandle{ LoadLibrary("GetCoreTempInfo.dll") } {
 
-    RGASSERT(m_libHandle, "Could not load GetCoreTempInfo.dll");
-
-    // Get the address of the GetCoreTempInfo function from the DLL
-    GetCoreTempInfo = (myGetCoreTempInfo)GetProcAddress(m_libHandle, "fnGetCoreTempInfoAlt");
-    RGASSERT(GetCoreTempInfo, "Could not get function address from GetCoreTempInfo.dll");
-
-    // Fill the CORE_TEMP_SHARED_DATA struct with CPU stats from CoreTemp's
-    // shared memory
-    m_getCoreTempInfoSuccess = GetCoreTempInfo(&m_ctData);
+	if (m_libHandle) {
+		// Get the address of the GetCoreTempInfo function from the DLL
+		GetCoreTempInfo = (myGetCoreTempInfo)GetProcAddress(m_libHandle, "fnGetCoreTempInfoAlt");
+		if (GetCoreTempInfo) {
+			// Fill the CORE_TEMP_SHARED_DATA struct with CPU stats from CoreTemp's
+			// shared memory
+			m_getCoreTempInfoSuccess = GetCoreTempInfo(&m_ctData);
+		}
+		else
+			RGERROR("Could not get function address from GetCoreTempInfo.dll");
+	}
+	else
+		RGERROR("Could not load GetCoreTempInfo.dll");
 }
 
 CPUPlugin::~CPUPlugin() noexcept {
-    FreeLibrary(m_libHandle);
+	if (m_libHandle)
+		FreeLibrary(m_libHandle);
 }
 
 void CPUPlugin::update() {

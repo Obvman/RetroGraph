@@ -110,19 +110,19 @@ T strToNum(std::string_view str) {
 // Throws error if expr is false
 inline void rgAssert(bool expr, std::string_view str) {
     if (!expr)
-        fatalMessageBox(str);
+        showMessageBox(str);
 }
 
 // Throws error
 inline void rgError(std::string_view str) {
-    fatalMessageBox(str);
+    showMessageBox(str);
 }
 
 // Throws error if expr is false. Always evaluates expr - even in release mode
 inline void rgVerify(bool expr [[maybe_unused]], std::string_view str[[maybe_unused]]) {
     if constexpr (debugMode)
         if (!expr)
-            fatalMessageBox(str);
+            showMessageBox(str);
 }
 
 // Debug Assertions
