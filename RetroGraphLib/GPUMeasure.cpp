@@ -19,8 +19,7 @@ NvAPI_QueryInterface_t NvAPI_QueryInterface{ nullptr };
 NvAPI_GPU_GetUsages_t NvAPI_GPU_GetUsages{ nullptr };
 
 GPUMeasure::GPUMeasure()
-        : Measure{ 2U }
-        , dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-GPUGraph.NumUsageSamples") } {
+        : dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-GPUGraph.NumUsageSamples") } {
 
     m_usageData.assign(dataSize, 0.0f);
 
@@ -93,7 +92,7 @@ float GPUMeasure::getMemUsagePercent() const {
 
 void GPUMeasure::updateGpuTemp() {
     const auto result{ NvAPI_GPU_GetThermalSettings(m_gpuHandle, NVAPI_THERMAL_TARGET_NONE, &m_thermalSettings) };
-    RGASSERT(result == NVAPI_OK, "Failed to get thermal information from NVAPI: " + std::to_string(result));
+    RGASSERT(result == NVAPI_OK, std::format("Failed to get thermal information from NVAPI: {}", static_cast<int>(result)));
     m_currentTemp = m_thermalSettings.sensor[0].currentTemp;
 }
 
@@ -109,7 +108,7 @@ NvPhysicalGpuHandle GPUMeasure::getGpuHandle() const {
 
 void GPUMeasure::getClockFrequencies() {
     const auto result{ NvAPI_GPU_GetAllClockFrequencies(m_gpuHandle, &m_clockFreqs) };
-    RGASSERT(result == NVAPI_OK, "Failed to get GPU clock frequencies %d\n" + std::to_string(result));
+    RGASSERT(result == NVAPI_OK, std::format("Failed to get GPU clock frequencies %d\n", static_cast<int>(result)));
 
     m_graphicsClock = m_clockFreqs.domain[NVAPI_GPU_PUBLIC_CLOCK_GRAPHICS].frequency;
     m_memoryClock = m_clockFreqs.domain[NVAPI_GPU_PUBLIC_CLOCK_MEMORY].frequency;
@@ -125,10 +124,6 @@ void GPUMeasure::getMemInformation() {
 void GPUMeasure::getGpuUsage() {
     RGVERIFY(NvAPI_GPU_GetDynamicPstatesInfoEx(m_gpuHandle, &m_pStateInfo) == NVAPI_OK, "Failed to get GPU usage percentage");
     m_gpuUsage = m_pStateInfo.utilization[NVAPI_GPU_UTILIZATION_DOMAIN_GPU].percentage;
-}
-
-bool GPUMeasure::shouldUpdate(int ticks) const {
-    return m_isEnabled && ticksMatchRate(ticks, m_updateRates.front());
 }
 
 }

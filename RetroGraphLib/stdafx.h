@@ -28,6 +28,7 @@
 #include <algorithm>
 #include <array>
 #include <atomic>
+#include <concepts>
 #include <chrono>
 #include <charconv>
 #include <fstream>
@@ -61,8 +62,8 @@
 
 namespace rg {
 #ifdef _DEBUG
-    constexpr auto debugMode = bool{ true };
+constexpr auto debugMode = bool{ true };
 #else
-    constexpr auto debugMode = bool{ false };
+constexpr auto debugMode = bool{ false };
 #endif
 }

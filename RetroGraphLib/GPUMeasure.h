@@ -51,8 +51,6 @@ private:
     void getMemInformation();
     void getGpuUsage();
 
-    bool shouldUpdate(int ticks) const override;
-
     bool m_isEnabled{ true };
 
     std::string m_driverVersion{ "" };

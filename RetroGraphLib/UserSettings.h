@@ -29,6 +29,7 @@ public:
     UserSettings& operator=(UserSettings&&)      = delete;
 
     template<typename T, typename CastT = T>
+    requires std::convertible_to<T, CastT>
     auto getVal(std::string_view settingName) {
         RGASSERT (m_settings.count(settingName) != 0, "Failed to find setting " + std::string{ settingName });
 
@@ -40,8 +41,8 @@ public:
         }
     }
 
-    bool isVisible(Widgets w) const { return m_widgetVisibilities[w]; }
-    WidgetPosition getWidgetPosition(Widgets w) const { return m_widgetPositions[w]; }
+    bool isVisible(Widgets w) const { return m_widgetVisibilities[static_cast<int>(w)]; }
+    WidgetPosition getWidgetPosition(Widgets w) const { return m_widgetPositions[static_cast<int>(w)]; }
 
     void toggleWidgetBackgroundVisible() { m_settings["Window.WidgetBackground"] = 
         !std::get<bool>(m_settings["Window.WidgetBackground"]); }

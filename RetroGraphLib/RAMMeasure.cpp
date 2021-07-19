@@ -13,9 +13,8 @@
 
 namespace rg {
 
-RAMMeasure::RAMMeasure() :
-    Measure{ 2 },
-    dataSize{ UserSettings::inst().getVal<int>("Widgets-RAMGraph.NumUsageSamples") } {
+RAMMeasure::RAMMeasure()
+    : dataSize{ UserSettings::inst().getVal<int>("Widgets-RAMGraph.NumUsageSamples") } {
 
     // Fill the memory stat struct with system information
     m_memStatus.dwLength = sizeof(m_memStatus);
@@ -29,8 +28,7 @@ void RAMMeasure::update(int) {
 
     // Add value to the list of load values and shift the list left
     m_usageData.front() = getLoadPercentagef();
-    std::rotate(m_usageData.begin(), m_usageData.begin() + 1,
-                m_usageData.end());
+    std::rotate(m_usageData.begin(), m_usageData.begin() + 1, m_usageData.end());
 }
 
 void RAMMeasure::refreshSettings() {
@@ -40,10 +38,6 @@ void RAMMeasure::refreshSettings() {
 
     m_usageData.assign(newDataSize, 0.0f);
     dataSize = newDataSize;
-}
-
-bool RAMMeasure::shouldUpdate(int ticks) const {
-    return ticksMatchRate(ticks, m_updateRates.front());
 }
 
 float RAMMeasure::getLoadPercentagef() const {

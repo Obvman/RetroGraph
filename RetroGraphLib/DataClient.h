@@ -10,11 +10,11 @@ namespace rg {
 
 class DataClient {
 public:
-    DataClient();
-    DataClient(const DataClient&) { RGERROR("Not Implemented"); }
-    DataClient& operator=(const DataClient&) { RGERROR("Not Implemented"); }
-    DataClient(DataClient&&);
-    DataClient& operator=(DataClient&&);
+    DataClient() noexcept;
+    DataClient(const DataClient&) noexcept { RGERROR("Not Implemented"); }
+    DataClient& operator=(const DataClient&) noexcept { RGERROR("Not Implemented"); }
+    DataClient(DataClient&&) noexcept;
+    DataClient& operator=(DataClient&&) noexcept;
     ~DataClient();
 
 private:

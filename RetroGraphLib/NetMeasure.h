@@ -39,9 +39,8 @@ public:
     const std::string& getAdapterIP() const { return m_mainAdapterIP; }
     bool isConnected() const;
     void setIsConnected(bool b);
-private:
-    bool shouldUpdate(int ticks) const override;
 
+private:
     void startNetworkThread();
     void destroyNetworkThread();
 

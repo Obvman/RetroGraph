@@ -16,33 +16,14 @@ constexpr auto maxVolumeNameSize = int{ 64U };
 /* Per drive data storage container */
 class DriveInfo {
 public:
-    DriveInfo(char _driveLetter, uint64_t initFreeBytes, uint64_t totalBytes,
-              const char* volumeName) :
-            driveLetter{ _driveLetter },
-            totalFreeBytes{ initFreeBytes },
-            totalBytes{ totalBytes },
-            volumeName{ volumeName },
-            capacityStr{ "" } {
-
-        updateCapacityStr();
-    }
-
+    DriveInfo(char _driveLetter, uint64_t initFreeBytes, uint64_t totalBytes, const char* volumeName);
     ~DriveInfo() noexcept = default;
     DriveInfo(const DriveInfo&) = default;
     DriveInfo& operator=(const DriveInfo&) = default;
     DriveInfo(DriveInfo&&) = default;
     DriveInfo& operator=(DriveInfo&&) = default;
 
-    void updateCapacityStr() {
-        const auto capacity{ bToGB(totalBytes) };
-        if (capacity < 1000) {
-            capacityStr = std::to_string(capacity) + "GB";
-        } else {
-            char buff[6];
-            snprintf(buff, sizeof(buff), "%.1fTB", capacity / 1024.0f);
-            capacityStr = buff;
-        }
-    }
+    void updateCapacityStr();
 
     char driveLetter{ 'A' };
     uint64_t totalFreeBytes{ 0U };

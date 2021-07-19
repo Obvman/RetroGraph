@@ -29,40 +29,40 @@ void Widget::setVisibility(bool b) {
 // static
 std::string Widget::widgetTypeToStr(Widgets w) {
     switch (w) {
-        case ProcessRAM:
+        case Widgets::ProcessRAM:
             return "ProcessRAM";
             break;
-        case ProcessCPU:
+        case Widgets::ProcessCPU:
             return "ProcessCPU";
             break;
-        case Time:
+        case Widgets::Time:
             return "Time";
             break;
-        case SystemStats:
+        case Widgets::SystemStats:
             return "SystemStats";
             break;
-        case Music:
+        case Widgets::Music:
             return "Music";
             break;
-        case CPUStats:
+        case Widgets::CPUStats:
             return "CPUStats";
             break;
-        case HDD:
+        case Widgets::HDD:
             return "HDD";
             break;
-        case Main:
+        case Widgets::Main:
             return "Main";
             break;
-        case CPUGraph:
+        case Widgets::CPUGraph:
             return "CPUGraph";
             break;
-        case RAMGraph:
+        case Widgets::RAMGraph:
             return "RAMGraph";
             break;
-        case NetGraph:
+        case Widgets::NetGraph:
             return "NetGraph";
             break;
-        case FPS:
+        case Widgets::FPS:
             return "FPS";
             break;
         default:

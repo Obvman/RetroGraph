@@ -6,7 +6,7 @@ namespace rg {
 
 static std::mutex m;
 
-DataClient::DataClient() {
+DataClient::DataClient() noexcept {
     startNetworkThread();
 }
 
@@ -14,7 +14,7 @@ DataClient::~DataClient() {
     destroyListenThread();
 }
 
-DataClient::DataClient(DataClient&& other) 
+DataClient::DataClient(DataClient&& other)  noexcept
     : cv{}
     , m_threadRunning{ other.m_threadRunning.load() }
     , m_listenThread{  }
@@ -25,7 +25,7 @@ DataClient::DataClient(DataClient&& other)
     other.m_threadRunning.store(false);
 }
 
-DataClient& DataClient::operator=(DataClient&& other) {
+DataClient& DataClient::operator=(DataClient&& other) noexcept {
     if (this != &other) {
         m_threadRunning = other.m_threadRunning.load();
         m_listenThread = std::move(other.m_listenThread);

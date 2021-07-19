@@ -97,27 +97,29 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPa
         case WM_NOTIFY_RG_TRAY:
             handleTrayMessage(hWnd, wParam, lParam);
             break;
-        case WM_COMMAND:
+        case WM_COMMAND: {
             switch (LOWORD(wParam)) {
-                case ID_EXIT:
-                    SendMessage(hWnd, WM_QUIT, wParam, lParam);
-                    break;
-                case ID_SEND_TO_BACK:
-                    sendToBack();
-                    break;
-                case ID_RESET_POSITION: {
-                    const auto& md{ m_monitors->getMonitorData()[m_currMonitor] };
-                    SetWindowPos(hWnd, HWND_TOPMOST, md.x, md.y, md.width, md.height, 0);
-                    break;
-                }
-                case ID_SET_WIDGET_BG:
-                    UserSettings::inst().toggleWidgetBackgroundVisible();
-                    break;
-                default:
-                    // Default case handles monitor selection list
-                    changeMonitor(hWnd, LOWORD(wParam) - ID_CHANGE_DISPLAY_MONITOR);
-                    break;
+				case ID_EXIT:
+					SendMessage(hWnd, WM_QUIT, wParam, lParam);
+					break;
+				case ID_SEND_TO_BACK:
+					sendToBack();
+					break;
+				case ID_RESET_POSITION: {
+					const auto& md{ m_monitors->getMonitorData()[m_currMonitor] };
+					SetWindowPos(hWnd, HWND_TOPMOST, md.x, md.y, md.width, md.height, 0);
+					break;
+				}
+				case ID_SET_WIDGET_BG:
+					UserSettings::inst().toggleWidgetBackgroundVisible();
+					break;
+				default:
+					// Default case handles monitor selection list
+					changeMonitor(hWnd, LOWORD(wParam) - ID_CHANGE_DISPLAY_MONITOR);
+					break;
             }
+            break;
+        }
         case WM_CONTEXTMENU: {
             int contextSpawnX{ LOWORD(lParam) };
             int contextSpawnY{ HIWORD(lParam) };
@@ -283,12 +285,6 @@ void Window::createRClickMenu(HWND hWnd) {
 }
 
 void Window::handleClick(DWORD clickX, DWORD clickY) {
-    // Check if a media control was clicked and handle it. If one was clicked, 
-    // then don't continue with the dragging checks.
-    if (m_retroGraph->getMusicMeasure().handleClick(clickX, clickY)) {
-        return;
-    }
-
     // Origin is at top left for click coords, so convert to bottom left
     clickY = m_height - clickY;
 
@@ -409,7 +405,7 @@ void Window::initOpenGL() {
     glewInit();
 
     // Make dummy command line arguments for glutInit
-    char* gargv[1] = {""};
+    char* gargv[1] = { '\0' };
     int gargc{ 1 };
     glutInit(&gargc, gargv);
 
@@ -469,7 +465,10 @@ bool Window::createHGLRC() {
     // Display window at the desktop layer on startup
     sendToBack();
 
-    RGASSERT(m_hWndMain, "CreateWindowEx - failed");
+    if (!m_hWndMain) {
+        RGERROR("CreateWindowEx - failed");
+        return false;
+    }
 
     // Make window transparent via dwm
     const auto hRgn{ CreateRectRgn(0, 0, -1, -1) };
@@ -518,6 +517,7 @@ bool Window::createHGLRC() {
             ReleaseDC(m_hWndMain, m_hdc);
             DestroyWindow(m_hWndMain);
             RGERROR("ChoosePixelFormat - failed");
+            return false;
         }
     } else {
         PixelFormat = m_arbMultisampleFormat;
@@ -530,6 +530,7 @@ bool Window::createHGLRC() {
         DestroyWindow(m_hWndMain);
         m_hWndMain = nullptr;
         RGERROR("SetPixelFormat - failed");
+        return false;
     }
 
     // Create an opengl context for the window
@@ -540,6 +541,7 @@ bool Window::createHGLRC() {
         DestroyWindow(m_hWndMain);
         m_hWndMain = nullptr;
         RGERROR("wglCreateContext - failed");
+        return false;
     }
 
     // Make the context the current one for the window
@@ -552,6 +554,7 @@ bool Window::createHGLRC() {
         m_hWndMain = nullptr;
 
         RGERROR("Failed to make current context with wglMakeCurrent");
+        return false;
     }
 
     // Once we've created the first window and found multisampling to be

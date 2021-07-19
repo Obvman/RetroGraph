@@ -11,9 +11,6 @@ Build script take platform/configuration arguments
 
 make particle line shader. for each vertex, send the position of that vertex's partner. Calculate position + transparency.
 
-BIG HITCHES EVERY 5 SECONDS
-	Music measure EnumWindows() every 5 seconds if the classname for the fubar title hasn't been set
-
 Enforce position restrictions on FPS/Graph/Main/CPUStats widgets
 
 implement 30 min work/rest timer
@@ -42,6 +39,7 @@ change font colour
 Music widget:
     Play/paused indication
     make song name 2 lines if it's too long
+	Interact with foobar: https://hydrogenaud.io/index.php?topic=84336.0
 
 retrograph debug performance stats (clocks per frame, RAM, etc)
 

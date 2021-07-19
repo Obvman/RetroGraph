@@ -19,7 +19,6 @@
 #include "MusicMeasure.h"
 #include "SystemMeasure.h"
 #include "AnimationState.h"
-#include "SystemInformationMeasure.h"
 #include "DisplayMeasure.h"
 
 namespace rg {
@@ -27,19 +26,18 @@ namespace rg {
 using MTypes = Measures::Types;
 
 auto RetroGraph::createMeasures() const {
-    decltype(m_measures) measureList( Measures::Types::NumMeasures );
+    decltype(m_measures) measureList( static_cast<int>(Measures::Types::NumMeasures) );
 
-    measureList[MTypes::CPU] =               std::make_unique<CPUMeasure>();
-    measureList[MTypes::GPU] =               std::make_unique<GPUMeasure>();
-    measureList[MTypes::RAM] =               std::make_unique<RAMMeasure>();
-    measureList[MTypes::Net] =               std::make_unique<NetMeasure>();
-    measureList[MTypes::Process] =           std::make_unique<ProcessMeasure>();
-    measureList[MTypes::Drive] =             std::make_unique<DriveMeasure>();
-    measureList[MTypes::Music] =             std::make_unique<MusicMeasure>(dynamic_cast<const ProcessMeasure&>(*measureList[MTypes::Process]));
-    measureList[MTypes::System] =            std::make_unique<SystemMeasure>();
-    measureList[MTypes::AnimationState] =    std::make_unique<AnimationState>();
-    measureList[MTypes::SystemInformation] = std::make_unique<SystemInformationMeasure>();
-    measureList[MTypes::Display] =           std::make_unique<DisplayMeasure>();
+    measureList[static_cast<int>(MTypes::CPU)] =               std::make_unique<CPUMeasure>();
+    measureList[static_cast<int>(MTypes::GPU)] =               std::make_unique<GPUMeasure>();
+    measureList[static_cast<int>(MTypes::RAM)] =               std::make_unique<RAMMeasure>();
+    measureList[static_cast<int>(MTypes::Net)] =               std::make_unique<NetMeasure>();
+    measureList[static_cast<int>(MTypes::Process)] =           std::make_unique<ProcessMeasure>();
+    measureList[static_cast<int>(MTypes::Drive)] =             std::make_unique<DriveMeasure>();
+    measureList[static_cast<int>(MTypes::Music)] =             std::make_unique<MusicMeasure>(dynamic_cast<const ProcessMeasure&>(*measureList[static_cast<int>(MTypes::Process)]));
+    measureList[static_cast<int>(MTypes::System)] =            std::make_unique<SystemMeasure>();
+    measureList[static_cast<int>(MTypes::AnimationState)] =    std::make_unique<AnimationState>();
+    measureList[static_cast<int>(MTypes::Display)] =           std::make_unique<DisplayMeasure>();
 
     return measureList;
 }
@@ -47,7 +45,7 @@ auto RetroGraph::createMeasures() const {
 RetroGraph::RetroGraph(HINSTANCE hInstance)
     : m_measures( createMeasures() )
     , m_window{ this, hInstance, UserSettings::inst().getVal<int>("Window.Monitor") }
-    , m_widgetVisibilities( Widgets::NumWidgets )
+    , m_widgetVisibilities( static_cast<int>(Widgets::NumWidgets) )
     , m_renderer{ std::make_unique<Renderer>(m_window, *this) }
     , m_dataClient{}
     , m_dependencyMap{
@@ -60,7 +58,6 @@ RetroGraph::RetroGraph(HINSTANCE hInstance)
         { MTypes::GPU,     { Widgets::GPUGraph} },
         { MTypes::RAM,     { Widgets::RAMGraph } },
         { MTypes::Drive,   { Widgets::HDD } },
-        { MTypes::SystemInformation, {} },
         { MTypes::Display, {} }, // Does have dependent widgets, but must not be destroyed
     } {
 
@@ -69,7 +66,7 @@ RetroGraph::RetroGraph(HINSTANCE hInstance)
 
     updateWidgetVisibilities();
 
-    checkDependencies();
+    cleanupUnusedMeasures();
 
     update(0);
     draw(0);
@@ -85,7 +82,7 @@ void RetroGraph::update(int ticks) {
     // Update with a tick offset so all measures don't update in the same
     // cycle and spike the CPU
     auto offset = int{ 0U };
-    for (auto i = size_t{ 0U }; i < MTypes::NumMeasures; ++i) {
+    for (auto i = size_t{ 0U }; i < static_cast<int>(MTypes::NumMeasures); ++i) {
         const auto& measurePtr{ m_measures[i] };
         if (measurePtr && measurePtr->shouldUpdate(ticks + ++offset)) {
             measurePtr->update(ticks + offset);
@@ -98,7 +95,7 @@ void RetroGraph::draw(int ticks) const {
     // Otherwise, we don't have to waste cycles swapping buffers when
     // the other measures update twice a second, so just draw at 2 FPS
     const auto framesPerSecond = int{ 
-        (m_widgetVisibilities[Widgets::Main]) ? getAnimationState().getAnimationFPS() : 2
+        (m_widgetVisibilities[static_cast<int>(Widgets::Main)]) ? getAnimationState().getAnimationFPS() : 2
     };
 
     m_renderer->draw(ticks, m_window, framesPerSecond);
@@ -132,9 +129,9 @@ void RetroGraph::refreshConfig(bool autoReadConfig) {
     updateWidgetVisibilities();
     for (auto i = size_t{ 0U }; i < m_widgetVisibilities.size(); ++i) {
         if (oldWidgetVisibilites[i] != m_widgetVisibilities[i]) {
-            checkDependencies();
+            cleanupUnusedMeasures();
             const auto w{ static_cast<Widgets>(i) };
-            m_renderer->setWidgetVisibility(w, m_widgetVisibilities[w]);
+            m_renderer->setWidgetVisibility(w, m_widgetVisibilities[static_cast<int>(w)]);
         }
     }
 
@@ -153,10 +150,10 @@ void RetroGraph::updateWindowSize(int width, int height) {
 }
 
 void RetroGraph::toggleWidget(Widgets w) {
-    m_widgetVisibilities[w] = !m_widgetVisibilities[w];
-    checkDependencies();
+    m_widgetVisibilities[static_cast<int>(w)] = !m_widgetVisibilities[static_cast<int>(w)];
+    cleanupUnusedMeasures();
 
-    m_renderer->setWidgetVisibility(w, m_widgetVisibilities[w]);
+    m_renderer->setWidgetVisibility(w, m_widgetVisibilities[static_cast<int>(w)]);
     m_renderer->setViewports(m_window.getWidth(), m_window.getHeight());
     m_renderer->draw(0, m_window, 1);
 }
@@ -166,40 +163,46 @@ void RetroGraph::shutdown() {
 }
 
 const CPUMeasure& RetroGraph::getCPUMeasure() const {
-    return dynamic_cast<const CPUMeasure&>(*m_measures[MTypes::CPU]); 
-}
-const GPUMeasure& RetroGraph::getGPUMeasure() const { 
-    return dynamic_cast<const GPUMeasure&>(*m_measures[MTypes::GPU]);
-}
-const RAMMeasure& RetroGraph::getRAMMeasure() const { 
-    return dynamic_cast<const RAMMeasure&>(*m_measures[MTypes::RAM]);
-}
-const NetMeasure& RetroGraph::getNetMeasure() const { 
-    return dynamic_cast<const NetMeasure&>(*m_measures[MTypes::Net]);
-}
-const ProcessMeasure& RetroGraph::getProcessMeasure() const { 
-    return dynamic_cast<const ProcessMeasure&>(*m_measures[MTypes::Process]);
-}
-const DriveMeasure& RetroGraph::getDriveMeasure() const { 
-    return dynamic_cast<const DriveMeasure&>(*m_measures[MTypes::Drive]);
-}
-const MusicMeasure& RetroGraph::getMusicMeasure() const { 
-    return dynamic_cast<const MusicMeasure&>(*m_measures[MTypes::Music]);
-}
-const SystemMeasure& RetroGraph::getSystemMeasure() const { 
-    return dynamic_cast<const SystemMeasure&>(*m_measures[MTypes::System]);
-}
-const AnimationState& RetroGraph::getAnimationState() const { 
-    return dynamic_cast<const AnimationState&>(*m_measures[MTypes::AnimationState]);
-}
-const DisplayMeasure & RetroGraph::getDisplayMeasure() const {
-    return dynamic_cast<const DisplayMeasure&>(*m_measures[MTypes::Display]);
-}
-const SystemInformationMeasure& RetroGraph::getSystemInformationMeasure() const { 
-    return dynamic_cast<const SystemInformationMeasure&>(*m_measures[MTypes::SystemInformation]);
+    return dynamic_cast<const CPUMeasure&>(*m_measures[static_cast<int>(MTypes::CPU)]); 
 }
 
-void RetroGraph::checkDependencies() {
+const GPUMeasure& RetroGraph::getGPUMeasure() const { 
+    return dynamic_cast<const GPUMeasure&>(*m_measures[static_cast<int>(MTypes::GPU)]);
+}
+
+const RAMMeasure& RetroGraph::getRAMMeasure() const { 
+    return dynamic_cast<const RAMMeasure&>(*m_measures[static_cast<int>(MTypes::RAM)]);
+}
+
+const NetMeasure& RetroGraph::getNetMeasure() const { 
+    return dynamic_cast<const NetMeasure&>(*m_measures[static_cast<int>(MTypes::Net)]);
+}
+
+const ProcessMeasure& RetroGraph::getProcessMeasure() const { 
+    return dynamic_cast<const ProcessMeasure&>(*m_measures[static_cast<int>(MTypes::Process)]);
+}
+
+const DriveMeasure& RetroGraph::getDriveMeasure() const { 
+    return dynamic_cast<const DriveMeasure&>(*m_measures[static_cast<int>(MTypes::Drive)]);
+}
+
+const MusicMeasure& RetroGraph::getMusicMeasure() const { 
+    return dynamic_cast<const MusicMeasure&>(*m_measures[static_cast<int>(MTypes::Music)]);
+}
+
+const SystemMeasure& RetroGraph::getSystemMeasure() const { 
+    return dynamic_cast<const SystemMeasure&>(*m_measures[static_cast<int>(MTypes::System)]);
+}
+
+const AnimationState& RetroGraph::getAnimationState() const { 
+    return dynamic_cast<const AnimationState&>(*m_measures[static_cast<int>(MTypes::AnimationState)]);
+}
+
+const DisplayMeasure & RetroGraph::getDisplayMeasure() const {
+    return dynamic_cast<const DisplayMeasure&>(*m_measures[static_cast<int>(MTypes::Display)]);
+}
+
+void RetroGraph::cleanupUnusedMeasures() {
     // Check dependent measures, if theres a measure that isn't being used by any
     // Widget, we can disable it. If a disabled measure needs to be used by a widget,
     // re-enable it
@@ -210,7 +213,7 @@ void RetroGraph::checkDependencies() {
 
         bool allDependentWidgetsDisabled{ true };
         for (const auto& w : widgets) {
-            if (m_widgetVisibilities[w]) {
+            if (m_widgetVisibilities[static_cast<int>(w)]) {
                 allDependentWidgetsDisabled = false;
                 break;
             }
@@ -218,7 +221,7 @@ void RetroGraph::checkDependencies() {
 
         // Enable/Disable measures depending on whether all it's dependencies
         // have toggled
-        auto& measurePtr{ m_measures[measure] };
+        auto& measurePtr{ m_measures[static_cast<int>(measure)] };
         if (allDependentWidgetsDisabled) {
             if (measurePtr) {
                 measurePtr.reset(nullptr);
@@ -252,9 +255,6 @@ void RetroGraph::checkDependencies() {
                 case MTypes::GPU:
                     measurePtr = std::make_unique<GPUMeasure>();
                     break;
-                case MTypes::SystemInformation:
-                    measurePtr = std::make_unique<SystemInformationMeasure>();
-                    break;
                 case MTypes::Display:
                     measurePtr = std::make_unique<DisplayMeasure>();
                     break;
@@ -270,7 +270,7 @@ void RetroGraph::checkDependencies() {
 }
 
 void RetroGraph::updateWidgetVisibilities() {
-    for (auto i = size_t{ 0U }; i < Widgets::NumWidgets; ++i)
+    for (auto i = size_t{ 0U }; i < static_cast<int>(Widgets::NumWidgets); ++i)
         m_widgetVisibilities[i] = UserSettings::inst().isVisible(static_cast<Widgets>(i));
 }
 

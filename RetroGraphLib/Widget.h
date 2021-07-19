@@ -6,7 +6,7 @@
 
 namespace rg {
 
-enum WidgetPosition : int {
+enum class WidgetPosition : int {
     TOP_LEFT  = 0,
     TOP_MID   = 1,
     TOP_RIGHT = 2,
@@ -20,7 +20,7 @@ enum WidgetPosition : int {
     NUM_POSITIONS
 };
 
-enum Widgets : int { // Must be consecutive integers!
+enum class Widgets : int { // Must be consecutive integers!
     ProcessCPU  = 0,
     ProcessRAM  = 1,
     Time        = 2,

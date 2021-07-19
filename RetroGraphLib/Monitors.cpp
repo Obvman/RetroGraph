@@ -32,6 +32,7 @@ BOOL CALLBACK Monitors::MonitorCallback2(HMONITOR hMonitor, HDC, LPRECT,
         refresh = dm.dmDisplayFrequency;
     }
 
+    // #TODO this gives incorrect results for 4K monitor on the left of the main monitor.
     This->m_monitors.emplace_back(monitorCount, hMonitor,
             mi.rcMonitor.right - mi.rcMonitor.left, mi.rcMonitor.bottom - mi.rcMonitor.top,
             mi.rcWork.right - mi.rcWork.left, mi.rcWork.bottom - mi.rcWork.top,

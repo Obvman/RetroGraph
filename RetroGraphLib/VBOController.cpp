@@ -221,12 +221,12 @@ void VBOController::updateAnimationVBO(const VBOID& vboID, const AnimationState 
 }
 
 
-VBOID::VBOID(VBOID&& other) {
+VBOID::VBOID(VBOID&& other) noexcept {
     m_id = other.m_id;
     other.m_id = -1;
 }
 
-VBOID& VBOID::operator=(VBOID&& other) {
+VBOID& VBOID::operator=(VBOID&& other) noexcept {
     if (&other != this) {
         m_id = other.m_id;
         other.m_id = -1;

@@ -22,8 +22,7 @@ unsigned long long FileTimeToInt64(const FILETIME & ft) {
 }
 
 CPUMeasure::CPUMeasure()
-    : Measure{ 2 }
-    , dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-CPUGraph.NumUsageSamples") }
+    : dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-CPUGraph.NumUsageSamples") }
     , m_usageData( dataSize, 0.0f ) {
 
     updateCPUName();
@@ -102,10 +101,6 @@ std::string CPUMeasure::getUptimeStr() const {
              , "snprintf() failed to copy uptime string");
 
     return std::string{ buff };
-}
-
-bool CPUMeasure::shouldUpdate(int ticks) const {
-    return ticksMatchRate(ticks, m_updateRates.front());
 }
 
 float CPUMeasure::calculateCPULoad(uint64_t idleTicks, uint64_t totalTicks) {

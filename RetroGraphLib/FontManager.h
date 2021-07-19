@@ -21,7 +21,7 @@ typedef float GLfloat;
 
 namespace rg {
 
-using RGFONTCODE = size_t;
+using RGFONTCODE = char;
 
 enum RG_ALIGN {
     RG_ALIGN_LEFT = 1,
@@ -32,7 +32,7 @@ enum RG_ALIGN {
     RG_ALIGN_BOTTOM = 32,
 };
 
-enum RGFontCode : size_t {
+enum RGFontCode : char {
     RG_FONT_STANDARD = 0U,
     RG_FONT_STANDARD_BOLD = 1U,
     RG_FONT_TIME = 2U,
@@ -44,6 +44,7 @@ enum RGFontCode : size_t {
 };
 
 constexpr size_t RG_NUM_CHARS_IN_FONT{ 256 };
+
 class FontManager {
 public:
     FontManager(HWND hWnd, int windowHeight);

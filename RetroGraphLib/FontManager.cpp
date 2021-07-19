@@ -91,7 +91,7 @@ void FontManager::renderLine(RGFONTCODE fontCode,
 
     // If the string is too large, then truncate it and add ellipses
     if (strWidthPx > areaWidth - alignMarginX) {
-        char newText[256];
+        char newText[255];
 
         // Copy char by char into the new buffer while there is enough width
         auto newStrWidthPx = int{ 0U };
@@ -117,8 +117,7 @@ void FontManager::renderLine(RGFONTCODE fontCode,
         const auto truncTextLen{ strlen(newText) };
         strWidthPx = calculateStringWidth(newText, truncTextLen, fontCode);
 
-        const auto rasterX{ getRasterXAlignment(alignFlags, strWidthPx, 
-                areaWidth, alignMarginX) };
+        const auto rasterX{ getRasterXAlignment(alignFlags, strWidthPx, areaWidth, alignMarginX) };
 
         glRasterPos2f(rasterX, rasterY);
         // Render in the specified font, preserving the previously selected font
@@ -164,7 +163,7 @@ void FontManager::renderLines(RGFONTCODE fontCode,
     // Set the Y position of the first line according to alignment rules
     const auto renderHeight{ areaHeight - alignMarginY * 2 };
     const auto fontHeight{ m_fontCharHeights[fontCode] };
-    const auto rasterLineDeltaY{ (renderHeight-fontHeight)/(lines.size()-1) };
+    const auto rasterLineDeltaY{ (renderHeight - fontHeight) / (static_cast<int>(lines.size()) - 1) };
 
     // Start at top, render downwards
     auto rasterYPx = int{ areaHeight - alignMarginY - fontHeight };
@@ -220,7 +219,7 @@ void FontManager::renderLines(RGFONTCODE fontCode,
     // Set the Y position of the first line according to alignment rules
     const auto renderHeight{ areaHeight - alignMarginY * 2 };
     const auto fontHeight{ m_fontCharHeights[fontCode] };
-    const auto rasterLineDeltaY{ (renderHeight-fontHeight)/(lines.size()-1) };
+    const auto rasterLineDeltaY{ (renderHeight - fontHeight) / (static_cast<int>(lines.size()) - 1) };
 
     // Start at top, render downwards
     auto rasterYPx = int{ areaHeight - alignMarginY - fontHeight };
@@ -316,8 +315,7 @@ void FontManager::setFontCharacteristics(RGFONTCODE c, HDC hdc) {
     m_fontCharInternalLeadings[c] = tm.tmInternalLeading;
 }
 
-int FontManager::calculateStringWidth(const char* text, size_t textLen, 
-                                          RGFONTCODE c) const {
+int FontManager::calculateStringWidth(const char* text, size_t textLen, RGFONTCODE c) const {
     auto strWidthPx = int{ 0 };
     for (auto i = size_t{ 0U }; i < textLen; ++i) {
         // Make sure the character is in range, if not, add default value

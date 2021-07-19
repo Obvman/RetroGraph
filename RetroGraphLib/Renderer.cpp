@@ -4,7 +4,6 @@
 
 #include "RetroGraph.h"
 #include "Window.h"
-#include "UserSettings.h"
 
 #include "TimeWidget.h"
 #include "HDDWidget.h"
@@ -23,61 +22,63 @@
 #include "units.h"
 #include "GLShaders.h"
 
+//import UserSettings;
+
 namespace rg {
 
 auto Renderer::createWidgetContainers() const {
     decltype(m_widgetContainers) widgetContainerList;
-    for (auto i = int{ 0 }; i < WidgetPosition::NUM_POSITIONS; ++i)
+    for (auto i = int{ 0 }; i < static_cast<int>(WidgetPosition::NUM_POSITIONS); ++i)
         widgetContainerList.emplace_back(std::make_unique<WidgetContainer>(static_cast<WidgetPosition>(i)));
 
     return widgetContainerList;
 }
 
 auto Renderer::createWidgets(const RetroGraph& _rg) const {
-    decltype(m_widgets) widgetList( Widgets::NumWidgets );
+    decltype(m_widgets) widgetList( static_cast<int>(Widgets::NumWidgets) );
 
     const auto& s{ UserSettings::inst() };
 
-    widgetList[Widgets::ProcessCPU] = std::make_unique<ProcessCPUWidget>(
+    widgetList[static_cast<int>(Widgets::ProcessCPU)] = std::make_unique<ProcessCPUWidget>(
         &m_fontManager, _rg, s.isVisible(Widgets::ProcessCPU)
     );
-    widgetList[Widgets::ProcessRAM] = std::make_unique<ProcessRAMWidget>(
+    widgetList[static_cast<int>(Widgets::ProcessRAM)] = std::make_unique<ProcessRAMWidget>(
         &m_fontManager, _rg, s.isVisible(Widgets::ProcessRAM)
     );
-    widgetList[Widgets::Time] = std::make_unique<TimeWidget>(
+    widgetList[static_cast<int>(Widgets::Time)] = std::make_unique<TimeWidget>(
         &m_fontManager, _rg, s.isVisible(Widgets::Time)
     );
-    widgetList[Widgets::SystemStats] = std::make_unique<SystemStatsWidget>(
+    widgetList[static_cast<int>(Widgets::SystemStats)] = std::make_unique<SystemStatsWidget>(
         &m_fontManager, _rg, s.isVisible(Widgets::SystemStats)
     );
-    widgetList[Widgets::Music] = std::make_unique<MusicWidget>(
+    widgetList[static_cast<int>(Widgets::Music)] = std::make_unique<MusicWidget>(
         &m_fontManager, _rg, s.isVisible(Widgets::Music)
     );
-    widgetList[Widgets::CPUStats] = std::make_unique<CPUStatsWidget>(
+    widgetList[static_cast<int>(Widgets::CPUStats)] = std::make_unique<CPUStatsWidget>(
         &m_fontManager, _rg, s.isVisible(Widgets::CPUStats)
     );
-    widgetList[Widgets::HDD] = std::make_unique<HDDWidget>(
+    widgetList[static_cast<int>(Widgets::HDD)] = std::make_unique<HDDWidget>(
         &m_fontManager, _rg, s.isVisible(Widgets::HDD)
     );
-    widgetList[Widgets::Main] = std::make_unique<MainWidget>(
+    widgetList[static_cast<int>(Widgets::Main)] = std::make_unique<MainWidget>(
         &m_fontManager, _rg, s.isVisible(Widgets::Main)
     );
-    widgetList[Widgets::FPS] = std::make_unique<FPSWidget>(
+    widgetList[static_cast<int>(Widgets::FPS)] = std::make_unique<FPSWidget>(
         &m_fontManager, s.isVisible(Widgets::FPS)
     );
-    widgetList[Widgets::NetStats] = std::make_unique<NetStatsWidget>(
+    widgetList[static_cast<int>(Widgets::NetStats)] = std::make_unique<NetStatsWidget>(
         &m_fontManager, _rg, s.isVisible(Widgets::NetStats)
     );
-    widgetList[Widgets::CPUGraph] = std::make_unique<CPUGraphWidget>(
+    widgetList[static_cast<int>(Widgets::CPUGraph)] = std::make_unique<CPUGraphWidget>(
         &m_fontManager, _rg, s.isVisible(Widgets::CPUGraph)
     );
-    widgetList[Widgets::RAMGraph] = std::make_unique<RAMGraphWidget>(
+    widgetList[static_cast<int>(Widgets::RAMGraph)] = std::make_unique<RAMGraphWidget>(
         &m_fontManager, _rg, s.isVisible(Widgets::RAMGraph)
     );
-    widgetList[Widgets::NetGraph] = std::make_unique<NetGraphWidget>(
+    widgetList[static_cast<int>(Widgets::NetGraph)] = std::make_unique<NetGraphWidget>(
         &m_fontManager, _rg, s.isVisible(Widgets::NetGraph)
     );
-    widgetList[Widgets::GPUGraph] = std::make_unique<GPUGraphWidget>(
+    widgetList[static_cast<int>(Widgets::GPUGraph)] = std::make_unique<GPUGraphWidget>(
         &m_fontManager, _rg, s.isVisible(Widgets::GPUGraph)
     );
 
@@ -111,8 +112,8 @@ void Renderer::draw(int ticks, const Window& window, int totalFPS) const {
 
         } else if (ticksMatchRate(ticks, totalFPS)) {
             // The main widget can have a higher framerate, so call every tick
-            const auto& mainWidget{ dynamic_cast<MainWidget&>(*m_widgets[Widgets::Main]) };
-            const auto& mainWidgetContainer{ m_widgetContainers[WidgetPosition::MID_MID] };
+            const auto& mainWidget{ dynamic_cast<MainWidget&>(*m_widgets[static_cast<int>(Widgets::Main)]) };
+            const auto& mainWidgetContainer{ m_widgetContainers[static_cast<int>(WidgetPosition::MID_MID)] };
             if (mainWidget.needsDraw(ticks))
                 mainWidgetContainer->draw();
         }
@@ -131,14 +132,14 @@ void Renderer::updateWindowSize(int newWidth, int newHeight) {
 }
 
 void Renderer::setWidgetVisibility(Widgets w, bool v) {
-    m_widgets[w]->setVisibility(v);
+    m_widgets[static_cast<int>(w)]->setVisibility(v);
 
     // Update the children of the widget container
     const auto pos{ UserSettings::inst().getWidgetPosition(w) };
     if (v) {
-        m_widgetContainers[pos]->addChild(m_widgets[w].get());
+        m_widgetContainers[static_cast<int>(pos)]->addChild(m_widgets[static_cast<int>(w)].get());
     } else {
-        m_widgetContainers[pos]->removeChild(m_widgets[w].get());
+        m_widgetContainers[static_cast<int>(pos)]->removeChild(m_widgets[static_cast<int>(w)].get());
     }
 }
 
@@ -150,11 +151,11 @@ void Renderer::setViewports(int windowWidth, int windowHeight) {
     // Update child widgets. Their position may have changed, so they'll need to go to the correct container
     std::for_each(m_widgetContainers.begin(), m_widgetContainers.end(), [](const auto& wc) { wc->clearChildren(); });
 
-    for (auto i = int{ 0 }; i < Widgets::NumWidgets; ++i) {
+    for (auto i = int{ 0 }; i < static_cast<int>(Widgets::NumWidgets); ++i) {
         const auto widgetType{ static_cast<Widgets>(i) };
         const auto widgetPos{ UserSettings::inst().getWidgetPosition(widgetType) };
-        const auto& widget{ m_widgets[widgetType] };
-        WidgetContainer& container{ *m_widgetContainers[widgetPos] };
+        const auto& widget{ m_widgets[static_cast<int>(widgetType)] };
+        WidgetContainer& container{ *m_widgetContainers[static_cast<int>(widgetPos)] };
 
         if (widgetType == Widgets::FPS)
             container.setType(ContainerType::Mini);
@@ -165,7 +166,7 @@ void Renderer::setViewports(int windowWidth, int windowHeight) {
             container.addChild(widget.get());
     }
 
-    for (auto i = int{ 0 }; i < WidgetPosition::NUM_POSITIONS; ++i) {
+    for (auto i = int{ 0 }; i < static_cast<int>(WidgetPosition::NUM_POSITIONS); ++i) {
         m_widgetContainers[i]->setViewport(windowWidth, windowHeight, static_cast<WidgetPosition>(i));
         m_widgetContainers[i]->clear();
     }

@@ -11,7 +11,11 @@
 namespace rg {
 
 FPSLimiter::FPSLimiter()
-    : m_maxFPS{ UserSettings::inst().getVal<int>("Widgets-Main.FPS") } {
+    : m_maxFPS{ UserSettings::inst().getVal<int>("Widgets-Main.FPS") }
+    , m_fps{ 0 }
+    , m_frameTime{ 0.0 }
+    , m_startTicks{ 0 }
+    , m_freq{ 0 } {
 
     QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&m_freq));
 }

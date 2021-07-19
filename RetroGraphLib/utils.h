@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <string>
 #include <string_view>
+#include <concepts>
 
 #include <Windows.h>
 
@@ -60,8 +61,7 @@ constexpr inline bool ticksMatchSeconds(int ticks, int s) {
 }
 
 /* Prints how long the given function f took to execute */
-template<typename F>
-void printTimeToExecuteMs(const char* funcName, F f) {
+void printTimeToExecuteMs(const char* funcName, std::regular_invocable auto f) {
     const auto start{ clock() };
     f();
     const auto end{ clock() };
@@ -70,13 +70,11 @@ void printTimeToExecuteMs(const char* funcName, F f) {
 }
 
 /* Default function name overload */
-template<typename F>
-void printTimeToExecuteMs(F f) {
+void printTimeToExecuteMs(std::regular_invocable auto f) {
     printTimeToExecuteMs("Function", f);
 }
 
-template<typename F>
-void printTimeToExecuteHighRes(const char* funcName, F f) {
+void printTimeToExecuteHighRes(const char* funcName, std::regular_invocable auto f) {
     LARGE_INTEGER li;
     QueryPerformanceCounter(&li);
     const int64_t start{ li.QuadPart };
@@ -89,8 +87,7 @@ void printTimeToExecuteHighRes(const char* funcName, F f) {
     printf("%s took %I64d counts\n", funcName, end - start);
 }
 
-template<typename F>
-void printTimeToExecuteHighRes(F f) {
+void printTimeToExecuteHighRes(std::regular_invocable auto f) {
     printTimeToExecuteHighRes("Function", f);
 }
 
@@ -118,7 +115,6 @@ inline void rgError(std::string_view str) {
     showMessageBox(str);
 }
 
-// Throws error if expr is false. Always evaluates expr - even in release mode
 inline void rgVerify(bool expr [[maybe_unused]], std::string_view str[[maybe_unused]]) {
     if constexpr (debugMode)
         if (!expr)
@@ -134,6 +130,7 @@ inline void rgVerify(bool expr [[maybe_unused]], std::string_view str[[maybe_unu
 #define RGERROR(str)
 #endif
 
+// Throws error if expr is false. Always evaluates expr - even in release mode
 #define RGVERIFY(expr, str) rgVerify(expr, str)
 
 } // namespace rg

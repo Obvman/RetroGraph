@@ -5,16 +5,16 @@
 #include "drawUtils.h"
 #include "GLShaders.h"
 
-#include <vector>
+#include <concepts>
 #include <utility>
+#include <vector>
 
 namespace rg {
 
 class AnimationState;
 
 // Automatically binds/unbinds given VBOs and executes the function given
-template<typename F>
-void vboElemArrayDrawScope(GLuint vertID, GLuint indexID, F f) {
+void vboElemArrayDrawScope(GLuint vertID, GLuint indexID, std::regular_invocable auto f) {
     glBindBuffer(GL_ARRAY_BUFFER, vertID);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexID);
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -27,8 +27,7 @@ void vboElemArrayDrawScope(GLuint vertID, GLuint indexID, F f) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-template<typename F>
-void vboDrawScope(GLuint vertID, F f) {
+void vboDrawScope(GLuint vertID, std::regular_invocable auto f) {
     glBindBuffer(GL_ARRAY_BUFFER, vertID);
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(2, GL_FLOAT, 0, nullptr);
@@ -41,9 +40,9 @@ void vboDrawScope(GLuint vertID, F f) {
 
 // Container for standard VBO data (no element array)
 struct VBOContainer {
-    VBOContainer() : VBOContainer{ 0 } { }
+    VBOContainer() noexcept : VBOContainer{ 0 } { }
 
-    VBOContainer(GLsizei size_)
+    VBOContainer(GLsizei size_) noexcept
         : id{ 0 }
         , size{ size_ }
         , data( size_ * 2)  { }
@@ -97,9 +96,9 @@ private:
 // provided id of the VBO
 class VBOID {
 public:
-    VBOID() : m_id{ -1 } {}
-    explicit VBOID(int id) : m_id{ id } {}
-    explicit VBOID(size_t id) : m_id{ static_cast<int>(id) } {}
+    VBOID() noexcept : m_id{ -1 } {}
+    explicit VBOID(int id) noexcept : m_id{ id } {}
+    explicit VBOID(size_t id) noexcept : m_id{ static_cast<int>(id) } {}
     ~VBOID() {
         VBOController::inst().destroyVBO(*this);
     }
@@ -107,8 +106,8 @@ public:
     // Very important that we never copy!
     VBOID(const VBOID&) = delete;
     VBOID& operator=(const VBOID&) = delete;
-    VBOID(VBOID&&);
-    VBOID& operator=(VBOID&&);
+    VBOID(VBOID&&) noexcept;
+    VBOID& operator=(VBOID&&) noexcept;
 
     // Conversion to int
     explicit operator int() const { return m_id; }

@@ -1,4 +1,3 @@
-// #include "stdafx.h"
 #define _WIN32_WINNT 0x601
 
 #define WIN32_LEAN_AND_MEAN
@@ -31,8 +30,7 @@
 namespace rg {
 
 NetMeasure::NetMeasure()
-    : Measure{ 2, 30 }
-    , m_pingServer{ UserSettings::inst().getVal<std::string>("Network.PingServer") }
+    : m_pingServer{ UserSettings::inst().getVal<std::string>("Network.PingServer") }
     , m_pingFreqSec{ UserSettings::inst().getVal<int>("Network.PingFrequency") }
     , dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-NetGraph.NumUsageSamples") } {
 
@@ -168,7 +166,7 @@ void NetMeasure::getDNSAndHostname() {
 void NetMeasure::update(int ticks) {
     // Check if the best network interface has changed and update to the new
     // one if so.
-    if (ticksMatchSeconds(ticks, m_updateRates[1])) {
+    if (ticksMatchSeconds(ticks, 30)) {
         DWORD bestIfaceIndex;
         if (GetBestInterface(INADDR_ANY, &bestIfaceIndex) != NO_ERROR) {
             RGERROR("Failed to get best interface");
@@ -202,10 +200,6 @@ bool NetMeasure::isConnected() const {
 
 void NetMeasure::setIsConnected(bool b) {
     m_isConnected.store(b);
-}
-
-bool NetMeasure::shouldUpdate(int ticks) const {
-    return ticksMatchRate(ticks, m_updateRates.front());
 }
 
 void NetMeasure::startNetworkThread() {

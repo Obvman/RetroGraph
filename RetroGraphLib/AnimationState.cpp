@@ -34,10 +34,10 @@ constexpr float particleMinSpeed{ 0.01f };
 constexpr float particleMaxSpeed{ 0.1f };
 
 AnimationState::AnimationState()
-    : Measure{ UserSettings::inst().getVal<int>("Widgets-Main.FPS") }
-    , m_particles( createParticles() )
+    : m_particles( createParticles() )
     , m_particleLines{}
-    , m_numLines{ 0 } {
+    , m_numLines{ 0 }
+    , m_animationFPS{ UserSettings::inst().getVal<int>("Widgets-Main.FPS") } {
 
     for (const auto& p : m_particles)
         m_cells[p.cellX][p.cellY].push_back(&p);
@@ -73,12 +73,12 @@ void AnimationState::update(int) {
 }
 
 void AnimationState::refreshSettings() {
-    m_updateRates.front() = UserSettings::inst().getVal<int>("Widgets-Main.FPS");
-    FPSLimiter::inst().setMaxFPS(m_updateRates.front());
+    m_animationFPS = UserSettings::inst().getVal<int>("Widgets-Main.FPS");
+    FPSLimiter::inst().setMaxFPS(m_animationFPS);
 }
 
 bool AnimationState::shouldUpdate(int ticks) const {
-    return ticksMatchRate(ticks, m_updateRates.front());
+    return ticksMatchRate(ticks, m_animationFPS);
 }
 
 void AnimationState::updateParticleLines() {
@@ -141,15 +141,15 @@ void AnimationState::addLine(const Particle* const p1, const Particle* const p2)
 }
 
 
-Particle::Particle() :
-    x{ particleMinPos + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos))) },
-    y{ particleMinPos + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos))) },
-    dirX{ particleMinPos + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos))) },
-    dirY{ particleMinPos + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos))) },
-    size{ particleMinSize + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(particleMaxSize-particleMinSize))) },
-    speed{ particleMinSpeed + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(particleMaxSpeed-particleMinSpeed))) },
-    cellX{ static_cast<int>((x + 1.0f) / cellSize) },
-    cellY{ static_cast<int>((y + 1.0f) / cellSize) } {
+Particle::Particle()
+    : x{ particleMinPos + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos))) }
+    , y{ particleMinPos + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos))) }
+    , dirX{ particleMinPos + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos))) }
+    , dirY{ particleMinPos + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos))) }
+    , size{ particleMinSize + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(particleMaxSize-particleMinSize))) }
+    , speed{ particleMinSpeed + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(particleMaxSpeed-particleMinSpeed))) }
+    , cellX{ static_cast<int>((x + 1.0f) / cellSize) }
+    , cellY{ static_cast<int>((y + 1.0f) / cellSize) } {
 }
 
 // TODO this is bugged, particles get stuck in the corners of the window

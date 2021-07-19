@@ -11,18 +11,9 @@
 namespace rg {
 
 DisplayMeasure::DisplayMeasure()
-    : Measure{ 2U }
-    , m_monitors{} {
+    : m_monitors{} {
 
     force_update();
-}
-
-void DisplayMeasure::update(int ticks) {
-    (void)ticks;
-}
-
-bool rg::DisplayMeasure::shouldUpdate(int ticks) const {
-    return ticksMatchSeconds(ticks, m_updateRates.front());
 }
 
 }

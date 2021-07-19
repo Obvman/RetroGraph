@@ -60,10 +60,7 @@ void SystemMeasure::getOSVersionInfo() {
     const DWORD dwSecondRight = HIWORD(osVersionLS);
     const DWORD dwRightMost = LOWORD(osVersionLS);
 
-    m_osInfoStr = std::string{ "Windows Version: " + std::to_string(dwLeftMost)
-                               + "." + std::to_string(dwSecondLeft)+ "." +
-                               std::to_string(dwSecondRight)+ "." +
-                               std::to_string(dwRightMost) };
+    m_osInfoStr = std::format("Windows Version: {}.{}.{}.{}", dwLeftMost, dwSecondLeft, dwSecondRight, dwRightMost);
 }
 
 void SystemMeasure::getCPUInfo() {

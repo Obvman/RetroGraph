@@ -72,7 +72,7 @@ public:
     void update(int ticks) override;
     void refreshSettings() override;
 
-    int getAnimationFPS() const { return m_updateRates.front(); };
+    int getAnimationFPS() const { return m_animationFPS; };
     const std::array<ParticleLine, maxLines>& getLines() const { return m_particleLines; }
     const std::array<float, maxLines>& getLineColours() const { return m_lineColors; }
     const std::vector<Particle>& getParticles() const { return m_particles; }
@@ -85,6 +85,7 @@ private:
     void addLine(const Particle* const p1, const Particle* const p2);
 
     std::vector<Particle> m_particles{ };
+    auto createParticles() -> decltype(m_particles);
 
     // Static buffer set to the maximum possible number of lines existing in worst case 
     // scenario (all particles are in neighbouring cells)
@@ -92,12 +93,12 @@ private:
     std::array<float, maxLines> m_lineColors;
     int m_numLines; // Tracks actual number of lines
 
-    auto createParticles() -> decltype(m_particles);
-
     // Members for spatial partitioning
     // The world space coordinates range from -1.0 to 1.0 for both x and y,
     // so we have a range of 2.0 for our world sides
     std::array<std::array<CellParticleList, numCellsPerSide>, numCellsPerSide> m_cells;
+
+    int m_animationFPS;
 
     friend struct Particle;
 };

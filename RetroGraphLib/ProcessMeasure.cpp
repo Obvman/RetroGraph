@@ -23,8 +23,7 @@
 namespace rg {
 
 ProcessMeasure::ProcessMeasure()
-    : Measure{ 2U, 10U, 5U }
-    , m_numCPUProcessesToDisplay{ UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesCPU.NumProcessesDisplayed") }
+    : m_numCPUProcessesToDisplay{ UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesCPU.NumProcessesDisplayed") }
     , m_numRAMProcessesToDisplay{ UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesRAM.NumProcessesDisplayed") } {
 
     if constexpr (!debugMode) {
@@ -44,11 +43,11 @@ ProcessMeasure::ProcessMeasure()
 
 void ProcessMeasure::update(int ticks) {
     // Update the process list vector every 10 seconds
-    if (ticksMatchSeconds(ticks, m_updateRates[1])) {
+    if (ticksMatchSeconds(ticks, 10)) {
         detectNewProcesses();
     }
 
-    if (ticksMatchSeconds(ticks, m_updateRates.front())) {
+    if (ticksMatchSeconds(ticks, 2)) {
         // Track iterator outside while scope for std::erase
         auto it{ m_allProcessData.begin() };
         while (it != m_allProcessData.end()) {
@@ -63,9 +62,7 @@ void ProcessMeasure::update(int ticks) {
                 // If access is denied or the process is the system idle 
                 // process, just silently skip the process
                 if (error != ERROR_ACCESS_DENIED && pd.getPID() != 0) {
-                    std::cout << "Failed to open process. Code: "
-                        << std::to_string(error) << ". ProcessID: "
-                        << std::to_string(pd.getPID()) << '\n';
+                    printf(std::format("Failed to open process. Code: {}. ProcessID: {}\n", error, pd.getPID()).c_str());
                 }
                 continue;
             }
@@ -73,9 +70,7 @@ void ProcessMeasure::update(int ticks) {
             // Check for processes that have exited and remove them from the list
             auto exitCode = DWORD{ 1U };
             if (!GetExitCodeProcess(pHandle, &exitCode)) {
-                const auto error{ GetLastError() };
-                std::cout << "Failed to retreive exit code of process. Error: " 
-                          << std::to_string(error) << '\n';
+                printf(std::format("Failed to retreive exit code of process. Error: {}", GetLastError()).c_str());
                 CloseHandle(pHandle);
                 continue;
             }
@@ -95,7 +90,7 @@ void ProcessMeasure::update(int ticks) {
         fillCPUData();
     }
 
-    if (ticksMatchSeconds(ticks, m_updateRates[2])) {
+    if (ticksMatchSeconds(ticks, 5)) {
         fillRAMData();
     }
 }
@@ -120,9 +115,8 @@ int ProcessMeasure::getPIDFromName(std::string_view name) const {
     }
 }
 
-bool ProcessMeasure::shouldUpdate(int) const {
-    return true;
-    // return ticksMatchSeconds(ticks, m_updateRates.front());
+bool ProcessMeasure::shouldUpdate(int ticks) const {
+    return ticksMatchSeconds(ticks, 2) || ticksMatchSeconds(ticks, 5);
 }
 
 bool ProcessMeasure::setDebugPrivileges(HANDLE hToken, LPCTSTR privilege,
@@ -234,8 +228,10 @@ void ProcessMeasure::populateList() {
     // Allocate buffer for the process list to fill
     // We need to allocate a large buffer because the process list can be large.
     PVOID buffer{ VirtualAlloc(nullptr, 1024*1024, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE) }; 
-
-    RGASSERT(buffer, "Error: Unable to allocate memory for process list " + std::to_string(GetLastError()));
+    if (!buffer) {
+		RGERROR(std::format("Error: Unable to allocate memory for process list: {}", GetLastError()));
+        return;
+    }
 
     PSYSTEM_PROCESS_INFO spi{ static_cast<PSYSTEM_PROCESS_INFO>(buffer) };
 
@@ -243,15 +239,15 @@ void ProcessMeasure::populateList() {
     NTSTATUS status;
     if(!NT_SUCCESS(status = NtQuerySystemInformation(SystemProcessInformation, spi, 1024*1024, nullptr))) {
         VirtualFree(buffer, 0, MEM_RELEASE);
-        RGERROR("Error: Unable to query process list: " + std::to_string(status));
+        RGERROR(std::format("Error: Unable to query process list: {}", status));
+        return;
     }
 
     // Loop over the process list and fill allProcessData with new ProcessData
     // object for each process
     for ( ;
           spi->NextEntryOffset;
-          spi = reinterpret_cast<PSYSTEM_PROCESS_INFO>(reinterpret_cast<LPBYTE>(spi) 
-                                                       + spi->NextEntryOffset)) {
+          spi = reinterpret_cast<PSYSTEM_PROCESS_INFO>(reinterpret_cast<LPBYTE>(spi) + spi->NextEntryOffset)) {
 
         const auto procID{ reinterpret_cast<LONGLONG>(spi->ProcessId) };
 
@@ -262,9 +258,7 @@ void ProcessMeasure::populateList() {
             // If access is denied or the process is the system idle process,
             // just silently skip the process
             if (error != ERROR_ACCESS_DENIED && procID != 0) {
-                std::cout << "Failed to open process. Code: "
-                          << std::to_string(error) << ". ProcessID: "
-                          << std::to_string(procID) << '\n';
+                RGERROR(std::format("Failed to open process. Code: {}. ProcessID: {}", error, procID));
             }
         } else {
             // Convert the process name from wchar* to char*
@@ -285,7 +279,10 @@ void ProcessMeasure::detectNewProcesses() {
     // We need to allocate a large buffer because the process list can be large.
     // #TODO this can throw an access violation ??
     PVOID buffer{ VirtualAlloc(nullptr, 1024*1024, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE) };
-    RGASSERT(buffer, std::string{ "Unable to allocate memory for process list " } + std::to_string(GetLastError()));
+    if (!buffer) {
+		RGERROR(std::format("Unable to allocate memory for process list: ", GetLastError()));
+        return;
+    }
 
     PSYSTEM_PROCESS_INFO spi{ static_cast<PSYSTEM_PROCESS_INFO>(buffer) };
 
@@ -293,7 +290,8 @@ void ProcessMeasure::detectNewProcesses() {
     NTSTATUS status;
     if(!NT_SUCCESS(status = NtQuerySystemInformation(SystemProcessInformation, spi, 1024*1024, nullptr))) {
         VirtualFree(buffer, 0, MEM_RELEASE);
-        RGERROR("Error: Unable to query process list " + std::to_string(status));
+        RGERROR(std::format("Error: Unable to query process list ", status));
+        return;
     }
 
     // Loop over the process list for any new processes
@@ -317,23 +315,22 @@ void ProcessMeasure::detectNewProcesses() {
                 // If access is denied or the process is the system idle
                 // process, just silently skip the process
                 if (error != ERROR_ACCESS_DENIED && procID != 0) {
-
-                    std::cout << "Failed to open process. Code: "
-                        << std::to_string(error) << ". ProcessID: "
-                        << std::to_string(procID) << '\n';
+                    RGERROR(std::format("Failed to open process. Code: {}. ProcessID: {}", error, procID));
                 }
             } else {
                 // Convert the ImageName buffer from wchar* to char*
                 auto charsConverted = size_t{ 0U };
-                auto nameBuff{ new char[spi->ImageName.Length] };
-                wcstombs_s(&charsConverted, nameBuff, spi->ImageName.Length,
-                           spi->ImageName.Buffer, spi->ImageName.Length);
+                std::vector<char> nameBuff(spi->ImageName.Length);
+                auto const errCode{ wcstombs_s(&charsConverted, nameBuff.data(), spi->ImageName.Length,
+                                               spi->ImageName.Buffer, spi->ImageName.Length) };
+                if (errCode) {
+                    RGERROR(std::format("Failed to convert process name encoding: {}", errCode));
+                } else {
+                    m_allProcessData.emplace_back(
+                        std::make_unique<ProcessData>(pHandle, static_cast<DWORD>(procID), nameBuff.data())
+                    );
+                }
 
-                m_allProcessData.emplace_back(
-                    std::make_unique<ProcessData>(pHandle, static_cast<DWORD>(procID), nameBuff)
-                );
-
-                delete[] nameBuff;
             }
         }
     }

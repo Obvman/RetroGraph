@@ -60,7 +60,7 @@ public:
 
 private:
     void checkConfigChanged(int ticks);
-    void checkDependencies(); // Disables any measures that aren't currently used TODO rename this
+    void cleanupUnusedMeasures();
     void updateWidgetVisibilities();
     void refreshConfig(bool autoReadConfig);
 

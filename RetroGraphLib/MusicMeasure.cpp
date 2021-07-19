@@ -13,32 +13,27 @@
 
 namespace rg {
 
-MusicMeasure::MusicMeasure(const ProcessMeasure& procMeasure) :
-    Measure{ 1U, 5U },
-    m_processMeasure{ &procMeasure } {
+constexpr const char * foobarWindowClassName{ "{97E27FAA-C0B3-4b8e-A693-ED7881E99FC1}" };
+
+MusicMeasure::MusicMeasure(const ProcessMeasure& procMeasure)
+    : m_processMeasure{ &procMeasure } {
 
     force_update();
 }
 
-void MusicMeasure::update(int ticks) {
-    const auto oldTitle{ m_playerWindowTitle };
-
-    // Get the window class name for the player if it hasn't yet been set
-    // Encode the this pointer into lParam so the proc can access members
-    if (ticksMatchSeconds(ticks, m_updateRates[1]) &&
-        m_playerWindowClassName.empty()) {
-        EnumWindows(MusicMeasure::EnumWindowsProc,
-                    reinterpret_cast<LPARAM>(this));
-    }
+void MusicMeasure::update(int /*ticks*/) {
 
     // Check if the player window is currently open by matching the class name
     // We must validate existence of window every time before we scrape
     // title information
-    m_playerHandle = FindWindow(m_playerWindowClassName.c_str(), nullptr);
+    m_playerHandle = FindWindow(foobarWindowClassName, nullptr);
     if (!m_playerHandle) {
         m_playerRunning = false;
     } else {
         m_playerRunning = true;
+
+        const auto oldTitle{ m_playerWindowTitle };
+
         updateTitleString();
 
         if (oldTitle != m_playerWindowTitle) {
@@ -47,23 +42,16 @@ void MusicMeasure::update(int ticks) {
     }
 }
 
-bool MusicMeasure::handleClick(int clickX, int clickY) const {
-    // TODO
-    (void)clickX;
-    (void)clickY;
-    return true;
-}
-
 void MusicMeasure::updateTitleString() {
     // Get the title string
     const auto titleLen{ GetWindowTextLength(m_playerHandle) + 1 };
-    RGASSERT((titleLen - 1) != 0, "Failed to get player title length");
+    RGASSERT((titleLen - 1) > 0, "Failed to get player title length");
 
     m_playerWindowTitle.resize(titleLen);
     RGVERIFY(GetWindowText(m_playerHandle, &m_playerWindowTitle[0], titleLen), "Failed to get music player window title");
 
     // Resize to avoid double NULL terminators
-    m_playerWindowTitle.resize(titleLen-1);
+    m_playerWindowTitle.resize(static_cast<size_t>(titleLen) - 1);
 }
 
 void MusicMeasure::scrapeInfoFromTitle() {
@@ -132,28 +120,7 @@ void MusicMeasure::scrapeInfoFromTitle() {
 }
 
 bool MusicMeasure::shouldUpdate(int ticks) const {
-    return ticksMatchSeconds(ticks, m_updateRates.front());
-}
-
-BOOL CALLBACK MusicMeasure::EnumWindowsProc(HWND hwnd, LPARAM lParam) {
-    auto This{ reinterpret_cast<MusicMeasure*>(lParam) };
-
-    char title[256];
-    GetWindowText(hwnd, title, sizeof(title));
-
-    std::string windowTitle{ title };
-    if (windowTitle.find(This->m_playerTitlePattern) != std::string::npos) {
-        char windowClass[256];
-        GetClassName(hwnd, windowClass, sizeof(windowClass));
-        This->m_playerWindowClassName = std::string{ windowClass };
-
-        This->m_playerHandle = hwnd;
-        This->m_playerRunning = true;
-        This->m_playerWindowTitle = windowTitle;
-
-        return FALSE;
-    }
-    return TRUE;
+    return ticksMatchSeconds(ticks, 1);
 }
 
 }

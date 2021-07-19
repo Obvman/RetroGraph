@@ -27,11 +27,6 @@ public:
      */
     void update(int ticks) override;
 
-    /* Checks click coordinates for collision with media controls, returns true
-     * if a media key was successfully clicked
-     */
-    bool handleClick(int clickX, int clickY) const;
-
     /* Returns true if the music player window is currently running */
     bool isPlayerRunning() const { return m_playerRunning; }
 
@@ -46,12 +41,6 @@ public:
 private:
     bool shouldUpdate(int ticks) const override;
 
-    /* Called for each window running in the operating system. Tries to find
-     * the music player by matching against the window title. If found,
-     * sets the player class name member
-     */
-    static BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam);
-
     void updateTitleString();
 
     void scrapeInfoFromTitle();
@@ -61,7 +50,6 @@ private:
 
     bool m_playerRunning{ false };
     HWND m_playerHandle{ nullptr };
-    std::string m_playerWindowClassName{ "" };
     std::string m_playerWindowTitle{ "" };
 
     // Current music status
@@ -73,8 +61,6 @@ private:
     std::string_view m_album{ "" };
     int m_elapsedTime{ 0U };
     int m_totalTime{ 0U };
-
-    static constexpr std::string_view m_playerTitlePattern{ "foobar2000 v1.\0" };
 };
 
 } // namespace rg

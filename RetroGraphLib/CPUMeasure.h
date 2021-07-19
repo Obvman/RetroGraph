@@ -70,8 +70,6 @@ public:
     }
 
 private:
-    bool shouldUpdate(int ticks) const override;
-
     /* Fill CPU name if CoreTemp interfacing was successful */
     void updateCPUName();
 

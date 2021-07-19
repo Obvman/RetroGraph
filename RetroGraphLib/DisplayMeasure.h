@@ -14,14 +14,13 @@ public:
     DisplayMeasure();
     ~DisplayMeasure() noexcept = default;
 
-    void update(int ticks) override;
+    void update(int /*ticks*/) override { /* Do nothing */ }
 
     const Monitors* getMonitors() const { return &m_monitors; }
 
     void refreshSettings() override { }
-private:
-    bool shouldUpdate(int ticks) const override;
 
+private:
     Monitors m_monitors;
 };
 

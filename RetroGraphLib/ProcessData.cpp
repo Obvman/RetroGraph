@@ -56,7 +56,7 @@ void ProcessData::setTimes(const FILETIME& cTime, const FILETIME& eTime,
 
 void ProcessData::updateMemCounters() {
     RGVERIFY(GetProcessMemoryInfo(m_pHandle, &m_memCounters, sizeof(m_memCounters)),
-             "Failed to get process memory information. Error: " + std::to_string(GetLastError()));
+             std::format("Failed to get process memory information. Error: ", GetLastError()));
 }
 
 }
