@@ -1,19 +1,22 @@
-#include <iostream>
-#include <iomanip>
-#include <chrono>
-#include <memory>
+#include "RGAssert.h"
 
-#include <Windows.h>
+import RetroGraph;
+import Utils;
+import Units;
 
-#include "RetroGraph.h"
-#include "units.h"
+import <iostream>;
+import <iomanip>;
+import <chrono>;
+import <memory>;
+
+import <WindowsHeaders.h>;
 
 void mainLoop(rg::RetroGraph& retroGraph);
 
 // Allows debug mode to show debug console, and release mode hides it
 #if _DEBUG
 int main() {
-    HINSTANCE hInstance = GetModuleHandle(nullptr);
+    HINSTANCE hInstance{ GetModuleHandle(nullptr) };
 #else
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
     hInstance = GetModuleHandle(nullptr);
@@ -23,6 +26,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
         rg::RetroGraph retroGraph{ hInstance };
 
         mainLoop(retroGraph);
+
     } catch (const std::runtime_error& e) {
         std::cout << e.what() << '\n';
     }
@@ -42,6 +46,7 @@ void mainLoop(rg::RetroGraph& retroGraph) {
 
     // Enter main update/draw loop
     while (retroGraph.isRunning()) {
+
         const auto currTime{ duration_cast<milliseconds>(
                                   system_clock::now().time_since_epoch()
                              ).count() };
@@ -71,10 +76,6 @@ void mainLoop(rg::RetroGraph& retroGraph) {
         // Keep the ticks counter in range [1, maxTicks] to prevent overflow
         if (ticks > rg::maxTicks)
             ticks = 1;
-
-        // Force flush to stdout for Cygwin/WSL
-        if constexpr (rg::debugMode)
-            fflush(stdout);
 
         // Lay off the CPU a little
         Sleep(2);

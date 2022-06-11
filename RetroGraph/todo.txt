@@ -1,4 +1,4 @@
-Fucking hell. resource error prevents opening of dialog
+unit tests
 
 debug asserts - replace all instances of fatalMessageBox (unless you REALLY want to kill the program in release!)
 

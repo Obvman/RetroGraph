@@ -13,266 +13,162 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Modules">
+      <UniqueIdentifier>{3ee1f8d9-0b15-4bb3-9150-d330abc7b61b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\Widgets">
+      <UniqueIdentifier>{61c50914-dee1-49ae-a5fa-a8aa6dec11e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\Measures">
+      <UniqueIdentifier>{e9183c73-d8ba-4834-99da-345c6ecd372a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\Measures\Data">
+      <UniqueIdentifier>{593b7e41-8975-4510-bfbd-4be99df85fb8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AnimationState.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CPUMeasure.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CPUPlugin.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CPUStatsWidget.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DriveMeasure.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FontManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GLShaders.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GPUMeasure.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphWidget.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HDDWidget.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MainWidget.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Monitors.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MusicMeasure.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MusicWidget.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NetMeasure.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ProcessCPUWidget.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ProcessData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ProcessMeasure.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ProcessRAMWidget.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RAMMeasure.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RetroGraph.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SystemMeasure.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SystemStatsWidget.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TimeWidget.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UserSettings.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Window.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="colors.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="drawUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FPSLimiter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="units.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FPSWidget.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Widget.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Measure.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NtDefs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NetStatsWidget.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DisplayMeasure.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ListContainer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VBOController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="resource1.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ErrorDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DataClient.h">
+    <ClInclude Include="RGAssert.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="utils.cpp">
+    <ClCompile Include="CPUStatsWidget.ixx">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeWidget.ixx">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="MainWidget.ixx">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="MusicWidget.ixx">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="ProcessRAMWidget.ixx">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="SystemStatsWidget.ixx">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="NetStatsWidget.ixx">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="FPSWidget.ixx">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphWidget.ixx">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="ProcessCPUWidget.ixx">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="HDDWidget.ixx">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget.ixx">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.ixx">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="RetroGraph.ixx">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="IRetroGraph.ixx">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="FPSLimiter.ixx">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawUtils.ixx">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="WidgetDefines.ixx">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="GLShader.ixx">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.ixx">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="RGAssert.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="drawUtils.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Units.ixx">
+      <Filter>Modules</Filter>
     </ClCompile>
-    <ClCompile Include="Window.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="UserSettings.ixx">
+      <Filter>Modules</Filter>
     </ClCompile>
-    <ClCompile Include="UserSettings.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Colors.ixx">
+      <Filter>Modules</Filter>
     </ClCompile>
-    <ClCompile Include="TimeWidget.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="NtDefs.ixx">
+      <Filter>Modules</Filter>
     </ClCompile>
-    <ClCompile Include="SystemStatsWidget.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="GLListContainer.ixx">
+      <Filter>Modules</Filter>
     </ClCompile>
-    <ClCompile Include="SystemMeasure.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Window.ixx">
+      <Filter>Modules</Filter>
     </ClCompile>
-    <ClCompile Include="RetroGraph.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="AnimationState.ixx">
+      <Filter>Modules\Measures</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Particle.ixx">
+      <Filter>Modules\Measures</Filter>
     </ClCompile>
-    <ClCompile Include="RAMMeasure.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Measure.ixx">
+      <Filter>Modules\Measures</Filter>
     </ClCompile>
-    <ClCompile Include="ProcessRAMWidget.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="RAMMeasure.ixx">
+      <Filter>Modules\Measures</Filter>
     </ClCompile>
-    <ClCompile Include="ProcessMeasure.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Monitors.ixx">
+      <Filter>Modules\Measures</Filter>
     </ClCompile>
-    <ClCompile Include="ProcessData.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="MusicMeasure.ixx">
+      <Filter>Modules\Measures</Filter>
     </ClCompile>
-    <ClCompile Include="ProcessCPUWidget.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="GPUMeasure.ixx">
+      <Filter>Modules\Measures</Filter>
     </ClCompile>
-    <ClCompile Include="NetMeasure.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="FontManager.ixx">
+      <Filter>Modules</Filter>
     </ClCompile>
-    <ClCompile Include="MusicWidget.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="SystemMeasure.ixx">
+      <Filter>Modules\Measures</Filter>
     </ClCompile>
-    <ClCompile Include="MusicMeasure.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="ProcessMeasure.ixx">
+      <Filter>Modules\Widgets</Filter>
     </ClCompile>
-    <ClCompile Include="Monitors.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="CPUMeasure.ixx">
+      <Filter>Modules\Measures</Filter>
     </ClCompile>
-    <ClCompile Include="MainWidget.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="CPUPlugin.ixx">
+      <Filter>Modules</Filter>
     </ClCompile>
-    <ClCompile Include="HDDWidget.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="DriveMeasure.ixx">
+      <Filter>Modules\Measures</Filter>
     </ClCompile>
-    <ClCompile Include="GraphWidget.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="ProcessData.ixx">
+      <Filter>Modules\Measures\Data</Filter>
     </ClCompile>
-    <ClCompile Include="GPUMeasure.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="DriveInfo.ixx">
+      <Filter>Modules\Measures\Data</Filter>
     </ClCompile>
-    <ClCompile Include="GLShaders.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="DisplayMeasure.ixx">
+      <Filter>Modules\Measures</Filter>
     </ClCompile>
-    <ClCompile Include="FontManager.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="NetMeasure.ixx">
+      <Filter>Modules\Measures</Filter>
     </ClCompile>
-    <ClCompile Include="FPSWidget.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="VBOController.ixx">
+      <Filter>Modules</Filter>
     </ClCompile>
-    <ClCompile Include="FPSLimiter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DriveMeasure.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CPUStatsWidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CPUPlugin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CPUMeasure.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimationState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Widget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="NetStatsWidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DisplayMeasure.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ListContainer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VBOController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ErrorDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DataClient.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="RetroGraphLib.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
   </ItemGroup>
 </Project>
