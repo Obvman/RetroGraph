@@ -206,7 +206,7 @@ GPUMeasure::GPUMeasure()
     NvAPI_GPU_GetFullName(m_gpuHandle, gpuName);
     m_gpuName = gpuName;
 
-    m_gpuDescription = "GPU: NVIDIA" + m_gpuName + " (" + m_driverVersion + ")";
+    m_gpuDescription = "GPU: " + m_gpuName + " (" + m_driverVersion + ")";
 
     // Initialise updating member structs
     m_thermalSettings.version = NV_GPU_THERMAL_SETTINGS_VER;
@@ -244,8 +244,7 @@ void GPUMeasure::refreshSettings() {
 }
 
 float GPUMeasure::getMemUsagePercent() const {
-    return 100.0f -
-        (static_cast<float>(m_currAvailableMemory) / m_totalMemory) * 100.0f;
+    return 100.0f - (static_cast<float>(m_currAvailableMemory) / m_totalMemory) * 100.0f;
 }
 
 void GPUMeasure::updateGpuTemp() {

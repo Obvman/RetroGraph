@@ -21,7 +21,6 @@ export {
     class NetGraphWidget;
 }
 
-// #TODO split into partitions
 class GPUGraphWidget : public Widget {
 public:
     GPUGraphWidget(const FontManager* fontManager, const IRetroGraph& rg, bool visible);

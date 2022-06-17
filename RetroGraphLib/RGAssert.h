@@ -12,8 +12,8 @@ constexpr auto debugMode = bool{ true };
 
 constexpr auto debugMode = bool{ false };
 
-#define RGASSERT(expr, str)
-#define RGERROR(str)
+#define RGASSERT(expr, str) ((void)(expr)); ((void)(str))
+#define RGERROR(str) ((void)(str))
 
 #endif
 
@@ -24,10 +24,6 @@ namespace rg {
 
 /* Displays an Error message box with the given string as a message */
 void showMessageBox(const char* s);
-
-/* Displays an Error message box with the given string as a message and
-   exits the program with a failure code */
-void fatalMessageBox(const char* s);
 
 // Throws error if expr is false
 void rgAssert(bool expr, const char* str);

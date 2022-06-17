@@ -1,7 +1,6 @@
 module;
 
-// #TODO error when removing these.
-#include <sys/types.h>
+// Error if this is not here, even though it's included in WindowsHeaders.h
 #include <sys/stat.h>
 
 export module RetroGraph;

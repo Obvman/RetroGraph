@@ -13,7 +13,7 @@
 @SET PKGDIR=Package\
 @SET RSRCDIR=%PKGDIR%resources\
 @SET BINDIR=%PKGDIR%bin\x64\
-@SET DEVENVCOM="C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\devenv.com"
+@SET DEVENVCOM="C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.com"
 
 @IF [%1]==[rebuild] GOTO :build
 @SET ACTION=-build

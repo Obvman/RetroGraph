@@ -41,8 +41,11 @@ SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
     m_statsStrings.emplace_back(sysInfo.getOSInfoStr());
 
     const auto& cpuMeasure{ rg.getCPUMeasure() };
-    if (cpuMeasure.getCoreTempInfoSuccess())
-        m_statsStrings.emplace_back(cpuMeasure.getCPUName());
+    if (cpuMeasure.getCoreTempInfoSuccess()) {
+        const auto cpuName = cpuMeasure.getCPUName();
+        if (!cpuName.empty())
+            m_statsStrings.emplace_back(cpuName);
+    }
     else
         m_statsStrings.emplace_back(sysInfo.getCPUDescription());
 

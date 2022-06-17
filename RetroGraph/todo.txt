@@ -1,8 +1,8 @@
 unit tests
 
-debug asserts - replace all instances of fatalMessageBox (unless you REALLY want to kill the program in release!)
+DPI awareness is not perfect.
 
-std::string& to string_view
+When modules are working properly, split into interface and implementation
 
 UserSettings should update when changing widgets via right-click menu. Save to settings file and read from there
 instead of .ini file.
@@ -12,8 +12,6 @@ Build script take platform/configuration arguments
 make particle line shader. for each vertex, send the position of that vertex's partner. Calculate position + transparency.
 
 Enforce position restrictions on FPS/Graph/Main/CPUStats widgets
-
-implement 30 min work/rest timer
 
 high-performance mode - switch between low and high FPS for main widget, graphs
 

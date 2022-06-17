@@ -7,15 +7,13 @@ export module FontManager;
 import DrawUtils;
 import Utils;
 
-//import <array>;
 import <algorithm>;
 import <cmath>;
 import <cstdint>;
 import <cstdio>;
+import <iostream>;
 import <string>;
 import <vector>;
-
-import <iostream>;
 
 import <GLHeaders.h>;
 import <WindowsHeaders.h>;

@@ -42,7 +42,7 @@ public:
     float getClockSpeed() const { return m_ctData.fCPUSpeed; }
 
     /* Returns the CPU Name */
-    std::string_view getCPUName() const { return m_ctData.sCPUName; }
+    std::string getCPUName() const { return m_ctData.sCPUName; }
 
     /* Returns the current temperature of the given CPU core (Celsius) */
     float getTemp(int coreNum) const { return m_ctData.fTemp[coreNum]; }

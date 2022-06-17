@@ -154,8 +154,11 @@ void CPUMeasure::refreshSettings() {
 }
 
 void CPUMeasure::updateCPUName() {
-    if (m_cpuName.empty() && m_coreTempPlugin.getCoreTempInfoSuccess())
-        m_cpuName = "CPU: " + std::string{ m_coreTempPlugin.getCPUName() };
+    if (m_cpuName.empty() && m_coreTempPlugin.getCoreTempInfoSuccess()) {
+        const auto cpuName{ m_coreTempPlugin.getCPUName() };
+        if (!cpuName.empty())
+            m_cpuName = "CPU: " + std::string{ cpuName };
+    }
 }
 
 float CPUMeasure::getCPULoad() {

@@ -2,22 +2,15 @@ module;
 
 #include "RGAssert.h"
 
-// #TODO imports?
-#include <fstream>
-#include <iostream>
-#include <string>
-#include <vector>
-
 export module GLShader;
 
 import Utils;
 
-//import <fstream>;
-//import <iostream>;
-//import <string>;
-//import <vector>;
-
 import <format>;
+import <fstream>;
+import <iostream>;
+import <string>;
+import <vector>;
 
 import <GLHeaders.h>;
 
@@ -108,7 +101,12 @@ GLuint GLShader::loadShader(const std::string& vFile, const std::string& fFile) 
         std::cout << &programError[0] << '\n';
 
         errorMessage.append(&programError[0]);
-        fatalMessageBox(errorMessage.c_str());
+        RGERROR(errorMessage.c_str());
+
+        glDeleteShader(vShader);
+        glDeleteShader(fShader);
+
+        return 0;
     }
 
     glDeleteShader(vShader);
