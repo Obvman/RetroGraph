@@ -94,32 +94,6 @@ private:
     std::map<Measures::Types, std::vector<Widgets>> m_dependencyMap;
 };
 
-// #TODO finish setup of the MFC app to get assert dialog working.
-//class RGApp : public CWinApp {
-//public:
-//    RGApp() = default;
-//    ~RGApp() {}
-//
-//    BOOL InitInstance() override;
-//    int ExitInstance() override;
-//
-//private:
-//    std::unique_ptr<RetroGraph> m_retrograph;
-//};
-
-//static RGApp theApp;
-//
-//BOOL RGApp::InitInstance() {
-//    auto ret{ __super::InitInstance() };
-//    m_retrograph = std::make_unique<RetroGraph>(::GetModuleHandle(nullptr));
-//    return ret;
-//}
-//
-//int RGApp::ExitInstance() {
-//    auto ret{ __super::ExitInstance() };
-//    return ret;
-//}
-
 using MTypes = Measures::Types;
 
 auto RetroGraph::createMeasures() const {

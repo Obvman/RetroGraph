@@ -9,7 +9,6 @@ export {
     struct Particle;
     struct ParticleLine;
 
-    // #TODO move to own module
     // NOTE: numCellsPerSide == (2.0 / cellSize)
     // cellSize should be no smaller than particleConnectionDistance
     constexpr auto particleConnectionDistance = float{ 0.2f };

@@ -114,9 +114,9 @@ private:
     void sendToBack() const;
 
     // Passes Window this pointer via userParam
-    //static void GLAPIENTRY GLMessageCallback(GLenum source, GLenum type, GLuint id,
-    //                                         GLenum severity, GLsizei length,
-    //                                         const GLchar* message, const void* userParam);
+    static void GLAPIENTRY GLMessageCallback(GLenum source, GLenum type, GLuint id,
+                                             GLenum severity, GLsizei length,
+                                             const GLchar* message, const void* userParam);
 
     bool m_running{ true };
 
@@ -434,13 +434,14 @@ void Window::sendToBack() const {
     SetWindowPos(m_hWndMain, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
 }
 
-//void GLAPIENTRY Window::GLMessageCallback(GLenum source, GLenum type, GLuint /*id*/,
-//                                          GLenum severity, GLsizei /*length*/,
-//                                          const GLchar * message, const void * /*userParam*/) {
-//    fprintf(stderr, "GL CALLBACK: %s source = %d, type = %d, severity = %xd message = %s\n",
-//        (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
-//            source, type, severity, message);
-//}
+void GLAPIENTRY Window::GLMessageCallback(GLenum source, GLenum type, GLuint /*id*/,
+                                          GLenum severity, GLsizei /*length*/,
+                                          const GLchar * message, const void * /*userParam*/) {
+
+    const auto& msg{ std::format("GL CALLBACK: {} source = {}, type = {}, severity = {} message = {}\n",
+        (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""), source, type, severity, message)};
+    std::cerr << msg << '\n';
+}
 
 void Window::updateSize(int width, int height) {
     m_width = width;
@@ -478,7 +479,7 @@ void Window::createTrayIcon() {
     m_tray.cbSize = sizeof(m_tray);
     m_tray.hIcon = LoadIcon(m_hInstance, MAKEINTRESOURCE(IDI_ICON1));
     m_tray.hWnd = m_hWndMain;
-    m_tray.uVersion = NOTIFYICON_VERSION; // #TODO get NOTIFYICON_VERSION_4 working
+    m_tray.uVersion = NOTIFYICON_VERSION_4;
 
     if constexpr (debugMode) {
         strcpy_s(m_tray.szTip, 128, "RetroGraph (Debug)");
@@ -504,8 +505,7 @@ void Window::initOpenGL() {
     // Enable debug info
     if constexpr (debugMode) {
         glEnable(GL_DEBUG_OUTPUT);
-        // #TODO this breaks with modules
-        //glDebugMessageCallback(GLMessageCallback, reinterpret_cast<void*>(this));
+        glDebugMessageCallback(GLMessageCallback, reinterpret_cast<void*>(this));
     }
 
     glEnable(GL_ALPHA_TEST);

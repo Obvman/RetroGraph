@@ -333,7 +333,6 @@ void ProcessMeasure::populateList() {
 
 void ProcessMeasure::detectNewProcesses() {
     // We need to allocate a large buffer because the process list can be large.
-    // #TODO this can throw an access violation ??
     PVOID buffer{ VirtualAlloc(nullptr, 1024*1024, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE) };
     if (!buffer) {
 		RGERROR(std::format("Unable to allocate memory for process list: ", GetLastError()).c_str());
