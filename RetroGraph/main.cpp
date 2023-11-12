@@ -4,12 +4,9 @@ import RetroGraph;
 import Utils;
 import Units;
 
-import <iostream>;
-import <iomanip>;
-import <chrono>;
-import <memory>;
+import std.core;
 
-import <WindowsHeaders.h>;
+import "../RetroGraphDLL/WindowsHeaders.h";
 
 void mainLoop(rg::RetroGraph& retroGraph);
 

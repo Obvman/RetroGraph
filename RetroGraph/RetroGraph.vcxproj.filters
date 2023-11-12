@@ -13,44 +13,31 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="resources">
+    <Filter Include="Resources">
       <UniqueIdentifier>{04c3c6ff-192a-4676-a2b9-6cd8a1d97513}</UniqueIdentifier>
     </Filter>
-    <Filter Include="resources\shaders">
+    <Filter Include="Resources\shaders">
       <UniqueIdentifier>{82c048dd-ec38-4a6a-8654-c3586ad1bee1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="RetroGraph.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="icon1.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="Creative-Freedom-Free-Vibrant-Line-Graph.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\resources\shaders\cpuGraph.frag">
-      <Filter>resources\shaders</Filter>
+    <None Include="Resources\shaders\test.vert">
+      <Filter>Resources\shaders</Filter>
     </None>
-    <None Include="..\resources\shaders\cpuGraph.vert">
-      <Filter>resources\shaders</Filter>
+    <None Include="Resources\shaders\test.frag">
+      <Filter>Resources\shaders</Filter>
     </None>
-    <None Include="..\resources\shaders\test.frag">
-      <Filter>resources\shaders</Filter>
+    <None Include="Resources\default_config.ini">
+      <Filter>Resources</Filter>
     </None>
-    <None Include="..\resources\shaders\test.vert">
-      <Filter>resources\shaders</Filter>
+    <None Include="Resources\config.ini">
+      <Filter>Resources</Filter>
     </None>
-    <None Include="..\resources\config.ini">
-      <Filter>resources</Filter>
+    <None Include="Resources\shaders\cpuGraph.frag">
+      <Filter>Resources\shaders</Filter>
     </None>
-    <None Include="..\resources\default_config.ini">
-      <Filter>resources</Filter>
+    <None Include="Resources\shaders\cpuGraph.vert">
+      <Filter>Resources\shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -61,5 +48,15 @@
   <ItemGroup>
     <Text Include="todo.txt" />
     <Text Include="InstallNotes.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resources\RetroGraph.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Resources\resource.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

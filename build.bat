@@ -46,15 +46,16 @@ GOTO :start_build
 @XCOPY /Q "bin\Releasex64\glew32.dll" %BINDIR% >NUL || goto :error
 @XCOPY /Q "bin\Releasex64\GetCoreTempInfo.dll" %BINDIR% >NUL || goto :error
 @XCOPY /Q "bin\Releasex64\RetroGraph.exe" %BINDIR% >NUL || goto :error
+@XCOPY /Q "bin\Releasex64\RetroGraphDLL.dll" %BINDIR% >NUL || goto :error
 
 @ECHO.
 @ECHO ========================================================================
 @ECHO Copying resource directory files
 @ECHO ========================================================================
 
-@XCOPY /Q /E /I "resources\fonts" "Package\resources\fonts" >NUL || goto :error
-@XCOPY /Q /E /I "resources\shaders" "Package\resources\shaders" >NUL || goto :error
-@COPY  "resources\default_config.ini" "Package\resources\config.ini" >NUL || goto :error
+@XCOPY /Q /E /I "RetroGraph\resources\fonts" "Package\RetroGraph\resources\fonts" >NUL || goto :error
+@XCOPY /Q /E /I "RetroGraph\resources\shaders" "Package\RetroGraph\resources\shaders" >NUL || goto :error
+@COPY  "RetroGraph\resources\default_config.ini" "Package\RetroGraph\resources\config.ini" >NUL || goto :error
 
 :success
 @ECHO.

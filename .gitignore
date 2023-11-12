@@ -12,6 +12,8 @@ Package/
 *.swp
 *.idb
 *.pdb
+*.aps
+.vim/
 *packages*
 *.vcxproj.user
 *.psess

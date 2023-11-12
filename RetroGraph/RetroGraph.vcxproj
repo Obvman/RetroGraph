@@ -113,7 +113,7 @@
       <ShowIncludes>false</ShowIncludes>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <DisableSpecificWarnings>5105;4005;5106</DisableSpecificWarnings>
+      <DisableSpecificWarnings>5050;</DisableSpecificWarnings>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalOptions>/experimental:module %(AdditionalOptions)</AdditionalOptions>
       <EnableModules>true</EnableModules>
@@ -133,16 +133,18 @@
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions);_WIN32_WINNT=0x0A00</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <DisableSpecificWarnings>5105;4005;5106</DisableSpecificWarnings>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <DisableSpecificWarnings>5050;</DisableSpecificWarnings>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <AdditionalOptions>/experimental:module %(AdditionalOptions)</AdditionalOptions>
       <EnableModules>true</EnableModules>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -166,7 +168,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <DisableSpecificWarnings>5105;4005;5106</DisableSpecificWarnings>
+      <DisableSpecificWarnings>5050;</DisableSpecificWarnings>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalOptions>/experimental:module %(AdditionalOptions)</AdditionalOptions>
       <EnableModules>true</EnableModules>
@@ -190,7 +192,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
@@ -199,10 +201,12 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions);_WIN32_WINNT=0x0A00</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <DisableSpecificWarnings>5105;4005;5106</DisableSpecificWarnings>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <DisableSpecificWarnings>5050;</DisableSpecificWarnings>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <AdditionalOptions>/experimental:module %(AdditionalOptions)</AdditionalOptions>
       <EnableModules>true</EnableModules>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -222,19 +226,12 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ResourceCompile Include="RetroGraph.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Creative-Freedom-Free-Vibrant-Line-Graph.ico" />
-    <Image Include="icon1.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\resources\config.ini" />
-    <None Include="..\resources\default_config.ini" />
-    <None Include="..\resources\shaders\cpuGraph.frag" />
-    <None Include="..\resources\shaders\cpuGraph.vert" />
-    <None Include="..\resources\shaders\test.frag" />
-    <None Include="..\resources\shaders\test.vert" />
+    <None Include="Resources\config.ini" />
+    <None Include="Resources\default_config.ini" />
+    <None Include="Resources\shaders\cpuGraph.frag" />
+    <None Include="Resources\shaders\cpuGraph.vert" />
+    <None Include="Resources\shaders\test.frag" />
+    <None Include="Resources\shaders\test.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -245,16 +242,19 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\HeaderUnits\HeaderUnits.vcxproj">
-      <Project>{cf7563fa-0578-4767-b0e3-56ffc4c244d5}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\RetroGraphLib\RetroGraphLib.vcxproj">
-      <Project>{d2722fbd-f44c-4e8f-8164-959674c38c64}</Project>
+    <ProjectReference Include="..\RetroGraphDLL\RetroGraphDLL.vcxproj">
+      <Project>{bd619e03-8cc4-41b7-91ad-aa54b77c4299}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Text Include="InstallNotes.txt" />
     <Text Include="todo.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resources\RetroGraph.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Resources\resource.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
