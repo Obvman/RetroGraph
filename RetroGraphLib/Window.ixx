@@ -8,12 +8,14 @@ export module Window;
 import Colors;
 import DisplayMeasure;
 import IRetroGraph;
+import Monitors;
 import UserSettings;
 import Utils;
 
 import <iostream>;
 
 import <GLHeaders.h>;
+import <WindowsHeaders.h>;
 
 namespace rg {
 

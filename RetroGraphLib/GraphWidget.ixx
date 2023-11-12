@@ -12,6 +12,8 @@ import Units;
 import VBOController;
 import Widget;
 
+import <GLHeaders.h>;
+
 namespace rg {
 
 export {

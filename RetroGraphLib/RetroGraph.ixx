@@ -31,6 +31,7 @@ import <map>;
 import <memory>;
 import <optional>;
 import <string>;
+import <vector>;
 
 import <WindowsHeaders.h>;
 

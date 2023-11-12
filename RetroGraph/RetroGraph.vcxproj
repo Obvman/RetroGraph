@@ -22,7 +22,7 @@
     <ProjectGuid>{DC558A9D-2E76-4F28-B4B9-6BDD42EAC515}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>RetroGraph</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.20348.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

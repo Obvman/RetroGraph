@@ -13,6 +13,7 @@ import WidgetDefines;
 
 import <algorithm>;
 import <string>;
+import <vector>;
 
 import <GLHeaders.h>;
 
