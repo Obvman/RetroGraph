@@ -124,7 +124,7 @@ https://github.com/benhoyt/inih
 #define MAX_NAME 50
 
 /* Strip whitespace chars off end of given string, in place. Return s. */
-inline static char* rstrip(char* s)
+inline char* rstrip(char* s)
 {
     char* p = s + strlen(s);
     while (p > s && isspace((unsigned char)(*--p)))
@@ -133,7 +133,7 @@ inline static char* rstrip(char* s)
 }
 
 /* Return pointer to first non-whitespace char in given string. */
-inline static char* lskip(const char* s)
+inline char* lskip(const char* s)
 {
     while (*s && isspace((unsigned char)(*s)))
         s++;
@@ -143,7 +143,7 @@ inline static char* lskip(const char* s)
 /* Return pointer to first char (of chars) or inline comment in given string,
    or pointer to null at end of string if neither found. Inline comment must
    be prefixed by a whitespace character to register as a comment. */
-inline static char* find_chars_or_comment(const char* s, const char* chars)
+inline char* find_chars_or_comment(const char* s, const char* chars)
 {
 #if INI_ALLOW_INLINE_COMMENTS
     int was_space = 0;
@@ -161,7 +161,7 @@ inline static char* find_chars_or_comment(const char* s, const char* chars)
 }
 
 /* Version of strncpy that ensures dest (size bytes) is null-terminated. */
-inline static char* strncpy0(char* dest, const char* src, size_t size)
+inline char* strncpy0(char* dest, const char* src, size_t size)
 {
     strncpy(dest, src, size);
     dest[size - 1] = '\0';
