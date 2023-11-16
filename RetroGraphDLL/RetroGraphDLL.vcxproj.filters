@@ -177,6 +177,9 @@
     <ClCompile Include="Rendering\FontManager.ixx">
       <Filter>Modules\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="VBO.ixx">
+      <Filter>Modules\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resources\resource.h">

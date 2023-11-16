@@ -4,11 +4,13 @@ module;
 
 export module Widgets.Widget;
 
+import IRetroGraph; // Reverse Dependency
+import Utils;
+
 import Rendering.DrawUtils;
 import Rendering.FontManager;
 import Rendering.GLListContainer;
-import IRetroGraph; // Reverse Dependency
-import Utils;
+
 import Widgets.WidgetDefines;
 
 import std.core;

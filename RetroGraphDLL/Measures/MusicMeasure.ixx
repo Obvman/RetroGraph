@@ -5,6 +5,7 @@ module;
 export module Measures.MusicMeasure;
 
 import Utils;
+
 import Measures.Measure;
 import Measures.ProcessMeasure;
 
@@ -14,14 +15,12 @@ import "WindowsHeaders.h";
 
 namespace rg {
 
-export class MusicMeasure;
-
 constexpr const char * foobarWindowClassName{ "{97E27FAA-C0B3-4b8e-A693-ED7881E99FC1}" };
 
 /* Monitors current music player status. Is dependent on ProcessMeasure, so must
  * be created after ProcessMeasure is created
  */
-class MusicMeasure : public Measure {
+export class MusicMeasure : public Measure {
 public:
     MusicMeasure(const ProcessMeasure& procMeasure);
     ~MusicMeasure() noexcept = default;

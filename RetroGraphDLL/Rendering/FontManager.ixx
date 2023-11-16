@@ -3,6 +3,7 @@ module;
 export module Rendering.FontManager;
 
 import Utils;
+
 import Rendering.DrawUtils;
 
 import std.core;
@@ -11,8 +12,6 @@ import "GLHeaders.h";
 import "WindowsHeaders.h";
 
 namespace rg {
-
-export class FontManager;
 
 export using RGFONTCODE = char;
 
@@ -38,7 +37,7 @@ export enum RGFontCode : char {
 
 export constexpr size_t RG_NUM_CHARS_IN_FONT{ 256 };
 
-class FontManager {
+export class FontManager {
 public:
     FontManager(HWND hWnd, int windowHeight);
     ~FontManager() noexcept;

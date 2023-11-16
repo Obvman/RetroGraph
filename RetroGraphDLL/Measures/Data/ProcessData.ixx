@@ -15,10 +15,8 @@ import "WindowsHeaders.h";
 
 namespace rg {
 
-export class ProcessData;
-
 /* Storage class that contains various information about a system process */
-class ProcessData {
+export class ProcessData {
 public:
     ProcessData(HANDLE pHandle, DWORD pID, const char* name);
     ~ProcessData() noexcept;

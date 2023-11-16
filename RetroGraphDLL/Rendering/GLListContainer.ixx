@@ -11,9 +11,7 @@ import "GLHeaders.h";
 
 namespace rg {
 
-export class GLListContainer;
-
-class GLListContainer {
+export class GLListContainer {
 public:
     static GLListContainer& inst() { static GLListContainer i; return i; }
 

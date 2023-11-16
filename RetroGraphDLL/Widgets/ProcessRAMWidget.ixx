@@ -3,10 +3,13 @@ module;
 export module Widgets.ProcessRAMWidget;
 
 import Colors;
+import IRetroGraph; // Reverse Dependency
+
+import Measures.ProcessMeasure;
+
 import Rendering.FontManager;
 import Rendering.GLListContainer;
-import IRetroGraph; // Reverse Dependency
-import Measures.ProcessMeasure;
+
 import Widgets.Widget;
 
 namespace rg {

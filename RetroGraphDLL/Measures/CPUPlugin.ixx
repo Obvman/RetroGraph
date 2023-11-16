@@ -12,15 +12,13 @@ import "WindowsHeaders.h";
 
 namespace rg {
 
-export class CPUPlugin;
-
 using getCoreTempInfoFn = bool (WINAPI *)(CORE_TEMP_SHARED_DATA* pData);
 getCoreTempInfoFn GetCoreTempInfo;
 
 /* CPUPlugin interfaces with CoreTemp's shared memory to get more detailed
    statistics on the system's CPU: Clock speed, core count, voltage, model name,
    individual core temperatures and loads */
-class CPUPlugin {
+export class CPUPlugin {
 public:
     CPUPlugin();
     ~CPUPlugin() noexcept;

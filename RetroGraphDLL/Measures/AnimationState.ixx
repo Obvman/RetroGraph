@@ -19,15 +19,13 @@ import "WindowsHeaders.h";
 
 namespace rg {
 
-export class AnimationState;
-
 constexpr size_t numParticles{ 100U };
 export constexpr size_t maxLines{ numParticles * numParticles };
 
 constexpr auto numVerticesPerCircle{ circleLines + 2 };
 constexpr auto numCoordsPerCircle{ numVerticesPerCircle * 2 };
 
-class AnimationState : public Measure {
+export class AnimationState : public Measure {
 
 public:
     AnimationState();

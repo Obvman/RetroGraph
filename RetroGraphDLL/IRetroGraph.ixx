@@ -17,9 +17,7 @@ import Widgets.WidgetDefines;
 
 namespace rg {
 
-export class IRetroGraph;
-
-class IRetroGraph {
+export class IRetroGraph {
 public:
     virtual ~IRetroGraph() = default;
 

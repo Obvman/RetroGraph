@@ -17,10 +17,8 @@ import "WindowsHeaders.h";
 
 namespace rg {
 
-export class SystemMeasure;
-
 /* Contains static information about the computer so no need to update */
-class SystemMeasure : public Measure {
+export class SystemMeasure : public Measure {
 public:
     SystemMeasure();
     ~SystemMeasure() noexcept = default;

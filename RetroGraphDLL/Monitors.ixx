@@ -12,8 +12,6 @@ import "WindowsHeaders.h";
 
 namespace rg {
 
-export class Monitors;
-
 struct MonitorData {
     MonitorData(int _index, HMONITOR _handle, int _realWidth, int _realHeight,
                 int _width, int _height, int _x, int _y, int _refreshRate)
@@ -51,7 +49,7 @@ struct MonitorData {
     HMONITOR handle;
 };
 
-class Monitors {
+export class Monitors {
 public:
     Monitors();
     ~Monitors() noexcept = default;

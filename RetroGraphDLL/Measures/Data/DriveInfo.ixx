@@ -4,10 +4,8 @@ import std.core;
 
 namespace rg {
 
-export class DriveInfo;
-
 /* Per drive data storage container */
-class DriveInfo {
+export class DriveInfo {
 public:
     DriveInfo(char _driveLetter, uint64_t initFreeBytes, uint64_t totalBytes, const char* volumeName);
     ~DriveInfo() noexcept = default;

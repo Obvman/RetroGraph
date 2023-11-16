@@ -5,12 +5,15 @@ module;
 export module Widgets.TimeWidget;
 
 import Colors;
+import IRetroGraph; // Reverse Dependency
+
 import Measures.CPUMeasure;
+import Measures.NetMeasure;
+
 import Rendering.DrawUtils;
 import Rendering.FontManager;
 import Rendering.GLListContainer;
-import IRetroGraph; // Reverse Dependency
-import Measures.NetMeasure;
+
 import Widgets.Widget;
 
 import std.core;

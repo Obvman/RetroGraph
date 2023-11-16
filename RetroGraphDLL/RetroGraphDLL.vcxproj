@@ -215,6 +215,7 @@
     <ClCompile Include="Units.ixx" />
     <ClCompile Include="UserSettings.ixx" />
     <ClCompile Include="Utils.ixx" />
+    <ClCompile Include="VBO.ixx" />
     <ClCompile Include="Widgets\CPUStatsWidget.ixx" />
     <ClCompile Include="Widgets\FPSWidget.ixx" />
     <ClCompile Include="Widgets\GraphWidget.ixx" />

@@ -4,6 +4,7 @@ import Colors;
 import Units;
 import UserSettings;
 import Utils;
+
 import Measures.Measure;
 
 import std.core;
@@ -12,10 +13,8 @@ import "WindowsHeaders.h";
 
 namespace rg {
 
-export class RAMMeasure;
-
 /* Stores capacity totals and availability for system RAM */
-class RAMMeasure : public Measure {
+export class RAMMeasure : public Measure {
 public:
     RAMMeasure();
     ~RAMMeasure() noexcept = default;

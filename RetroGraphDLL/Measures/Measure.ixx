@@ -8,7 +8,6 @@ import std.core;
 
 namespace rg {
 
-export class Measure;
 export using Hz = int;
 export using Seconds = int;
 
@@ -31,7 +30,7 @@ namespace Measures {
 
 }
 
-class Measure {
+export class Measure {
 public:
     Measure() = default;
     virtual ~Measure() = default;

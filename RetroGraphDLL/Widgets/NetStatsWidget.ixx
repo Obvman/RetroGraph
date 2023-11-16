@@ -3,20 +3,21 @@ module;
 export module Widgets.NetStatsWidget;
 
 import Colors;
+import IRetroGraph; // Reverse Dependency
+
+import Measures.NetMeasure;
+
 import Rendering.DrawUtils;
 import Rendering.FontManager;
 import Rendering.GLListContainer;
-import Measures.NetMeasure;
-import IRetroGraph; // Reverse Dependency
+
 import Widgets.Widget;
 
 import "GLHeaders.h";
 
 namespace rg {
 
-export { class NetStatsWidget; }
-
-class NetStatsWidget : public Widget {
+export class NetStatsWidget : public Widget {
 public:
     NetStatsWidget(const FontManager* fontManager,
                   const IRetroGraph& rg, bool visible);

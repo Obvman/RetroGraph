@@ -21,8 +21,6 @@ import "WindowsHeaders.h";
 
 namespace rg {
 
-export class GPUMeasure;
-
 constexpr int NVAPI_MAX_USAGES_PER_GPU{ 34 };
 constexpr int NVAPI_GPU_UTILIZATION_DOMAIN_GPU{ 0U };
 
@@ -32,7 +30,7 @@ using NvAPI_GPU_GetUsages_t = int (*)(NvPhysicalGpuHandle handle, NvU32* usages)
 NvAPI_QueryInterface_t NvAPI_QueryInterface{ nullptr };
 NvAPI_GPU_GetUsages_t NvAPI_GPU_GetUsages{ nullptr };
 
-class GPUMeasure : public Measure {
+export class GPUMeasure : public Measure {
 public:
     GPUMeasure();
     ~GPUMeasure() noexcept;

@@ -16,12 +16,10 @@ import "WindowsHeaders.h";
 
 namespace rg {
 
-export class DriveMeasure;
-
 constexpr auto maxVolumeNameSize = int{ 64U };
 
 /* Stores paths and statistics about all the system's fixed drives */
-class DriveMeasure : public Measure {
+export class DriveMeasure : public Measure {
 public:
     DriveMeasure();
     ~DriveMeasure() noexcept = default;

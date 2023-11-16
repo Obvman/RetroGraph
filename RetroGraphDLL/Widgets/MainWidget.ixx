@@ -42,13 +42,13 @@ private:
 
     const AnimationState* m_animationState;
 
-    VBOID m_vboID;
+    VBOID m_vbo;
 };
 
 MainWidget::MainWidget(const FontManager* fontManager, const IRetroGraph& rg, bool visible)
     : Widget{ fontManager, visible }
     , m_animationState{ &rg.getAnimationState() }
-    , m_vboID{ VBOController::inst().createAnimationVBO(maxLines) }  { }
+    , m_vbo{ VBOController::inst().createAnimationVBO(maxLines) }  { }
 
 bool MainWidget::needsDraw(int ticks) const {
     // Only draw if visible and we need to draw to keep
@@ -88,8 +88,8 @@ void MainWidget::drawParticles() const {
 }
 
 void MainWidget::drawParticleLines() const {
-    //VBOController::inst().updateAnimationVBO(m_vboID, *m_animationState);
-    //VBOController::inst().drawAnimationVBO(m_vboID, m_animationState->getNumLines() * sizeof(ParticleLine));
+    //VBOController::inst().updateAnimationVBO(m_vbo, *m_animationState);
+    //VBOController::inst().drawAnimationVBO(m_vbo, m_animationState->getNumLines() * sizeof(ParticleLine));
 
     glBegin(GL_LINES); {
         for (int i = 0; i < m_animationState->getNumLines(); ++i) {

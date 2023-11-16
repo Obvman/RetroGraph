@@ -3,10 +3,13 @@ module;
 export module Widgets.MusicWidget;
 
 import Colors;
+import IRetroGraph; // Reverse Dependency
+
+import Measures.MusicMeasure;
+
 import Rendering.FontManager;
 import Rendering.GLListContainer;
-import IRetroGraph; // Reverse Dependency
-import Measures.MusicMeasure;
+
 import Widgets.Widget;
 
 import std.core;

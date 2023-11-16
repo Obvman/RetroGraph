@@ -32,10 +32,8 @@ import "WindowsHeaders.h";
 
 namespace rg {
 
-export class Renderer;
-
 /* In charge of rendering each component's data to the window */
-class Renderer {
+export class Renderer {
 public:
     Renderer(HWND window, int width, int height, const IRetroGraph& _rg);
     __declspec(dllexport) ~Renderer() noexcept;

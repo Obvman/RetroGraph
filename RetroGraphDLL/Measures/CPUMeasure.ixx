@@ -17,10 +17,8 @@ import "WindowsHeaders.h";
 
 namespace rg {
 
-export class CPUMeasure;
-
 /* Measures statistics about the system CPU: Model name, total CPU load*/
-class CPUMeasure : public Measure {
+export class CPUMeasure : public Measure {
 public:
     CPUMeasure();
     ~CPUMeasure() noexcept = default;

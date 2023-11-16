@@ -19,10 +19,8 @@ import "WindowsHeaders.h";
 
 namespace rg {
 
-export class ProcessMeasure;
-
 /* Tracks system processes and their CPU/RAM usage */
-class ProcessMeasure : public Measure {
+export class ProcessMeasure : public Measure {
 public:
     ProcessMeasure();
     ~ProcessMeasure() noexcept = default;

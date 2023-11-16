@@ -5,9 +5,7 @@ import Measures.Measure;
 
 namespace rg {
 
-export class DisplayMeasure;
-
-class DisplayMeasure : public Measure {
+export class DisplayMeasure : public Measure {
 public:
     DisplayMeasure();
     ~DisplayMeasure() noexcept = default;

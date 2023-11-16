@@ -20,9 +20,7 @@ import "WindowsNetworkHeaders.h";
 
 namespace rg {
 
-export class NetMeasure;
-
-class NetMeasure : public Measure {
+export class NetMeasure : public Measure {
 public:
     NetMeasure();
     ~NetMeasure() noexcept;
