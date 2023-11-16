@@ -1,4 +1,4 @@
-export module Particle;
+export module Measures.Particle;
 
 import <cstdlib>;
 

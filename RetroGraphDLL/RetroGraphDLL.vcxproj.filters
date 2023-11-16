@@ -21,35 +21,17 @@
     <Filter Include="Widgets">
       <UniqueIdentifier>{023c0db9-90cc-4bda-9b5f-a6d2778c8414}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Widgets\Rendering">
-      <UniqueIdentifier>{459b7937-af9f-4fae-97ad-d092abfc637e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resources">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Modules\Rendering">
+      <UniqueIdentifier>{858fd7ec-e6f0-4f57-b805-49fc166d8584}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RetroGraphDLL.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Widgets\Rendering\DrawUtils.ixx">
-      <Filter>Widgets\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Widgets\Rendering\FontManager.ixx">
-      <Filter>Widgets\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Widgets\Rendering\GLListContainer.ixx">
-      <Filter>Widgets\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Widgets\Rendering\GLShader.ixx">
-      <Filter>Widgets\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Widgets\Rendering\Renderer.ixx">
-      <Filter>Widgets\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Widgets\Rendering\VBOController.ixx">
-      <Filter>Widgets\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="GLHeaders.h">
       <Filter>Header Units</Filter>
@@ -176,6 +158,24 @@
     </ClCompile>
     <ClCompile Include="RGAssert.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\GLListContainer.ixx">
+      <Filter>Modules\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\GLShader.ixx">
+      <Filter>Modules\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\Renderer.ixx">
+      <Filter>Modules\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\VBOController.ixx">
+      <Filter>Modules\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\DrawUtils.ixx">
+      <Filter>Modules\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\FontManager.ixx">
+      <Filter>Modules\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

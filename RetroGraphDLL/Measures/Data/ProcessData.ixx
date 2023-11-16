@@ -2,7 +2,7 @@ module;
 
 #include "RGAssert.h"
 
-export module ProcessData;
+export module Measures.Data.ProcessData;
 
 import Units;
 import Utils;

@@ -184,6 +184,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Colors.ixx" />
+    <ClCompile Include="Rendering\DrawUtils.ixx" />
+    <ClCompile Include="Rendering\FontManager.ixx" />
+    <ClCompile Include="Rendering\GLListContainer.ixx" />
+    <ClCompile Include="Rendering\GLShader.ixx" />
+    <ClCompile Include="Rendering\Renderer.ixx" />
+    <ClCompile Include="Rendering\VBOController.ixx" />
     <ClCompile Include="RetroGraphDLL.cpp" />
     <ClCompile Include="FPSLimiter.ixx" />
     <ClCompile Include="IRetroGraph.ixx" />
@@ -218,12 +224,6 @@
     <ClCompile Include="Widgets\NetStatsWidget.ixx" />
     <ClCompile Include="Widgets\ProcessCPUWidget.ixx" />
     <ClCompile Include="Widgets\ProcessRAMWidget.ixx" />
-    <ClCompile Include="Widgets\Rendering\DrawUtils.ixx" />
-    <ClCompile Include="Widgets\Rendering\FontManager.ixx" />
-    <ClCompile Include="Widgets\Rendering\GLListContainer.ixx" />
-    <ClCompile Include="Widgets\Rendering\GLShader.ixx" />
-    <ClCompile Include="Widgets\Rendering\Renderer.ixx" />
-    <ClCompile Include="Widgets\Rendering\VBOController.ixx" />
     <ClCompile Include="Widgets\SystemStatsWidget.ixx" />
     <ClCompile Include="Widgets\TimeWidget.ixx" />
     <ClCompile Include="Widgets\Widget.ixx" />

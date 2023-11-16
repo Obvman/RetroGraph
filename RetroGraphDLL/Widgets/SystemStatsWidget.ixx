@@ -1,17 +1,17 @@
 module;
 
-export module SystemStatsWidget;
+export module Widgets.SystemStatsWidget;
 
 import Colors;
-import CPUMeasure;
-import DisplayMeasure;
-import FontManager;
-import GLListContainer;
-import GPUMeasure;
+import Measures.CPUMeasure;
+import Measures.DisplayMeasure;
+import Rendering.FontManager;
+import Rendering.GLListContainer;
+import Measures.GPUMeasure;
 import IRetroGraph; // Reverse Dependency
 import Monitors;
-import SystemMeasure;
-import Widget;
+import Measures.SystemMeasure;
+import Widgets.Widget;
 
 namespace rg {
 

@@ -1,14 +1,16 @@
 module;
 
-export module FPSWidget;
+export module Widgets.FPSWidget;
 
 import Colors;
-import DrawUtils;
-import FontManager;
 import FPSLimiter;
-import GLListContainer;
 import IRetroGraph; // Reverse Dependency
-import Widget;
+
+import Rendering.DrawUtils;
+import Rendering.FontManager;
+import Rendering.GLListContainer;
+
+import Widgets.Widget;
 
 namespace rg {
 

@@ -1,6 +1,6 @@
 module;
 
-export module NtDefs;
+export module Measures.NtDefs;
 
 import "WindowsHeaders.h";
 

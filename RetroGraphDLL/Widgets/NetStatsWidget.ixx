@@ -1,14 +1,14 @@
 module;
 
-export module NetStatsWidget;
+export module Widgets.NetStatsWidget;
 
 import Colors;
-import DrawUtils;
-import FontManager;
-import GLListContainer;
-import NetMeasure;
+import Rendering.DrawUtils;
+import Rendering.FontManager;
+import Rendering.GLListContainer;
+import Measures.NetMeasure;
 import IRetroGraph; // Reverse Dependency
-import Widget;
+import Widgets.Widget;
 
 import "GLHeaders.h";
 

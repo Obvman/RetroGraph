@@ -2,7 +2,7 @@ module;
 
 #include "RGAssert.h"
 
-export module CPUPlugin;
+export module Measures.CPUPlugin;
 
 import Utils;
 

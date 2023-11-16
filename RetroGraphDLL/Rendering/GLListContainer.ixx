@@ -1,6 +1,6 @@
 module;
 
-export module GLListContainer;
+export module Rendering.GLListContainer;
 
 import Colors;
 import Units;

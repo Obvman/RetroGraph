@@ -1,6 +1,6 @@
 module;
 
-export module WidgetDefines;
+export module Widgets.WidgetDefines;
 
 namespace rg {
 

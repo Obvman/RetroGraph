@@ -2,7 +2,7 @@ module;
 
 #include "RGAssert.h"
 
-export module GLShader;
+export module Rendering.GLShader;
 
 import Utils;
 

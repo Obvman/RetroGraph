@@ -1,13 +1,16 @@
 module;
 
-export module HDDWidget;
+export module Widgets.HDDWidget;
 
 import Colors;
-import DriveMeasure;
-import FontManager;
-import GLListContainer;
 import IRetroGraph; // Reverse Dependency
-import Widget;
+
+import Measures.DriveMeasure;
+
+import Rendering.FontManager;
+import Rendering.GLListContainer;
+
+import Widgets.Widget;
 
 import "GLHeaders.h";
 

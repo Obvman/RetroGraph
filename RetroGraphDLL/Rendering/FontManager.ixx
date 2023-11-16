@@ -1,9 +1,9 @@
 module;
 
-export module FontManager;
+export module Rendering.FontManager;
 
-import DrawUtils;
 import Utils;
+import Rendering.DrawUtils;
 
 import std.core;
 

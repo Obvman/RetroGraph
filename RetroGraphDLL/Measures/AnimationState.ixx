@@ -1,16 +1,16 @@
 module;
 
-export module AnimationState;
+export module Measures.AnimationState;
 
 import Colors;
-import DrawUtils; // Invalid dependency
 import FPSLimiter; // Invalid dependency
-import GLListContainer; // Invalid dependency
-import Measure;
-import Particle;
 import Units;
 import UserSettings;
 import Utils;
+import Measures.Measure;
+import Measures.Particle;
+import Rendering.DrawUtils; // Invalid dependency
+import Rendering.GLListContainer; // Invalid dependency
 
 import std.core;
 

@@ -1,29 +1,30 @@
 module;
 
-export module Renderer;
-
-import CPUStatsWidget;
-import FPSWidget;
-import GraphWidget;
-import HDDWidget;
-import Widget;
-import MainWidget;
-import MusicWidget;
-import NetStatsWidget;
-import ProcessCPUWidget;
-import ProcessRAMWidget;
-import SystemStatsWidget;
-import TimeWidget;
-import WidgetDefines;
+export module Rendering.Renderer;
 
 import Colors;
-import FontManager;
 import FPSLimiter;
-import GLShader;
 import IRetroGraph; // Reverse Dependency
 import Units;
 import UserSettings;
 import Utils;
+
+import Rendering.FontManager;
+import Rendering.GLShader;
+
+import Widgets.CPUStatsWidget;
+import Widgets.FPSWidget;
+import Widgets.GraphWidget;
+import Widgets.HDDWidget;
+import Widgets.Widget;
+import Widgets.MainWidget;
+import Widgets.MusicWidget;
+import Widgets.NetStatsWidget;
+import Widgets.ProcessCPUWidget;
+import Widgets.ProcessRAMWidget;
+import Widgets.SystemStatsWidget;
+import Widgets.TimeWidget;
+import Widgets.WidgetDefines;
 
 import std.core;
 

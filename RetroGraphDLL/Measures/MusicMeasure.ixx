@@ -2,11 +2,11 @@ module;
 
 #include "RGAssert.h"
 
-export module MusicMeasure;
+export module Measures.MusicMeasure;
 
-import Measure;
-import ProcessMeasure;
 import Utils;
+import Measures.Measure;
+import Measures.ProcessMeasure;
 
 import std.core;
 

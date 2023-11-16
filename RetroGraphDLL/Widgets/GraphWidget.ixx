@@ -1,16 +1,19 @@
-export module GraphWidget;
+export module Widgets.GraphWidget;
 
 import Colors;
-import CPUMeasure;
-import FontManager;
-import GLListContainer;
-import GPUMeasure;
-import NetMeasure;
 import IRetroGraph;
-import RAMMeasure;
 import Units;
-import VBOController;
-import Widget;
+
+import Measures.CPUMeasure;
+import Measures.GPUMeasure;
+import Measures.NetMeasure;
+import Measures.RAMMeasure;
+
+import Rendering.FontManager;
+import Rendering.GLListContainer;
+import Rendering.VBOController;
+
+import Widgets.Widget;
 
 import std.core;
 

@@ -1,15 +1,18 @@
 module;
 
-export module CPUStatsWidget;
+export module Widgets.CPUStatsWidget;
 
 import Colors;
-import CPUMeasure;
-import FontManager;
-import GLListContainer;
 import IRetroGraph; // Reverse Dependency
 import Utils;
-import VBOController;
-import Widget;
+
+import Measures.CPUMeasure;
+
+import Rendering.FontManager;
+import Rendering.GLListContainer;
+import Rendering.VBOController;
+
+import Widgets.Widget;
 
 import std.core;
 

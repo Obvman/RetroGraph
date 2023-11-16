@@ -2,14 +2,14 @@ module;
 
 #include "RGAssert.h"
 
-export module ProcessMeasure;
+export module Measures.ProcessMeasure;
 
 import Colors;
-import Measure;
-import NtDefs;
-import ProcessData;
 import UserSettings;
 import Utils;
+import Measures.Measure;
+import Measures.NtDefs;
+import Measures.Data.ProcessData;
 
 import std.core;
 

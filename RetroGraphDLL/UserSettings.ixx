@@ -5,7 +5,8 @@ module;
 export module UserSettings;
 
 import Utils;
-import WidgetDefines;
+
+import Widgets.WidgetDefines;
 
 import std.core;
 import std.filesystem;

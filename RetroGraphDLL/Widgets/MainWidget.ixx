@@ -1,16 +1,19 @@
 module;
 
-export module MainWidget;
+export module Widgets.MainWidget;
 
-import AnimationState;
 import Colors;
-import FontManager;
-import GLListContainer;
 import IRetroGraph; // Reverse Dependency
 import Utils;
 import Units;
-import VBOController;
-import Widget;
+
+import Measures.AnimationState;
+
+import Rendering.FontManager;
+import Rendering.GLListContainer;
+import Rendering.VBOController;
+
+import Widgets.Widget;
 
 import std.core;
 

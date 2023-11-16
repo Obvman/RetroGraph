@@ -2,12 +2,12 @@ module;
 
 #include "RGAssert.h"
 
-export module SystemMeasure;
+export module Measures.SystemMeasure;
 
 import Colors;
-import Measure;
 import Utils;
 import Units;
+import Measures.Measure;
 
 import std.core;
 

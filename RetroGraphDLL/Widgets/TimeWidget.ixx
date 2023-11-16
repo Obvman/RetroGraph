@@ -2,16 +2,16 @@ module;
 
 #include "RGAssert.h"
 
-export module TimeWidget;
+export module Widgets.TimeWidget;
 
 import Colors;
-import CPUMeasure;
-import DrawUtils;
-import FontManager;
-import GLListContainer;
+import Measures.CPUMeasure;
+import Rendering.DrawUtils;
+import Rendering.FontManager;
+import Rendering.GLListContainer;
 import IRetroGraph; // Reverse Dependency
-import NetMeasure;
-import Widget;
+import Measures.NetMeasure;
+import Widgets.Widget;
 
 import std.core;
 

@@ -1,11 +1,11 @@
 module;
 
-export module DrawUtils;
+export module Rendering.DrawUtils;
 
 import Colors;
-import GLListContainer;
 import Units;
 import UserSettings;
+import Rendering.GLListContainer;
 
 import std.core;
 

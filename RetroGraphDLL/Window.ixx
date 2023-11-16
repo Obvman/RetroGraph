@@ -7,11 +7,12 @@ module;
 export module Window;
 
 import Colors;
-import DisplayMeasure;
 import IRetroGraph;
 import Monitors;
 import UserSettings;
 import Utils;
+
+import Measures.DisplayMeasure; // Invalid dependency
 
 import std.core;
 

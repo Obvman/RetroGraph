@@ -5,25 +5,28 @@ module;
 
 export module RetroGraph;
 
-import AnimationState;
-import CPUMeasure;
-import DisplayMeasure;
-import DrawUtils;
-import DriveMeasure;
 import FPSLimiter;
 import IRetroGraph;
-import GPUMeasure;
-import Measure;
-import MusicMeasure;
-import NetMeasure;
-import ProcessMeasure;
-import RAMMeasure;
-import Renderer;
-import SystemMeasure;
 import UserSettings;
-import WidgetDefines;
 import Window;
 import Utils;
+
+import Measures.AnimationState;
+import Measures.CPUMeasure;
+import Measures.DisplayMeasure;
+import Measures.DriveMeasure;
+import Measures.GPUMeasure;
+import Measures.Measure;
+import Measures.MusicMeasure;
+import Measures.NetMeasure;
+import Measures.ProcessMeasure;
+import Measures.RAMMeasure;
+import Measures.SystemMeasure;
+
+import Rendering.DrawUtils;
+import Rendering.Renderer;
+
+import Widgets.WidgetDefines;
 
 import std.core;
 

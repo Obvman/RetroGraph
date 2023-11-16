@@ -2,14 +2,14 @@ module;
 
 #include "RGAssert.h"
 
-export module CPUMeasure;
+export module Measures.CPUMeasure;
 
 import Colors;
-import CPUPlugin;
-import Measure;
 import Units;
 import UserSettings;
 import Utils;
+import Measures.CPUPlugin;
+import Measures.Measure;
 
 import std.core;
 

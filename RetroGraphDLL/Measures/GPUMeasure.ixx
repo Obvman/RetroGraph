@@ -5,12 +5,12 @@ module;
 #include <Windows.h> // Must be included before nvapi.h
 #include <NVAPI/nvapi.h>
 
-export module GPUMeasure;
+export module Measures.GPUMeasure;
 
-import Measure;
 import Units;
 import UserSettings;
 import Utils;
+import Measures.Measure;
 
 import std.core;
 

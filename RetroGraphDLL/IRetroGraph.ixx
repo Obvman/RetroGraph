@@ -2,17 +2,18 @@ module;
 
 export module IRetroGraph;
 
-import AnimationState;
-import CPUMeasure;
-import DisplayMeasure;
-import DriveMeasure;
-import GPUMeasure;
-import NetMeasure;
-import RAMMeasure;
-import MusicMeasure;
-import ProcessMeasure;
-import SystemMeasure;
-import WidgetDefines;
+import Measures.AnimationState;
+import Measures.CPUMeasure;
+import Measures.DisplayMeasure;
+import Measures.DriveMeasure;
+import Measures.GPUMeasure;
+import Measures.NetMeasure;
+import Measures.RAMMeasure;
+import Measures.MusicMeasure;
+import Measures.ProcessMeasure;
+import Measures.SystemMeasure;
+
+import Widgets.WidgetDefines;
 
 namespace rg {
 

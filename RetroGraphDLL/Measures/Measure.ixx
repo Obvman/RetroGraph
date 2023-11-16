@@ -1,6 +1,6 @@
 module;
 
-export module Measure;
+export module Measures.Measure;
 
 import Utils;
 

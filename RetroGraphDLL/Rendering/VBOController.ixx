@@ -2,13 +2,15 @@ module;
 
 #include "RGAssert.h"
 
-export module VBOController;
+export module Rendering.VBOController;
 
-import AnimationState;
 import Colors;
-import DrawUtils;
-import GLShader;
 import UserSettings;
+
+import Measures.AnimationState;
+
+import Rendering.DrawUtils;
+import Rendering.GLShader;
 
 import std.core;
 

@@ -1,7 +1,7 @@
-export module DisplayMeasure;
+export module Measures.DisplayMeasure;
 
-import Measure;
 import Monitors;
+import Measures.Measure;
 
 namespace rg {
 

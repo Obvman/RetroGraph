@@ -2,14 +2,14 @@ module;
 
 #include "RGAssert.h"
 
-export module Widget;
+export module Widgets.Widget;
 
-import DrawUtils;
-import FontManager;
-import GLListContainer;
+import Rendering.DrawUtils;
+import Rendering.FontManager;
+import Rendering.GLListContainer;
 import IRetroGraph; // Reverse Dependency
 import Utils;
-import WidgetDefines;
+import Widgets.WidgetDefines;
 
 import std.core;
 

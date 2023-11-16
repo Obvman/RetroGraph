@@ -2,13 +2,13 @@ module;
 
 #include "RGAssert.h"
 
-export module DriveMeasure;
+export module Measures.DriveMeasure;
 
 import Colors;
-import DriveInfo;
-import Measure;
 import Units;
 import Utils;
+import Measures.Measure;
+import Measures.Data.DriveInfo;
 
 import std.core;
 

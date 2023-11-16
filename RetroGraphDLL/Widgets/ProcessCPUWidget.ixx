@@ -1,13 +1,13 @@
 module;
 
-export module ProcessCPUWidget;
+export module Widgets.ProcessCPUWidget;
 
 import Colors;
-import FontManager;
-import GLListContainer;
+import Rendering.FontManager;
+import Rendering.GLListContainer;
 import IRetroGraph; // Reverse Dependency
-import ProcessMeasure;
-import Widget;
+import Measures.ProcessMeasure;
+import Widgets.Widget;
 
 namespace rg {
 
