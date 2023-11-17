@@ -1,5 +1,3 @@
-module;
-
 export module Widgets.MainWidget;
 
 import Colors;
@@ -17,7 +15,7 @@ import Widgets.Widget;
 
 import std.core;
 
-import "GLHeaders.h";
+import "GLHeaderUnit.h";
 
 namespace rg {
 

@@ -1,10 +1,3 @@
-module;
-
-#include "RGAssert.h"
-
-#include <Windows.h> // Must be included before nvapi.h
-#include <NVAPI/nvapi.h>
-
 export module Measures.GPUMeasure;
 
 import Units;
@@ -14,8 +7,10 @@ import Measures.Measure;
 
 import std.core;
 
-import "GLHeaders.h";
-import "WindowsHeaders.h";
+import "GLHeaderUnit.h";
+import "NvidiaHeaderUnit.h";
+import "RGAssert.h";
+import "WindowsHeaderUnit.h";
 
 #pragma comment(lib, "nvapi64.lib")
 

@@ -1,10 +1,8 @@
-module;
-
 export module FPSLimiter;
 
 import UserSettings;
 
-import "WindowsHeaders.h";
+import "WindowsHeaderUnit.h";
 
 namespace rg {
 

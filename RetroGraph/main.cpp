@@ -1,12 +1,11 @@
-#include "RGAssert.h"
-
 import RetroGraph;
 import Utils;
 import Units;
 
 import std.core;
 
-import "../RetroGraphDLL/WindowsHeaders.h";
+import "../RetroGraphDLL/RGAssert.h";
+import "../RetroGraphDLL/WindowsHeaderUnit.h";
 
 void mainLoop(rg::RetroGraph& retroGraph);
 

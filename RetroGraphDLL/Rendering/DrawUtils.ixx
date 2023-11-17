@@ -1,5 +1,3 @@
-module;
-
 export module Rendering.DrawUtils;
 
 import Colors;
@@ -9,8 +7,8 @@ import Rendering.GLListContainer;
 
 import std.core;
 
-import "GLHeaders.h";
-import "WindowsHeaders.h";
+import "GLHeaderUnit.h";
+import "WindowsHeaderUnit.h";
 
 namespace rg {
 

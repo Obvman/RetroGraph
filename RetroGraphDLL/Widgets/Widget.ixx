@@ -1,7 +1,3 @@
-module;
-
-#include "RGAssert.h"
-
 export module Widgets.Widget;
 
 import IRetroGraph; // Reverse Dependency
@@ -15,7 +11,8 @@ import Widgets.WidgetDefines;
 
 import std.core;
 
-import "GLHeaders.h";
+import "GLHeaderUnit.h";
+import "RGAssert.h";
 
 namespace rg {
 

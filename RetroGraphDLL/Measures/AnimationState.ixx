@@ -1,5 +1,3 @@
-module;
-
 export module Measures.AnimationState;
 
 import Colors;
@@ -14,8 +12,8 @@ import Rendering.GLListContainer; // Invalid dependency
 
 import std.core;
 
-import "GLHeaders.h";
-import "WindowsHeaders.h";
+import "GLHeaderUnit.h";
+import "WindowsHeaderUnit.h";
 
 namespace rg {
 

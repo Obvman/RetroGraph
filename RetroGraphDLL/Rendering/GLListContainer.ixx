@@ -1,5 +1,3 @@
-module;
-
 export module Rendering.GLListContainer;
 
 import Colors;
@@ -7,7 +5,7 @@ import Units;
 
 import std.core;
 
-import "GLHeaders.h";
+import "GLHeaderUnit.h";
 
 namespace rg {
 
@@ -78,6 +76,7 @@ void GLListContainer::initCircleList() const {
         } glEnd();
     } glEndList();
 }
+
 void GLListContainer::initViewportBorderList() const {
     glNewList(m_vpBorderList, GL_COMPILE); {
         float color[4];
@@ -162,6 +161,5 @@ void GLListContainer::initWidgetBGList() const {
         } glEnd();
     } glEndList();
 }
-
 
 }

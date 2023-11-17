@@ -1,7 +1,3 @@
-module;
-
-#include "RGAssert.h"
-
 export module Measures.DriveMeasure;
 
 import Colors;
@@ -12,7 +8,8 @@ import Measures.Data.DriveInfo;
 
 import std.core;
 
-import "WindowsHeaders.h";
+import "RGAssert.h";
+import "WindowsHeaderUnit.h";
 
 namespace rg {
 

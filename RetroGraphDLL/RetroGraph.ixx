@@ -1,8 +1,3 @@
-module;
-
-// Error if this is not here, even though it's included in WindowsHeaders.h
-#include <sys/stat.h>
-
 export module RetroGraph;
 
 import FPSLimiter;
@@ -30,7 +25,7 @@ import Widgets.WidgetDefines;
 
 import std.core;
 
-import "WindowsHeaders.h";
+import "WindowsHeaderUnit.h";
 
 namespace rg {
 

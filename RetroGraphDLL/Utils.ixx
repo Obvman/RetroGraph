@@ -1,7 +1,3 @@
-module;
-
-#include "RGAssert.h"
-
 export module Utils;
 
 import Colors;
@@ -11,7 +7,8 @@ import std.core;
 
 import <ctime>;
 
-import "WindowsHeaders.h";
+import "RGAssert.h";
+import "WindowsHeaderUnit.h";
 
 #pragma comment(lib, "Pathcch.lib")
 

@@ -1,8 +1,7 @@
-#include "RGAssert.h"
-
 import std.core;
 
-import "WindowsHeaders.h";
+import "RGAssert.h";
+import "WindowsHeaderUnit.h";
 
 namespace rg {
 
@@ -19,7 +18,7 @@ void rgError(const char* str) {
     showMessageBox(str);
 }
 
-void rgVerify(bool expr [[maybe_unused]], const char* str[[maybe_unused]]) {
+void rgVerify([[maybe_unused]] bool expr, [[maybe_unused]] const char* str) {
     if constexpr (debugMode)
         if (!expr)
             showMessageBox(str);

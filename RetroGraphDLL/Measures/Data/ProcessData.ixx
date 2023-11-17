@@ -1,7 +1,3 @@
-module;
-
-#include "RGAssert.h"
-
 export module Measures.Data.ProcessData;
 
 import Units;
@@ -9,7 +5,8 @@ import Utils;
 
 import std.core;
 
-import "WindowsHeaders.h";
+import "RGAssert.h";
+import "WindowsHeaderUnit.h";
 
 #pragma comment(lib, "Ntdll.lib")
 

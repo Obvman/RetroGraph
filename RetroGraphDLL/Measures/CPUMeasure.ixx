@@ -1,7 +1,3 @@
-module;
-
-#include "RGAssert.h"
-
 export module Measures.CPUMeasure;
 
 import Colors;
@@ -13,7 +9,8 @@ import Measures.Measure;
 
 import std.core;
 
-import "WindowsHeaders.h";
+import "RGAssert.h";
+import "WindowsHeaderUnit.h";
 
 namespace rg {
 

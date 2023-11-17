@@ -1,19 +1,17 @@
-module;
-
-#include "RGAssert.h"
-
 export module Measures.ProcessMeasure;
 
 import Colors;
 import UserSettings;
 import Utils;
+
 import Measures.Measure;
 import Measures.NtDefs;
 import Measures.Data.ProcessData;
 
 import std.core;
 
-import "WindowsHeaders.h";
+import "RGAssert.h";
+import "WindowsHeaderUnit.h";
 
 #pragma comment(lib, "Ntdll.lib")
 

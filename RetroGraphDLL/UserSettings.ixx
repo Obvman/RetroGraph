@@ -1,7 +1,3 @@
-module;
-
-#include "RGAssert.h"
-
 export module UserSettings;
 
 import Utils;
@@ -11,7 +7,8 @@ import Widgets.WidgetDefines;
 import std.core;
 import std.filesystem;
 
-import "WindowsHeaders.h";
+import "RGAssert.h";
+import "WindowsHeaderUnit.h";
 import <inih/INIReader.h>;
 
 namespace rg {

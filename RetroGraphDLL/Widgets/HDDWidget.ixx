@@ -1,5 +1,3 @@
-module;
-
 export module Widgets.HDDWidget;
 
 import Colors;
@@ -12,7 +10,7 @@ import Rendering.GLListContainer;
 
 import Widgets.Widget;
 
-import "GLHeaders.h";
+import "GLHeaderUnit.h";
 
 namespace rg {
 

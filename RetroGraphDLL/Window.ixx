@@ -1,6 +1,5 @@
 module;
 
-#include "RGAssert.h"
 #include "Resources/resource.h"
 #include "RetroGraphDLL.h"
 
@@ -16,8 +15,9 @@ import Measures.DisplayMeasure; // Invalid dependency
 
 import std.core;
 
-import "GLHeaders.h";
-import "WindowsHeaders.h";
+import "GLHeaderUnit.h";
+import "RGAssert.h";
+import "WindowsHeaderUnit.h";
 
 namespace rg {
 

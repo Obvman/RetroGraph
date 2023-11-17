@@ -1,8 +1,6 @@
-module;
-
 export module Measures.NtDefs;
 
-import "WindowsHeaders.h";
+import "WindowsHeaderUnit.h";
 
 namespace rg {
 

@@ -1,14 +1,11 @@
-module;
-
-#include "RGAssert.h"
-
 export module Monitors;
 
 import Utils;
 
 import std.core;
 
-import "WindowsHeaders.h";
+import "RGAssert.h";
+import "WindowsHeaderUnit.h";
 
 namespace rg {
 

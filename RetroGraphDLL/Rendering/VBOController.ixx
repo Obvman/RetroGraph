@@ -1,7 +1,3 @@
-module;
-
-#include "RGAssert.h"
-
 export module Rendering.VBOController;
 
 import Colors;
@@ -15,7 +11,8 @@ import Rendering.VBO;
 
 import std.core;
 
-import "GLHeaders.h";
+import "RGAssert.h";
+import "GLHeaderUnit.h";
 
 namespace rg {
 

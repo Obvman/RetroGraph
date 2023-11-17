@@ -1,14 +1,11 @@
-module;
-
-#include "RGAssert.h"
-
 export module Measures.CPUPlugin;
 
 import Utils;
 
 import std.core;
 
-import "WindowsHeaders.h";
+import "CoreTempHeaderUnit.h";
+import "RGAssert.h";
 
 namespace rg {
 

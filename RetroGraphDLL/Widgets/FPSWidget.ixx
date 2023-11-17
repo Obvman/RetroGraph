@@ -1,5 +1,3 @@
-module;
-
 export module Widgets.FPSWidget;
 
 import Colors;

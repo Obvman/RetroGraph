@@ -1,5 +1,3 @@
-module;
-
 export module Rendering.FontManager;
 
 import Utils;
@@ -8,8 +6,8 @@ import Rendering.DrawUtils;
 
 import std.core;
 
-import "GLHeaders.h";
-import "WindowsHeaders.h";
+import "GLHeaderUnit.h";
+import "WindowsHeaderUnit.h";
 
 namespace rg {
 
@@ -122,9 +120,7 @@ FontManager::FontManager(HWND hWnd, int windowHeight) :
 }
 
 FontManager::~FontManager() {
-    for (const auto base : m_fontBases) {
-        glDeleteLists(base, RG_NUM_CHARS_IN_FONT);
-    }
+    release();
 }
 
 void FontManager::release() {
@@ -371,15 +367,13 @@ void FontManager::initFonts(int windowHeight) {
 
     createFont(standardFontHeight, FW_DONTCARE, typefaces[0], RG_FONT_STANDARD);
 
-    createFont(standardFontHeight, FW_BOLD, typefaces[0],
-               RG_FONT_STANDARD_BOLD);
+    createFont(standardFontHeight, FW_BOLD, typefaces[0], RG_FONT_STANDARD_BOLD);
 
     createFont(72, FW_NORMAL, typefaces[7], RG_FONT_TIME);
 
     createFont(7*standardFontHeight/8, FW_NORMAL, typefaces[1], RG_FONT_SMALL);
 
-    createFont(3*standardFontHeight/2, FW_BOLD, typefaces[0],
-               RG_FONT_MUSIC_LARGE);
+    createFont(3*standardFontHeight/2, FW_BOLD, typefaces[0], RG_FONT_MUSIC_LARGE);
 
     createFont(standardFontHeight, FW_BOLD, typefaces[7], RG_FONT_MUSIC);
 
@@ -432,16 +426,7 @@ int FontManager::calculateStringWidth(const char* text, size_t textLen, RGFONTCO
 }
 
 int FontManager::calculateStringWidth(std::string_view text, RGFONTCODE c) const {
-    auto strWidthPx = int{ 0 };
-    for (auto i = size_t{ 0U }; i < text.size(); ++i) {
-        // Make sure the character is in range, if not, add default value
-        if (text[i] > RG_NUM_CHARS_IN_FONT || text[i] < 0) {
-            strWidthPx += m_fontCharWidths[c]['A'];
-        } else {
-            strWidthPx += m_fontCharWidths[c][text[i]];
-        }
-    }
-    return strWidthPx;
+    return calculateStringWidth(text.data(), text.size(), c);
 }
 
 float FontManager::getRasterXAlignment(int alignFlags, int strWidthPx,

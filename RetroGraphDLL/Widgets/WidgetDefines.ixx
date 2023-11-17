@@ -1,5 +1,3 @@
-module;
-
 export module Widgets.WidgetDefines;
 
 namespace rg {

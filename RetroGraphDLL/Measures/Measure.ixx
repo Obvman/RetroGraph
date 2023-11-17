@@ -1,5 +1,3 @@
-module;
-
 export module Measures.Measure;
 
 import Utils;

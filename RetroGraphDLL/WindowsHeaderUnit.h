@@ -20,6 +20,3 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <Sysinfoapi.h>
-
-#include <CoreTempSDK/GetCoreTempInfo.h>
-

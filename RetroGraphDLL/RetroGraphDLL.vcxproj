@@ -232,13 +232,16 @@
     <ClCompile Include="Window.ixx" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GLHeaders.h" />
-    <ClCompile Include="WindowsHeaders.h" />
-    <ClCompile Include="WindowsNetworkHeaders.h" />
+    <ClCompile Include="GLHeaderUnit.h" />
+    <ClCompile Include="WindowsHeaderUnit.h" />
+    <ClCompile Include="WindowsNetworkHeaderUnit.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="NvidiaHeaderUnit.h" />
+    <ClCompile Include="CoreTempHeaderUnit.h" />
     <ClInclude Include="Resources\resource.h" />
     <ClInclude Include="RetroGraphDLL.h" />
+    <ClCompile Include="RGAssert.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resources\RetroGraphDLL.rc" />

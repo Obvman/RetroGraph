@@ -1,18 +1,13 @@
-module;
-
-#include "RGAssert.h"
-
 export module Rendering.GLShader;
 
 import Utils;
 
 import std.core;
 
-import "GLHeaders.h";
+import "GLHeaderUnit.h";
+import "RGAssert.h";
 
 namespace rg {
-
-export { class GLShader; }
 
 // The executable path is different whether we start the program from the
 // visual studio or debugger, so this handles the two cases
@@ -21,7 +16,7 @@ const std::string shaderPath{ getExePath() + R"(\..\..\RetroGraph\Resources\shad
 /* Compiles and links the given vertex and fragment shaders returns the ID
    of the compiled program if successful, otherwise presents a fatal
    message box with the GLSL compilation error message */
-class GLShader {
+export class GLShader {
 public:
     GLShader(const std::string& vertPath, const std::string& fragPath)
         : id{ loadShader(vertPath, fragPath) } { }

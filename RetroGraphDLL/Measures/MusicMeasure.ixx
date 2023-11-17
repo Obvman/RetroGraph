@@ -1,7 +1,3 @@
-module;
-
-#include "RGAssert.h"
-
 export module Measures.MusicMeasure;
 
 import Utils;
@@ -11,7 +7,8 @@ import Measures.ProcessMeasure;
 
 import std.core;
 
-import "WindowsHeaders.h";
+import "RGAssert.h";
+import "WindowsHeaderUnit.h";
 
 namespace rg {
 

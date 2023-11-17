@@ -1,7 +1,3 @@
-module;
-
-#include "RGAssert.h"
-
 export module Measures.NetMeasure;
 
 import Units;
@@ -12,7 +8,8 @@ import Measures.Measure;
 import std.core;
 import std.threading;
 
-import "WindowsNetworkHeaders.h";
+import "RGAssert.h";
+import "WindowsNetworkHeaderUnit.h";
 
 #pragma comment(lib, "Iphlpapi.lib")
 #pragma comment(lib, "Wininet.lib")
@@ -58,8 +55,8 @@ private:
     std::string m_pingServer{ "" };
     int m_pingFreqSec{ 0U };
 
-    std::condition_variable cv;
-    std::mutex m;
+    std::condition_variable m_netConnectionCV;
+    std::mutex m_netConnectionMutex;
     std::atomic<bool> m_isConnected{ false };
     std::atomic<bool> m_threadRunning{ false };
     std::thread m_netConnectionThread{ };
@@ -251,12 +248,12 @@ void NetMeasure::startNetworkThread() {
     m_threadRunning.store(true);
     m_netConnectionThread = std::thread{ [this]() {
         while (m_threadRunning.load()) {
-            std::unique_lock<std::mutex> lg{ m };
+            std::unique_lock<std::mutex> lg{ m_netConnectionMutex };
             setIsConnected(static_cast<bool>(
                 InternetCheckConnectionA(m_pingServer.c_str(), FLAG_ICC_FORCE_CONNECTION, 0)
             ));
 
-            cv.wait_for(lg, 1000ms * m_pingFreqSec, [&]() { return !m_threadRunning.load(); });
+            m_netConnectionCV.wait_for(lg, 1000ms * m_pingFreqSec, [&]() { return !m_threadRunning.load(); });
         }
     }};
 
@@ -265,7 +262,7 @@ void NetMeasure::startNetworkThread() {
 void NetMeasure::destroyNetworkThread() {
     // End the background thread
     m_threadRunning.store(false);
-    cv.notify_all();
+    m_netConnectionCV.notify_all();
     m_netConnectionThread.join();
 }
 

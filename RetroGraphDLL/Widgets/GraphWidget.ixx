@@ -17,7 +17,7 @@ import Widgets.Widget;
 
 import std.core;
 
-import "GLHeaders.h";
+import "GLHeaderUnit.h";
 
 namespace rg {
 

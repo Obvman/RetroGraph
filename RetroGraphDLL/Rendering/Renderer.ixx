@@ -1,5 +1,3 @@
-module;
-
 export module Rendering.Renderer;
 
 import Colors;
@@ -28,7 +26,7 @@ import Widgets.WidgetDefines;
 
 import std.core;
 
-import "WindowsHeaders.h";
+import "WindowsHeaderUnit.h";
 
 namespace rg {
 

@@ -2,7 +2,7 @@ export module Rendering.VBO;
 
 import std.core;
 
-import "GLHeaders.h";
+import "GLHeaderUnit.h";
 
 namespace rg {
 

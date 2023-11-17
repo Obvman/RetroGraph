@@ -1,6 +1,6 @@
-// dllmain.cpp : Defines the entry point for the DLL application.
+// RetroGraphDLL.cpp : Defines the entry point for the DLL application.
 
-import "WindowsHeaders.h";
+import "WindowsHeaderUnit.h";
 
 static HMODULE dllHandle;
 

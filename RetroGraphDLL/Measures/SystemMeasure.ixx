@@ -1,7 +1,3 @@
-module;
-
-#include "RGAssert.h"
-
 export module Measures.SystemMeasure;
 
 import Colors;
@@ -11,7 +7,8 @@ import Measures.Measure;
 
 import std.core;
 
-import "WindowsHeaders.h";
+import "RGAssert.h";
+import "WindowsHeaderUnit.h";
 
 #pragma comment(lib, "version.lib")
 

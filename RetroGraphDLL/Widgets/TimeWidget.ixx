@@ -1,7 +1,3 @@
-module;
-
-#include "RGAssert.h"
-
 export module Widgets.TimeWidget;
 
 import Colors;
@@ -18,7 +14,8 @@ import Widgets.Widget;
 
 import std.core;
 
-import "GLHeaders.h";
+import "GLHeaderUnit.h";
+import "RGAssert.h";
 
 namespace rg {
 

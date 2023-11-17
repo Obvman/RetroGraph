@@ -1,5 +1,3 @@
-module;
-
 export module Widgets.NetStatsWidget;
 
 import Colors;
@@ -13,7 +11,7 @@ import Rendering.GLListContainer;
 
 import Widgets.Widget;
 
-import "GLHeaders.h";
+import "GLHeaderUnit.h";
 
 namespace rg {
 

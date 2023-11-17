@@ -1,5 +1,3 @@
-module;
-
 export module Widgets.ProcessCPUWidget;
 
 import Colors;

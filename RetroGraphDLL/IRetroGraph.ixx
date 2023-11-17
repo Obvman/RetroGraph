@@ -1,5 +1,3 @@
-module;
-
 export module IRetroGraph;
 
 import Measures.AnimationState;

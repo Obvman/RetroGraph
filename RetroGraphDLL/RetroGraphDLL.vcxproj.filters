@@ -33,13 +33,13 @@
     <ClCompile Include="RetroGraphDLL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GLHeaders.h">
+    <ClCompile Include="GLHeaderUnit.h">
       <Filter>Header Units</Filter>
     </ClCompile>
-    <ClCompile Include="WindowsHeaders.h">
+    <ClCompile Include="WindowsHeaderUnit.h">
       <Filter>Header Units</Filter>
     </ClCompile>
-    <ClCompile Include="WindowsNetworkHeaders.h">
+    <ClCompile Include="WindowsNetworkHeaderUnit.h">
       <Filter>Header Units</Filter>
     </ClCompile>
     <ClCompile Include="Measures\Data\DriveInfo.ixx">
@@ -179,6 +179,15 @@
     </ClCompile>
     <ClCompile Include="VBO.ixx">
       <Filter>Modules\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="RGAssert.h">
+      <Filter>Header Units</Filter>
+    </ClCompile>
+    <ClCompile Include="NvidiaHeaderUnit.h">
+      <Filter>Header Units</Filter>
+    </ClCompile>
+    <ClCompile Include="CoreTempHeaderUnit.h">
+      <Filter>Header Units</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
