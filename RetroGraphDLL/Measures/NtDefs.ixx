@@ -101,4 +101,4 @@ export {
 
 }
 
-}
+} // namespace rg

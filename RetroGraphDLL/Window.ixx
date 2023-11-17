@@ -21,8 +21,6 @@ import "WindowsHeaderUnit.h";
 
 namespace rg {
 
-export class Window;
-
 constexpr auto WM_NOTIFY_RG_TRAY = int{ 3141 };
 
 constexpr auto ID_EXIT                      = int{ 1 };
@@ -45,7 +43,7 @@ constexpr auto ID_TOGGLE_RAM_GRAPH_WIDGET   = int{ 17 };
 constexpr auto ID_TOGGLE_NET_GRAPH_WIDGET   = int{ 18 };
 constexpr auto ID_CHANGE_DISPLAY_MONITOR    = int{ 19 }; // Should always be last ID in the list
 
-class Window {
+export class Window {
 public:
     Window(IRetroGraph* rg_, HINSTANCE hInstance, int startupMonitor);
     __declspec(dllexport) ~Window() noexcept;

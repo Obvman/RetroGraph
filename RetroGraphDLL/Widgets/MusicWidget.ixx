@@ -16,11 +16,7 @@ import "GLHeaderUnit.h";
 
 namespace rg {
 
-export { class MusicWidget; }
-
-void createFormattedTimeStr(char* buffer, size_t buffSize, int seconds);
-
-class MusicWidget : public Widget {
+export class MusicWidget : public Widget {
 public:
     MusicWidget(const FontManager* fontManager,
                 const IRetroGraph& rg, bool visible) :
@@ -39,6 +35,8 @@ public:
 private:
     const MusicMeasure* m_musicMeasure;
 };
+
+void createFormattedTimeStr(char* buffer, size_t buffSize, int seconds);
 
 void MusicWidget::updateObservers(const IRetroGraph & rg) {
     m_musicMeasure = &rg.getMusicMeasure();

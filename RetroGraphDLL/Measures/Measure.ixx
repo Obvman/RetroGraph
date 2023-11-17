@@ -9,24 +9,20 @@ namespace rg {
 export using Hz = int;
 export using Seconds = int;
 
-namespace Measures {
+export enum class MeasureType : size_t {
+    CPU = 0U,
+    GPU = 1U,
+    RAM = 2U,
+    Net = 3U,
+    Process = 4U,
+    Drive = 5U,
+    Music = 6U,
+    System = 7U,
+    AnimationState = 8U,
+    Display = 9U,
 
-    export enum class Types : size_t {
-        CPU = 0U,
-        GPU = 1U,
-        RAM = 2U,
-        Net = 3U,
-        Process = 4U,
-        Drive = 5U,
-        Music = 6U,
-        System = 7U,
-        AnimationState = 8U,
-        Display = 9U,
-
-        NumMeasures,
-    };
-
-}
+    NumMeasures,
+};
 
 export class Measure {
 public:

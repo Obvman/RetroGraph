@@ -6,11 +6,9 @@ import "WindowsHeaderUnit.h";
 
 namespace rg {
 
-export { class FPSLimiter; }
-
 SettingVariant variant = {};
 
-class FPSLimiter {
+export class FPSLimiter {
 public:
     static FPSLimiter& inst() { static FPSLimiter i; return i; }
 

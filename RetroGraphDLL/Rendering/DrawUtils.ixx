@@ -3,6 +3,7 @@ export module Rendering.DrawUtils;
 import Colors;
 import Units;
 import UserSettings;
+
 import Rendering.GLListContainer;
 
 import std.core;
@@ -12,13 +13,11 @@ import "WindowsHeaderUnit.h";
 
 namespace rg {
 
+struct Viewport;
+
 /* Minimum distance from the edge of the screen to draw each object (in pixels) */
 export constexpr auto marginX = int{ 16 };
 export constexpr auto marginY = int{ 10 };
-
-export {
-    struct Viewport;
-}
 
 export void scissorClear(GLint x, GLint y, GLint w, GLint h);
 export void drawFilledGraph(const std::vector<float>& data);
@@ -51,7 +50,7 @@ export constexpr inline int vpCoordsToPixels(float vpCoord, int vpWidth) {
     return static_cast<int>(((vpCoord + 1.0f) / 2.0f) * vpWidth);
 }
 
-struct Viewport {
+export struct Viewport {
     GLint x{ 0 };
     GLint y{ 0 };
     GLint width{ 0 };

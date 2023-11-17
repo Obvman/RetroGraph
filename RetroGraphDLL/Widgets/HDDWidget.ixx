@@ -14,9 +14,7 @@ import "GLHeaderUnit.h";
 
 namespace rg {
 
-export { class HDDWidget; }
-
-class HDDWidget : public Widget {
+export class HDDWidget : public Widget {
 public:
     HDDWidget(const FontManager* fontManager,
               const IRetroGraph& rg, bool visible) :

@@ -16,20 +16,14 @@ import "RGAssert.h";
 
 namespace rg {
 
-export {
-    enum class ContainerType;
-    class Widget;
-    class WidgetContainer;
-}
-
-enum class ContainerType {
+export enum class ContainerType {
     VFill, // Widgets fill up space top to bottom
     HFill, // Widgets fill up space left to right
     Single, // Only one widget can exist in this container
     Mini,  // Mini-sized container. Only one widget can exist in this container
 };
 
-class Widget {
+export class Widget {
 public:
     Widget(const FontManager* fm, bool visibility) : 
         m_fontManager{ fm }, m_visible { visibility } { }
@@ -73,7 +67,7 @@ private:
  * Can contain multiple widgets, and is responsible for positioning each widget
  * withing the container, and drawing them
  */
-class WidgetContainer {
+export class WidgetContainer {
 public:
     explicit WidgetContainer(WidgetPosition p);
     ~WidgetContainer() = default;

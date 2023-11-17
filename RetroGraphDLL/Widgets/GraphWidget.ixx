@@ -21,14 +21,7 @@ import "GLHeaderUnit.h";
 
 namespace rg {
 
-export {
-    class GPUGraphWidget;
-    class CPUGraphWidget;
-    class RAMGraphWidget;
-    class NetGraphWidget;
-}
-
-class GPUGraphWidget : public Widget {
+export class GPUGraphWidget : public Widget {
 public:
     GPUGraphWidget(const FontManager* fontManager, const IRetroGraph& rg, bool visible);
 
@@ -40,7 +33,7 @@ private:
     VBOID m_gpuVBO;
 };
 
-class CPUGraphWidget : public Widget {
+export class CPUGraphWidget : public Widget {
 public:
     CPUGraphWidget(const FontManager* fontManager, const IRetroGraph& rg, bool visible);
 
@@ -52,7 +45,7 @@ private:
     VBOID m_cpuVBO;
 };
 
-class RAMGraphWidget : public Widget {
+export class RAMGraphWidget : public Widget {
 public:
     RAMGraphWidget(const FontManager* fontManager, const IRetroGraph& rg, bool visible);
 
@@ -64,7 +57,7 @@ private:
     VBOID m_ramVBO;
 };
 
-class NetGraphWidget : public Widget {
+export class NetGraphWidget : public Widget {
 public:
     NetGraphWidget(const FontManager* fontManager, const IRetroGraph& rg, bool visible);
 

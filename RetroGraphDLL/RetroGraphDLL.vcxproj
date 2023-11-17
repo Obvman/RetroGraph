@@ -184,6 +184,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Colors.ixx" />
+    <ClCompile Include="Measures\AnimationState.cpp" />
+    <ClCompile Include="Measures\CPUMeasure.cpp" />
+    <ClCompile Include="Measures\CPUPlugin.cpp" />
+    <ClCompile Include="Measures\Data\DriveInfo.cpp" />
+    <ClCompile Include="Measures\Data\ProcessData.cpp" />
+    <ClCompile Include="Measures\DisplayMeasure.cpp" />
+    <ClCompile Include="Measures\DriveMeasure.cpp" />
+    <ClCompile Include="Measures\GPUMeasure.cpp" />
+    <ClCompile Include="Measures\MusicMeasure.cpp" />
+    <ClCompile Include="Measures\NetMeasure.cpp" />
+    <ClCompile Include="Measures\Particle.cpp" />
+    <ClCompile Include="Measures\ParticleLine.ixx" />
+    <ClCompile Include="Measures\ProcessMeasure.cpp" />
+    <ClCompile Include="Measures\RAMMeasure.cpp" />
+    <ClCompile Include="Measures\SystemMeasure.cpp" />
     <ClCompile Include="Rendering\DrawUtils.ixx" />
     <ClCompile Include="Rendering\FontManager.ixx" />
     <ClCompile Include="Rendering\GLListContainer.ixx" />

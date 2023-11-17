@@ -12,9 +12,7 @@ import Widgets.Widget;
 
 namespace rg {
 
-export class ProcessCPUWidget;
-
-class ProcessCPUWidget : public Widget {
+export class ProcessCPUWidget : public Widget {
 public:
     ProcessCPUWidget(const FontManager* fontManager,
                      const IRetroGraph& rg,

@@ -13,11 +13,9 @@ import <inih/INIReader.h>;
 
 namespace rg {
 
-export class UserSettings;
-
 export using SettingVariant = std::variant<int, bool, double, std::string>;
 
-class UserSettings {
+export class UserSettings {
 public:
     static UserSettings& inst() { static UserSettings i; return i; }
 

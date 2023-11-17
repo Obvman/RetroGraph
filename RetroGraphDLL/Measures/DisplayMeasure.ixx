@@ -20,10 +20,4 @@ private:
     Monitors m_monitors;
 };
 
-DisplayMeasure::DisplayMeasure()
-    : m_monitors{} {
-
-    force_update();
-}
-
-}
+} // namespace rg

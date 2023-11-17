@@ -12,9 +12,7 @@ import Widgets.Widget;
 
 namespace rg {
 
-export { class FPSWidget; }
-
-class FPSWidget : public Widget {
+export class FPSWidget : public Widget {
 public:
     FPSWidget(const FontManager* fontManager, bool visible) :
         Widget{ fontManager, visible } { }

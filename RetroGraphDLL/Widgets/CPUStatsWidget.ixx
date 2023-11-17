@@ -18,12 +18,10 @@ import "GLHeaderUnit.h";
 
 namespace rg {
 
-export { class CPUStatsWidget; }
-
 /* Responsible for drawing widget containing CPU voltage, frequency and temperature
  * obtained from CoreTemp
  */
-class CPUStatsWidget : public Widget {
+export class CPUStatsWidget : public Widget {
 public:
     CPUStatsWidget(const FontManager* fontManager, const IRetroGraph& rg,
                    bool visible) :

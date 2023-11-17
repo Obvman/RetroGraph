@@ -19,9 +19,7 @@ import "GLHeaderUnit.h";
 
 namespace rg {
 
-export { class MainWidget; }
-
-class MainWidget : public Widget {
+export class MainWidget : public Widget {
 public:
     MainWidget(const FontManager* fontManager, const IRetroGraph& rg, bool visible);
     ~MainWidget() noexcept = default;

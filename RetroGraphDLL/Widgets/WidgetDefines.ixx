@@ -2,12 +2,7 @@ export module Widgets.WidgetDefines;
 
 namespace rg {
 
-export {
-    enum class WidgetPosition;
-    enum class Widgets;
-}
-
-enum class WidgetPosition : int {
+export enum class WidgetPosition : int {
     TOP_LEFT  = 0,
     TOP_MID   = 1,
     TOP_RIGHT = 2,
@@ -21,7 +16,7 @@ enum class WidgetPosition : int {
     NUM_POSITIONS
 };
 
-enum class Widgets : int { // Must be consecutive integers!
+export enum class Widgets : int { // Must be consecutive integers!
     ProcessCPU  = 0,
     ProcessRAM  = 1,
     Time        = 2,

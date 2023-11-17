@@ -19,13 +19,11 @@ import "RGAssert.h";
 
 namespace rg {
 
-export class TimeWidget;
-
 constexpr unsigned int maxTimeLen{ 9 }; // "13:10:10\0"
 constexpr unsigned int maxDateLen{ 13 }; // "30 September\0"
 constexpr unsigned int maxDayLen{ 10 }; // "Wednesday\0"
 
-class TimeWidget : public Widget {
+export class TimeWidget : public Widget {
 public:
     TimeWidget(const FontManager* fontManager,
                const IRetroGraph& rg, bool visible) :

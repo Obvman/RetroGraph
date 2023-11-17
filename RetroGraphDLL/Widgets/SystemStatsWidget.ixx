@@ -16,9 +16,7 @@ import Widgets.Widget;
 
 namespace rg {
 
-export class SystemStatsWidget;
-
-class SystemStatsWidget : public Widget {
+export class SystemStatsWidget : public Widget {
 public:
     SystemStatsWidget(const FontManager* fontManager,
                       const IRetroGraph& rg, bool visible);

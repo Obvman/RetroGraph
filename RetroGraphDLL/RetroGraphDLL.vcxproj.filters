@@ -18,15 +18,15 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Widgets">
-      <UniqueIdentifier>{023c0db9-90cc-4bda-9b5f-a6d2778c8414}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resources">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Modules\Rendering">
       <UniqueIdentifier>{858fd7ec-e6f0-4f57-b805-49fc166d8584}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\Widgets">
+      <UniqueIdentifier>{023c0db9-90cc-4bda-9b5f-a6d2778c8414}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -91,43 +91,43 @@
       <Filter>Modules\Measures</Filter>
     </ClCompile>
     <ClCompile Include="Widgets\MainWidget.ixx">
-      <Filter>Widgets</Filter>
+      <Filter>Modules\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="Widgets\MusicWidget.ixx">
-      <Filter>Widgets</Filter>
+      <Filter>Modules\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="Widgets\NetStatsWidget.ixx">
-      <Filter>Widgets</Filter>
+      <Filter>Modules\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="Widgets\ProcessCPUWidget.ixx">
-      <Filter>Widgets</Filter>
+      <Filter>Modules\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="Widgets\ProcessRAMWidget.ixx">
-      <Filter>Widgets</Filter>
+      <Filter>Modules\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="Widgets\SystemStatsWidget.ixx">
-      <Filter>Widgets</Filter>
+      <Filter>Modules\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="Widgets\TimeWidget.ixx">
-      <Filter>Widgets</Filter>
+      <Filter>Modules\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="Widgets\Widget.ixx">
-      <Filter>Widgets</Filter>
+      <Filter>Modules\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="Widgets\WidgetDefines.ixx">
-      <Filter>Widgets</Filter>
+      <Filter>Modules\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="Widgets\CPUStatsWidget.ixx">
-      <Filter>Widgets</Filter>
+      <Filter>Modules\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="Widgets\FPSWidget.ixx">
-      <Filter>Widgets</Filter>
+      <Filter>Modules\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="Widgets\GraphWidget.ixx">
-      <Filter>Widgets</Filter>
+      <Filter>Modules\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="Widgets\HDDWidget.ixx">
-      <Filter>Widgets</Filter>
+      <Filter>Modules\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="RetroGraph.ixx">
       <Filter>Modules</Filter>
@@ -188,6 +188,51 @@
     </ClCompile>
     <ClCompile Include="CoreTempHeaderUnit.h">
       <Filter>Header Units</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\AnimationState.cpp">
+      <Filter>Modules\Measures</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\Data\ProcessData.cpp">
+      <Filter>Modules\Measures\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\CPUMeasure.cpp">
+      <Filter>Modules\Measures</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\CPUPlugin.cpp">
+      <Filter>Modules\Measures</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DisplayMeasure.cpp">
+      <Filter>Modules\Measures</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DriveMeasure.cpp">
+      <Filter>Modules\Measures</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\Data\DriveInfo.cpp">
+      <Filter>Modules\Measures\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\GPUMeasure.cpp">
+      <Filter>Modules\Measures</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\MusicMeasure.cpp">
+      <Filter>Modules\Measures</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\NetMeasure.cpp">
+      <Filter>Modules\Measures</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\ParticleLine.ixx">
+      <Filter>Modules\Measures</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\Particle.cpp">
+      <Filter>Modules\Measures</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\ProcessMeasure.cpp">
+      <Filter>Modules\Measures</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\RAMMeasure.cpp">
+      <Filter>Modules\Measures</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\SystemMeasure.cpp">
+      <Filter>Modules\Measures</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

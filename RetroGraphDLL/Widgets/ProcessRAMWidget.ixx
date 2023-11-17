@@ -12,9 +12,7 @@ import Widgets.Widget;
 
 namespace rg {
 
-export class ProcessRAMWidget;
-
-class ProcessRAMWidget : public Widget {
+export class ProcessRAMWidget : public Widget {
 public:
     ProcessRAMWidget(const FontManager* fontManager,
                      const IRetroGraph& rg,

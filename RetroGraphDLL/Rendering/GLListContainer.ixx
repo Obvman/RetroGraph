@@ -37,6 +37,7 @@ private:
     GLuint m_circleList;
     GLuint m_widgetBGList;
 };
+
 GLListContainer::GLListContainer()
     : m_circleList{ glGenLists(1) }
     , m_vpBorderList{ glGenLists(1) }
@@ -53,7 +54,6 @@ GLListContainer::GLListContainer()
     GLenum error = glGetError();
     std::cout << error << '\n';
 }
-
 
 GLListContainer::~GLListContainer() {
     glDeleteLists(m_circleList, 1);
