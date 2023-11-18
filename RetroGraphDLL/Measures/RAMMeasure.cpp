@@ -12,6 +12,15 @@ RAMMeasure::RAMMeasure()
     GlobalMemoryStatusEx(&m_memStatus);
 
     m_usageData.assign(dataSize, 0.0f);
+
+    UserSettings::inst().registerRefreshProc(
+        [&]() {
+            const int newDataSize{ UserSettings::inst().getVal<int>("Widgets-RAMGraph.NumUsageSamples") };
+            if (dataSize != newDataSize) {
+                m_usageData.assign(newDataSize, 0.0f);
+                dataSize = newDataSize;
+            }
+        });
 }
 
 void RAMMeasure::update(int) {
@@ -20,15 +29,6 @@ void RAMMeasure::update(int) {
     // Add value to the list of load values and shift the list left
     m_usageData.front() = getLoadPercentagef();
     std::rotate(m_usageData.begin(), m_usageData.begin() + 1, m_usageData.end());
-}
-
-void RAMMeasure::refreshSettings() {
-    const int newDataSize{ UserSettings::inst().getVal<int>("Widgets-RAMGraph.NumUsageSamples") };
-    if (dataSize == newDataSize)
-        return;
-
-    m_usageData.assign(newDataSize, 0.0f);
-    dataSize = newDataSize;
 }
 
 float RAMMeasure::getLoadPercentagef() const {

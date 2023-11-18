@@ -19,8 +19,6 @@ public:
        Stops tracking any processes that have exited */
     void update(int ticks) override;
 
-    void refreshSettings() override;
-
     size_t getNumProcessesRunning() const { return m_allProcessData.size(); }
 
     int getPIDFromName(std::string_view name) const;

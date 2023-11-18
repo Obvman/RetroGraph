@@ -18,8 +18,6 @@ public:
 
     void update(int ticks) override;
 
-    void refreshSettings() override;
-
     int64_t getMaxDownValue() const { return m_downMaxVal; }
     int64_t getMaxUpValue() const { return m_upMaxVal; }
     const std::vector<int64_t>& getDownData() const { return m_downBytes; }

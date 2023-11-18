@@ -23,6 +23,15 @@ CPUMeasure::CPUMeasure()
     for (auto& vec : m_perCoreData) {
         vec.assign(perCoreDataSize, 0.0f);
     }
+
+    UserSettings::inst().registerRefreshProc(
+        [&]() {
+            const size_t newDataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-CPUGraph.NumUsageSamples") };
+            if (dataSize != newDataSize) {
+                m_usageData.assign(newDataSize, 0.0f);
+                dataSize = newDataSize;
+            }
+        });
 }
 
 void CPUMeasure::update(int) {
@@ -51,15 +60,6 @@ void CPUMeasure::update(int) {
         std::rotate(m_perCoreData[i].begin(),
                     m_perCoreData[i].begin() + 1, m_perCoreData[i].end());
     }
-}
-
-void CPUMeasure::refreshSettings() {
-    const size_t newDataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-CPUGraph.NumUsageSamples") };
-    if (dataSize == newDataSize)
-        return;
-
-    m_usageData.assign(newDataSize, 0.0f);
-    dataSize = newDataSize;
 }
 
 void CPUMeasure::updateCPUName() {

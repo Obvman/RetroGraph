@@ -16,8 +16,6 @@ public:
     /* Get latest GPU stats from OpenGL or nvapi and updates dynamic members */
     void update(int ticks) override;
 
-    void refreshSettings() override;
-
     /* Returns true if the measure successfully initialized and is getting data,
      * And false if it failed to initialise
      */

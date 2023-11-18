@@ -43,26 +43,27 @@ NetMeasure::NetMeasure()
     getMACAndLocalIP();
 
     startNetworkThread();
+
+    UserSettings::inst().registerRefreshProc(
+        [&]() {
+            destroyNetworkThread();
+
+            m_pingServer = UserSettings::inst().getVal<std::string>("Network.PingServer");
+            m_pingFreqSec = UserSettings::inst().getVal<int>("Network.PingFrequency");
+
+            const size_t newDataSize = UserSettings::inst().getVal<int, size_t>("Widgets-NetGraph.NumUsageSamples");
+            if (dataSize != newDataSize) {
+                m_downBytes.assign(newDataSize, 0U);
+                m_upBytes.assign(newDataSize, 0U);
+                dataSize = newDataSize;
+            }
+
+            startNetworkThread();
+        });
 }
 
 NetMeasure::~NetMeasure() {
     destroyNetworkThread();
-}
-
-void NetMeasure::refreshSettings() {
-    destroyNetworkThread();
-
-    m_pingServer = UserSettings::inst().getVal<std::string>("Network.PingServer");
-    m_pingFreqSec = UserSettings::inst().getVal<int>("Network.PingFrequency");
-
-    const size_t newDataSize = UserSettings::inst().getVal<int, size_t>("Widgets-NetGraph.NumUsageSamples");
-    if (dataSize != newDataSize) {
-        m_downBytes.assign(newDataSize, 0U);
-        m_upBytes.assign(newDataSize, 0U);
-        dataSize = newDataSize;
-    }
-
-    startNetworkThread();
 }
 
 void NetMeasure::getMACAndLocalIP() {

@@ -29,7 +29,6 @@ public:
 
     std::string_view getComputerName() const { return m_computerName; }
 
-    void refreshSettings() override { }
 private:
     bool shouldUpdate(int /*ticks*/) const override { return false; }
 

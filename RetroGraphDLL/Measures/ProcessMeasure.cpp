@@ -28,6 +28,12 @@ ProcessMeasure::ProcessMeasure()
 
     populateList();
     fillRAMData();
+
+    UserSettings::inst().registerRefreshProc(
+        [&]() {
+            m_numCPUProcessesToDisplay = UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesCPU.NumProcessesDisplayed");
+            m_numRAMProcessesToDisplay = UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesRAM.NumProcessesDisplayed");
+        });
 }
 
 void ProcessMeasure::update(int ticks) {
@@ -82,11 +88,6 @@ void ProcessMeasure::update(int ticks) {
     if (ticksMatchSeconds(ticks, 5)) {
         fillRAMData();
     }
-}
-
-void ProcessMeasure::refreshSettings() {
-    m_numCPUProcessesToDisplay = UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesCPU.NumProcessesDisplayed");
-    m_numRAMProcessesToDisplay = UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesRAM.NumProcessesDisplayed");
 }
 
 int ProcessMeasure::getPIDFromName(std::string_view name) const {

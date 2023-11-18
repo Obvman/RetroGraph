@@ -19,7 +19,6 @@ public:
 
     /* Updates the positions of all particles */
     void update(int ticks) override;
-    void refreshSettings() override;
 
     int getAnimationFPS() const { return m_animationFPS; };
     const std::array<ParticleLine, maxLines>& getLines() const { return m_particleLines; }

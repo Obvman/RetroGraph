@@ -37,11 +37,10 @@ public:
     virtual void update(int) = 0;
 
     /* Must true if the Measure should update this frame 
-     * By default, most measure update every 2 seconds.
+     * By default, most measures update every 2 seconds.
      */
     virtual bool shouldUpdate(int ticks) const { return ticksMatchRate(ticks, 2); }
 
-    virtual void refreshSettings() = 0;
 protected:
 
     // Updates the measure so it *should* bypass checks against ticks 

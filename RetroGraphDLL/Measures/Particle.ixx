@@ -2,8 +2,6 @@ export module Measures.Particle;
 
 import std.core;
 
-import <cstdlib>;
-
 namespace rg {
 
 struct Particle;

@@ -19,6 +19,12 @@ AnimationState::AnimationState()
 
     for (const auto& p : m_particles)
         m_cells[p.cellX][p.cellY].push_back(&p);
+
+    UserSettings::inst().registerRefreshProc(
+        [&]() {
+            m_animationFPS = UserSettings::inst().getVal<int>("Widgets-Main.FPS");
+            FPSLimiter::inst().setMaxFPS(m_animationFPS);
+        });
 }
 
 AnimationState::~AnimationState() {
@@ -48,11 +54,6 @@ void AnimationState::update(int) {
         p.update(m_cells, dt);
 
     updateParticleLines();
-}
-
-void AnimationState::refreshSettings() {
-    m_animationFPS = UserSettings::inst().getVal<int>("Widgets-Main.FPS");
-    FPSLimiter::inst().setMaxFPS(m_animationFPS);
 }
 
 bool AnimationState::shouldUpdate(int ticks) const {

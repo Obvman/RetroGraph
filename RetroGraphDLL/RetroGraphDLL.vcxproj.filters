@@ -294,6 +294,30 @@
     <ClCompile Include="Widgets\TimeWidget.cpp">
       <Filter>Modules\Widgets</Filter>
     </ClCompile>
+    <ClCompile Include="MonitorData.ixx">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Monitors.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="FPSLimiter.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="RetroGraph.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="UserSettings.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="CSTDHeaderUnit.h">
+      <Filter>Header Units</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resources\resource.h">

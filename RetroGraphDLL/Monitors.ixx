@@ -1,50 +1,12 @@
 export module Monitors;
 
-import Utils;
+import MonitorData;
 
 import std.core;
 
-import "RGAssert.h";
 import "WindowsHeaderUnit.h";
 
 namespace rg {
-
-struct MonitorData {
-    MonitorData(int _index, HMONITOR _handle, int _realWidth, int _realHeight,
-                int _width, int _height, int _x, int _y, int _refreshRate)
-        : index{ _index }
-        , realWidth{ _realWidth }
-        , realHeight{ _realHeight }
-        , width{ _width }
-        , height{ _height }
-        , x{ _x }
-        , y{ _y }
-        , refreshRate{ _refreshRate }
-        , handle{ _handle } { /* Empty */ }
-
-    ~MonitorData() noexcept = default;
-    MonitorData(const MonitorData&) = default;
-    MonitorData& operator=(const MonitorData&) = default;
-    MonitorData(MonitorData&&) = default;
-    MonitorData& operator=(MonitorData&&) = default;
-
-    int index;
-
-    // Total pixels
-    int realWidth;
-    int realHeight;
-
-    // Work area (not including taskbar)
-    int width;
-    int height;
-
-    int x;
-    int y;
-
-    int refreshRate;
-
-    HMONITOR handle;
-};
 
 export class Monitors {
 public:
@@ -66,44 +28,9 @@ private:
     void fillMonitorData();
 
     static BOOL CALLBACK MonitorCallback2(HMONITOR hMonitor,
-            HDC, LPRECT, LPARAM dwData);
+                                          HDC, LPRECT, LPARAM dwData);
 
     std::vector<MonitorData> m_monitors{ };
 };
 
-Monitors::Monitors() {
-    fillMonitorData();
-}
-
-void Monitors::fillMonitorData() {
-    RGVERIFY(EnumDisplayMonitors(nullptr, nullptr, MonitorCallback2, reinterpret_cast<LPARAM>(this)),
-             "Failed to enumerate monitors");
-}
-
-BOOL CALLBACK Monitors::MonitorCallback2(HMONITOR hMonitor, HDC, LPRECT,
-                                         LPARAM dwData) {
-    static auto monitorCount = int{ 0 };
-
-    auto* This{ reinterpret_cast<Monitors*>(dwData) };
-
-    MONITORINFOEX mi;
-    mi.cbSize = sizeof(MONITORINFOEX);
-    GetMonitorInfo(hMonitor, &mi);
-
-    DEVMODE dm;
-    dm.dmSize = sizeof(dm);
-    auto refresh = int{ 0 };
-    if (EnumDisplaySettings(mi.szDevice, ENUM_CURRENT_SETTINGS, &dm)) {
-        refresh = dm.dmDisplayFrequency;
-    }
-
-    This->m_monitors.emplace_back(monitorCount, hMonitor,
-            mi.rcMonitor.right - mi.rcMonitor.left, mi.rcMonitor.bottom - mi.rcMonitor.top,
-            mi.rcWork.right - mi.rcWork.left, mi.rcWork.bottom - mi.rcWork.top,
-            mi.rcWork.left, mi.rcWork.top, refresh);
-
-    ++monitorCount;
-    return TRUE;
-}
-
-}
+} // namespace rg

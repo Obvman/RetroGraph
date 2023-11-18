@@ -23,8 +23,6 @@ public:
 
     /* Returns the drive list */
     const std::vector<DriveInfo>& getDrives() const { return m_drives; }
-
-    void refreshSettings() override { }
 private:
     bool shouldUpdate(int ticks) const override;
 

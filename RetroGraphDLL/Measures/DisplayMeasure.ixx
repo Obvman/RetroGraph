@@ -14,8 +14,6 @@ public:
 
     const Monitors* getMonitors() const { return &m_monitors; }
 
-    void refreshSettings() override { }
-
 private:
     Monitors m_monitors;
 };

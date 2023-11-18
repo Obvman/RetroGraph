@@ -61,6 +61,15 @@ GPUMeasure::GPUMeasure()
     m_memInfo.version = NV_DISPLAY_DRIVER_MEMORY_INFO_VER;
 
     m_pStateInfo.version = NV_GPU_DYNAMIC_PSTATES_INFO_EX_VER;
+
+    UserSettings::inst().registerRefreshProc(
+        [&]() {
+            const size_t newDataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-GPUGraph.NumUsageSamples") };
+            if (dataSize != newDataSize) {
+                m_usageData.assign(newDataSize, 0.0f);
+                dataSize = newDataSize;
+            }
+        });
 }
 
 GPUMeasure::~GPUMeasure() {
@@ -75,15 +84,6 @@ void GPUMeasure::update(int) {
 
     m_usageData[0] = m_gpuUsage / 100.0f;
     std::rotate(m_usageData.begin(), m_usageData.begin() + 1, m_usageData.end());
-}
-
-void GPUMeasure::refreshSettings() {
-    const size_t newDataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-GPUGraph.NumUsageSamples") };
-    if (dataSize == newDataSize)
-        return;
-
-    m_usageData.assign(newDataSize, 0.0f);
-    dataSize = newDataSize;
 }
 
 float GPUMeasure::getMemUsagePercent() const {

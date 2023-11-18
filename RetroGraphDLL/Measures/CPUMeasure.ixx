@@ -16,8 +16,6 @@ public:
     /* Updates the total system's CPU usage statistics */
     void update(int ticks) override;
 
-    void refreshSettings() override;
-
     /* Returns the current system CPU load as a percentage */
     float getCPULoad();
 

@@ -33,8 +33,6 @@ public:
     int getElapsedTime() const { return m_elapsedTime; }
     int getTotalTime() const { return m_totalTime; }
 
-    void refreshSettings() override { }
-
 private:
     bool shouldUpdate(int ticks) const override;
 
