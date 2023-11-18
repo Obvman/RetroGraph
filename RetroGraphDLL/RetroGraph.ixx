@@ -21,7 +21,7 @@ import Measures.SystemMeasure;
 import Rendering.DrawUtils;
 import Rendering.Renderer;
 
-import Widgets.WidgetDefines;
+import Widgets.WidgetType;
 
 import std.core;
 

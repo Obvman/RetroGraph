@@ -16,6 +16,8 @@ import Widgets.ProcessCPUWidget;
 import Widgets.ProcessRAMWidget;
 import Widgets.SystemStatsWidget;
 import Widgets.TimeWidget;
+import Widgets.WidgetPosition;
+import Widgets.WidgetType;
 
 namespace rg {
 

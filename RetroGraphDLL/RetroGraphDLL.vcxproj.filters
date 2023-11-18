@@ -114,9 +114,6 @@
     <ClCompile Include="Widgets\Widget.ixx">
       <Filter>Modules\Widgets</Filter>
     </ClCompile>
-    <ClCompile Include="Widgets\WidgetDefines.ixx">
-      <Filter>Modules\Widgets</Filter>
-    </ClCompile>
     <ClCompile Include="Widgets\CPUStatsWidget.ixx">
       <Filter>Modules\Widgets</Filter>
     </ClCompile>
@@ -257,6 +254,45 @@
     </ClCompile>
     <ClCompile Include="Rendering\VBOController.cpp">
       <Filter>Modules\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\CPUStatsWidget.cpp">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\FPSWidget.cpp">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\WidgetType.ixx">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\WidgetPosition.ixx">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\GraphWidget.cpp">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\HDDWidget.cpp">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\MainWidget.cpp">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\MusicWidget.cpp">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\NetStatsWidget.cpp">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\ProcessCPUWidget.cpp">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\ProcessRAMWidget.cpp">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\SystemStatsWidget.cpp">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\TimeWidget.cpp">
+      <Filter>Modules\Widgets</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

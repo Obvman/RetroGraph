@@ -8,7 +8,8 @@ import Rendering.FontManager;
 import Rendering.GLListContainer;
 import Rendering.Viewport;
 
-import Widgets.WidgetDefines;
+import Widgets.WidgetPosition;
+import Widgets.WidgetType;
 
 import std.core;
 

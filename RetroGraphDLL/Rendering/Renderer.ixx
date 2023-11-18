@@ -5,7 +5,7 @@ import IRetroGraph; // Reverse Dependency
 import Rendering.FontManager;
 
 import Widgets.Widget;
-import Widgets.WidgetDefines;
+import Widgets.WidgetType;
 
 import std.core;
 

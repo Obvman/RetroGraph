@@ -6,6 +6,8 @@ import "GLHeaderUnit.h";
 
 namespace rg {
 
+export using VBOID = size_t;
+
 constexpr GLuint invalidID{ UINT_MAX };
 
 // Container for standard VBO data (no element array)

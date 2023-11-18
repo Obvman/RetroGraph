@@ -11,7 +11,7 @@ import Measures.MusicMeasure;
 import Measures.ProcessMeasure;
 import Measures.SystemMeasure;
 
-import Widgets.WidgetDefines;
+import Widgets.WidgetType;
 
 namespace rg {
 

@@ -10,8 +10,6 @@ import "GLHeaderUnit.h";
 
 namespace rg {
 
-export using VBOID = size_t;
-
 export class VBOController {
 public:
     static VBOController & inst() { static VBOController i; return i; }
