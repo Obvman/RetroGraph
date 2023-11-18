@@ -19,17 +19,4 @@ export struct VBO {
     std::vector<GLfloat> data;
 };
 
-VBO::VBO(GLsizei size_) noexcept
-    : id{ invalidID }
-    , size{ size_ }
-    , data( size_ * 2) {
-
-    glGenBuffers(1, &id);
-}
-
-VBO::~VBO() {
-    if (id != invalidID)
-        glDeleteBuffers(1, &id);
-}
-
 }

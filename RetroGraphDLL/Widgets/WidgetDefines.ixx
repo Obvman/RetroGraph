@@ -16,7 +16,7 @@ export enum class WidgetPosition : int {
     NUM_POSITIONS
 };
 
-export enum class Widgets : int { // Must be consecutive integers!
+export enum class WidgetType : int { // Must be consecutive integers!
     ProcessCPU  = 0,
     ProcessRAM  = 1,
     Time        = 2,

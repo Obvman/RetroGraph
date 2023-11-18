@@ -6,9 +6,6 @@ namespace rg {
 
 export {
 
-    constexpr auto circleLines = int{ 10 };
-    constexpr auto serifLen = float{ 0.05f };
-
     constexpr uint64_t KB{ 1024 };
     constexpr uint64_t MB{ KB * 1024 };
     constexpr uint64_t GB{ MB * 1024 };

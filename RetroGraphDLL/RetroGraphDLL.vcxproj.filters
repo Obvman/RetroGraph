@@ -234,6 +234,30 @@
     <ClCompile Include="Measures\SystemMeasure.cpp">
       <Filter>Modules\Measures</Filter>
     </ClCompile>
+    <ClCompile Include="Rendering\DrawUtils.cpp">
+      <Filter>Modules\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\Viewport.ixx">
+      <Filter>Modules\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\FontManager.cpp">
+      <Filter>Modules\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\GLListContainer.cpp">
+      <Filter>Modules\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\GLShader.cpp">
+      <Filter>Modules\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\Renderer.cpp">
+      <Filter>Modules\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\VBO.cpp">
+      <Filter>Modules\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\VBOController.cpp">
+      <Filter>Modules\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resources\resource.h">

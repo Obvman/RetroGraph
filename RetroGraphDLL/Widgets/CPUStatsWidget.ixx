@@ -6,6 +6,7 @@ import Utils;
 
 import Measures.CPUMeasure;
 
+import Rendering.DrawUtils;
 import Rendering.FontManager;
 import Rendering.GLListContainer;
 import Rendering.VBOController;

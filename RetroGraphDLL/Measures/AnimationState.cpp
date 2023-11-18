@@ -4,6 +4,8 @@ import FPSLimiter; // Invalid dependency
 import Units;
 import UserSettings;
 
+import Rendering.GLListContainer;
+
 namespace rg {
 
 constexpr auto numVerticesPerCircle{ circleLines + 2 };

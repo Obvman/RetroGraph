@@ -6,6 +6,7 @@ import Utils;
 import Rendering.DrawUtils;
 import Rendering.FontManager;
 import Rendering.GLListContainer;
+import Rendering.Viewport;
 
 import Widgets.WidgetDefines;
 
@@ -51,7 +52,7 @@ public:
 
     bool isVisible() const { return m_visible; }
 
-    static std::string widgetTypeToStr(Widgets w);
+    static std::string widgetTypeToStr(WidgetType w);
 
     const Viewport& getViewport() const { return m_viewport; }
 
@@ -109,42 +110,42 @@ void Widget::setVisibility(bool b) {
 }
 
 // static
-std::string Widget::widgetTypeToStr(Widgets w) {
+std::string Widget::widgetTypeToStr(WidgetType w) {
     switch (w) {
-        case Widgets::ProcessRAM:
+        case WidgetType::ProcessRAM:
             return "ProcessRAM";
             break;
-        case Widgets::ProcessCPU:
+        case WidgetType::ProcessCPU:
             return "ProcessCPU";
             break;
-        case Widgets::Time:
+        case WidgetType::Time:
             return "Time";
             break;
-        case Widgets::SystemStats:
+        case WidgetType::SystemStats:
             return "SystemStats";
             break;
-        case Widgets::Music:
+        case WidgetType::Music:
             return "Music";
             break;
-        case Widgets::CPUStats:
+        case WidgetType::CPUStats:
             return "CPUStats";
             break;
-        case Widgets::HDD:
+        case WidgetType::HDD:
             return "HDD";
             break;
-        case Widgets::Main:
+        case WidgetType::Main:
             return "Main";
             break;
-        case Widgets::CPUGraph:
+        case WidgetType::CPUGraph:
             return "CPUGraph";
             break;
-        case Widgets::RAMGraph:
+        case WidgetType::RAMGraph:
             return "RAMGraph";
             break;
-        case Widgets::NetGraph:
+        case WidgetType::NetGraph:
             return "NetGraph";
             break;
-        case Widgets::FPS:
+        case WidgetType::FPS:
             return "FPS";
             break;
         default:

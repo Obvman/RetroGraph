@@ -322,7 +322,7 @@ void Window::createRClickMenu(HWND hWnd) {
 
     switch (selection) {
         case ID_EXIT:
-            // SendMessage(hWnd, WM_QUIT, wParam, lParam);
+            // SendMessage(hWnd, WM_QUIT, wParam, lParam);Widgets
             SendMessage(hWnd, WM_QUIT, 0, 0);
             break;
         case ID_SEND_TO_BACK: {
@@ -336,43 +336,43 @@ void Window::createRClickMenu(HWND hWnd) {
             runTest();
             break;
         case ID_TOGGLE_MUSIC_WIDGET:
-            m_retroGraph->toggleWidget(Widgets::Music);
+            m_retroGraph->toggleWidget(WidgetType::Music);
             break;
         case ID_TOGGLE_TIME_WIDGET:
-            m_retroGraph->toggleWidget(Widgets::Time);
+            m_retroGraph->toggleWidget(WidgetType::Time);
             break;
         case ID_TOGGLE_HDD_WIDGET:
-            m_retroGraph->toggleWidget(Widgets::HDD);
+            m_retroGraph->toggleWidget(WidgetType::HDD);
             break;
         case ID_TOGGLE_CPUSTATS_WIDGET:
-            m_retroGraph->toggleWidget(Widgets::CPUStats);
+            m_retroGraph->toggleWidget(WidgetType::CPUStats);
             break;
         case ID_TOGGLE_PROCESS_CPU_WIDGET:
-            m_retroGraph->toggleWidget(Widgets::ProcessCPU);
+            m_retroGraph->toggleWidget(WidgetType::ProcessCPU);
             break;
         case ID_TOGGLE_PROCESS_RAM_WIDGET:
-            m_retroGraph->toggleWidget(Widgets::ProcessRAM);
+            m_retroGraph->toggleWidget(WidgetType::ProcessRAM);
             break;
         case ID_TOGGLE_CPU_GRAPH_WIDGET:
-            m_retroGraph->toggleWidget(Widgets::CPUGraph);
+            m_retroGraph->toggleWidget(WidgetType::CPUGraph);
             break;
         case ID_TOGGLE_GPU_GRAPH_WIDGET:
-            m_retroGraph->toggleWidget(Widgets::GPUGraph);
+            m_retroGraph->toggleWidget(WidgetType::GPUGraph);
             break;
         case ID_TOGGLE_RAM_GRAPH_WIDGET:
-            m_retroGraph->toggleWidget(Widgets::RAMGraph);
+            m_retroGraph->toggleWidget(WidgetType::RAMGraph);
             break;
         case ID_TOGGLE_NET_GRAPH_WIDGET:
-            m_retroGraph->toggleWidget(Widgets::NetGraph);
+            m_retroGraph->toggleWidget(WidgetType::NetGraph);
             break;
         case ID_TOGGLE_SYSTEMSTATS_WIDGET:
-            m_retroGraph->toggleWidget(Widgets::SystemStats);
+            m_retroGraph->toggleWidget(WidgetType::SystemStats);
             break;
         case ID_TOGGLE_MAIN_WIDGET:
-            m_retroGraph->toggleWidget(Widgets::Main);
+            m_retroGraph->toggleWidget(WidgetType::Main);
             break;
         case ID_TOGGLE_FPS_WIDGET:
-            m_retroGraph->toggleWidget(Widgets::FPS);
+            m_retroGraph->toggleWidget(WidgetType::FPS);
             break;
         default:
             // Default case handles monitor selection list

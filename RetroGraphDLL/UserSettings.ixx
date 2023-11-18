@@ -38,8 +38,8 @@ public:
         }
     }
 
-    bool isVisible(Widgets w) const { return m_widgetVisibilities[static_cast<int>(w)]; }
-    WidgetPosition getWidgetPosition(Widgets w) const { return m_widgetPositions[static_cast<int>(w)]; }
+    bool isVisible(WidgetType w) const { return m_widgetVisibilities[static_cast<int>(w)]; }
+    WidgetPosition getWidgetPosition(WidgetType w) const { return m_widgetPositions[static_cast<int>(w)]; }
 
     void toggleWidgetBackgroundVisible() { m_settings["Window.WidgetBackground"] = 
         !std::get<bool>(m_settings["Window.WidgetBackground"]); }
@@ -78,8 +78,8 @@ private:
 };
 
 UserSettings::UserSettings()
-    : m_widgetVisibilities(static_cast<int>(Widgets::NumWidgets), true)
-    , m_widgetPositions(static_cast<int>(Widgets::NumWidgets)) {
+    : m_widgetVisibilities(static_cast<int>(WidgetType::NumWidgets), true)
+    , m_widgetPositions(static_cast<int>(WidgetType::NumWidgets)) {
 
     // TODO only read config if no settings file
     readConfig();
@@ -119,35 +119,35 @@ void UserSettings::readMembers(const INIReader& reader) {
     m_settings["Widgets-RAMGraph.NumUsageSamples"]             = reader.GetInteger("Widgets-RAMGraph",     "NumUsageSamples", 40);
     m_settings["Widgets-Main.FPS"]                             = reader.GetInteger("Widgets-Main",         "FPS", 30);
 
-    m_widgetVisibilities[static_cast<int>(Widgets::Time)]        = reader.GetBoolean("Widgets-Time",         "Visible", true);
-    m_widgetVisibilities[static_cast<int>(Widgets::CPUStats)]    = reader.GetBoolean("Widgets-CPUStats",     "Visible", true);
-    m_widgetVisibilities[static_cast<int>(Widgets::SystemStats)] = reader.GetBoolean("Widgets-SystemStats",  "Visible", true);
-    m_widgetVisibilities[static_cast<int>(Widgets::ProcessCPU)]  = reader.GetBoolean("Widgets-ProcessesCPU", "Visible", true);
-    m_widgetVisibilities[static_cast<int>(Widgets::ProcessRAM)]  = reader.GetBoolean("Widgets-ProcessesRAM", "Visible", true);
-    m_widgetVisibilities[static_cast<int>(Widgets::Music)]       = reader.GetBoolean("Widgets-Music",        "Visible", true);
-    m_widgetVisibilities[static_cast<int>(Widgets::Main)]        = reader.GetBoolean("Widgets-Main",         "Visible", true);
-    m_widgetVisibilities[static_cast<int>(Widgets::HDD)]         = reader.GetBoolean("Widgets-Drives",       "Visible", true);
-    m_widgetVisibilities[static_cast<int>(Widgets::FPS)]         = reader.GetBoolean("Widgets-FPS",          "Visible", true);
-    m_widgetVisibilities[static_cast<int>(Widgets::NetStats)]    = reader.GetBoolean("Widgets-NetStats",     "Visible", true);
-    m_widgetVisibilities[static_cast<int>(Widgets::CPUGraph)]    = reader.GetBoolean("Widgets-CPUGraph",     "Visible", true);
-    m_widgetVisibilities[static_cast<int>(Widgets::RAMGraph)]    = reader.GetBoolean("Widgets-RAMGraph",     "Visible", true);
-    m_widgetVisibilities[static_cast<int>(Widgets::NetGraph)]    = reader.GetBoolean("Widgets-NetGraph",     "Visible", true);
-    m_widgetVisibilities[static_cast<int>(Widgets::GPUGraph)]    = reader.GetBoolean("Widgets-GPUGraph",     "Visible", true);
+    m_widgetVisibilities[static_cast<int>(WidgetType::Time)]        = reader.GetBoolean("Widgets-Time",         "Visible", true);
+    m_widgetVisibilities[static_cast<int>(WidgetType::CPUStats)]    = reader.GetBoolean("Widgets-CPUStats",     "Visible", true);
+    m_widgetVisibilities[static_cast<int>(WidgetType::SystemStats)] = reader.GetBoolean("Widgets-SystemStats",  "Visible", true);
+    m_widgetVisibilities[static_cast<int>(WidgetType::ProcessCPU)]  = reader.GetBoolean("Widgets-ProcessesCPU", "Visible", true);
+    m_widgetVisibilities[static_cast<int>(WidgetType::ProcessRAM)]  = reader.GetBoolean("Widgets-ProcessesRAM", "Visible", true);
+    m_widgetVisibilities[static_cast<int>(WidgetType::Music)]       = reader.GetBoolean("Widgets-Music",        "Visible", true);
+    m_widgetVisibilities[static_cast<int>(WidgetType::Main)]        = reader.GetBoolean("Widgets-Main",         "Visible", true);
+    m_widgetVisibilities[static_cast<int>(WidgetType::HDD)]         = reader.GetBoolean("Widgets-Drives",       "Visible", true);
+    m_widgetVisibilities[static_cast<int>(WidgetType::FPS)]         = reader.GetBoolean("Widgets-FPS",          "Visible", true);
+    m_widgetVisibilities[static_cast<int>(WidgetType::NetStats)]    = reader.GetBoolean("Widgets-NetStats",     "Visible", true);
+    m_widgetVisibilities[static_cast<int>(WidgetType::CPUGraph)]    = reader.GetBoolean("Widgets-CPUGraph",     "Visible", true);
+    m_widgetVisibilities[static_cast<int>(WidgetType::RAMGraph)]    = reader.GetBoolean("Widgets-RAMGraph",     "Visible", true);
+    m_widgetVisibilities[static_cast<int>(WidgetType::NetGraph)]    = reader.GetBoolean("Widgets-NetGraph",     "Visible", true);
+    m_widgetVisibilities[static_cast<int>(WidgetType::GPUGraph)]    = reader.GetBoolean("Widgets-GPUGraph",     "Visible", true);
 
-    m_widgetPositions[static_cast<int>(Widgets::ProcessCPU)]  = m_posMap.at(reader.Get("Widgets-ProcessesCPU", "Position", "top-middle"));
-    m_widgetPositions[static_cast<int>(Widgets::ProcessRAM)]  = m_posMap.at(reader.Get("Widgets-ProcessesRAM", "Position", "top-middle"));
-    m_widgetPositions[static_cast<int>(Widgets::Time)]        = m_posMap.at(reader.Get("Widgets-Time",         "Position", "top-left"));
-    m_widgetPositions[static_cast<int>(Widgets::SystemStats)] = m_posMap.at(reader.Get("Widgets-SystemStats",  "Position", "bottom-middle"));
-    m_widgetPositions[static_cast<int>(Widgets::Music)]       = m_posMap.at(reader.Get("Widgets-Music",        "Position", "bottom-right"));
-    m_widgetPositions[static_cast<int>(Widgets::CPUStats)]    = m_posMap.at(reader.Get("Widgets-CPUStats",     "Position", "middle-right"));
-    m_widgetPositions[static_cast<int>(Widgets::HDD)]         = m_posMap.at(reader.Get("Widgets-Drives",       "Position", "top-right"));
-    m_widgetPositions[static_cast<int>(Widgets::Main)]        = m_posMap.at(reader.Get("Widgets-Main",         "Position", "middle-middle"));
-    m_widgetPositions[static_cast<int>(Widgets::FPS)]         = m_posMap.at(reader.Get("Widgets-FPS",          "Position", "bottom-left"));
-    m_widgetPositions[static_cast<int>(Widgets::NetStats)]    = m_posMap.at(reader.Get("Widgets-NetStats",     "Position", "bottom-middle"));
-    m_widgetPositions[static_cast<int>(Widgets::CPUGraph)]    = m_posMap.at(reader.Get("Widgets-CPUGraph",     "Position", "middle-left"));
-    m_widgetPositions[static_cast<int>(Widgets::RAMGraph)]    = m_posMap.at(reader.Get("Widgets-RAMGraph",     "Position", "middle-left"));
-    m_widgetPositions[static_cast<int>(Widgets::NetGraph)]    = m_posMap.at(reader.Get("Widgets-NetGraph",     "Position", "middle-left"));
-    m_widgetPositions[static_cast<int>(Widgets::GPUGraph)]    = m_posMap.at(reader.Get("Widgets-GPUGraph",     "Position", "middle-left"));
+    m_widgetPositions[static_cast<int>(WidgetType::ProcessCPU)]  = m_posMap.at(reader.Get("Widgets-ProcessesCPU", "Position", "top-middle"));
+    m_widgetPositions[static_cast<int>(WidgetType::ProcessRAM)]  = m_posMap.at(reader.Get("Widgets-ProcessesRAM", "Position", "top-middle"));
+    m_widgetPositions[static_cast<int>(WidgetType::Time)]        = m_posMap.at(reader.Get("Widgets-Time",         "Position", "top-left"));
+    m_widgetPositions[static_cast<int>(WidgetType::SystemStats)] = m_posMap.at(reader.Get("Widgets-SystemStats",  "Position", "bottom-middle"));
+    m_widgetPositions[static_cast<int>(WidgetType::Music)]       = m_posMap.at(reader.Get("Widgets-Music",        "Position", "bottom-right"));
+    m_widgetPositions[static_cast<int>(WidgetType::CPUStats)]    = m_posMap.at(reader.Get("Widgets-CPUStats",     "Position", "middle-right"));
+    m_widgetPositions[static_cast<int>(WidgetType::HDD)]         = m_posMap.at(reader.Get("Widgets-Drives",       "Position", "top-right"));
+    m_widgetPositions[static_cast<int>(WidgetType::Main)]        = m_posMap.at(reader.Get("Widgets-Main",         "Position", "middle-middle"));
+    m_widgetPositions[static_cast<int>(WidgetType::FPS)]         = m_posMap.at(reader.Get("Widgets-FPS",          "Position", "bottom-left"));
+    m_widgetPositions[static_cast<int>(WidgetType::NetStats)]    = m_posMap.at(reader.Get("Widgets-NetStats",     "Position", "bottom-middle"));
+    m_widgetPositions[static_cast<int>(WidgetType::CPUGraph)]    = m_posMap.at(reader.Get("Widgets-CPUGraph",     "Position", "middle-left"));
+    m_widgetPositions[static_cast<int>(WidgetType::RAMGraph)]    = m_posMap.at(reader.Get("Widgets-RAMGraph",     "Position", "middle-left"));
+    m_widgetPositions[static_cast<int>(WidgetType::NetGraph)]    = m_posMap.at(reader.Get("Widgets-NetGraph",     "Position", "middle-left"));
+    m_widgetPositions[static_cast<int>(WidgetType::GPUGraph)]    = m_posMap.at(reader.Get("Widgets-GPUGraph",     "Position", "middle-left"));
 }
 
 void UserSettings::writeDataFile() const {

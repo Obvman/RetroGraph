@@ -42,7 +42,7 @@ public:
     void draw(int ticks) const override;
 
     void updateWindowSize(int width, int height) override;
-    void toggleWidget(Widgets w) override;
+    void toggleWidget(WidgetType w) override;
     bool isRunning() const override { return m_window.isRunning(); }
     void shutdown() override;
 
@@ -82,7 +82,7 @@ private:
 
     // Specifies which widgets rely on which measures.
     // IMPORTANT: Must be updated everytime we modify widgets or their observer pointers to measures!
-    std::map<MeasureType, std::vector<Widgets>> m_dependencyMap;
+    std::map<MeasureType, std::vector<WidgetType>> m_dependencyMap;
 };
 
 auto RetroGraph::createMeasures() const {
@@ -105,18 +105,18 @@ auto RetroGraph::createMeasures() const {
 RetroGraph::RetroGraph(HINSTANCE hInstance)
     : m_measures( createMeasures() )
     , m_window{ this, hInstance, UserSettings::inst().getVal<int>("Window.Monitor") }
-    , m_widgetVisibilities( static_cast<int>(Widgets::NumWidgets) )
+    , m_widgetVisibilities( static_cast<int>(WidgetType::NumWidgets) )
     , m_renderer{ std::make_unique<Renderer>(m_window.getHwnd(), m_window.getWidth(), m_window.getHeight(), *this)}
     , m_dependencyMap{
-        { MeasureType::AnimationState, { Widgets::Main } },
-        { MeasureType::Music,   { Widgets::Music } },
-        { MeasureType::Process, { Widgets::Music, Widgets::ProcessCPU, Widgets::ProcessRAM } },
-        { MeasureType::System,  { Widgets::SystemStats } },
-        { MeasureType::Net,     { Widgets::Time, Widgets::NetStats, Widgets::NetGraph } },
-        { MeasureType::CPU,     { Widgets::CPUStats, Widgets::CPUGraph, Widgets::SystemStats, Widgets::Time } },
-        { MeasureType::GPU,     { Widgets::GPUGraph} },
-        { MeasureType::RAM,     { Widgets::RAMGraph } },
-        { MeasureType::Drive,   { Widgets::HDD } },
+        { MeasureType::AnimationState, { WidgetType::Main } },
+        { MeasureType::Music,   { WidgetType::Music } },
+        { MeasureType::Process, { WidgetType::Music, WidgetType::ProcessCPU, WidgetType::ProcessRAM } },
+        { MeasureType::System,  { WidgetType::SystemStats } },
+        { MeasureType::Net,     { WidgetType::Time, WidgetType::NetStats, WidgetType::NetGraph } },
+        { MeasureType::CPU,     { WidgetType::CPUStats, WidgetType::CPUGraph, WidgetType::SystemStats, WidgetType::Time } },
+        { MeasureType::GPU,     { WidgetType::GPUGraph} },
+        { MeasureType::RAM,     { WidgetType::RAMGraph } },
+        { MeasureType::Drive,   { WidgetType::HDD } },
         { MeasureType::Display, {} }, // Does have dependent widgets, but must not be destroyed
     } {
 
@@ -147,7 +147,7 @@ void RetroGraph::draw(int ticks) const {
     // Otherwise, we don't have to waste cycles swapping buffers when
     // the other measures update twice a second, so just draw at 2 FPS
     const auto framesPerSecond = int{ 
-        (m_widgetVisibilities[static_cast<int>(Widgets::Main)]) ? getAnimationState().getAnimationFPS() : 2
+        (m_widgetVisibilities[static_cast<int>(WidgetType::Main)]) ? getAnimationState().getAnimationFPS() : 2
     };
 
     m_renderer->draw(ticks, m_window.getHwnd(), m_window.getHGLRC(), framesPerSecond);
@@ -182,7 +182,7 @@ void RetroGraph::refreshConfig(bool autoReadConfig) {
     for (auto i = size_t{ 0U }; i < m_widgetVisibilities.size(); ++i) {
         if (oldWidgetVisibilites[i] != m_widgetVisibilities[i]) {
             cleanupUnusedMeasures();
-            const auto w{ static_cast<Widgets>(i) };
+            const auto w{ static_cast<WidgetType>(i) };
             m_renderer->setWidgetVisibility(w, m_widgetVisibilities[static_cast<int>(w)]);
         }
     }
@@ -201,7 +201,7 @@ void RetroGraph::updateWindowSize(int width, int height) {
     m_renderer->updateWindowSize(width, height);
 }
 
-void RetroGraph::toggleWidget(Widgets w) {
+void RetroGraph::toggleWidget(WidgetType w) {
     m_widgetVisibilities[static_cast<int>(w)] = !m_widgetVisibilities[static_cast<int>(w)];
     cleanupUnusedMeasures();
 
@@ -322,8 +322,8 @@ void RetroGraph::cleanupUnusedMeasures() {
 }
 
 void RetroGraph::updateWidgetVisibilities() {
-    for (auto i = size_t{ 0U }; i < static_cast<int>(Widgets::NumWidgets); ++i)
-        m_widgetVisibilities[i] = UserSettings::inst().isVisible(static_cast<Widgets>(i));
+    for (auto i = size_t{ 0U }; i < static_cast<int>(WidgetType::NumWidgets); ++i)
+        m_widgetVisibilities[i] = UserSettings::inst().isVisible(static_cast<WidgetType>(i));
 }
 
 }
