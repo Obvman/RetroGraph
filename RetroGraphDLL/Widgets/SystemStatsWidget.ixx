@@ -1,17 +1,27 @@
 export module Widgets.SystemStatsWidget;
 
-import IRetroGraph; // Reverse Dependency
+import Measures.CPUMeasure;
+import Measures.DisplayMeasure;
+import Measures.GPUMeasure;
+import Measures.SystemMeasure;
 
 import Rendering.FontManager;
 
 import Widgets.Widget;
+
+import std.core;
+import std.memory;
 
 namespace rg {
 
 export class SystemStatsWidget : public Widget {
 public:
     SystemStatsWidget(const FontManager* fontManager,
-                      const IRetroGraph& rg, bool visible);
+                      std::shared_ptr<CPUMeasure const> cpuMeasure,
+                      std::shared_ptr<GPUMeasure const> gpuMeasure,
+                      std::shared_ptr<DisplayMeasure const> displayMeasure,
+                      std::shared_ptr<SystemMeasure const> systemMeasure,
+                      bool visible);
     ~SystemStatsWidget() noexcept = default;
 
     void draw() const override;

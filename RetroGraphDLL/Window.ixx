@@ -3,6 +3,8 @@ export module Window;
 import IRetroGraph; // Reverse Dependency
 import Monitors;
 
+import Measures.DisplayMeasure;
+
 import std.core;
 
 import "GLHeaderUnit.h";
@@ -12,8 +14,8 @@ namespace rg {
 
 export class Window {
 public:
-    Window(IRetroGraph* rg_, HINSTANCE hInstance, int startupMonitor);
-    __declspec(dllexport) ~Window() noexcept;
+    Window(IRetroGraph* rg_, std::shared_ptr<DisplayMeasure const> displayMeasure, HINSTANCE hInstance, int startupMonitor);
+    ~Window() noexcept;
     Window(const Window&)            = delete;
     Window& operator=(const Window&) = delete;
     Window(Window&&)                 = delete;

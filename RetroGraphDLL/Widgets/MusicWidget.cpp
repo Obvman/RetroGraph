@@ -10,10 +10,6 @@ namespace rg {
 
 void createFormattedTimeStr(char* buffer, size_t buffSize, int seconds);
 
-void MusicWidget::updateObservers(const IRetroGraph & rg) {
-    m_musicMeasure = &rg.getMusicMeasure();
-}
-
 void MusicWidget::draw() const {
     if (m_musicMeasure->isPlayerRunning()) {
         glViewport(m_viewport.x, m_viewport.y + m_viewport.height/4,

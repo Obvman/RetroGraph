@@ -18,10 +18,6 @@ void CPUStatsWidget::setViewport(const Viewport& vp) {
 
 };
 
-void CPUStatsWidget::updateObservers(const IRetroGraph & rg) {
-    m_cpuMeasure = &rg.getCPUMeasure();
-}
-
 void CPUStatsWidget::draw() const {
     if (m_cpuMeasure->getCoreTempInfoSuccess()) {
         drawCoreGraphs();

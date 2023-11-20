@@ -1,19 +1,20 @@
 export module Widgets.NetStatsWidget;
 
-import IRetroGraph; // Reverse Dependency
-
 import Measures.NetMeasure;
 
 import Rendering.FontManager;
 
 import Widgets.Widget;
 
+import std.core;
+import std.memory;
+
 namespace rg {
 
 export class NetStatsWidget : public Widget {
 public:
     NetStatsWidget(const FontManager* fontManager,
-                  const IRetroGraph& rg, bool visible);
+                   std::shared_ptr<NetMeasure const>, bool visible);
 
     ~NetStatsWidget() noexcept = default;
 
@@ -22,11 +23,10 @@ public:
     NetStatsWidget(NetStatsWidget&&) = delete;
     NetStatsWidget& operator=(NetStatsWidget&&) = delete;
 
-    void updateObservers(const IRetroGraph& rg) override { m_netMeasure = &rg.getNetMeasure();  }
     void draw() const override;
 
 private:
-    const NetMeasure* m_netMeasure;
+    std::shared_ptr<NetMeasure const> m_netMeasure;
     std::vector<std::string> m_statsStrings;
 };
 

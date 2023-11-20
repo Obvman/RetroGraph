@@ -11,9 +11,9 @@ import "GLHeaderUnit.h";
 
 namespace rg {
 
-MainWidget::MainWidget(const FontManager* fontManager, const IRetroGraph& rg, bool visible)
+MainWidget::MainWidget(const FontManager* fontManager, std::shared_ptr<AnimationState const> animationState, bool visible)
     : Widget{ fontManager, visible }
-    , m_animationState{ &rg.getAnimationState() }
+    , m_animationState{ animationState }
     , m_vbo{ VBOController::inst().createAnimationVBO(maxLines) }  { }
 
 bool MainWidget::needsDraw(int ticks) const {
@@ -26,10 +26,6 @@ bool MainWidget::needsDraw(int ticks) const {
         return false;
     }
     return true;
-}
-
-void MainWidget::updateObservers(const IRetroGraph & rg) {
-    m_animationState = &rg.getAnimationState();
 }
 
 void MainWidget::draw() const {

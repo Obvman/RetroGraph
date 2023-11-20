@@ -8,10 +8,6 @@ import "GLHeaderUnit.h";
 
 namespace rg {
 
-void HDDWidget::updateObservers(const IRetroGraph & rg) {
-    m_driveMeasure = &rg.getDriveMeasure();
-}
-
 void HDDWidget::draw() const {
     // Draw each drive status section
     const auto& drives{ m_driveMeasure->getDrives() };

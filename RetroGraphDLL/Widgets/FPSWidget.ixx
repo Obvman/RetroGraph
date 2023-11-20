@@ -18,7 +18,6 @@ public:
     FPSWidget(FPSWidget&&) = delete;
     FPSWidget& operator=(FPSWidget&&) = delete;
 
-    void updateObservers(const IRetroGraph&) override { /* Empty */ }
     void draw() const override;
 };
 

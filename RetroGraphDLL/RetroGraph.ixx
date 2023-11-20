@@ -15,8 +15,11 @@ import Measures.ProcessMeasure;
 import Measures.RAMMeasure;
 import Measures.SystemMeasure;
 
-import Rendering.Renderer;
+import Rendering.FontManager;
 
+import Widgets.Widget;
+import Widgets.WidgetContainer;
+import Widgets.WidgetPosition;
 import Widgets.WidgetType;
 
 import std.core;
@@ -25,10 +28,12 @@ import "WindowsHeaderUnit.h";
 
 namespace rg {
 
+template <class...> constexpr std::false_type always_false{};
+
 export class RetroGraph : public IRetroGraph {
 public:
     __declspec(dllexport) RetroGraph(HINSTANCE hInstance);
-    ~RetroGraph() = default;
+    __declspec(dllexport) ~RetroGraph();
     RetroGraph(const RetroGraph&) = delete;
     RetroGraph& operator=(const RetroGraph&) = delete;
     RetroGraph(RetroGraph&&) = delete;
@@ -42,43 +47,70 @@ public:
     bool isRunning() const override { return m_window.isRunning(); }
     void shutdown() override;
 
-    const CPUMeasure& getCPUMeasure() const override;
-    const GPUMeasure& getGPUMeasure() const override;
-    const RAMMeasure& getRAMMeasure() const override;
-    const NetMeasure& getNetMeasure() const override;
-    const ProcessMeasure& getProcessMeasure() const override;
-    const DriveMeasure& getDriveMeasure() const override;
-    const MusicMeasure& getMusicMeasure() const override;
-    const SystemMeasure& getSystemMeasure() const override;
-    const AnimationState& getAnimationState() const override;
-    const DisplayMeasure& getDisplayMeasure() const override;
-
 private:
-    void cleanupUnusedMeasures();
+    template<std::derived_from<Measure> T>
+    std::shared_ptr<T const> getMeasure() const {
+        MeasureType measureType;
+        if constexpr (std::is_same_v<T, CPUMeasure>) {
+            measureType = MeasureType::CPU;
+        } else if constexpr (std::is_same_v<T, GPUMeasure>) {
+            measureType = MeasureType::GPU;
+        } else if constexpr (std::is_same_v<T, RAMMeasure>) {
+            measureType = MeasureType::RAM;
+        } else if constexpr (std::is_same_v<T, NetMeasure>) {
+            measureType = MeasureType::Net;
+        } else if constexpr (std::is_same_v<T, ProcessMeasure>) {
+            measureType = MeasureType::Process;
+        } else if constexpr (std::is_same_v<T, DriveMeasure>) {
+            measureType = MeasureType::Drive;
+        } else if constexpr (std::is_same_v<T, MusicMeasure>) {
+            measureType = MeasureType::Music;
+        } else if constexpr (std::is_same_v<T, SystemMeasure>) {
+            measureType = MeasureType::System;
+        } else if constexpr (std::is_same_v<T, AnimationState>) {
+            measureType = MeasureType::AnimationState;
+        } else if constexpr (std::is_same_v<T, DisplayMeasure>) {
+            measureType = MeasureType::Display;
+        } else {
+            static_assert (always_false<T>, "Unknown measure type.");
+        }
+
+        auto& measure{ m_measures[static_cast<int>(measureType)] };
+        if (!measure)
+            measure = createMeasure(measureType);
+        return dynamic_pointer_cast<T const> (measure);
+    }
+
+    void draw(int ticks, HWND window, HGLRC hrc, int totalFPS) const;
+    void setWidgetVisibility(WidgetType w, bool v);
+    void setViewports(int windowWidth, int windowHeight);
+    std::unique_ptr<Widget> createWidget(WidgetType widgetType) const;
+    void destroyWidget(WidgetType widgetType);
+    auto createWidgets() const;
+    auto createWidgetContainers() const;
+
     void updateWidgetVisibilities();
     void refreshConfig(int ticks);
 
-    // Initialises the measures list
-    auto createMeasures() const;
+    void cleanupUnusedMeasures();
+    std::shared_ptr<Measure> createMeasure(MeasureType measureType) const;
 
     // Measures are shared among widgets so we need these so we know to disable
     // a measure only when there are no widgets using it.
     std::vector<bool> m_widgetVisibilities;
 
     /* Measure data acquisition/updating is managed by the lifetime of the
-     * object, so wrapping them in smart pointers let's us disable/enable
+     * object, so wrapping them in smart pointers lets us disable/enable
      * measures by destroying/creating the objects
      */
-    std::vector<std::unique_ptr<Measure>> m_measures;
+    mutable std::vector<std::shared_ptr<Measure>> m_measures; // #TODO mutable
 
     Window m_window;
 
-    std::unique_ptr<Renderer> m_renderer;
-
-    // Specifies which widgets rely on which measures.
-    // IMPORTANT: Must be updated everytime we modify widgets or their observer pointers to measures!
-    // #TODO this should be done via shared_ptr instead.
-    std::map<MeasureType, std::vector<WidgetType>> m_dependencyMap;
+    HWND m_renderTargetHandle{ nullptr };
+    FontManager m_fontManager;
+    std::vector<std::unique_ptr<Widget>> m_widgets;
+    std::vector<std::unique_ptr<WidgetContainer>> m_widgetContainers;
 };
 
 } // namespace rg

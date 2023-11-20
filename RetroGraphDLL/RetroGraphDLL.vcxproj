@@ -210,8 +210,6 @@
     <ClCompile Include="Rendering\GLListContainer.ixx" />
     <ClCompile Include="Rendering\GLShader.cpp" />
     <ClCompile Include="Rendering\GLShader.ixx" />
-    <ClCompile Include="Rendering\Renderer.cpp" />
-    <ClCompile Include="Rendering\Renderer.ixx" />
     <ClCompile Include="Rendering\VBO.cpp" />
     <ClCompile Include="Rendering\VBOController.cpp" />
     <ClCompile Include="Rendering\VBOController.ixx" />
@@ -267,7 +265,10 @@
     <ClCompile Include="Widgets\SystemStatsWidget.ixx" />
     <ClCompile Include="Widgets\TimeWidget.cpp" />
     <ClCompile Include="Widgets\TimeWidget.ixx" />
+    <ClCompile Include="Widgets\Widget.cpp" />
     <ClCompile Include="Widgets\Widget.ixx" />
+    <ClCompile Include="Widgets\WidgetContainer.cpp" />
+    <ClCompile Include="Widgets\WidgetContainer.ixx" />
     <ClCompile Include="Widgets\WidgetPosition.ixx" />
     <ClCompile Include="Widgets\WidgetType.ixx" />
     <ClCompile Include="Window.cpp" />

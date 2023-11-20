@@ -1,22 +1,22 @@
 export module Widgets.ProcessCPUWidget;
 
-import IRetroGraph; // Reverse Dependency
-
 import Measures.ProcessMeasure;
 
 import Rendering.FontManager;
 
 import Widgets.Widget;
 
+import std.memory;
+
 namespace rg {
 
 export class ProcessCPUWidget : public Widget {
 public:
     ProcessCPUWidget(const FontManager* fontManager,
-                     const IRetroGraph& rg,
+                     std::shared_ptr<ProcessMeasure const> processMeasure,
                      bool visible) :
         Widget{ fontManager, visible },
-        m_procMeasure{ &rg.getProcessMeasure() } {}
+        m_procMeasure{ processMeasure } {}
 
     ~ProcessCPUWidget() noexcept = default;
     ProcessCPUWidget(const ProcessCPUWidget&) = delete;
@@ -24,10 +24,9 @@ public:
     ProcessCPUWidget(ProcessCPUWidget&&) = delete;
     ProcessCPUWidget& operator=(ProcessCPUWidget&&) = delete;
 
-    void updateObservers(const IRetroGraph& rg) override;
     void draw() const override;
 private:
-    const ProcessMeasure* m_procMeasure{ nullptr };
+    std::shared_ptr<ProcessMeasure const> m_procMeasure{ nullptr };
 };
 
 } // namespace rg

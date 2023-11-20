@@ -1,9 +1,5 @@
 unit tests
 
-DPI awareness is not perfect.
-
-When modules are working properly, split into interface and implementation
-
 UserSettings should update when changing widgets via right-click menu. Save to settings file and read from there
 instead of .ini file.
 

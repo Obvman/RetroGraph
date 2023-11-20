@@ -6,9 +6,11 @@ import "GLHeaderUnit.h";
 
 namespace rg {
 
-NetStatsWidget::NetStatsWidget(const FontManager* fontManager, const IRetroGraph& rg, bool visible)
+NetStatsWidget::NetStatsWidget(const FontManager* fontManager,
+                               std::shared_ptr<NetMeasure const> netMeasure,
+                               bool visible)
     : Widget{ fontManager, visible }
-    , m_netMeasure{ &rg.getNetMeasure() } {
+    , m_netMeasure{ netMeasure } {
 
     m_statsStrings.emplace_back("Hostname: " + m_netMeasure->getHostname());
     m_statsStrings.emplace_back("LAN IP: " + m_netMeasure->getAdapterIP());

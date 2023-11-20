@@ -46,18 +46,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 }
 
 void Window::runTest() {
-
+    m_retroGraph->toggleWidget(WidgetType::HDD);
 }
 
-Window::Window(IRetroGraph* rg_, HINSTANCE hInstance, int startupMonitor)
-    : m_monitors{ rg_->getDisplayMeasure().getMonitors() }
+Window::Window(IRetroGraph* rg_, std::shared_ptr<DisplayMeasure const> displayMeasure, HINSTANCE hInstance, int startupMonitor)
+    : m_monitors{ displayMeasure->getMonitors() }
     , m_retroGraph{ rg_ }
     , m_currMonitor{ startupMonitor }
     , m_width{ m_monitors->getWidth(m_currMonitor) }
     , m_height{ m_monitors->getHeight(m_currMonitor) }
     , m_startPosX{ m_monitors->getX(m_currMonitor) }
     , m_startPosY{ m_monitors->getY(m_currMonitor) }
-    , m_hInstance{ (hInstance) } {
+    , m_hInstance{ hInstance } {
 
     createWindow();
     createTrayIcon();

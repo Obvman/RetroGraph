@@ -4,10 +4,6 @@ import Colors;
 
 namespace rg {
 
-void ProcessRAMWidget::updateObservers(const IRetroGraph & rg) {
-    m_procMeasure = &rg.getProcessMeasure();
-}
-
 void ProcessRAMWidget::draw() const {
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 

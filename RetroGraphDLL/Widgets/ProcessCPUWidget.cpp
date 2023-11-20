@@ -4,10 +4,6 @@ import Colors;
 
 namespace rg {
 
-void ProcessCPUWidget::updateObservers(const IRetroGraph & rg) {
-    m_procMeasure = &rg.getProcessMeasure();
-}
-
 void ProcessCPUWidget::draw() const {
     // Draw the list itself
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);

@@ -5,32 +5,31 @@ import Colors;
 namespace rg {
 
 SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
-                                     const IRetroGraph& rg, bool visible)
+                                     std::shared_ptr<CPUMeasure const> cpuMeasure,
+                                     std::shared_ptr<GPUMeasure const> gpuMeasure,
+                                     std::shared_ptr<DisplayMeasure const> displayMeasure,
+                                     std::shared_ptr<SystemMeasure const> systemMeasure,
+                                     bool visible)
     : Widget{ fontManager, visible } {
-
-    const auto& sysInfo{ rg.getSystemMeasure() };
-    const auto& gpuMeasure{ rg.getGPUMeasure() };
 
     // Just create stats string here since we expect it not to change during
     // the lifetime of the program
-    m_statsStrings.emplace_back(std::string{ sysInfo.getUserName() } +"@" + std::string{ sysInfo.getComputerName() });
-    m_statsStrings.emplace_back(sysInfo.getOSInfoStr());
+    m_statsStrings.emplace_back(std::string{ systemMeasure->getUserName() } +"@" + std::string{ systemMeasure->getComputerName() });
+    m_statsStrings.emplace_back(systemMeasure->getOSInfoStr());
 
-    const auto& cpuMeasure{ rg.getCPUMeasure() };
-    if (cpuMeasure.getCoreTempInfoSuccess()) {
-        const auto cpuName = cpuMeasure.getCPUName();
+    if (cpuMeasure->getCoreTempInfoSuccess()) {
+        const auto cpuName = cpuMeasure->getCPUName();
         if (!cpuName.empty())
             m_statsStrings.emplace_back(cpuName);
     }
     else
-        m_statsStrings.emplace_back(sysInfo.getCPUDescription());
+        m_statsStrings.emplace_back(systemMeasure->getCPUDescription());
 
-    m_statsStrings.emplace_back(gpuMeasure.getGpuDescription());
-    m_statsStrings.emplace_back(sysInfo.getRAMDescription());
+    m_statsStrings.emplace_back(gpuMeasure->getGpuDescription());
+    m_statsStrings.emplace_back(systemMeasure->getRAMDescription());
 
     // Monitor information
-    const auto& displayMeasure{ rg.getDisplayMeasure() };
-    const auto& monitors{ displayMeasure.getMonitors() };
+    const auto& monitors{ displayMeasure->getMonitors() };
 
     if (monitors->getNumMonitors() > 1) {
         for (int i = 0; i < monitors->getNumMonitors() && i <= 3; ++i) {

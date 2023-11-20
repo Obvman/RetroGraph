@@ -1,50 +1,131 @@
 module RetroGraph;
 
+import Colors;
+import FPSLimiter;
 import UserSettings;
+
+import Widgets.CPUStatsWidget;
+import Widgets.FPSWidget;
+import Widgets.GraphWidget;
+import Widgets.HDDWidget;
+import Widgets.MainWidget;
+import Widgets.MusicWidget;
+import Widgets.NetStatsWidget;
+import Widgets.ProcessCPUWidget;
+import Widgets.ProcessRAMWidget;
+import Widgets.SystemStatsWidget;
+import Widgets.TimeWidget;
+
+import "RGAssert.h";
 
 namespace rg {
 
-auto RetroGraph::createMeasures() const {
-    decltype(m_measures) measureList( static_cast<int>(MeasureType::NumMeasures) );
+std::unique_ptr<Widget> RetroGraph::createWidget(WidgetType widgetType) const {
 
-    measureList[static_cast<int>(MeasureType::CPU)] =               std::make_unique<CPUMeasure>();
-    measureList[static_cast<int>(MeasureType::GPU)] =               std::make_unique<GPUMeasure>();
-    measureList[static_cast<int>(MeasureType::RAM)] =               std::make_unique<RAMMeasure>();
-    measureList[static_cast<int>(MeasureType::Net)] =               std::make_unique<NetMeasure>();
-    measureList[static_cast<int>(MeasureType::Process)] =           std::make_unique<ProcessMeasure>();
-    measureList[static_cast<int>(MeasureType::Drive)] =             std::make_unique<DriveMeasure>();
-    measureList[static_cast<int>(MeasureType::Music)] =             std::make_unique<MusicMeasure>(dynamic_cast<const ProcessMeasure&>(*measureList[static_cast<int>(MeasureType::Process)]));
-    measureList[static_cast<int>(MeasureType::System)] =            std::make_unique<SystemMeasure>();
-    measureList[static_cast<int>(MeasureType::AnimationState)] =    std::make_unique<AnimationState>();
-    measureList[static_cast<int>(MeasureType::Display)] =           std::make_unique<DisplayMeasure>();
+    const auto& s{ UserSettings::inst() };
 
-    return measureList;
+    switch (widgetType) {
+    case WidgetType::ProcessCPU:
+        return std::make_unique<ProcessCPUWidget>(&m_fontManager, getMeasure<ProcessMeasure>(), s.isVisible(WidgetType::ProcessCPU));
+    case WidgetType::ProcessRAM:
+        return std::make_unique<ProcessRAMWidget>(&m_fontManager, getMeasure<ProcessMeasure>(), s.isVisible(WidgetType::ProcessRAM));
+    case WidgetType::Time:
+        return std::make_unique<TimeWidget>(&m_fontManager, getMeasure<CPUMeasure>(), getMeasure<NetMeasure>(), s.isVisible(WidgetType::Time));
+    case WidgetType::SystemStats:
+        return std::make_unique<SystemStatsWidget>(&m_fontManager, getMeasure<CPUMeasure>(), getMeasure<GPUMeasure>(), getMeasure<DisplayMeasure>(), getMeasure<SystemMeasure>(), s.isVisible(WidgetType::SystemStats));
+    case WidgetType::Music:
+        return std::make_unique<MusicWidget>(&m_fontManager, getMeasure<MusicMeasure>(), s.isVisible(WidgetType::Music));
+    case WidgetType::CPUStats:
+        return std::make_unique<CPUStatsWidget>(&m_fontManager, getMeasure<CPUMeasure>(), s.isVisible(WidgetType::CPUStats));
+    case WidgetType::HDD:
+        return std::make_unique<HDDWidget>(&m_fontManager, getMeasure<DriveMeasure>(), s.isVisible(WidgetType::HDD));
+    case WidgetType::Main:
+        return std::make_unique<MainWidget>(&m_fontManager, getMeasure<AnimationState>(), s.isVisible(WidgetType::Main));
+    case WidgetType::FPS:
+        return std::make_unique<FPSWidget>(&m_fontManager, s.isVisible(WidgetType::FPS));
+    case WidgetType::NetStats:
+        return std::make_unique<NetStatsWidget>(&m_fontManager, getMeasure<NetMeasure>(), s.isVisible(WidgetType::NetStats));
+    case WidgetType::CPUGraph:
+        return std::make_unique<CPUGraphWidget>(&m_fontManager, getMeasure<CPUMeasure>(), s.isVisible(WidgetType::CPUGraph));
+    case WidgetType::RAMGraph:
+        return std::make_unique<RAMGraphWidget>(&m_fontManager, getMeasure<RAMMeasure>(), s.isVisible(WidgetType::RAMGraph));
+    case WidgetType::NetGraph:
+        return std::make_unique<NetGraphWidget>(&m_fontManager, getMeasure<NetMeasure>(), s.isVisible(WidgetType::NetGraph));
+    case WidgetType::GPUGraph:
+        return std::make_unique<GPUGraphWidget>(&m_fontManager, getMeasure<GPUMeasure>(), s.isVisible(WidgetType::GPUGraph));
+    default:
+        RGERROR("Unknown widget type.");
+        break;
+    }
+
+    return nullptr;
+}
+
+std::shared_ptr<Measure> RetroGraph::createMeasure(MeasureType measureType) const {
+    switch (measureType) {
+    case MeasureType::CPU:
+        return std::make_shared<CPUMeasure>();
+    case MeasureType::GPU:
+        return std::make_shared<GPUMeasure>();
+    case MeasureType::RAM:
+        return std::make_shared<RAMMeasure>();
+    case MeasureType::Net:
+        return std::make_shared<NetMeasure>();
+    case MeasureType::Process:
+        return std::make_shared<ProcessMeasure>();
+    case MeasureType::Drive:
+        return std::make_shared<DriveMeasure>();
+    case MeasureType::Music:
+        return std::make_shared<MusicMeasure>();
+    case MeasureType::System:
+        return std::make_shared<SystemMeasure>();
+    case MeasureType::AnimationState:
+        return std::make_shared<AnimationState>();
+    case MeasureType::Display:
+        return std::make_shared<DisplayMeasure>();
+    default:
+        RGERROR("Unknown measure type.");
+        break;
+    }
+
+    return nullptr;
+}
+
+auto RetroGraph::createWidgetContainers() const {
+    decltype(m_widgetContainers) widgetContainerList;
+    for (auto i = int{ 0 }; i < static_cast<int>(WidgetPosition::NUM_POSITIONS); ++i)
+        widgetContainerList.emplace_back(std::make_unique<WidgetContainer>(static_cast<WidgetPosition>(i)));
+
+    return widgetContainerList;
+}
+
+auto RetroGraph::createWidgets() const {
+    decltype(m_widgets) widgetList( static_cast<int>(WidgetType::NumWidgets) );
+
+    for (auto i = int{ 0 }; i < static_cast<int>(WidgetType::NumWidgets); ++i)
+        widgetList[i] = createWidget(static_cast<WidgetType> (i));
+
+    return widgetList;
 }
 
 RetroGraph::RetroGraph(HINSTANCE hInstance)
-    : m_measures( createMeasures() )
-    , m_window{ this, hInstance, UserSettings::inst().getVal<int>("Window.Monitor") }
+    : m_measures( static_cast<int>(MeasureType::NumMeasures) )
+    , m_window{ this, getMeasure<DisplayMeasure>(), hInstance, UserSettings::inst().getVal<int>("Window.Monitor") }
     , m_widgetVisibilities( static_cast<int>(WidgetType::NumWidgets) )
-    , m_renderer{ std::make_unique<Renderer>(m_window.getHwnd(), m_window.getWidth(), m_window.getHeight(), *this)}
-    , m_dependencyMap{
-        { MeasureType::AnimationState, { WidgetType::Main } },
-        { MeasureType::Music,   { WidgetType::Music } },
-        { MeasureType::Process, { WidgetType::Music, WidgetType::ProcessCPU, WidgetType::ProcessRAM } },
-        { MeasureType::System,  { WidgetType::SystemStats } },
-        { MeasureType::Net,     { WidgetType::Time, WidgetType::NetStats, WidgetType::NetGraph } },
-        { MeasureType::CPU,     { WidgetType::CPUStats, WidgetType::CPUGraph, WidgetType::SystemStats, WidgetType::Time } },
-        { MeasureType::GPU,     { WidgetType::GPUGraph} },
-        { MeasureType::RAM,     { WidgetType::RAMGraph } },
-        { MeasureType::Drive,   { WidgetType::HDD } },
-        { MeasureType::Display, {} }, // Does have dependent widgets, but must not be destroyed
-    } {
+    , m_renderTargetHandle{ m_window.getHwnd() }
+    , m_fontManager{ m_window.getHwnd(), m_window.getHeight() }
+    , m_widgets{ createWidgets() }
+    , m_widgetContainers{ createWidgetContainers() } {
 
     updateWidgetVisibilities();
 
-    cleanupUnusedMeasures();
+    setViewports(m_window.getWidth(), m_window.getHeight());
 
     update(0);
     draw(0);
+}
+
+RetroGraph::~RetroGraph() {
 }
 
 void RetroGraph::update(int ticks) {
@@ -66,10 +147,10 @@ void RetroGraph::draw(int ticks) const {
     // Otherwise, we don't have to waste cycles swapping buffers when
     // the other measures update twice a second, so just draw at 2 FPS
     const auto framesPerSecond = int{ 
-        (m_widgetVisibilities[static_cast<int>(WidgetType::Main)]) ? getAnimationState().getAnimationFPS() : 2
+        (m_widgets[static_cast<int>(WidgetType::Main)]) ? getMeasure<AnimationState>()->getAnimationFPS() : 2
     };
 
-    m_renderer->draw(ticks, m_window.getHwnd(), m_window.getHGLRC(), framesPerSecond);
+    draw(ticks, m_window.getHwnd(), m_window.getHGLRC(), framesPerSecond);
 }
 
 void RetroGraph::refreshConfig(int ticks) {
@@ -80,140 +161,32 @@ void RetroGraph::refreshConfig(int ticks) {
         updateWidgetVisibilities();
         for (auto i = size_t{ 0U }; i < m_widgetVisibilities.size(); ++i) {
             if (oldWidgetVisibilites[i] != m_widgetVisibilities[i]) {
-                cleanupUnusedMeasures();
                 const auto w{ static_cast<WidgetType>(i) };
-                m_renderer->setWidgetVisibility(w, m_widgetVisibilities[static_cast<int>(w)]);
+                setWidgetVisibility(w, m_widgetVisibilities[static_cast<int>(w)]);
             }
         }
 
-        m_renderer->setViewports(m_window.getWidth(), m_window.getHeight());
+        setViewports(m_window.getWidth(), m_window.getHeight());
 
         draw(0);
     }
 }
 
-void RetroGraph::updateWindowSize(int width, int height) {
-    m_renderer->updateWindowSize(width, height);
+void RetroGraph::updateWindowSize(int newWidth, int newHeight) {
+    setViewports(newWidth, newHeight);
+    m_fontManager.refreshFonts(newHeight);
 }
 
 void RetroGraph::toggleWidget(WidgetType w) {
     m_widgetVisibilities[static_cast<int>(w)] = !m_widgetVisibilities[static_cast<int>(w)];
-    cleanupUnusedMeasures();
 
-    m_renderer->setWidgetVisibility(w, m_widgetVisibilities[static_cast<int>(w)]);
-    m_renderer->setViewports(m_window.getWidth(), m_window.getHeight());
-    m_renderer->draw(0, m_window.getHwnd(), m_window.getHGLRC(), 1);
+    setWidgetVisibility(w, m_widgetVisibilities[static_cast<int>(w)]);
+    setViewports(m_window.getWidth(), m_window.getHeight());
+    draw(0, m_window.getHwnd(), m_window.getHGLRC(), 1);
 }
 
 void RetroGraph::shutdown() {
     UserSettings::inst().writeDataFile();
-}
-
-const CPUMeasure& RetroGraph::getCPUMeasure() const {
-    return dynamic_cast<const CPUMeasure&>(*m_measures[static_cast<int>(MeasureType::CPU)]); 
-}
-
-const GPUMeasure& RetroGraph::getGPUMeasure() const { 
-    return dynamic_cast<const GPUMeasure&>(*m_measures[static_cast<int>(MeasureType::GPU)]);
-}
-
-const RAMMeasure& RetroGraph::getRAMMeasure() const { 
-    return dynamic_cast<const RAMMeasure&>(*m_measures[static_cast<int>(MeasureType::RAM)]);
-}
-
-const NetMeasure& RetroGraph::getNetMeasure() const { 
-    return dynamic_cast<const NetMeasure&>(*m_measures[static_cast<int>(MeasureType::Net)]);
-}
-
-const ProcessMeasure& RetroGraph::getProcessMeasure() const { 
-    return dynamic_cast<const ProcessMeasure&>(*m_measures[static_cast<int>(MeasureType::Process)]);
-}
-
-const DriveMeasure& RetroGraph::getDriveMeasure() const { 
-    return dynamic_cast<const DriveMeasure&>(*m_measures[static_cast<int>(MeasureType::Drive)]);
-}
-
-const MusicMeasure& RetroGraph::getMusicMeasure() const { 
-    return dynamic_cast<const MusicMeasure&>(*m_measures[static_cast<int>(MeasureType::Music)]);
-}
-
-const SystemMeasure& RetroGraph::getSystemMeasure() const { 
-    return dynamic_cast<const SystemMeasure&>(*m_measures[static_cast<int>(MeasureType::System)]);
-}
-
-const AnimationState& RetroGraph::getAnimationState() const { 
-    return dynamic_cast<const AnimationState&>(*m_measures[static_cast<int>(MeasureType::AnimationState)]);
-}
-
-const DisplayMeasure & RetroGraph::getDisplayMeasure() const {
-    return dynamic_cast<const DisplayMeasure&>(*m_measures[static_cast<int>(MeasureType::Display)]);
-}
-
-void RetroGraph::cleanupUnusedMeasures() {
-    // Check dependent measures, if theres a measure that isn't being used by any
-    // Widget, we can disable it. If a disabled measure needs to be used by a widget,
-    // re-enable it
-    for (const auto& [measure, widgets] : m_dependencyMap) {
-        // Measures with no widget dependencies will always exist.
-        if (widgets.empty()) 
-            continue;
-
-        bool allDependentWidgetsDisabled{ true };
-        for (const auto& w : widgets) {
-            if (m_widgetVisibilities[static_cast<int>(w)]) {
-                allDependentWidgetsDisabled = false;
-                break;
-            }
-        }
-
-        // Enable/Disable measures depending on whether all it's dependencies
-        // have toggled
-        auto& measurePtr{ m_measures[static_cast<int>(measure)] };
-        if (allDependentWidgetsDisabled) {
-            if (measurePtr) {
-                measurePtr.reset(nullptr);
-            }
-        } else if (!measurePtr) {
-            switch (measure) {
-                case MeasureType::AnimationState:
-                    measurePtr = std::make_unique<AnimationState>();
-                    break;
-                case MeasureType::Drive:
-                    measurePtr = std::make_unique<DriveMeasure>();
-                    break;
-                case MeasureType::Music:
-                    measurePtr = std::make_unique<MusicMeasure>(getProcessMeasure());
-                    break;
-                case MeasureType::Net:
-                    measurePtr = std::make_unique<NetMeasure>();
-                    break;
-                case MeasureType::System:
-                    measurePtr = std::make_unique<SystemMeasure>();
-                    break;
-                case MeasureType::Process:
-                    measurePtr = std::make_unique<ProcessMeasure>();
-                    break;
-                case MeasureType::RAM:
-                    measurePtr = std::make_unique<RAMMeasure>();
-                    break;
-                case MeasureType::CPU:
-                    measurePtr = std::make_unique<CPUMeasure>();
-                    break;
-                case MeasureType::GPU:
-                    measurePtr = std::make_unique<GPUMeasure>();
-                    break;
-                case MeasureType::Display:
-                    measurePtr = std::make_unique<DisplayMeasure>();
-                    break;
-                default: // nothing
-                    break;
-            }
-        }
-    }
-
-    // Most Widgets store observers to Measures, this updates their value
-    // in case of destruction/construction of Measures
-    m_renderer->updateObservers(*this);
 }
 
 void RetroGraph::updateWidgetVisibilities() {
@@ -221,4 +194,90 @@ void RetroGraph::updateWidgetVisibilities() {
         m_widgetVisibilities[i] = UserSettings::inst().isVisible(static_cast<WidgetType>(i));
 }
 
+void RetroGraph::draw(int ticks, HWND window, HGLRC hrc, int totalFPS) const {
+    if (ticksMatchRate(ticks, 2U) || ticksMatchRate(ticks, totalFPS)) {
+
+        auto hdc{ GetDC(window) };
+        wglMakeCurrent(hdc, hrc);
+
+        glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
+
+        // Render the bulk of widgets at a low FPS to keep light on resources
+        if (ticksMatchRate(ticks, 2U)) {
+            for (const auto& widgetContainer : m_widgetContainers)
+                widgetContainer->draw();
+
+        } else if (ticksMatchRate(ticks, totalFPS)) {
+            // The main widget can have a higher framerate, so call every tick
+            const auto& mainWidget{ dynamic_cast<MainWidget&>(*m_widgets[static_cast<int>(WidgetType::Main)]) };
+            const auto& mainWidgetContainer{ m_widgetContainers[static_cast<int>(WidgetPosition::MID_MID)] };
+            if (mainWidget.needsDraw(ticks))
+                mainWidgetContainer->draw();
+        }
+
+        SwapBuffers(hdc);
+        ReleaseDC(window, hdc);
+
+        FPSLimiter::inst().end();
+        FPSLimiter::inst().begin();
+    }
+}
+
+void RetroGraph::setWidgetVisibility(WidgetType w, bool visible) {
+    auto* widget{ m_widgets[static_cast<int>(w)].get()};
+    if (widget) {
+        widget->setVisibility(visible);
+        // Update the children of the widget container
+        const auto pos{ UserSettings::inst().getWidgetPosition(w) };
+        auto& widgetContainer{ m_widgetContainers[static_cast<int>(pos)] };
+        if (visible) {
+            widgetContainer->addChild(m_widgets[static_cast<int>(w)].get());
+        } else {
+            widgetContainer->removeChild(m_widgets[static_cast<int>(w)].get());
+            destroyWidget(w);
+        }
+    } else if (visible) {
+        m_widgets[static_cast<int>(w)] = createWidget(w);
+        m_widgets[static_cast<int>(w)]->setVisibility(visible);
+    }
+}
+
+void RetroGraph::destroyWidget(WidgetType widgetType) {
+    m_widgets[static_cast<int>(widgetType)] = nullptr;
+    cleanupUnusedMeasures();
+}
+
+void RetroGraph::cleanupUnusedMeasures() {
+    for (auto i = int{ 0 }; i < static_cast<int>(MeasureType::NumMeasures); ++i) {
+        auto& measurePtr{ m_measures[i] };
+        if (measurePtr && measurePtr.use_count() == 1) {
+            measurePtr.reset();
+        }
+    }
+}
+
+void RetroGraph::setViewports(int windowWidth, int windowHeight) {
+    // Update child widgets. Their position may have changed, so they'll need to go to the correct container
+    std::for_each(m_widgetContainers.begin(), m_widgetContainers.end(), [](const auto& wc) { wc->clearChildren(); });
+
+    for (auto i = int{ 0 }; i < static_cast<int>(WidgetType::NumWidgets); ++i) {
+        const auto widgetType{ static_cast<WidgetType>(i) };
+        const auto widgetPos{ UserSettings::inst().getWidgetPosition(widgetType) };
+        auto* widget{ m_widgets[static_cast<int>(widgetType)].get() };
+        auto& container{ *m_widgetContainers[static_cast<int>(widgetPos)] };
+
+        if (widgetType == WidgetType::FPS)
+            container.setType(ContainerType::Mini);
+        else
+            container.resetType();
+
+        if (widget && widget->isVisible())
+            container.addChild(widget);
+    }
+
+    for (auto i = int{ 0 }; i < static_cast<int>(WidgetPosition::NUM_POSITIONS); ++i) {
+        m_widgetContainers[i]->setViewport(windowWidth, windowHeight, static_cast<WidgetPosition>(i));
+        m_widgetContainers[i]->clear();
+    }
+}
 } // namespace rg

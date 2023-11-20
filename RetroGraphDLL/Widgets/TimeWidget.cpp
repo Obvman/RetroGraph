@@ -13,11 +13,6 @@ constexpr unsigned int maxTimeLen{ 9 }; // "13:10:10\0"
 constexpr unsigned int maxDateLen{ 13 }; // "30 September\0"
 constexpr unsigned int maxDayLen{ 10 }; // "Wednesday\0"
 
-void TimeWidget::updateObservers(const IRetroGraph & rg) {
-    m_cpuMeasure = &rg.getCPUMeasure();
-    m_netMeasure = &rg.getNetMeasure();
-}
-
 void TimeWidget::draw() const {
     constexpr float leftDivX{ -0.33f };
     constexpr float rightDivX{ 0.33f };

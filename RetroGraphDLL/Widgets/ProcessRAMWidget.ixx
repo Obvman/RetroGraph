@@ -1,22 +1,22 @@
 export module Widgets.ProcessRAMWidget;
 
-import IRetroGraph; // Reverse Dependency
-
 import Measures.ProcessMeasure;
 
 import Rendering.FontManager;
 
 import Widgets.Widget;
 
+import std.memory;
+
 namespace rg {
 
 export class ProcessRAMWidget : public Widget {
 public:
     ProcessRAMWidget(const FontManager* fontManager,
-                     const IRetroGraph& rg,
+                     std::shared_ptr<ProcessMeasure const> processMeasure,
                      bool visible) :
         Widget{ fontManager, visible },
-        m_procMeasure{ &rg.getProcessMeasure() } {}
+        m_procMeasure{ processMeasure } {}
 
     ~ProcessRAMWidget() noexcept = default;
     ProcessRAMWidget(const ProcessRAMWidget&) = delete;
@@ -24,10 +24,9 @@ public:
     ProcessRAMWidget(ProcessRAMWidget&&) = delete;
     ProcessRAMWidget& operator=(ProcessRAMWidget&&) = delete;
 
-    void updateObservers(const IRetroGraph& rg) override;
     void draw() const override;
 private:
-    const ProcessMeasure* m_procMeasure{ nullptr };
+    std::shared_ptr<ProcessMeasure const> m_procMeasure{ nullptr };
 };
 
 } // namespace rg

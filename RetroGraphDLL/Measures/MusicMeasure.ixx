@@ -1,7 +1,6 @@
 export module Measures.MusicMeasure;
 
 import Measures.Measure;
-import Measures.ProcessMeasure;
 
 import std.core;
 
@@ -14,7 +13,7 @@ namespace rg {
  */
 export class MusicMeasure : public Measure {
 public:
-    MusicMeasure(const ProcessMeasure& procMeasure);
+    MusicMeasure();
     ~MusicMeasure() noexcept = default;
 
     /* If the player class name isn't yet set, enumerates all running windows
@@ -39,9 +38,6 @@ private:
     void updateTitleString();
 
     void scrapeInfoFromTitle();
-
-
-    const ProcessMeasure* m_processMeasure{ nullptr };
 
     bool m_playerRunning{ false };
     HWND m_playerHandle{ nullptr };

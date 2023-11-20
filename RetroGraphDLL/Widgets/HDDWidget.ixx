@@ -1,21 +1,21 @@
 export module Widgets.HDDWidget;
 
-import IRetroGraph; // Reverse Dependency
-
 import Measures.DriveMeasure;
 
 import Rendering.FontManager;
 
 import Widgets.Widget;
 
+import std.core;
+
 namespace rg {
 
 export class HDDWidget : public Widget {
 public:
     HDDWidget(const FontManager* fontManager,
-              const IRetroGraph& rg, bool visible) :
+              std::shared_ptr<DriveMeasure const> driveMeasure, bool visible) :
         Widget{ fontManager, visible },
-        m_driveMeasure{ &rg.getDriveMeasure() } { }
+        m_driveMeasure{ driveMeasure } { }
 
     ~HDDWidget() noexcept = default;
     HDDWidget(const HDDWidget&) = delete;
@@ -23,10 +23,9 @@ public:
     HDDWidget(HDDWidget&&) = delete;
     HDDWidget& operator=(HDDWidget&&) = delete;
 
-    void updateObservers(const IRetroGraph& rg) override;
     void draw() const override;
 private:
-    const DriveMeasure* m_driveMeasure;
+    std::shared_ptr<DriveMeasure const> m_driveMeasure;
 };
 
 } // namespace rg

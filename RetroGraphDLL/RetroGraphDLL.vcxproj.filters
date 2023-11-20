@@ -162,9 +162,6 @@
     <ClCompile Include="Rendering\GLShader.ixx">
       <Filter>Modules\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Rendering\Renderer.ixx">
-      <Filter>Modules\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="Rendering\VBOController.ixx">
       <Filter>Modules\Rendering</Filter>
     </ClCompile>
@@ -246,9 +243,6 @@
     <ClCompile Include="Rendering\GLShader.cpp">
       <Filter>Modules\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Rendering\Renderer.cpp">
-      <Filter>Modules\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="Rendering\VBO.cpp">
       <Filter>Modules\Rendering</Filter>
     </ClCompile>
@@ -317,6 +311,15 @@
     </ClCompile>
     <ClCompile Include="Window.cpp">
       <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\WidgetContainer.ixx">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\Widget.cpp">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\WidgetContainer.cpp">
+      <Filter>Modules\Widgets</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
