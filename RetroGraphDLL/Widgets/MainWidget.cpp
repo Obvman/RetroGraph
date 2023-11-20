@@ -11,17 +11,16 @@ import "GLHeaderUnit.h";
 
 namespace rg {
 
-MainWidget::MainWidget(const FontManager* fontManager, std::shared_ptr<AnimationState const> animationState, bool visible)
-    : Widget{ fontManager, visible }
+MainWidget::MainWidget(const FontManager* fontManager, std::shared_ptr<const AnimationState> animationState)
+    : Widget{ fontManager }
     , m_animationState{ animationState }
     , m_vbo{ VBOController::inst().createAnimationVBO(maxLines) }  { }
 
 bool MainWidget::needsDraw(int ticks) const {
     // Only draw if visible and we need to draw to keep
     // up with the animation framerate
-    if (!isVisible() || 
-        (ticks != 0 
-        && ticks % std::lround(static_cast<float>(rg::ticksPerSecond) / m_animationState->getAnimationFPS()) != 0)) {
+    if ((ticks != 0 &&
+         ticks % std::lround(static_cast<float>(rg::ticksPerSecond) / m_animationState->getAnimationFPS()) != 0)) {
 
         return false;
     }

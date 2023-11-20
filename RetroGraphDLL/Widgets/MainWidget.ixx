@@ -13,12 +13,8 @@ namespace rg {
 
 export class MainWidget : public Widget {
 public:
-    MainWidget(const FontManager* fontManager, std::shared_ptr<AnimationState const> animationState, bool visible);
+    MainWidget(const FontManager* fontManager, std::shared_ptr<const AnimationState> animationState);
     ~MainWidget() noexcept = default;
-    MainWidget(const MainWidget&) = delete;
-    MainWidget& operator=(const MainWidget&) = delete;
-    MainWidget(MainWidget&&) = delete;
-    MainWidget& operator=(MainWidget&&) = delete;
 
     /* Checks if the widget should draw to maintain the target FPS */
     bool needsDraw(int ticks) const;
@@ -27,7 +23,7 @@ private:
     void drawParticles() const;
     void drawParticleLines() const;
 
-    std::shared_ptr<AnimationState const> m_animationState;
+    std::shared_ptr<const AnimationState> m_animationState;
 
     VBOID m_vbo;
 };

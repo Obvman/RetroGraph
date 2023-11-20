@@ -10,8 +10,8 @@ import "GLHeaderUnit.h";
 
 namespace rg {
 
-GPUGraphWidget::GPUGraphWidget(const FontManager* fontManager, std::shared_ptr<GPUMeasure const> gpuMeasure, bool visible)
-    : Widget(fontManager, visible)
+GPUGraphWidget::GPUGraphWidget(const FontManager* fontManager, std::shared_ptr<const GPUMeasure> gpuMeasure)
+    : Widget(fontManager)
     , m_gpuMeasure(gpuMeasure)
     , m_gpuVBO{ VBOController::inst().createGraphLineVBO(m_gpuMeasure->getUsageData().size()) } {
 
@@ -46,8 +46,8 @@ void GPUGraphWidget::draw() const {
 }
 
 
-CPUGraphWidget::CPUGraphWidget(const FontManager* fontManager, std::shared_ptr<CPUMeasure const> cpuMeasure, bool visible)
-    : Widget(fontManager, visible)
+CPUGraphWidget::CPUGraphWidget(const FontManager* fontManager, std::shared_ptr<const CPUMeasure> cpuMeasure)
+    : Widget(fontManager)
     , m_cpuMeasure(cpuMeasure)
     , m_cpuVBO{ VBOController::inst().createGraphLineVBO(m_cpuMeasure->getUsageData().size()) } {
 
@@ -79,8 +79,8 @@ void CPUGraphWidget::draw() const {
                              RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
 }
 
-RAMGraphWidget::RAMGraphWidget(const FontManager* fontManager, std::shared_ptr<RAMMeasure const> ramMeasure, bool visible)
-    : Widget(fontManager, visible)
+RAMGraphWidget::RAMGraphWidget(const FontManager* fontManager, std::shared_ptr<const RAMMeasure> ramMeasure)
+    : Widget(fontManager)
     , m_ramMeasure(ramMeasure)
     , m_ramVBO{ VBOController::inst().createGraphLineVBO(m_ramMeasure->getUsageData().size()) } {
 
@@ -114,8 +114,8 @@ void RAMGraphWidget::draw() const {
 
 }
 
-NetGraphWidget::NetGraphWidget(const FontManager* fontManager, std::shared_ptr<NetMeasure const> netMeasure, bool visible)
-    : Widget(fontManager, visible)
+NetGraphWidget::NetGraphWidget(const FontManager* fontManager, std::shared_ptr<const NetMeasure> netMeasure)
+    : Widget(fontManager)
     , m_netMeasure(netMeasure)
     , m_netUpVBO{ VBOController::inst().createGraphLineVBO(m_netMeasure->getUpData().size()) }
     , m_netDownVBO{ VBOController::inst().createGraphLineVBO(m_netMeasure->getDownData().size()) } {

@@ -16,6 +16,8 @@ export struct Viewport {
     void set(GLint _x, GLint _y, GLint _width, GLint _height) {
         x = _x; y = _y; width = _width; height = _height;
     }
+
+    bool isEmpty() const { return x == 0 && y == 0 && width == 0 && height == 0; }
 };
 
 } // namespace rg

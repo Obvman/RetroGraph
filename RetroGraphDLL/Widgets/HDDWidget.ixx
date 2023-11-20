@@ -12,20 +12,15 @@ namespace rg {
 
 export class HDDWidget : public Widget {
 public:
-    HDDWidget(const FontManager* fontManager,
-              std::shared_ptr<DriveMeasure const> driveMeasure, bool visible) :
-        Widget{ fontManager, visible },
+    HDDWidget(const FontManager* fontManager, std::shared_ptr<const DriveMeasure> driveMeasure) :
+        Widget{ fontManager },
         m_driveMeasure{ driveMeasure } { }
 
     ~HDDWidget() noexcept = default;
-    HDDWidget(const HDDWidget&) = delete;
-    HDDWidget& operator=(const HDDWidget&) = delete;
-    HDDWidget(HDDWidget&&) = delete;
-    HDDWidget& operator=(HDDWidget&&) = delete;
 
     void draw() const override;
 private:
-    std::shared_ptr<DriveMeasure const> m_driveMeasure;
+    std::shared_ptr<const DriveMeasure> m_driveMeasure;
 };
 
 } // namespace rg

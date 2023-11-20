@@ -1,7 +1,5 @@
 export module IRetroGraph;
 
-import Measures.DisplayMeasure;
-
 import Widgets.WidgetType;
 
 import std.core;

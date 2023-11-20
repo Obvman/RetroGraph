@@ -4,17 +4,14 @@ import Rendering.DrawUtils;
 
 namespace rg {
 
-void Widget::clear() const {
-    viewport(m_viewport);
-    scissorClear(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
+Widget::~Widget() {
+    clear();
 }
 
-void Widget::setVisibility(bool b) {
-    m_visible = b;
-    if (m_visible) {
-        draw();
-    } else {
-        clear();
+void Widget::clear() const {
+    if (!m_viewport.isEmpty()) {
+        viewport(m_viewport);
+        scissorClear(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
     }
 }
 

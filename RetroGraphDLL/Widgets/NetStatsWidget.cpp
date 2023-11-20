@@ -6,10 +6,8 @@ import "GLHeaderUnit.h";
 
 namespace rg {
 
-NetStatsWidget::NetStatsWidget(const FontManager* fontManager,
-                               std::shared_ptr<NetMeasure const> netMeasure,
-                               bool visible)
-    : Widget{ fontManager, visible }
+NetStatsWidget::NetStatsWidget(const FontManager* fontManager, std::shared_ptr<const NetMeasure> netMeasure)
+    : Widget{ fontManager }
     , m_netMeasure{ netMeasure } {
 
     m_statsStrings.emplace_back("Hostname: " + m_netMeasure->getHostname());

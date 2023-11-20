@@ -49,14 +49,14 @@ void Window::runTest() {
     m_retroGraph->toggleWidget(WidgetType::HDD);
 }
 
-Window::Window(IRetroGraph* rg_, std::shared_ptr<DisplayMeasure const> displayMeasure, HINSTANCE hInstance, int startupMonitor)
-    : m_monitors{ displayMeasure->getMonitors() }
+Window::Window(IRetroGraph* rg_, std::shared_ptr<const DisplayMeasure> displayMeasure, HINSTANCE hInstance, int startupMonitor)
+    : m_displayMeasure{ displayMeasure }
     , m_retroGraph{ rg_ }
     , m_currMonitor{ startupMonitor }
-    , m_width{ m_monitors->getWidth(m_currMonitor) }
-    , m_height{ m_monitors->getHeight(m_currMonitor) }
-    , m_startPosX{ m_monitors->getX(m_currMonitor) }
-    , m_startPosY{ m_monitors->getY(m_currMonitor) }
+    , m_width{ m_displayMeasure->getMonitors()->getWidth(m_currMonitor)}
+    , m_height{ m_displayMeasure->getMonitors()->getHeight(m_currMonitor) }
+    , m_startPosX{ m_displayMeasure->getMonitors()->getX(m_currMonitor) }
+    , m_startPosY{ m_displayMeasure->getMonitors()->getY(m_currMonitor) }
     , m_hInstance{ hInstance } {
 
     createWindow();
@@ -106,7 +106,7 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPa
                     sendToBack();
                     break;
                 case ID_RESET_POSITION: {
-                    const auto& md{ m_monitors->getMonitorData()[m_currMonitor] };
+                    const auto& md{ m_displayMeasure->getMonitors()->getMonitorData()[m_currMonitor] };
                     SetWindowPos(hWnd, HWND_TOPMOST, md.x, md.y, md.width, md.height, 0);
                     break;
                 }
@@ -184,8 +184,8 @@ void Window::createRClickMenu(HWND hWnd) {
     }
 
     // Create an option for each monitor for multi-monitor systems
-    const auto& md{ m_monitors->getMonitorData() };
-    if (m_monitors->getNumMonitors() > 1) {
+    const auto& md{ m_displayMeasure->getMonitors()->getMonitorData() };
+    if (m_displayMeasure->getMonitors()->getNumMonitors() > 1) {
         for (auto i = size_t{ 0U }; i < md.size(); ++i) {
             char optionName[] = "Move to display 0";
             optionName[16] = '0' + static_cast<char>(i);
@@ -302,12 +302,12 @@ void Window::changeMonitor(HWND hWnd, int monIndex) {
     // Check monitor selection is in range and the monitor isn't
     // the currently selected one
     if (monIndex >= 0 &&
-        monIndex < m_monitors->getNumMonitors() &&
+        monIndex < m_displayMeasure->getMonitors()->getNumMonitors() &&
         monIndex != m_currMonitor) {
 
         m_currMonitor = monIndex;
 
-        const auto& md{ m_monitors->getMonitorData()[m_currMonitor] };
+        const auto& md{ m_displayMeasure->getMonitors()->getMonitorData()[m_currMonitor] };
 
         updateSize(md.width, md.height);
         SetWindowPos(hWnd, HWND_TOP, md.x, md.y, md.width, md.height, 0);

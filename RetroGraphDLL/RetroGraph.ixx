@@ -49,65 +49,55 @@ public:
 
 private:
     template<std::derived_from<Measure> T>
-    std::shared_ptr<T const> getMeasure() const {
-        MeasureType measureType;
+    MeasureType getMeasureType() const {
         if constexpr (std::is_same_v<T, CPUMeasure>) {
-            measureType = MeasureType::CPU;
+            return MeasureType::CPU;
         } else if constexpr (std::is_same_v<T, GPUMeasure>) {
-            measureType = MeasureType::GPU;
+            return MeasureType::GPU;
         } else if constexpr (std::is_same_v<T, RAMMeasure>) {
-            measureType = MeasureType::RAM;
+            return MeasureType::RAM;
         } else if constexpr (std::is_same_v<T, NetMeasure>) {
-            measureType = MeasureType::Net;
+            return MeasureType::Net;
         } else if constexpr (std::is_same_v<T, ProcessMeasure>) {
-            measureType = MeasureType::Process;
+            return MeasureType::Process;
         } else if constexpr (std::is_same_v<T, DriveMeasure>) {
-            measureType = MeasureType::Drive;
+            return MeasureType::Drive;
         } else if constexpr (std::is_same_v<T, MusicMeasure>) {
-            measureType = MeasureType::Music;
+            return MeasureType::Music;
         } else if constexpr (std::is_same_v<T, SystemMeasure>) {
-            measureType = MeasureType::System;
+            return MeasureType::System;
         } else if constexpr (std::is_same_v<T, AnimationState>) {
-            measureType = MeasureType::AnimationState;
+            return MeasureType::AnimationState;
         } else if constexpr (std::is_same_v<T, DisplayMeasure>) {
-            measureType = MeasureType::Display;
+            return MeasureType::Display;
         } else {
             static_assert (always_false<T>, "Unknown measure type.");
         }
-
-        auto& measure{ m_measures[static_cast<int>(measureType)] };
-        if (!measure)
-            measure = createMeasure(measureType);
-        return dynamic_pointer_cast<T const> (measure);
     }
 
-    void draw(int ticks, HWND window, HGLRC hrc, int totalFPS) const;
-    void setWidgetVisibility(WidgetType w, bool v);
-    void setViewports(int windowWidth, int windowHeight);
-    std::unique_ptr<Widget> createWidget(WidgetType widgetType) const;
-    void destroyWidget(WidgetType widgetType);
-    auto createWidgets() const;
-    auto createWidgetContainers() const;
+    template<std::derived_from<Measure> T>
+    std::shared_ptr<const T> getMeasure() {
+        MeasureType measureType{ getMeasureType<T>() };
+        auto& measure{ m_measures[static_cast<int>(measureType)] };
+        if (!measure)
+            measure = std::make_shared<T>();
+        return dynamic_pointer_cast<const T> (measure);
+    }
 
-    void updateWidgetVisibilities();
     void refreshConfig(int ticks);
-
+    void setViewports(int windowWidth, int windowHeight);
+    std::unique_ptr<Widget> createWidget(WidgetType widgetType);
+    auto createWidgets();
+    auto createWidgetContainers() const;
     void cleanupUnusedMeasures();
-    std::shared_ptr<Measure> createMeasure(MeasureType measureType) const;
-
-    // Measures are shared among widgets so we need these so we know to disable
-    // a measure only when there are no widgets using it.
-    std::vector<bool> m_widgetVisibilities;
 
     /* Measure data acquisition/updating is managed by the lifetime of the
      * object, so wrapping them in smart pointers lets us disable/enable
      * measures by destroying/creating the objects
      */
-    mutable std::vector<std::shared_ptr<Measure>> m_measures; // #TODO mutable
+    std::vector<std::shared_ptr<Measure>> m_measures;
 
     Window m_window;
-
-    HWND m_renderTargetHandle{ nullptr };
     FontManager m_fontManager;
     std::vector<std::unique_ptr<Widget>> m_widgets;
     std::vector<std::unique_ptr<WidgetContainer>> m_widgetContainers;

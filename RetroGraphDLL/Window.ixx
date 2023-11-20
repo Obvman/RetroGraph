@@ -14,7 +14,7 @@ namespace rg {
 
 export class Window {
 public:
-    Window(IRetroGraph* rg_, std::shared_ptr<DisplayMeasure const> displayMeasure, HINSTANCE hInstance, int startupMonitor);
+    Window(IRetroGraph* rg_, std::shared_ptr<const DisplayMeasure> displayMeasure, HINSTANCE hInstance, int startupMonitor);
     ~Window() noexcept;
     Window(const Window&)            = delete;
     Window& operator=(const Window&) = delete;
@@ -88,8 +88,7 @@ private:
                                              const GLchar* message, const void* userParam);
 
     bool m_running{ true };
-
-    const Monitors* m_monitors;
+    std::shared_ptr<const DisplayMeasure> m_displayMeasure;
     IRetroGraph* m_retroGraph;
 
     HWND m_hWndMain{ nullptr };

@@ -15,16 +15,11 @@ namespace rg {
  */
 export class CPUStatsWidget : public Widget {
 public:
-    CPUStatsWidget(const FontManager* fontManager, std::shared_ptr<CPUMeasure const> cpuMeasure,
-                   bool visible) :
-        Widget{ fontManager, visible },
+    CPUStatsWidget(const FontManager* fontManager, std::shared_ptr<const CPUMeasure> cpuMeasure) :
+        Widget{ fontManager },
         m_cpuMeasure{ cpuMeasure } {}
 
     ~CPUStatsWidget() noexcept = default;
-    CPUStatsWidget(const CPUStatsWidget&) = delete;
-    CPUStatsWidget& operator=(const CPUStatsWidget&) = delete;
-    CPUStatsWidget(CPUStatsWidget&&) = delete;
-    CPUStatsWidget& operator=(CPUStatsWidget&&) = delete;
 
     void draw() const override;
     void setViewport(const Viewport& vp) override;
@@ -37,7 +32,7 @@ private:
     Viewport m_coreGraphViewport{ };
     Viewport m_statsViewport{ };
 
-    std::shared_ptr<CPUMeasure const> m_cpuMeasure{ nullptr };
+    std::shared_ptr<const CPUMeasure> m_cpuMeasure{ nullptr };
 };
 
 } // namespace rg

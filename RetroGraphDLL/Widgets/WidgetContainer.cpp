@@ -17,8 +17,7 @@ WidgetContainer::WidgetContainer(WidgetPosition p)
 }
 
 bool WidgetContainer::isVisible() const {
-    return !m_children.empty() 
-        && std::any_of(m_children.cbegin(), m_children.cend(), [](const auto* w) { return w && w->isVisible(); });
+    return !m_children.empty();
 }
 
 void WidgetContainer::clear() const {
@@ -80,13 +79,11 @@ void WidgetContainer::draw() const {
     if (isVisible()) {
         clear();
         for (const auto* w : m_children) {
-            if (w->isVisible()) {
-                viewport(w->getViewport());
-                rg::drawWidgetBackground();
-                GLListContainer::inst().drawTopAndBottomSerifs();
+            viewport(w->getViewport());
+            rg::drawWidgetBackground();
+            GLListContainer::inst().drawTopAndBottomSerifs();
 
-                w->draw();
-            }
+            w->draw();
         }
     }
 }
