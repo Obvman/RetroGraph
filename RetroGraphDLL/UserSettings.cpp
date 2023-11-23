@@ -12,10 +12,7 @@ UserSettings::UserSettings()
     , m_widgetVisibilities(static_cast<int>(WidgetType::NumWidgets), true)
     , m_widgetPositions(static_cast<int>(WidgetType::NumWidgets)) {
 
-    // TODO only read config if no settings file
     readConfig();
-
-    writeDataFile();
 }
 
 void UserSettings::toggleWidgetBackgroundVisible() {
@@ -107,50 +104,6 @@ void UserSettings::readMembers(const INIReader& reader) {
     m_widgetPositions[static_cast<int>(WidgetType::RAMGraph)]    = m_posMap.at(reader.Get("Widgets-RAMGraph",     "Position", "middle-left"));
     m_widgetPositions[static_cast<int>(WidgetType::NetGraph)]    = m_posMap.at(reader.Get("Widgets-NetGraph",     "Position", "middle-left"));
     m_widgetPositions[static_cast<int>(WidgetType::GPUGraph)]    = m_posMap.at(reader.Get("Widgets-GPUGraph",     "Position", "middle-left"));
-}
-
-void UserSettings::writeDataFile() const {
-    using namespace std::filesystem;
-
-    const auto configFilePath = []() {
-        if constexpr (debugMode) {
-            return path{ getExePath() + R"(\..\..\DEBUGSETTINGS\settingsDEBUG)" };
-        } else {
-            return path{ getExpandedEnvPath(R"(%APPDATA%\RetroGraph\settings)") };
-        }
-    }(); // Call immediately
-
-    const auto configFileDir{ configFilePath.parent_path() };
-    if (!exists(configFileDir)) {
-        create_directories(configFileDir);
-    }
-
-    std::ofstream outFile{ configFilePath };
-    RGASSERT(!!outFile, "Couldn't write settings to file");
-
-    // Write all the options to file
-    for (const auto& [key, value] : m_settings) {
-        std::visit([&outFile, &key](auto&& arg) {
-            using T = std::decay_t<decltype(arg)>;
-            if constexpr (std::is_same_v<T, int>) {
-                outFile << key << ' ' << arg << '\n';
-            } else if constexpr (std::is_same_v<T, bool>) {
-                outFile << key << std::boolalpha << ' ' << arg << '\n';
-            } else if constexpr (std::is_same_v<T, double>) {
-                outFile << key << ' ' << arg << '\n';
-            } else if constexpr (std::is_same_v<T, std::string>) {
-                outFile << key << ' ' << arg << '\n';
-            }
-        }, value);
-    }
-
-    for (auto i = int{ 0 }; i < m_widgetVisibilities.size(); ++i) {
-        outFile << i << ' ' << m_widgetVisibilities[i] << '\n';
-    }
-
-    for (auto i = int{ 0 }; i < m_widgetPositions.size(); ++i) {
-        outFile << i << ' ' << static_cast<int>(m_widgetPositions[i]) << '\n';
-    }
 }
 
 void UserSettings::registerRefreshProc(std::function<void(void)> const& refreshProc) {

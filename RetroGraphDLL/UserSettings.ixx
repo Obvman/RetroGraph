@@ -46,10 +46,6 @@ public:
     bool checkConfigChanged() const;
     void refresh();
 
-    // Write to the settings storage file.
-    // Should be done after reading an ini file and on program shutdown.
-    void writeDataFile() const;
-
     void registerRefreshProc(std::function<void(void)> const& refreshProc);
 
 private:

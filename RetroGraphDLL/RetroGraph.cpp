@@ -132,7 +132,6 @@ void RetroGraph::toggleWidget(WidgetType widgetType) {
 }
 
 void RetroGraph::shutdown() {
-    UserSettings::inst().writeDataFile();
 }
 
 void RetroGraph::refreshConfig(int ticks) {
