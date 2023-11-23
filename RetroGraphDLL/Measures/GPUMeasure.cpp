@@ -1,7 +1,5 @@
 module Measures.GPUMeasure;
 
-import UserSettings;
-
 import "NvidiaHeaderUnit.h";
 import "RGAssert.h";
 
@@ -19,9 +17,19 @@ NvAPI_QueryInterface_t NvAPI_QueryInterface{ nullptr };
 NvAPI_GPU_GetUsages_t NvAPI_GPU_GetUsages{ nullptr };
 
 GPUMeasure::GPUMeasure()
-        : dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-GPUGraph.NumUsageSamples") } {
+    : m_dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-GPUGraph.NumUsageSamples") }
+    , m_refreshProcHandle{
+        UserSettings::inst().registerRefreshProc(
+            [&]() {
+                const size_t newDataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-GPUGraph.NumUsageSamples") };
+                if (m_dataSize != newDataSize) {
+                    m_usageData.assign(newDataSize, 0.0f);
+                    m_dataSize = newDataSize;
+                }
+            })
+    } {
 
-    m_usageData.assign(dataSize, 0.0f);
+    m_usageData.assign(m_dataSize, 0.0f);
 
     if (NvAPI_Initialize() != NVAPI_OK) {
         m_isEnabled = false;
@@ -61,19 +69,11 @@ GPUMeasure::GPUMeasure()
     m_memInfo.version = NV_DISPLAY_DRIVER_MEMORY_INFO_VER;
 
     m_pStateInfo.version = NV_GPU_DYNAMIC_PSTATES_INFO_EX_VER;
-
-    UserSettings::inst().registerRefreshProc(
-        [&]() {
-            const size_t newDataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-GPUGraph.NumUsageSamples") };
-            if (dataSize != newDataSize) {
-                m_usageData.assign(newDataSize, 0.0f);
-                dataSize = newDataSize;
-            }
-        });
 }
 
 GPUMeasure::~GPUMeasure() {
     NvAPI_Unload();
+    UserSettings::inst().releaseRefreshProc(m_refreshProcHandle);
 }
 
 void GPUMeasure::update(int) {

@@ -13,6 +13,8 @@ import <inih/INIReader.h>;
 
 namespace rg {
 
+export using RefreshProcHandle = int;
+
 using SettingVariant = std::variant<int, bool, double, std::string>;
 
 export class UserSettings {
@@ -46,7 +48,8 @@ public:
     bool checkConfigChanged() const;
     void refresh();
 
-    void registerRefreshProc(std::function<void(void)> const& refreshProc);
+    RefreshProcHandle registerRefreshProc(std::function<void(void)> const& refreshProc);
+    void releaseRefreshProc(RefreshProcHandle handle);
 
 private:
     UserSettings();
@@ -76,7 +79,8 @@ private:
         {"bottom-right",  WidgetPosition::BOT_RIGHT},
     };
 
-    std::list<std::function<void(void)>> m_refreshProcs;
+    std::map<RefreshProcHandle, std::function<void(void)>> m_refreshProcs;
+    RefreshProcHandle m_refreshProcCounter;
 };
 
 } // namespace rg

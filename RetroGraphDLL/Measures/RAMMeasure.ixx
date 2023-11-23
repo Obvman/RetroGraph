@@ -1,6 +1,7 @@
 export module Measures.RAMMeasure;
 
 import Units;
+import UserSettings;
 
 import Measures.Measure;
 
@@ -14,7 +15,7 @@ namespace rg {
 export class RAMMeasure : public Measure {
 public:
     RAMMeasure();
-    ~RAMMeasure() noexcept = default;
+    ~RAMMeasure() noexcept;
 
     /* Updates the system memory status values */
     void update(int ticks) override;
@@ -50,8 +51,9 @@ private:
     float getLoadPercentagef() const;
 
     MEMORYSTATUSEX m_memStatus{ };
-    int dataSize{ 40 }; // max number of usage percentages to store
+    int m_dataSize{ 40 }; // max number of usage percentages to store
     std::vector<float> m_usageData{ };
+    RefreshProcHandle m_refreshProcHandle;
 };
 
 } // namespace rg

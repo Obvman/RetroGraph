@@ -10,7 +10,9 @@ UserSettings::UserSettings()
     : m_iniPath{ getExePath() + R"(\..\..\RetroGraph\Resources\config.ini)" }
     , m_fallbackIniPath{ getExePath() + R"(\..\..\RetroGraph\Resources\default_config.ini)" }
     , m_widgetVisibilities(static_cast<int>(WidgetType::NumWidgets), true)
-    , m_widgetPositions(static_cast<int>(WidgetType::NumWidgets)) {
+    , m_widgetPositions(static_cast<int>(WidgetType::NumWidgets))
+    , m_refreshProcs{}
+    , m_refreshProcCounter{ 0 } {
 
     readConfig();
 }
@@ -38,8 +40,7 @@ bool UserSettings::checkConfigChanged() const {
 
 void UserSettings::refresh() {
     readConfig();
-    // #TODO crashes if original registrar has been destroyed
-    for (const auto& refreshProc : m_refreshProcs)
+    for (const auto& [handle, refreshProc] : m_refreshProcs)
         refreshProc();
 }
 
@@ -106,8 +107,13 @@ void UserSettings::readMembers(const INIReader& reader) {
     m_widgetPositions[static_cast<int>(WidgetType::GPUGraph)]    = m_posMap.at(reader.Get("Widgets-GPUGraph",     "Position", "middle-left"));
 }
 
-void UserSettings::registerRefreshProc(std::function<void(void)> const& refreshProc) {
-    m_refreshProcs.push_back(refreshProc);
+RefreshProcHandle UserSettings::registerRefreshProc(std::function<void(void)> const& refreshProc) {
+    m_refreshProcs.insert_or_assign(m_refreshProcCounter, refreshProc);
+    return m_refreshProcCounter++;
+}
+
+void UserSettings::releaseRefreshProc(RefreshProcHandle handle) {
+    m_refreshProcs.erase(handle);
 }
 
 } // namespace rg

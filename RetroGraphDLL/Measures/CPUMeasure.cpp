@@ -1,7 +1,5 @@
 module Measures.CPUMeasure;
 
-import UserSettings;
-
 import "RGAssert.h";
 
 namespace rg {
@@ -12,8 +10,18 @@ unsigned long long fileTimeToInt64(const FILETIME & ft) {
 }
 
 CPUMeasure::CPUMeasure()
-    : dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-CPUGraph.NumUsageSamples") }
-    , m_usageData( dataSize, 0.0f ) {
+    : m_dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-CPUGraph.NumUsageSamples") }
+    , m_usageData( m_dataSize, 0.0f )
+    , m_refreshProcHandle{
+        UserSettings::inst().registerRefreshProc(
+            [&]() {
+                const size_t newDataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-CPUGraph.NumUsageSamples") };
+                if (m_dataSize != newDataSize) {
+                    m_usageData.assign(newDataSize, 0.0f);
+                    m_dataSize = newDataSize;
+                }
+            })
+    } {
 
     updateCPUName();
 
@@ -23,15 +31,10 @@ CPUMeasure::CPUMeasure()
     for (auto& vec : m_perCoreData) {
         vec.assign(perCoreDataSize, 0.0f);
     }
+}
 
-    UserSettings::inst().registerRefreshProc(
-        [&]() {
-            const size_t newDataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-CPUGraph.NumUsageSamples") };
-            if (dataSize != newDataSize) {
-                m_usageData.assign(newDataSize, 0.0f);
-                dataSize = newDataSize;
-            }
-        });
+CPUMeasure::~CPUMeasure() {
+    UserSettings::inst().releaseRefreshProc(m_refreshProcHandle);
 }
 
 void CPUMeasure::update(int) {

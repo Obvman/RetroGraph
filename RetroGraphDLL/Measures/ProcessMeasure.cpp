@@ -1,7 +1,5 @@
 module Measures.ProcessMeasure;
 
-import UserSettings;
-
 import Measures.NtDefs;
 
 import "RGAssert.h";
@@ -13,7 +11,14 @@ namespace rg {
 
 ProcessMeasure::ProcessMeasure()
     : m_numCPUProcessesToDisplay{ UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesCPU.NumProcessesDisplayed") }
-    , m_numRAMProcessesToDisplay{ UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesRAM.NumProcessesDisplayed") } {
+    , m_numRAMProcessesToDisplay{ UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesRAM.NumProcessesDisplayed") }
+    , m_refreshProcHandle{
+        UserSettings::inst().registerRefreshProc(
+            [&]() {
+                m_numCPUProcessesToDisplay = UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesCPU.NumProcessesDisplayed");
+                m_numRAMProcessesToDisplay = UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesRAM.NumProcessesDisplayed");
+            })
+    } {
 
     if constexpr (!debugMode) {
         // Set the debug privilege in order to gain access to system processes
@@ -28,12 +33,10 @@ ProcessMeasure::ProcessMeasure()
 
     populateList();
     fillRAMData();
+}
 
-    UserSettings::inst().registerRefreshProc(
-        [&]() {
-            m_numCPUProcessesToDisplay = UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesCPU.NumProcessesDisplayed");
-            m_numRAMProcessesToDisplay = UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesRAM.NumProcessesDisplayed");
-        });
+ProcessMeasure::~ProcessMeasure() {
+    UserSettings::inst().releaseRefreshProc(m_refreshProcHandle);
 }
 
 void ProcessMeasure::update(int ticks) {

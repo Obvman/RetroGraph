@@ -36,17 +36,16 @@ void SystemMeasure::getOSVersionInfo() {
 
     DWORD dummy;
     const auto fileVersionInfoSize{ GetFileVersionInfoSize(filePath, &dummy) };
-    auto* lpVersionInfo = new BYTE[fileVersionInfoSize];
-    RGVERIFY(GetFileVersionInfo(filePath, 0, fileVersionInfoSize, lpVersionInfo), "Could not get OS version\n");
+    std::vector<BYTE> versionInfoBuff(fileVersionInfoSize);
+    RGVERIFY(GetFileVersionInfo(filePath, 0, fileVersionInfoSize, versionInfoBuff.data()), "Could not get OS version\n");
 
     UINT uLen;
     VS_FIXEDFILEINFO* lpFfi;
-    const auto bVer{ VerQueryValue(lpVersionInfo, "\\", (LPVOID*)&lpFfi, &uLen) };
+    const auto bVer{ VerQueryValue(versionInfoBuff.data(), "\\", (LPVOID*)&lpFfi, &uLen) };
     RGASSERT(bVer && uLen != 0, "Failed to query OS value\n");
 
     const DWORD osVersionMS = lpFfi->dwProductVersionMS;
     const DWORD osVersionLS = lpFfi->dwProductVersionLS;
-    delete[] lpVersionInfo;
 
     const DWORD dwLeftMost = HIWORD(osVersionMS);
     const DWORD dwSecondLeft = LOWORD(osVersionMS);

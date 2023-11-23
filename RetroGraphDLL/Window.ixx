@@ -2,6 +2,7 @@ export module Window;
 
 import IRetroGraph; // Reverse Dependency
 import Monitors;
+import UserSettings;
 
 import Measures.DisplayMeasure;
 
@@ -106,6 +107,7 @@ private:
     int m_arbMultisampleFormat{ 0 };
     int m_aaSamples{ 8 };
     HINSTANCE m_hInstance{ nullptr };
+    RefreshProcHandle m_refreshProcHandle;
 };
 
 } // namespace rg

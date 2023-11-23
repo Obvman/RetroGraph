@@ -1,5 +1,7 @@
 export module Measures.ProcessMeasure;
 
+import UserSettings;
+
 import Measures.Measure;
 import Measures.Data.ProcessData;
 
@@ -13,7 +15,7 @@ namespace rg {
 export class ProcessMeasure : public Measure {
 public:
     ProcessMeasure();
-    ~ProcessMeasure() noexcept = default;
+    ~ProcessMeasure() noexcept;
 
     /* Updates the currently tracked processes and their CPU usage.
        Stops tracking any processes that have exited */
@@ -56,6 +58,7 @@ private:
     unsigned int m_numRAMProcessesToDisplay{ 10U };
     std::vector<std::pair<std::string, double>> m_procCPUListData{ m_numCPUProcessesToDisplay };
     std::vector<std::pair<std::string, size_t>> m_procRAMListData{ m_numRAMProcessesToDisplay };
+    RefreshProcHandle m_refreshProcHandle;
 };
 
 } // namespace rg

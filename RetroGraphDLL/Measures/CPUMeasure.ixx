@@ -1,5 +1,7 @@
 export module Measures.CPUMeasure;
 
+import UserSettings;
+
 import Measures.CPUPlugin;
 import Measures.Measure;
 
@@ -11,7 +13,7 @@ namespace rg {
 export class CPUMeasure : public Measure {
 public:
     CPUMeasure();
-    ~CPUMeasure() noexcept = default;
+    ~CPUMeasure() noexcept;
 
     /* Updates the total system's CPU usage statistics */
     void update(int ticks) override;
@@ -52,7 +54,7 @@ public:
     }
 
     /* Returns the maximum number of CPU usage samples stored */
-    size_t getDataSize() const { return dataSize; }
+    size_t getDataSize() const { return m_dataSize; }
 
     bool getCoreTempInfoSuccess() const {
         return m_coreTempPlugin.getCoreTempInfoSuccess();
@@ -70,7 +72,7 @@ private:
 
     CPUPlugin m_coreTempPlugin{};
 
-    size_t dataSize{ 40U };
+    size_t m_dataSize{ 40U };
     std::vector<float> m_usageData{};
 
     size_t perCoreDataSize{ 80U };
@@ -78,6 +80,7 @@ private:
 
     std::chrono::milliseconds m_uptime{ 0 };
     std::string m_cpuName{ "" };
+    RefreshProcHandle m_refreshProcHandle;
 };
 
 } // namespace rg

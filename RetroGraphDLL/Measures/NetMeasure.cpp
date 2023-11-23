@@ -1,7 +1,5 @@
 module Measures.NetMeasure;
 
-import UserSettings;
-
 import "RGAssert.h";
 import "WindowsNetworkHeaderUnit.h";
 
@@ -14,11 +12,29 @@ namespace rg {
 NetMeasure::NetMeasure()
     : m_pingServer{ UserSettings::inst().getVal<std::string>("Network.PingServer") }
     , m_pingFreqSec{ UserSettings::inst().getVal<int>("Network.PingFrequency") }
-    , dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-NetGraph.NumUsageSamples") } {
+    , m_dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-NetGraph.NumUsageSamples") }
+    , m_refreshProcHandle{
+        UserSettings::inst().registerRefreshProc(
+            [&]() {
+                destroyNetworkThread();
+
+                m_pingServer = UserSettings::inst().getVal<std::string>("Network.PingServer");
+                m_pingFreqSec = UserSettings::inst().getVal<int>("Network.PingFrequency");
+
+                const size_t newDataSize = UserSettings::inst().getVal<int, size_t>("Widgets-NetGraph.NumUsageSamples");
+                if (m_dataSize != newDataSize) {
+                    m_downBytes.assign(newDataSize, 0U);
+                    m_upBytes.assign(newDataSize, 0U);
+                    m_dataSize = newDataSize;
+                }
+
+                startNetworkThread();
+            })
+    } {
 
     // Fill data vectors with default values
-    m_downBytes.assign(dataSize, 0);
-    m_upBytes.assign(dataSize, 0);
+    m_downBytes.assign(m_dataSize, 0);
+    m_upBytes.assign(m_dataSize, 0);
 
     RGVERIFY(GetIfTable2(&m_table) == NO_ERROR, "GetIfTable failed");
 
@@ -44,26 +60,11 @@ NetMeasure::NetMeasure()
 
     startNetworkThread();
 
-    UserSettings::inst().registerRefreshProc(
-        [&]() {
-            destroyNetworkThread();
-
-            m_pingServer = UserSettings::inst().getVal<std::string>("Network.PingServer");
-            m_pingFreqSec = UserSettings::inst().getVal<int>("Network.PingFrequency");
-
-            const size_t newDataSize = UserSettings::inst().getVal<int, size_t>("Widgets-NetGraph.NumUsageSamples");
-            if (dataSize != newDataSize) {
-                m_downBytes.assign(newDataSize, 0U);
-                m_upBytes.assign(newDataSize, 0U);
-                dataSize = newDataSize;
-            }
-
-            startNetworkThread();
-        });
 }
 
 NetMeasure::~NetMeasure() {
     destroyNetworkThread();
+    UserSettings::inst().releaseRefreshProc(m_refreshProcHandle);
 }
 
 void NetMeasure::getMACAndLocalIP() {

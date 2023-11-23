@@ -1,26 +1,29 @@
 module Measures.RAMMeasure;
 
-import UserSettings;
-
 namespace rg {
 
 RAMMeasure::RAMMeasure()
-    : dataSize{ UserSettings::inst().getVal<int>("Widgets-RAMGraph.NumUsageSamples") } {
+    : m_dataSize{ UserSettings::inst().getVal<int>("Widgets-RAMGraph.NumUsageSamples") }
+    , m_refreshProcHandle{
+        UserSettings::inst().registerRefreshProc(
+            [&]() {
+                const int newDataSize{ UserSettings::inst().getVal<int>("Widgets-RAMGraph.NumUsageSamples") };
+                if (m_dataSize != newDataSize) {
+                    m_usageData.assign(newDataSize, 0.0f);
+                    m_dataSize = newDataSize;
+                }
+            })
+    } {
 
     // Fill the memory stat struct with system information
     m_memStatus.dwLength = sizeof(m_memStatus);
     GlobalMemoryStatusEx(&m_memStatus);
 
-    m_usageData.assign(dataSize, 0.0f);
+    m_usageData.assign(m_dataSize, 0.0f);
+}
 
-    UserSettings::inst().registerRefreshProc(
-        [&]() {
-            const int newDataSize{ UserSettings::inst().getVal<int>("Widgets-RAMGraph.NumUsageSamples") };
-            if (dataSize != newDataSize) {
-                m_usageData.assign(newDataSize, 0.0f);
-                dataSize = newDataSize;
-            }
-        });
+RAMMeasure::~RAMMeasure() {
+    UserSettings::inst().releaseRefreshProc(m_refreshProcHandle);
 }
 
 void RAMMeasure::update(int) {

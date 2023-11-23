@@ -7,8 +7,6 @@ module Window;
 
 import Colors;
 
-import UserSettings;
-
 import "RGAssert.h";
 import "GLHeaderUnit.h";
 import "WindowsHeaderUnit.h";
@@ -57,20 +55,22 @@ Window::Window(IRetroGraph* rg_, std::shared_ptr<const DisplayMeasure> displayMe
     , m_height{ m_displayMeasure->getMonitors()->getHeight(m_currMonitor) }
     , m_startPosX{ m_displayMeasure->getMonitors()->getX(m_currMonitor) }
     , m_startPosY{ m_displayMeasure->getMonitors()->getY(m_currMonitor) }
-    , m_hInstance{ hInstance } {
+    , m_hInstance{ hInstance }
+    , m_refreshProcHandle{
+        UserSettings::inst().registerRefreshProc(
+            [&]() {
+                const auto newMonitor{ UserSettings::inst().getVal<int>("Window.Monitor") };
+                if (m_currMonitor != newMonitor)
+                    changeMonitor(m_hWndMain, newMonitor);
+            })
+    } {
 
     createWindow();
     createTrayIcon();
-
-    UserSettings::inst().registerRefreshProc(
-        [&]() {
-            const auto newMonitor{ UserSettings::inst().getVal<int>("Window.Monitor") };
-            if (m_currMonitor != newMonitor)
-                changeMonitor(m_hWndMain, newMonitor);
-        });
 }
 
 Window::~Window() {
+    UserSettings::inst().releaseRefreshProc(m_refreshProcHandle);
     wglMakeCurrent(nullptr, nullptr);
     wglDeleteContext(m_hrc);
 

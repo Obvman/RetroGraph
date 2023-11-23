@@ -1,5 +1,7 @@
 export module Measures.AnimationState;
 
+import UserSettings;
+
 import Measures.Measure;
 import Measures.Particle;
 import Measures.ParticleLine;
@@ -47,6 +49,7 @@ private:
     CellContainer m_cells;
 
     int m_animationFPS;
+    RefreshProcHandle m_refreshProcHandle;
 
     friend struct Particle;
 };

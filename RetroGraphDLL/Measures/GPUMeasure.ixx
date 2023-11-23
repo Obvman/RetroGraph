@@ -1,5 +1,7 @@
 export module Measures.GPUMeasure;
 
+import UserSettings;
+
 import Measures.Measure;
 
 import std.core;
@@ -63,8 +65,9 @@ private:
     NvU32 m_totalMemory{ 0U };
     NvU32 m_gpuUsage{ 0U };
 
-    size_t dataSize{ 40U };
+    size_t m_dataSize{ 40U };
     std::vector<float> m_usageData{ };
+    RefreshProcHandle m_refreshProcHandle;
 };
 
 } // namespace rg

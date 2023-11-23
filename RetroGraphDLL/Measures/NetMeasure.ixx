@@ -1,6 +1,7 @@
 export module Measures.NetMeasure;
 
 import Units;
+import UserSettings;
 
 import Measures.Measure;
 
@@ -55,9 +56,10 @@ private:
 
     int64_t m_downMaxVal{ 10U * GB };
     int64_t m_upMaxVal{ 10U * GB };
-    size_t dataSize{ 40U };
+    size_t m_dataSize{ 40U };
     std::vector<int64_t> m_downBytes{ };
     std::vector<int64_t> m_upBytes{ };
+    RefreshProcHandle m_refreshProcHandle;
 };
 
 } // namespace rg

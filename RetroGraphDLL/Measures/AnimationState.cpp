@@ -2,7 +2,6 @@ module Measures.AnimationState;
 
 import FPSLimiter; // Invalid dependency
 import Units;
-import UserSettings;
 
 import Rendering.GLListContainer;
 
@@ -15,19 +14,21 @@ AnimationState::AnimationState()
     : m_particles( createParticles() )
     , m_particleLines{}
     , m_numLines{ 0 }
-    , m_animationFPS{ UserSettings::inst().getVal<int>("Widgets-Main.FPS") } {
+    , m_animationFPS{ UserSettings::inst().getVal<int>("Widgets-Main.FPS") }
+    , m_refreshProcHandle{
+        UserSettings::inst().registerRefreshProc(
+            [&]() {
+                m_animationFPS = UserSettings::inst().getVal<int>("Widgets-Main.FPS");
+                FPSLimiter::inst().setMaxFPS(m_animationFPS);
+            })
+    } {
 
     for (const auto& p : m_particles)
         m_cells[p.cellX][p.cellY].push_back(&p);
-
-    UserSettings::inst().registerRefreshProc(
-        [&]() {
-            m_animationFPS = UserSettings::inst().getVal<int>("Widgets-Main.FPS");
-            FPSLimiter::inst().setMaxFPS(m_animationFPS);
-        });
 }
 
 AnimationState::~AnimationState() {
+    UserSettings::inst().releaseRefreshProc(m_refreshProcHandle);
 }
 
 auto AnimationState::createParticles() -> decltype(m_particles) {
