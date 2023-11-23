@@ -78,12 +78,12 @@ void WidgetContainer::removeChild(Widget * child) {
 void WidgetContainer::draw() const {
     if (isVisible()) {
         clear();
-        for (const auto* w : m_children) {
-            viewport(w->getViewport());
+        for (const auto* widget : m_children) {
+            viewport(widget->getViewport());
             rg::drawWidgetBackground();
             GLListContainer::inst().drawTopAndBottomSerifs();
 
-            w->draw();
+            widget->draw();
         }
     }
 }

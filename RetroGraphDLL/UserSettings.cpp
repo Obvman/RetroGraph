@@ -41,6 +41,7 @@ bool UserSettings::checkConfigChanged() const {
 
 void UserSettings::refresh() {
     readConfig();
+    // #TODO crashes if original registrar has been destroyed
     for (const auto& refreshProc : m_refreshProcs)
         refreshProc();
 }

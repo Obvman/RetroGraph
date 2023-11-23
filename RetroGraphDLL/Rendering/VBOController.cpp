@@ -145,7 +145,7 @@ VBOID VBOController::createGraphLineVBO(size_t numValues) {
     auto& verts{ vbo.data };
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo.id);
-    glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(GLfloat), verts.data(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(GLfloat), verts.data(), GL_STREAM_DRAW);
 
     return m_vbos.size() - 1;
 }
@@ -159,7 +159,7 @@ VBOID VBOController::createAnimationVBO(size_t numLines) {
     // TODO create color buffer
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo.id);
-    glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(GLfloat), verts.data(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(GLfloat), verts.data(), GL_STREAM_DRAW);
 
     return m_vbos.size() - 1;
 }
@@ -179,7 +179,7 @@ void VBOController::updateGraphLines(VBOID vboId, const std::vector<GLfloat>& va
         }
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo.id);
-        glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(GLfloat), verts.data(), GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(GLfloat), verts.data(), GL_STREAM_DRAW);
     } else {
         for (size_t i = 0; i < values.size(); ++i) {
             verts[2 * i] = (static_cast<GLfloat>(i) / (values.size() - 1)) * 2.0f - 1.0f;

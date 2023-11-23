@@ -97,10 +97,12 @@ void RetroGraph::draw(int ticks) const {
 
         } else if (ticksMatchRate(ticks, framesPerSecond)) {
             // The main widget can have a higher framerate, so call every tick
-            const auto& mainWidget{ dynamic_cast<MainWidget&>(*m_widgets[static_cast<int>(WidgetType::Main)]) };
-            const auto& mainWidgetContainer{ m_widgetContainers[static_cast<int>(WidgetPosition::MID_MID)] };
-            if (mainWidget.needsDraw(ticks))
-                mainWidgetContainer->draw();
+            const auto* mainWidget{ dynamic_cast<const MainWidget*>(m_widgets[static_cast<int>(WidgetType::Main)].get()) };
+            if (mainWidget) {
+                const auto& mainWidgetContainer{ m_widgetContainers[static_cast<int>(WidgetPosition::MID_MID)] };
+                if (mainWidget->needsDraw(ticks))
+                    mainWidgetContainer->draw();
+            }
         }
 
         SwapBuffers(hdc);

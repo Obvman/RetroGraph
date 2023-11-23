@@ -207,14 +207,12 @@ void NetGraphWidget::draw() const {
         /* Print the maximum throughput as the scale at the top of the graph */
         if (suffix == "MB") {
             char buff[8];
-            snprintf(buff, sizeof(buff), "%5.1fMB",
-                     maxVal / static_cast<float>(MB));
+            snprintf(buff, sizeof(buff), "%5.1fMB", maxVal / static_cast<float>(MB));
             m_fontManager->renderLine(RG_FONT_SMALL, buff, 0, 0, m_viewport.width / 5, m_viewport.height,
                                       RG_ALIGN_TOP | RG_ALIGN_LEFT);
         } else if (suffix == "KB") {
             char buff[8];
-            snprintf(buff, sizeof(buff), "%5.1fKB",
-                     maxVal / static_cast<float>(KB));
+            snprintf(buff, sizeof(buff), "%5.1fKB", maxVal / static_cast<float>(KB));
             m_fontManager->renderLine(RG_FONT_SMALL, buff, 0, 0, m_viewport.width / 5, m_viewport.height,
                                       RG_ALIGN_TOP | RG_ALIGN_LEFT);
         } else {
