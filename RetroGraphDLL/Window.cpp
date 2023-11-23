@@ -151,6 +151,15 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPa
         case WM_MBUTTONUP:
             sendToBack();
             break;
+        case WM_KEYDOWN:
+            if constexpr (debugMode) {
+                // ctrl-t runs the test command
+                if ('T' == wParam && (::GetKeyState(VK_CONTROL) >> 15)) {
+                    runTest();
+                }
+            }
+            break;
+
         case WM_QUIT:
         case WM_CLOSE:
             m_running = false;
