@@ -43,10 +43,6 @@ hdd read/write usage
 
 3D effects on graph
 
-separate net traffic graphs
-
-have an average ping time display
-
 
 NOTES:
 Foobar status format:

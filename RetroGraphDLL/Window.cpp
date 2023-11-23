@@ -46,7 +46,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 }
 
 void Window::runTest() {
-    m_retroGraph->toggleWidget(WidgetType::HDD);
+    m_retroGraph->toggleWidget(WidgetType::Main);
 }
 
 Window::Window(IRetroGraph* rg_, std::shared_ptr<const DisplayMeasure> displayMeasure, HINSTANCE hInstance, int startupMonitor)
@@ -71,8 +71,6 @@ Window::Window(IRetroGraph* rg_, std::shared_ptr<const DisplayMeasure> displayMe
 }
 
 Window::~Window() {
-    printf("Window releasing\n");
-
     wglMakeCurrent(nullptr, nullptr);
     wglDeleteContext(m_hrc);
 
@@ -222,10 +220,9 @@ void Window::createRClickMenu(HWND hWnd) {
             // SendMessage(hWnd, WM_QUIT, wParam, lParam);Widgets
             SendMessage(hWnd, WM_QUIT, 0, 0);
             break;
-        case ID_SEND_TO_BACK: {
+        case ID_SEND_TO_BACK:
             sendToBack();
             break;
-        }
         case ID_SET_WIDGET_BG:
             UserSettings::inst().toggleWidgetBackgroundVisible();
             break;

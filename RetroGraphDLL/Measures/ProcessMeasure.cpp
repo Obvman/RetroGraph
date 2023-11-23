@@ -186,32 +186,29 @@ void ProcessMeasure::fillRAMData() {
 }
 
 double ProcessMeasure::calculateCPUUsage(HANDLE pHandle, ProcessData& oldData) {
-        // Find delta in the process's total CPU usage time
-        FILETIME cTime;
-        FILETIME eTime;
-        FILETIME kTime;
-        FILETIME uTime;
-        GetProcessTimes(pHandle, &cTime, &eTime, &uTime, &kTime);
-        const auto procKernelDiff{ subtractTimes(kTime, oldData.getKernelTime()) };
-        const auto procUserDiff{ subtractTimes(uTime, oldData.getUserTime()) };
-        const auto totalProc{ procKernelDiff + procUserDiff };
+    // Find delta in the process's total CPU usage time
+    FILETIME cTime;
+    FILETIME eTime;
+    FILETIME kTime;
+    FILETIME uTime;
+    GetProcessTimes(pHandle, &cTime, &eTime, &uTime, &kTime);
+    const auto procKernelDiff{ subtractTimes(kTime, oldData.getKernelTime()) };
+    const auto procUserDiff{ subtractTimes(uTime, oldData.getUserTime()) };
+    const auto totalProc{ procKernelDiff + procUserDiff };
 
-        // Find delta in the entire system's CPU usage time
-        FILETIME sysIdle, sysKernel, sysUser;
-        GetSystemTimes(&sysIdle, &sysKernel, &sysUser);
-        const auto sysKernelDiff{ subtractTimes(sysKernel,
-                                                oldData.getLastSystemKernelTime()) };
-        const auto sysUserDiff{ subtractTimes(sysUser,
-                                              oldData.getLastSystemUserTime()) };
-        const auto totalSys{ sysKernelDiff + sysUserDiff };
+    // Find delta in the entire system's CPU usage time
+    FILETIME sysIdle, sysKernel, sysUser;
+    GetSystemTimes(&sysIdle, &sysKernel, &sysUser);
+    const auto sysKernelDiff{ subtractTimes(sysKernel, oldData.getLastSystemKernelTime()) };
+    const auto sysUserDiff{ subtractTimes(sysUser, oldData.getLastSystemUserTime()) };
+    const auto totalSys{ sysKernelDiff + sysUserDiff };
 
-        // Get the CPU usage as a percentage
-        const double cpuUse = static_cast<double>(100 * totalProc) /
-                              static_cast<double>(totalSys);
+    // Get the CPU usage as a percentage
+    const double cpuUse = static_cast<double>(100 * totalProc) / static_cast<double>(totalSys);
 
-        oldData.setTimes(cTime, eTime, kTime, uTime);
+    oldData.setTimes(cTime, eTime, kTime, uTime);
 
-        return cpuUse;
+    return cpuUse;
 }
 
 void ProcessMeasure::populateList() {
@@ -219,7 +216,7 @@ void ProcessMeasure::populateList() {
     // We need to allocate a large buffer because the process list can be large.
     PVOID buffer{ VirtualAlloc(nullptr, 1024*1024, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE) }; 
     if (!buffer) {
-		RGERROR(std::format("Error: Unable to allocate memory for process list: {}", GetLastError()).c_str());
+        RGERROR(std::format("Error: Unable to allocate memory for process list: {}", GetLastError()).c_str());
         return;
     }
 
@@ -269,7 +266,7 @@ void ProcessMeasure::detectNewProcesses() {
     // We need to allocate a large buffer because the process list can be large.
     PVOID buffer{ VirtualAlloc(nullptr, 1024*1024, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE) };
     if (!buffer) {
-		RGERROR(std::format("Unable to allocate memory for process list: ", GetLastError()).c_str());
+        RGERROR(std::format("Unable to allocate memory for process list: ", GetLastError()).c_str());
         return;
     }
 
@@ -292,9 +289,9 @@ void ProcessMeasure::detectNewProcesses() {
 
         const auto it{ std::find_if(m_allProcessData.cbegin(),
                                     m_allProcessData.cend(),
-            [procID](const auto& ppd) {
-                return procID == ppd->getPID();
-            })};
+                                    [procID](const auto& ppd) {
+                                        return procID == ppd->getPID();
+                                    })};
 
         // If it doesn't exist, create a new ProcessData object in the list
         if (it == m_allProcessData.cend()) {

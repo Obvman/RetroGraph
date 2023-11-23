@@ -155,7 +155,7 @@ Viewport WidgetContainer::getMiniViewport(WidgetPosition pos) const {
 ContainerType WidgetContainer::getFillTypeFromPosition(WidgetPosition p) const {
     if (p == WidgetPosition::TOP_MID || p == WidgetPosition::BOT_MID)
         return ContainerType::HFill;
-    if (p == WidgetPosition::MID_LEFT || p == WidgetPosition::MID_RIGHT)
+    else if (p == WidgetPosition::MID_LEFT || p == WidgetPosition::MID_RIGHT)
         return ContainerType::VFill;
     else 
         return ContainerType::Single;
