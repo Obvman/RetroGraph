@@ -18,9 +18,6 @@ GLListContainer::GLListContainer()
     initBorderList();
     initSerifList();
     initWidgetBGList();
-
-    GLenum error = glGetError();
-    std::cout << error << '\n';
 }
 
 GLListContainer::~GLListContainer() {

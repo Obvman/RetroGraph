@@ -23,8 +23,8 @@ public:
         : GLShader{ baseName + ".vert", baseName + ".frag" } { }
     ~GLShader();
 
-    operator GLuint() { return id; }
-    operator bool() { return id > 0; }
+    operator GLuint() const { return id; }
+    operator bool() const { return id > 0; }
 
 private:
     GLuint loadShader(const std::string& vFile, const std::string& fFile);

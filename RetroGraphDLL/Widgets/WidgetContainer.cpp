@@ -21,7 +21,7 @@ bool WidgetContainer::isVisible() const {
 }
 
 void WidgetContainer::clear() const {
-    viewport(m_viewport);
+    setGLViewport(m_viewport);
     scissorClear(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
 }
 
@@ -79,7 +79,7 @@ void WidgetContainer::draw() const {
     if (isVisible()) {
         clear();
         for (const auto* widget : m_children) {
-            viewport(widget->getViewport());
+            setGLViewport(widget->getViewport());
             rg::drawWidgetBackground();
             GLListContainer::inst().drawTopAndBottomSerifs();
 

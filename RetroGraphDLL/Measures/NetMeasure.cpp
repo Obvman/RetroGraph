@@ -168,10 +168,8 @@ void NetMeasure::update(int ticks) {
     RGVERIFY(GetIfEntry2(m_adapterEntry) == NO_ERROR, "GetIfEntry2 failed");
 
     m_downBytes[0] = m_adapterEntry->InOctets - oldDown;
-    std::rotate(m_downBytes.begin(), m_downBytes.begin() + 1,
-                m_downBytes.end());
-    m_downMaxVal = *std::max_element(m_downBytes.cbegin(),
-                                     m_downBytes.cend());
+    std::rotate(m_downBytes.begin(), m_downBytes.begin() + 1, m_downBytes.end());
+    m_downMaxVal = *std::max_element(m_downBytes.cbegin(), m_downBytes.cend());
 
     m_upBytes[0] = m_adapterEntry->OutOctets - oldUp;
     std::rotate(m_upBytes.begin(), m_upBytes.begin() + 1, m_upBytes.end());

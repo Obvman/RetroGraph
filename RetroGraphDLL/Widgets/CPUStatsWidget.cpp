@@ -34,7 +34,7 @@ void CPUStatsWidget::drawNoInfoState() const {
 }
 
 void CPUStatsWidget::drawStats() const {
-    viewport(m_statsViewport);
+    setGLViewport(m_statsViewport);
 
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
     constexpr auto bottomTextMargin{ 10U };
@@ -53,7 +53,7 @@ void CPUStatsWidget::drawStats() const {
 }
 
 void CPUStatsWidget::drawCoreGraphs() const {
-    viewport(m_coreGraphViewport);
+    setGLViewport(m_coreGraphViewport);
 
     // Draw x rows of core graphs, with 2 graphs per row until all graphs
     // are drawn

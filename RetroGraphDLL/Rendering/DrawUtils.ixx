@@ -31,7 +31,9 @@ export void drawHorizontalProgressBar(float barWidth, float startX, float endX,
 // Primitive drawing
 export void drawSerifLine(GLfloat x1, GLfloat x2, GLfloat y);
 
-export void viewport(const Viewport& vp);
+export void setGLViewport(const Viewport& vp);
+
+export Viewport getGLViewport();
 
 // Given a pixel value (x or y) and the current viewport width/height in pixels,
 // converts the pixel value to the corresponding viewport ordinate

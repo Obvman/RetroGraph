@@ -117,8 +117,14 @@ void drawSerifLine(GLfloat x1, GLfloat x2, GLfloat y) {
     } glEnd();
 }
 
-void viewport(const Viewport& vp) {
+void setGLViewport(const Viewport& vp) {
     glViewport(vp.x, vp.y, vp.width, vp.height);
+}
+
+Viewport getGLViewport() {
+    GLint vp[4];
+    glGetIntegerv(GL_VIEWPORT, vp);
+    return { vp[0], vp[1], vp[2], vp[3] };
 }
 
 } // namespace rg

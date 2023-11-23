@@ -10,7 +10,7 @@ Widget::~Widget() {
 
 void Widget::clear() const {
     if (!m_viewport.isEmpty()) {
-        viewport(m_viewport);
+        setGLViewport(m_viewport);
         scissorClear(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
     }
 }

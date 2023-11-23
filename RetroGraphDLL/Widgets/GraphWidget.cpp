@@ -128,69 +128,34 @@ void NetGraphWidget::draw() const {
     VBOController::inst().drawGraphGrid();
     GLListContainer::inst().drawBorder();
 
-    {// Draw the line graph
-        glLineWidth(0.5f);
+    {// Draw the line graphs
         const auto& downData{ m_netMeasure->getDownData() };
         const auto& upData{ m_netMeasure->getUpData() };
-        const auto maxDownValMB{ m_netMeasure->getMaxDownValue() /
-                                 static_cast<float>(MB) };
-        const auto maxUpValMB{ m_netMeasure->getMaxUpValue() /
-                               static_cast<float>(MB) };
+        const auto maxDownValMB{ m_netMeasure->getMaxDownValue() / static_cast<float>(MB) };
+        const auto maxUpValMB{ m_netMeasure->getMaxUpValue() / static_cast<float>(MB) };
 
         const auto maxValMB{ std::max(maxUpValMB, maxDownValMB) };
 
-        // #TODO VBO these!
-        // Draw the download graph
-        glBegin(GL_LINE_STRIP);
-        {
-            glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.7f);
-            for (auto i = size_t{ 0U }; i < downData.size() - 1; ++i) {
-                const auto percent1 = float{ (downData[i] /
-                                              static_cast<float>(MB)) /
-                                              maxValMB };
-                const auto percent2 = float{ (downData[i + 1] /
-                                              static_cast<float>(MB)) /
-                                              maxValMB };
+        std::vector<float> normalizedDownData(downData.size());
+        for (auto i = int{ 0 }; i < downData.size(); ++i) {
+            normalizedDownData[i] = (downData[i] / static_cast<float>(MB)) / maxValMB;
+        }
+        std::vector<float> normalizedUpData(upData.size());
+        for (auto i = int{ 0 }; i < upData.size(); ++i) {
+            normalizedUpData[i] = (upData[i] / static_cast<float>(MB)) / maxValMB;
+        }
+        VBOController::inst().updateGraphLines(m_netDownVBO, normalizedDownData);
+        VBOController::inst().updateGraphLines(m_netUpVBO, normalizedUpData);
 
-                const auto x1 = float{ (static_cast<float>(i) /
-                                        (downData.size() - 1)) * 2.0f - 1.0f };
-                const auto y1 = float{ percent1 * 2.0f - 1.0f };
-                const auto x2 = float{ (static_cast<float>(i + 1) /
-                                        (downData.size() - 1)) * 2.0f - 1.0f };
-                const auto y2 = float{ percent2 * 2.0f - 1.0f };
-
-                glVertex2f(x1, y1);    // Top-left
-                glVertex2f(x2, y2);    // Top-right
-            }
-        } glEnd();
-
-        // Draw the upload graph
-        glBegin(GL_LINE_STRIP);
-        {
-            glColor4f(PINK1_R, PINK1_G, PINK1_B, 0.7f);
-            for (auto i = size_t{ 0U }; i < upData.size() - 1; ++i) {
-                const auto percent1 = float{ (upData[i] /
-                        static_cast<float>(MB)) / maxValMB };
-                const auto percent2 = float{ (upData[i + 1] /
-                        static_cast<float>(MB)) / maxValMB };
-
-                const auto x1 = float{ (static_cast<float>(i) / (upData.size()
-                            - 1)) * 2.0f - 1.0f };
-                const auto y1 = float{ percent1 * 2.0f - 1.0f };
-
-                const auto x2 = float{ (static_cast<float>(i + 1) /
-                        (upData.size() - 1)) * 2.0f - 1.0f };
-                const auto y2 = float{ percent2 * 2.0f - 1.0f };
-
-                glVertex2f(x1, y1); // Top-left
-                glVertex2f(x2, y2); // Top-right
-            }
-        } glEnd();
+        glLineWidth(0.5f);
+        glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.7f);
+        VBOController::inst().drawGraphLines(m_netDownVBO);
+        glColor4f(PINK1_R, PINK1_G, PINK1_B, 0.7f);
+        VBOController::inst().drawGraphLines(m_netUpVBO);
     }
 
     {// Text
-        glViewport(m_viewport.x + (4 * m_viewport.width) / 5, m_viewport.y,
-                   m_viewport.width / 5, m_viewport.height);
+        glViewport(m_viewport.x + (4 * m_viewport.width) / 5, m_viewport.y, m_viewport.width / 5, m_viewport.height);
         glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
         const auto maxVal{ m_netMeasure->getMaxDownValue() };
