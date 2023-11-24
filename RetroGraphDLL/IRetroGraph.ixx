@@ -13,6 +13,7 @@ public:
     virtual void update(int ticks) = 0;
     virtual void draw(int ticks) const = 0;
     virtual bool isRunning() const = 0;
+    virtual void reloadResources() = 0;
     virtual void toggleWidget(WidgetType w) = 0;
     virtual void updateWindowSize(int width, int height) = 0;
     virtual void shutdown() = 0;

@@ -7,27 +7,46 @@ import "GLHeaderUnit.h";
 namespace rg {
 
 export using VBOID = size_t;
-export using VAOID = size_t;
 
 constexpr GLuint invalidID{ UINT_MAX };
+
+export class [[nodiscard]] VBOBindScope {
+public:
+    VBOBindScope(GLuint id, GLenum target_)
+        : target{ target_ } {
+
+        glBindBuffer(target, id);
+    }
+    ~VBOBindScope() {
+        glBindBuffer(target, 0);
+    }
+    VBOBindScope(const VBOBindScope&) = delete;
+    VBOBindScope& operator=(const VBOBindScope&) = delete;
+    VBOBindScope(VBOBindScope&&) = delete;
+    VBOBindScope& operator=(VBOBindScope&&) = delete;
+
+private:
+    GLenum target;
+};
 
 // Container for standard VBO data (no element array)
 export template<class T>
 class VBO {
 public:
-    VBO() noexcept : VBO{ 0 } { }
+    VBO(GLenum target) noexcept : VBO{ 0, target } { }
 
-    explicit VBO(GLsizei size_) noexcept
+    explicit VBO(GLsizei size_, GLenum target_) noexcept
         : id{ invalidID }
-        , size{ size_ }
-        , data( size_ * 2) {
+        , data( size_ )
+        , target{ target_ } {
 
         glGenBuffers(1, &id);
     }
 
     ~VBO() {
-        if (id != invalidID)
+        if (id != invalidID) {
             glDeleteBuffers(1, &id);
+        }
     }
 
     VBO(const VBO&) = delete;
@@ -42,8 +61,7 @@ public:
             id = other.id;
             other.id = invalidID;
 
-            size = other.size;
-            other.size = 0;
+            target = other.target;
 
             data = std::move(other.data);
         }
@@ -51,10 +69,19 @@ public:
         return *this;
     }
 
-    GLuint id;
-    GLsizei size; // Num vertices
-    std::vector<T> data;
-};
+    VBOBindScope bind() const { return { id, target }; }
+    GLsizei size() const { return static_cast<GLsizei>(data.size()); }
+    GLsizei sizeBytes() const { return size() * sizeof(T); }
+    GLsizei elemBytes() const { return sizeof(T); }
 
+    void resize(size_t size) { data.resize(size); }
+    void reserve(size_t size) { data.reserve(size); }
+
+    std::vector<T> data;
+
+private:
+    GLuint id;
+    GLenum target;
+};
 
 }

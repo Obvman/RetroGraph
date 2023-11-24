@@ -14,8 +14,10 @@ namespace rg {
 
 MainWidget::MainWidget(const FontManager* fontManager, std::shared_ptr<const AnimationState> animationState)
     : Widget{ fontManager }
-    , m_animationState{ animationState }
-    , m_vbo{ VBOController::inst().createAnimationVBO(maxLines) }  { }
+    , m_animationState{ animationState } {
+
+    VBOController::inst().createAnimationVBO(maxLines);
+}
 
 bool MainWidget::needsDraw(int ticks) const {
     // Only draw if visible and we need to draw to keep
@@ -50,8 +52,8 @@ void MainWidget::drawParticles() const {
 }
 
 void MainWidget::drawParticleLines(float aspectRatio) const {
-    VBOController::inst().updateAnimationVBO(m_vbo, *m_animationState);
-    VBOController::inst().drawAnimationVBO(m_vbo, m_animationState->getNumLines() * 2, aspectRatio);
+    VBOController::inst().updateAnimationVBO(*m_animationState);
+    VBOController::inst().drawAnimationVBO(m_animationState->getNumLines() * 2, aspectRatio);
 }
 
 } // namespace rg

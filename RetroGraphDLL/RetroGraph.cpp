@@ -4,6 +4,8 @@ import Colors;
 import FPSLimiter;
 import UserSettings;
 
+import Rendering.VBOController;
+
 import Widgets.CPUStatsWidget;
 import Widgets.FPSWidget;
 import Widgets.GraphWidget;
@@ -129,6 +131,11 @@ void RetroGraph::toggleWidget(WidgetType widgetType) {
 
     setViewports(m_window.getWidth(), m_window.getHeight());
     draw(0);
+}
+
+void RetroGraph::reloadResources() {
+    refreshConfig(0);
+    VBOController::inst().reloadShaders();
 }
 
 void RetroGraph::shutdown() {

@@ -30,10 +30,10 @@
     <None Include="Resources\config.ini">
       <Filter>Resources</Filter>
     </None>
-    <None Include="Resources\shaders\particle.frag">
+    <None Include="Resources\shaders\particleLine.frag">
       <Filter>Resources\shaders</Filter>
     </None>
-    <None Include="Resources\shaders\particle.vert">
+    <None Include="Resources\shaders\particleLine.vert">
       <Filter>Resources\shaders</Filter>
     </None>
   </ItemGroup>

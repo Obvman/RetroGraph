@@ -41,6 +41,7 @@ public:
 
     void update(int ticks) override;
     void draw(int ticks) const override;
+    void reloadResources() override;
 
     void updateWindowSize(int width, int height) override;
     void toggleWidget(WidgetType w) override;

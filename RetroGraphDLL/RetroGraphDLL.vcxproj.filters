@@ -318,6 +318,9 @@
     <ClCompile Include="Widgets\WidgetContainer.cpp">
       <Filter>Modules\Widgets</Filter>
     </ClCompile>
+    <ClCompile Include="Rendering\VAO.ixx">
+      <Filter>Modules\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resources\resource.h">

@@ -158,6 +158,9 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPa
                     runTest();
                 }
             }
+            if ('R' == wParam && (::GetKeyState(VK_CONTROL) >> 15)) {
+                m_retroGraph->reloadResources();
+            }
             break;
 
         case WM_QUIT:

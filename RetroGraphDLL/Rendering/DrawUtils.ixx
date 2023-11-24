@@ -35,6 +35,8 @@ export void setGLViewport(const Viewport& vp);
 
 export Viewport getGLViewport();
 
+export void checkGLErrors();
+
 // Given a pixel value (x or y) and the current viewport width/height in pixels,
 // converts the pixel value to the corresponding viewport ordinate
 export constexpr inline float pixelsToVPCoords(int p, int vpWidth) {

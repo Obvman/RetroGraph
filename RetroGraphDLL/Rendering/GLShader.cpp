@@ -6,7 +6,15 @@ import "RGAssert.h";
 namespace rg {
 
 GLShader::~GLShader() {
-    if (*this) glDeleteProgram(id);
+    if (*this)
+        glDeleteProgram(*this);
+}
+
+void GLShader::reload() {
+    if (*this)
+        glDeleteProgram(*this);
+
+    loadShader(vertFilename, fragFilename);
 }
 
 GLuint GLShader::loadShader(const std::string& vFile, const std::string& fFile) {
