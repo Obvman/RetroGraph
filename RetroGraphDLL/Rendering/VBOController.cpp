@@ -34,15 +34,15 @@ void vboDrawScope(GLuint vertID, std::regular_invocable auto f) {
 }
 
 VBOController::VBOController() {
-    glGenBuffers(1, &m_graphGridVertsID);
+    glGenVertexArrays(1, &m_animVAOID);
     glGenBuffers(1, &m_graphGridIndicesID);
 
     initVBOs();
 }
 
 VBOController::~VBOController() {
-    glDeleteBuffers(1, &m_graphGridVertsID);
-    glDeleteVertexArrays(1, &m_graphGridIndicesID);
+    glDeleteBuffers(1, &m_graphGridIndicesID);
+    glDeleteVertexArrays(1, &m_animVAOID);
 }
 
 void VBOController::initVBOs() {
@@ -88,14 +88,12 @@ void VBOController::initGraphGridVBO() {
 
 
     // Initialise the graph grid VBO
-    glBindBuffer(GL_ARRAY_BUFFER, m_graphGridVertsID);
-    glBufferData(GL_ARRAY_BUFFER, gVerts.size() * sizeof(GLfloat),
-                 gVerts.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, m_graphGridVerts.id);
+    glBufferData(GL_ARRAY_BUFFER, gVerts.size() * sizeof(GLfloat), gVerts.data(), GL_STATIC_DRAW);
 
     // Initialise graph grid index array
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_graphGridIndicesID);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, gIndices.size() * sizeof(GLuint),
-                 gIndices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, gIndices.size() * sizeof(GLuint), gIndices.data(), GL_STATIC_DRAW);
 
     // Unbind buffers
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -103,7 +101,7 @@ void VBOController::initGraphGridVBO() {
 }
 
 void VBOController::drawGraphGrid() const {
-    vboElemArrayDrawScope(m_graphGridVertsID, m_graphGridIndicesID, [this]() {
+    vboElemArrayDrawScope(m_graphGridVerts.id, m_graphGridIndicesID, [this]() {
         glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.2f);
         glLineWidth(0.5f);
         glDrawElements(GL_LINES, m_graphGridIndicesSize, GL_UNSIGNED_INT, nullptr);
@@ -111,37 +109,33 @@ void VBOController::drawGraphGrid() const {
 }
 
 void VBOController::drawGraphLines(VBOID vboId) const {
-    const VBO& vbo{ getVBO(vboId) };
+    const VBO<GLfloat>& vbo{ getVBO(vboId) };
     vboDrawScope(vbo.id, [this, &vbo]() {
         glDrawArrays(GL_LINE_STRIP, 0, vbo.size);
     });
 }
 
-void VBOController::drawAnimationVBO(VBOID vboId, int size) const {
-    // TODO colors!
-    const VBO& vbo{ getVBO(vboId) };
-    glBindBuffer(GL_ARRAY_BUFFER, vbo.id);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(2, GL_FLOAT, 0, nullptr);
+void VBOController::drawAnimationVBO(VBOID vboId, int size, float aspectRatio) const {
+    (void)vboId;
 
-    //glBindBuffer(GL_ARRAY_BUFFER, m_animColors);
-    //glVertexAttribPointer(1U, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
-    //glEnableVertexAttribArray(1U);
+    glUseProgram(m_animShader);
+    glBindVertexArray(m_animVAOID);
 
-    //glUseProgram(particleLineShader);
+    glm::vec3 const scale{ glm::vec3(1.0f, aspectRatio, 1.0f) };
+    glm::mat4 modelMatrix{ glm::mat4() };
+    modelMatrix = glm::scale(modelMatrix, scale);
+    GLuint const location = glGetUniformLocation(m_animShader, "model");
+    glUniformMatrix4fv(location, 1, false, glm::value_ptr(modelMatrix));
 
-    //glColor4f(PARTICLE_R, PARTICLE_G, PARTICLE_B, 1.0f);
     glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(size));
 
-    //glUseProgram(0);
-
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+    glUseProgram(0);
 }
 
 VBOID VBOController::createGraphLineVBO(size_t numValues) {
     m_vbos.emplace_back(static_cast<GLsizei>(numValues));
-    VBO& vbo{ m_vbos.back() };
+    VBO<GLfloat>& vbo{ m_vbos.back() };
     auto& verts{ vbo.data };
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo.id);
@@ -151,21 +145,32 @@ VBOID VBOController::createGraphLineVBO(size_t numValues) {
 }
 
 VBOID VBOController::createAnimationVBO(size_t numLines) {
+    glBindVertexArray(m_animVAOID);
+
     // Each line has 2 vertices...
     m_vbos.emplace_back(static_cast<GLsizei>(numLines * 2));
-    VBO& vbo{ m_vbos.back() };
-    auto& verts{ vbo.data};
+    VBO<GLfloat>& vbo{ m_vbos.back() };
+    auto& verts{ vbo.data };
 
-    // TODO create color buffer
-
+    glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, vbo.id);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
     glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(GLfloat), verts.data(), GL_STREAM_DRAW);
 
+    m_animColors = VBO<GLfloat>{ static_cast<GLsizei>(numLines * 4 * 2) };
+    auto& colors{ m_animColors.data };
+
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, m_animColors.id);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_TRUE, 0, nullptr);
+    glBufferData(GL_ARRAY_BUFFER, colors.size() * sizeof(GLfloat), colors.data(), GL_STREAM_DRAW);
+
+    glBindVertexArray(0);
     return m_vbos.size() - 1;
 }
 
 void VBOController::updateGraphLines(VBOID vboId, const std::vector<GLfloat>& values) {
-    VBO& vbo{ getVBO(vboId) };
+    VBO<GLfloat>& vbo{ getVBO(vboId) };
     auto& verts{ vbo.data };
 
     // Value vectors can change size. In this case we need to allocate buffer data instead of just writing to it
@@ -192,7 +197,8 @@ void VBOController::updateGraphLines(VBOID vboId, const std::vector<GLfloat>& va
 }
 
 void VBOController::updateAnimationVBO(VBOID vboId, const AnimationState & as) {
-    VBO& vbo{ getVBO(vboId) };
+    glBindVertexArray(m_animVAOID);
+    VBO<GLfloat>& vbo{ getVBO(vboId) };
     auto& verts{ vbo.data };
 
     const auto numLines{ as.getNumLines() };
@@ -207,13 +213,32 @@ void VBOController::updateAnimationVBO(VBOID vboId, const AnimationState & as) {
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo.id);
     glBufferSubData(GL_ARRAY_BUFFER, 0, numLines * sizeof(ParticleLine), verts.data());
+
+
+    auto& colors{ m_animColors.data };
+    for (int i = 0; i < numLines; ++i) {
+        const auto lineTransparency{ as.getLineTransparencies()[i] };
+        colors[8 * i] = WHITE_R;
+        colors[8 * i + 1] = WHITE_G;
+        colors[8 * i + 2] = WHITE_B;
+        colors[8 * i + 3] = lineTransparency;
+
+        colors[8 * i + 4] = WHITE_R;
+        colors[8 * i + 5] = WHITE_G;
+        colors[8 * i + 6] = WHITE_B;
+        colors[8 * i + 7] = lineTransparency;
+    }
+    glBindBuffer(GL_ARRAY_BUFFER, m_animColors.id);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, numLines * 4 * 2 * sizeof(GLfloat), colors.data());
+
+    glBindVertexArray(0);
 }
 
-VBO& VBOController::getVBO(VBOID vboId) {
+VBO<GLfloat>& VBOController::getVBO(VBOID vboId) {
     return m_vbos[vboId];
 }
 
-const VBO& VBOController::getVBO(VBOID vboId) const {
+const VBO<GLfloat>& VBOController::getVBO(VBOID vboId) const {
     return m_vbos[vboId];
 }
 

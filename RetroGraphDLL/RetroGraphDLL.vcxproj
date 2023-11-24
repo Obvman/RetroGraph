@@ -210,7 +210,6 @@
     <ClCompile Include="Rendering\GLListContainer.ixx" />
     <ClCompile Include="Rendering\GLShader.cpp" />
     <ClCompile Include="Rendering\GLShader.ixx" />
-    <ClCompile Include="Rendering\VBO.cpp" />
     <ClCompile Include="Rendering\VBOController.cpp" />
     <ClCompile Include="Rendering\VBOController.ixx" />
     <ClCompile Include="Rendering\Viewport.ixx" />

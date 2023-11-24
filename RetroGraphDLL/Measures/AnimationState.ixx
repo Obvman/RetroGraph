@@ -24,7 +24,7 @@ public:
 
     int getAnimationFPS() const { return m_animationFPS; };
     const std::array<ParticleLine, maxLines>& getLines() const { return m_particleLines; }
-    const std::array<float, maxLines>& getLineColours() const { return m_lineColors; }
+    const std::array<float, maxLines>& getLineTransparencies() const { return m_lineTransparencies; }
     const std::vector<Particle>& getParticles() const { return m_particles; }
     int getNumLines() const { return m_numLines; }
 
@@ -40,7 +40,7 @@ private:
     // Static buffer set to the maximum possible number of lines existing in worst case 
     // scenario (all particles are in neighbouring cells)
     std::array<ParticleLine, maxLines> m_particleLines;
-    std::array<float, maxLines> m_lineColors;
+    std::array<float, maxLines> m_lineTransparencies;
     int m_numLines; // Tracks actual number of lines
 
     // Members for spatial partitioning

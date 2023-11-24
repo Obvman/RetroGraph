@@ -24,19 +24,16 @@
     <None Include="Resources\shaders\test.vert">
       <Filter>Resources\shaders</Filter>
     </None>
-    <None Include="Resources\shaders\test.frag">
-      <Filter>Resources\shaders</Filter>
-    </None>
     <None Include="Resources\default_config.ini">
       <Filter>Resources</Filter>
     </None>
     <None Include="Resources\config.ini">
       <Filter>Resources</Filter>
     </None>
-    <None Include="Resources\shaders\cpuGraph.frag">
+    <None Include="Resources\shaders\particle.frag">
       <Filter>Resources\shaders</Filter>
     </None>
-    <None Include="Resources\shaders\cpuGraph.vert">
+    <None Include="Resources\shaders\particle.vert">
       <Filter>Resources\shaders</Filter>
     </None>
   </ItemGroup>

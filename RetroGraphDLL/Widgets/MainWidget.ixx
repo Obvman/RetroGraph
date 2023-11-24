@@ -21,7 +21,7 @@ public:
     void draw() const override;
 private:
     void drawParticles() const;
-    void drawParticleLines() const;
+    void drawParticleLines(float aspectRatio) const;
 
     std::shared_ptr<const AnimationState> m_animationState;
 

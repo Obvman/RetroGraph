@@ -2,6 +2,7 @@ export module Rendering.VBOController;
 
 import Measures.AnimationState; // Invalid dependency
 
+import Rendering.GLShader;
 import Rendering.VBO;
 
 import std.core;
@@ -24,21 +25,24 @@ public:
 
     void drawGraphGrid() const;
     void drawGraphLines(VBOID vboId) const;
-    void drawAnimationVBO(VBOID vboId, int size) const;
+    void drawAnimationVBO(VBOID vboId, int size, float aspectRatio) const;
 private:
     VBOController();
 
     void initVBOs();
     void initGraphGridVBO();
-    VBO& getVBO(VBOID vboId);
-    const VBO& getVBO(VBOID vboId) const;
+    VBO<GLfloat>& getVBO(VBOID vboId);
+    const VBO<GLfloat>& getVBO(VBOID vboId) const;
 
-    GLuint m_graphGridVertsID{ 0 };
+    VBO<GLfloat> m_graphGridVerts;
     GLuint m_graphGridIndicesID{ 0 };
-    GLuint m_animColors{ 0 };
+    VBO<GLfloat> m_animColors;
     GLsizei m_graphGridIndicesSize{ 0 };
+    GLShader m_animShader{ "particle.vert", "particle.frag" };
 
-    std::vector<VBO> m_vbos;
+    GLuint m_animVAOID;
+
+    std::vector<VBO<GLfloat>> m_vbos;
 };
 
 }

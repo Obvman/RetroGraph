@@ -116,7 +116,7 @@ void AnimationState::addLine(const Particle* const p1, const Particle* const p2)
 
     if (distance < radiusSq) {
         m_particleLines[m_numLines] = ParticleLine{ p1->x, p1->y, p2->x, p2->y };
-        m_lineColors[m_numLines++] = 1.0f - distance / radiusSq;
+        m_lineTransparencies[m_numLines++] = 1.0f - distance / radiusSq;
     }
 }
 

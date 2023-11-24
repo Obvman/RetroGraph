@@ -243,9 +243,6 @@
     <ClCompile Include="Rendering\GLShader.cpp">
       <Filter>Modules\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Rendering\VBO.cpp">
-      <Filter>Modules\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="Rendering\VBOController.cpp">
       <Filter>Modules\Rendering</Filter>
     </ClCompile>
