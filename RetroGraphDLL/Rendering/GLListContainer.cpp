@@ -7,13 +7,11 @@ import "GLHeaderUnit.h";
 namespace rg {
 
 GLListContainer::GLListContainer()
-    : m_circleList{ glGenLists(1) }
-    , m_vpBorderList{ glGenLists(1) }
+    : m_vpBorderList{ glGenLists(1) }
     , m_borderList{ glGenLists(1) }
     , m_widgetBGList{ glGenLists(1) }
     , m_serifList{ glGenLists(1) } {
 
-    initCircleList();
     initViewportBorderList();
     initBorderList();
     initSerifList();
@@ -21,25 +19,10 @@ GLListContainer::GLListContainer()
 }
 
 GLListContainer::~GLListContainer() {
-    glDeleteLists(m_circleList, 1);
     glDeleteLists(m_borderList, 1);
     glDeleteLists(m_vpBorderList, 1);
     glDeleteLists(m_widgetBGList, 1);
     glDeleteLists(m_serifList, 1);
-}
-
-void GLListContainer::initCircleList() const {
-    glNewList(m_circleList, GL_COMPILE); {
-        glColor4f(PARTICLE_R, PARTICLE_G, PARTICLE_B, PARTICLE_A);
-        glBegin(GL_TRIANGLE_FAN); {
-            glVertex2f(0.0f, 0.0f);
-            for (int i = 0; i < circleLines; ++i) {
-                const auto theta{ 2.0f * 3.1415926f * static_cast<float>(i) /
-                    static_cast<float>(circleLines - 1) };
-                glVertex2f(cosf(theta), sinf(theta));
-            }
-        } glEnd();
-    } glEndList();
 }
 
 void GLListContainer::initViewportBorderList() const {

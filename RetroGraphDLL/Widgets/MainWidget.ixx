@@ -12,6 +12,8 @@ import Widgets.Widget;
 
 import std.memory;
 
+import "GLHeaderUnit.h";
+
 namespace rg {
 
 export class MainWidget : public Widget {
@@ -28,6 +30,8 @@ private:
     void drawParticles() const;
     void drawParticleLines(float aspectRatio) const;
 
+    void createParticleVBO();
+
     void createAnimationVBO(size_t numLines);
     void updateAnimationVBO() const;
     void drawAnimationVBO(int size, float aspectRatio) const;
@@ -36,6 +40,7 @@ private:
 
     VAO m_animVAO;
     mutable VBO<ParticleLine> m_animLines; //#TODO mutable
+    VBO<glm::vec2> m_animParticle;
     GLShader m_animShader;
 };
 

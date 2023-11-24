@@ -7,9 +7,6 @@ import Rendering.GLListContainer;
 
 namespace rg {
 
-constexpr auto numVerticesPerCircle{ circleLines + 2 };
-constexpr auto numCoordsPerCircle{ numVerticesPerCircle * 2 };
-
 AnimationState::AnimationState()
     : m_particles( createParticles() )
     , m_particleLines{}
