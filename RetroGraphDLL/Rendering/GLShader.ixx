@@ -39,8 +39,6 @@ public:
         : GLShader{ baseName + ".vert", baseName + ".frag" } { }
     ~GLShader();
 
-    operator bool() const { return id > 0; }
-
     void reload();
     GLShaderBindScope bind() const { return { id }; }
     GLuint getUniformLocation(const char* uniformName) const { return glGetUniformLocation(id, uniformName); }

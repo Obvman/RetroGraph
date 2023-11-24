@@ -25,6 +25,9 @@ public:
     /* Clears the widget's entire viewport */
     virtual void clear() const;
 
+    /* Reloads and recompiles shader files */
+    virtual void reloadShaders() {}
+
     /* Sets the viewport for the entire widget. Should be overriden
        for widgets with sub-viewports */
     virtual void setViewport(const Viewport& vp) { m_viewport = vp; }

@@ -39,10 +39,6 @@ VBOController::VBOController() {
 VBOController::~VBOController() {
 }
 
-void VBOController::reloadShaders() {
-    m_animShader.reload();
-}
-
 void VBOController::initVBOs() {
     initGraphGridVBO();
 }
@@ -107,19 +103,6 @@ void VBOController::drawGraphLines(VBOID vboId) const {
     });
 }
 
-void VBOController::drawAnimationVBO(int size, float aspectRatio) const {
-    auto shaderScope{ m_animShader.bind() };
-    auto vaoScope{ m_animVAO.bind() };
-
-    glm::vec3 const scale{ glm::vec3(1.0f, aspectRatio, 1.0f) };
-    glm::mat4 modelMatrix{ glm::mat4() };
-    modelMatrix = glm::scale(modelMatrix, scale);
-    GLuint const location = m_animShader.getUniformLocation("model");
-    glUniformMatrix4fv(location, 1, false, glm::value_ptr(modelMatrix));
-
-    glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(size));
-}
-
 VBOID VBOController::createGraphLineVBO(size_t numValues) {
     m_vbos.emplace_back(static_cast<GLsizei>(numValues), GL_ARRAY_BUFFER);
     VBO<glm::vec2>& vbo{ m_vbos.back() };
@@ -128,25 +111,6 @@ VBOID VBOController::createGraphLineVBO(size_t numValues) {
     glBufferData(GL_ARRAY_BUFFER, vbo.sizeBytes(), vbo.data.data(), GL_STREAM_DRAW);
 
     return m_vbos.size() - 1;
-}
-
-void VBOController::createAnimationVBO(size_t numLines) {
-    constexpr GLuint vertexLocationIndex{ 0 };
-    constexpr GLuint lineLengthLocationIndex{ 1 };
-
-    auto vaoScope{ m_animVAO.bind() };
-
-    m_animLines.resize(numLines);
-    auto vboScope{ m_animLines.bind() };
-
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(vertexLocationIndex, 2, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), nullptr);
-
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(lineLengthLocationIndex, 1, GL_FLOAT, GL_FALSE,
-                          3 * sizeof(GLfloat), reinterpret_cast<GLvoid*>(2 * sizeof(GLfloat)));
-
-    glBufferData(GL_ARRAY_BUFFER, m_animLines.sizeBytes(), m_animLines.data.data(), GL_STREAM_DRAW);
 }
 
 void VBOController::updateGraphLines(VBOID vboId, const std::vector<GLfloat>& values) {
@@ -173,20 +137,6 @@ void VBOController::updateGraphLines(VBOID vboId, const std::vector<GLfloat>& va
 
         glBufferSubData(GL_ARRAY_BUFFER, 0, vbo.sizeBytes(), verts.data());
     }
-}
-
-void VBOController::updateAnimationVBO(const AnimationState & as) {
-    const auto numLines{ as.getNumLines() };
-
-    auto& verts{ m_animLines.data };
-    for (int i = 0; i < numLines; ++i) {
-        verts[i] = as.getLines()[i];
-    }
-
-    auto vaoScope{ m_animVAO.bind() };
-    auto vboScope{ m_animLines.bind() };
-
-    glBufferSubData(GL_ARRAY_BUFFER, 0, numLines * m_animLines.elemBytes(), verts.data());
 }
 
 VBO<glm::vec2>& VBOController::getVBO(VBOID vboId) {

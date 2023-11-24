@@ -6,13 +6,13 @@ import "RGAssert.h";
 namespace rg {
 
 GLShader::~GLShader() {
-    if (*this)
-        glDeleteProgram(*this);
+    if (id > 0)
+        glDeleteProgram(id);
 }
 
 void GLShader::reload() {
-    if (*this)
-        glDeleteProgram(*this);
+    if (id > 0)
+        glDeleteProgram(id);
 
     loadShader(vertFilename, fragFilename);
 }
@@ -44,6 +44,7 @@ GLuint GLShader::loadShader(const std::string& vFile, const std::string& fFile) 
 
         errorMessage.append(&vertShaderError[0]);
         std::cout << &vertShaderError[0] << '\n';
+        return 0;
     }
 
     glShaderSource(fShader, 1, &fragShaderSrc, nullptr);
@@ -58,6 +59,7 @@ GLuint GLShader::loadShader(const std::string& vFile, const std::string& fFile) 
 
         errorMessage.append(&fragShaderError[0]);
         std::cout << &fragShaderError[0] << '\n';
+        return 0;
     }
 
     GLuint program{ glCreateProgram() };
