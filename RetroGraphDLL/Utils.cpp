@@ -67,33 +67,4 @@ const std::string getExpandedEnvPath(const std::string& path) {
     return std::string{ buff };
 }
 
-void printTimeToExecuteMs(const char* funcName, std::regular_invocable auto f) {
-    const auto start{ clock() };
-    f();
-    const auto end{ clock() };
-
-    printf("%s took %f seconds\n", funcName, (static_cast<float>(end) - static_cast<float>(start)) / CLOCKS_PER_SEC);
-}
-
-void printTimeToExecuteMs(std::regular_invocable auto f) {
-    printTimeToExecuteMs("Function", f);
-}
-
-void printTimeToExecuteHighRes(const char* funcName, std::regular_invocable auto f) {
-    LARGE_INTEGER li;
-    QueryPerformanceCounter(&li);
-    const int64_t start{ li.QuadPart };
-
-    f();
-
-    QueryPerformanceCounter(&li);
-    const int64_t end{ li.QuadPart };
-
-    printf("%s took %I64d counts\n", funcName, end - start);
-}
-
-void printTimeToExecuteHighRes(std::regular_invocable auto f) {
-    printTimeToExecuteHighRes("Function", f);
-}
-
 } // namespace rg
