@@ -162,9 +162,6 @@
     <ClCompile Include="Rendering\Shader.ixx">
       <Filter>Modules\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Rendering\VBOController.ixx">
-      <Filter>Modules\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="Rendering\DrawUtils.ixx">
       <Filter>Modules\Rendering</Filter>
     </ClCompile>
@@ -243,9 +240,6 @@
     <ClCompile Include="Rendering\Shader.cpp">
       <Filter>Modules\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Rendering\VBOController.cpp">
-      <Filter>Modules\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="Widgets\CPUStatsWidget.cpp">
       <Filter>Modules\Widgets</Filter>
     </ClCompile>
@@ -320,6 +314,12 @@
     </ClCompile>
     <ClCompile Include="Rendering\VAO.ixx">
       <Filter>Modules\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\LineGraph.ixx">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\LineGraph.cpp">
+      <Filter>Modules\Widgets</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

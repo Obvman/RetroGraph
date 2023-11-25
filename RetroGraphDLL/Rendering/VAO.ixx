@@ -6,8 +6,6 @@ import "GLHeaderUnit.h";
 
 namespace rg {
 
-export using VAOID = size_t;
-
 constexpr GLuint invalidID{ UINT_MAX };
 
 export class [[nodiscard]] VAOBindScope {

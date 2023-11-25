@@ -4,6 +4,7 @@ import Measures.CPUMeasure;
 
 import Rendering.FontManager;
 
+import Widgets.LineGraph;
 import Widgets.Widget;
 
 import std.core;
@@ -15,16 +16,14 @@ namespace rg {
  */
 export class CPUStatsWidget : public Widget {
 public:
-    CPUStatsWidget(const FontManager* fontManager, std::shared_ptr<const CPUMeasure> cpuMeasure) :
-        Widget{ fontManager },
-        m_cpuMeasure{ cpuMeasure } {}
-
-    ~CPUStatsWidget() noexcept = default;
+    CPUStatsWidget(const FontManager* fontManager, std::shared_ptr<const CPUMeasure> cpuMeasure);
 
     void draw() const override;
     void setViewport(const Viewport& vp) override;
 
 private:
+    auto createCoreGraphs(const CPUMeasure& cpuMeasure);
+
     void drawCoreGraphs() const;
     void drawStats() const;
     void drawNoInfoState() const;
@@ -33,6 +32,8 @@ private:
     Viewport m_statsViewport{ };
 
     std::shared_ptr<const CPUMeasure> m_cpuMeasure{ nullptr };
+
+    std::vector<LineGraph> m_coreGraphs;
 };
 
 } // namespace rg

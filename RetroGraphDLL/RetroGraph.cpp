@@ -4,8 +4,6 @@ import Colors;
 import FPSLimiter;
 import UserSettings;
 
-import Rendering.VBOController;
-
 import Widgets.CPUStatsWidget;
 import Widgets.FPSWidget;
 import Widgets.GraphWidget;

@@ -3,38 +3,30 @@ module Widgets.GraphWidget;
 import Colors;
 import Units;
 
-import Rendering.GLListContainer;
-import Rendering.VBOController;
-
-import "GLHeaderUnit.h";
-
 namespace rg {
 
+GraphWidget::GraphWidget(const FontManager* fontManager, size_t numGraphSamples)
+    : Widget{ fontManager }
+    , m_graph{ numGraphSamples } {
+
+}
+
 GPUGraphWidget::GPUGraphWidget(const FontManager* fontManager, std::shared_ptr<const GPUMeasure> gpuMeasure)
-    : Widget(fontManager)
-    , m_gpuMeasure(gpuMeasure)
-    , m_gpuVBO{ VBOController::inst().createGraphLineVBO(m_gpuMeasure->getUsageData().size()) } {
+    : GraphWidget{ fontManager, gpuMeasure->getUsageData().size() }
+    , m_gpuMeasure{ gpuMeasure } {
 
 }
 
 void GPUGraphWidget::draw() const {
-    // Set the viewport for the graph to be left section
-    glViewport(m_viewport.x, m_viewport.y,
-               (m_viewport.width*4)/5 , m_viewport.height);
-    GLListContainer::inst().drawBorder();
-    VBOController::inst().drawGraphGrid();
-
     if (m_gpuMeasure->isEnabled()) {
-        glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
-        glLineWidth(0.5f);
-
-        VBOController::inst().updateGraphLines(m_gpuVBO, m_gpuMeasure->getUsageData());
-        VBOController::inst().drawGraphLines(m_gpuVBO);
+        // Set the viewport for the graph to be left section
+        glViewport(m_viewport.x, m_viewport.y, (m_viewport.width * 4) / 5, m_viewport.height);
+        m_graph.updatePoints(m_gpuMeasure->getUsageData());
+        m_graph.draw();
     }
 
     // Set viewport for text drawing
-    glViewport(m_viewport.x + (4 * m_viewport.width) / 5, m_viewport.y,
-               m_viewport.width / 5, m_viewport.height);
+    glViewport(m_viewport.x + (4 * m_viewport.width) / 5, m_viewport.y, m_viewport.width / 5, m_viewport.height);
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
     m_fontManager->renderLine(RG_FONT_SMALL, "0%", 0, 0, m_viewport.width/5, m_viewport.height,
@@ -47,28 +39,19 @@ void GPUGraphWidget::draw() const {
 
 
 CPUGraphWidget::CPUGraphWidget(const FontManager* fontManager, std::shared_ptr<const CPUMeasure> cpuMeasure)
-    : Widget(fontManager)
-    , m_cpuMeasure(cpuMeasure)
-    , m_cpuVBO{ VBOController::inst().createGraphLineVBO(m_cpuMeasure->getUsageData().size()) } {
+    : GraphWidget{ fontManager, cpuMeasure->getUsageData().size() }
+    , m_cpuMeasure{ cpuMeasure } {
 
 }
 
 void CPUGraphWidget::draw() const {
     // Set the viewport for the graph to be left section
     glViewport(m_viewport.x, m_viewport.y, (m_viewport.width * 4)/5, m_viewport.height);
-
-    GLListContainer::inst().drawBorder();
-
-    VBOController::inst().drawGraphGrid();
-
-    glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
-    glLineWidth(0.5f);
-    VBOController::inst().updateGraphLines(m_cpuVBO, m_cpuMeasure->getUsageData());
-    VBOController::inst().drawGraphLines(m_cpuVBO);
+    m_graph.updatePoints(m_cpuMeasure->getUsageData());
+    m_graph.draw();
 
     // Text
-    glViewport(m_viewport.x + (4 * m_viewport.width) / 5, m_viewport.y,
-               m_viewport.width / 5, m_viewport.height);
+    glViewport(m_viewport.x + (4 * m_viewport.width) / 5, m_viewport.y, m_viewport.width / 5, m_viewport.height);
 
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
     m_fontManager->renderLine(RG_FONT_SMALL, "0%", 0, 0, m_viewport.width/5, m_viewport.height,
@@ -80,25 +63,16 @@ void CPUGraphWidget::draw() const {
 }
 
 RAMGraphWidget::RAMGraphWidget(const FontManager* fontManager, std::shared_ptr<const RAMMeasure> ramMeasure)
-    : Widget(fontManager)
-    , m_ramMeasure(ramMeasure)
-    , m_ramVBO{ VBOController::inst().createGraphLineVBO(m_ramMeasure->getUsageData().size()) } {
+    : GraphWidget{ fontManager, ramMeasure->getUsageData().size() }
+    , m_ramMeasure{ ramMeasure } {
 
 }
 
 void RAMGraphWidget::draw() const {
     // Set the viewport for the graph itself to be left section
     glViewport(m_viewport.x, m_viewport.y, (m_viewport.width*4)/5 , m_viewport.height);
-
-    GLListContainer::inst().drawBorder();
-
-    // Draw the background grid for the graph
-    VBOController::inst().drawGraphGrid();
-
-    glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
-    glLineWidth(0.5f);
-    VBOController::inst().updateGraphLines(m_ramVBO, m_ramMeasure->getUsageData());
-    VBOController::inst().drawGraphLines(m_ramVBO);
+    m_graph.updatePoints(m_ramMeasure->getUsageData());
+    m_graph.draw();
 
     // Set viewport for text drawing
     glViewport(m_viewport.x + (4 * m_viewport.width) / 5, m_viewport.y,
@@ -115,18 +89,16 @@ void RAMGraphWidget::draw() const {
 }
 
 NetGraphWidget::NetGraphWidget(const FontManager* fontManager, std::shared_ptr<const NetMeasure> netMeasure)
-    : Widget(fontManager)
-    , m_netMeasure(netMeasure)
-    , m_netUpVBO{ VBOController::inst().createGraphLineVBO(m_netMeasure->getUpData().size()) }
-    , m_netDownVBO{ VBOController::inst().createGraphLineVBO(m_netMeasure->getDownData().size()) } {
+    : GraphWidget{ fontManager, netMeasure->getDownData().size() }
+    , m_netMeasure{ netMeasure }
+    , m_netUpGraph{ m_netMeasure->getUpData().size(), { PINK1_R, PINK1_G, PINK1_B, 0.7f }, false } {
 
+    m_graph.setColor({ GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.7f });
 }
 
 void NetGraphWidget::draw() const {
     // Set the viewport for the graph to be left section
     glViewport(m_viewport.x, m_viewport.y, (m_viewport.width * 4) / 5, m_viewport.height);
-    VBOController::inst().drawGraphGrid();
-    GLListContainer::inst().drawBorder();
 
     {// Draw the line graphs
         const auto& downData{ m_netMeasure->getDownData() };
@@ -144,14 +116,11 @@ void NetGraphWidget::draw() const {
         for (auto i = int{ 0 }; i < upData.size(); ++i) {
             normalizedUpData[i] = (upData[i] / static_cast<float>(MB)) / maxValMB;
         }
-        VBOController::inst().updateGraphLines(m_netDownVBO, normalizedDownData);
-        VBOController::inst().updateGraphLines(m_netUpVBO, normalizedUpData);
+        m_netUpGraph.updatePoints(normalizedUpData);
+        m_graph.updatePoints(normalizedDownData);
 
-        glLineWidth(0.5f);
-        glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.7f);
-        VBOController::inst().drawGraphLines(m_netDownVBO);
-        glColor4f(PINK1_R, PINK1_G, PINK1_B, 0.7f);
-        VBOController::inst().drawGraphLines(m_netUpVBO);
+        m_netUpGraph.draw();
+        m_graph.draw();
     }
 
     {// Text

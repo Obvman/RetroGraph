@@ -211,8 +211,6 @@
     <ClCompile Include="Rendering\Shader.cpp" />
     <ClCompile Include="Rendering\Shader.ixx" />
     <ClCompile Include="Rendering\VAO.ixx" />
-    <ClCompile Include="Rendering\VBOController.cpp" />
-    <ClCompile Include="Rendering\VBOController.ixx" />
     <ClCompile Include="Rendering\Viewport.ixx" />
     <ClCompile Include="RetroGraph.cpp" />
     <ClCompile Include="RetroGraphDLL.cpp" />
@@ -251,6 +249,8 @@
     <ClCompile Include="Widgets\GraphWidget.ixx" />
     <ClCompile Include="Widgets\HDDWidget.cpp" />
     <ClCompile Include="Widgets\HDDWidget.ixx" />
+    <ClCompile Include="Widgets\LineGraph.cpp" />
+    <ClCompile Include="Widgets\LineGraph.ixx" />
     <ClCompile Include="Widgets\MainWidget.cpp" />
     <ClCompile Include="Widgets\MainWidget.ixx" />
     <ClCompile Include="Widgets\MusicWidget.cpp" />
