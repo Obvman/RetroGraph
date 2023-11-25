@@ -21,9 +21,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\shaders\test.vert">
-      <Filter>Resources\shaders</Filter>
-    </None>
     <None Include="Resources\default_config.ini">
       <Filter>Resources</Filter>
     </None>
@@ -34,6 +31,12 @@
       <Filter>Resources\shaders</Filter>
     </None>
     <None Include="Resources\shaders\particleLine.vert">
+      <Filter>Resources\shaders</Filter>
+    </None>
+    <None Include="Resources\shaders\particle.vert">
+      <Filter>Resources\shaders</Filter>
+    </None>
+    <None Include="Resources\shaders\particle.frag">
       <Filter>Resources\shaders</Filter>
     </None>
   </ItemGroup>

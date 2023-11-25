@@ -27,7 +27,6 @@ export {
 export struct Particle {
     // Initialises members with random values. Should seed before constructing.
     Particle();
-    ~Particle() = default;
 
     void update(CellContainer& as, float dt);
 

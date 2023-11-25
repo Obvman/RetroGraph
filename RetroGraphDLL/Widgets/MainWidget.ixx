@@ -27,21 +27,23 @@ public:
     void reloadShaders() override;
 
 private:
-    void drawParticles() const;
+    void drawParticles(float aspectRatio) const;
     void drawParticleLines(float aspectRatio) const;
 
-    void createParticleVBO();
+    void createParticleVAO();
+    void createParticleLinesVAO(size_t numLines);
 
-    void createAnimationVBO(size_t numLines);
-    void updateAnimationVBO() const;
-    void drawAnimationVBO(int size, float aspectRatio) const;
+    void updateParticleLinesVAO() const;
 
     std::shared_ptr<const AnimationState> m_animationState;
 
-    VAO m_animVAO;
-    mutable VBO<ParticleLine> m_animLines; //#TODO mutable
-    VBO<glm::vec2> m_animParticle;
-    GLShader m_animShader;
+    VAO m_particleLinesVAO;
+    mutable VBO<ParticleLine> m_particleLinesVBO; //#TODO mutable
+    GLShader m_particleLinesShader;
+
+    VAO m_particleVAO;
+    VBO<glm::vec2> m_particleVBO;
+    GLShader m_particleShader;
 };
 
 } // namespace rg
