@@ -64,7 +64,7 @@ private:
     /* Queries wgl to see if the given extension is supported on this device.
      * Must be called with an OpenGL context active
      */
-    bool wglIisExtensionSupported(const char *extension);
+    bool wglIisExtensionSupported(const std::string& extension);
 
     /* Destroys the win32 window and releases resources for the purpose of
      * testing multisampling support
@@ -105,7 +105,6 @@ private:
     int m_startPosY{ 0 };
     bool m_arbMultisampleSupported{ false };
     int m_arbMultisampleFormat{ 0 };
-    int m_aaSamples{ 8 };
     HINSTANCE m_hInstance{ nullptr };
     RefreshProcHandle m_refreshProcHandle;
 };

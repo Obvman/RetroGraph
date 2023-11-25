@@ -460,7 +460,7 @@ bool Window::createHGLRC() {
     }
 
     // Store a pointer to this Window object so we can reference members in WndProc
-    SetWindowLongPtr(m_hWndMain, GWLP_USERDATA, (LONG_PTR)this);
+    SetWindowLongPtr(m_hWndMain, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 
     // Display window at the desktop layer on startup
     sendToBack();
@@ -477,6 +477,7 @@ bool Window::createHGLRC() {
     bb.hRgnBlur = hRgn;
     bb.fEnable = TRUE;
     DwmEnableBlurBehindWindow(m_hWndMain, &bb);
+    DeleteObject(hRgn);
 
     m_hdc = GetDC(m_hWndMain);
     if (!m_hdc) {
@@ -487,44 +488,41 @@ bool Window::createHGLRC() {
 
     PIXELFORMATDESCRIPTOR pfd = {
         sizeof(PIXELFORMATDESCRIPTOR),
-        1,                                // Version Number
-        PFD_DRAW_TO_WINDOW      |
-        PFD_SUPPORT_OPENGL      |
-        PFD_SUPPORT_COMPOSITION |         // For transparency
-        PFD_DOUBLEBUFFER,
+        1,                                // Version number
+        PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_SUPPORT_COMPOSITION | PFD_DOUBLEBUFFER,
         PFD_TYPE_RGBA,
-        32,                               // Color Depth
-        0, 0, 0, 0, 0, 0,                 // Color Bits Ignored
-        8,                                // Alpha Buffer
-        0,                                // Shift Bit Ignored
-        0,                                // No Accumulation Buffer
-        0, 0, 0, 0,                       // Accumulation Bits Ignored
+        32,                               // Color depth
+        0, 0, 0, 0, 0, 0,                 // Color bits ignored
+        8,                                // Alpha buffer
+        0,                                // Shift bit ignored
+        0,                                // No accumulation buffer
+        0, 0, 0, 0,                       // Accumulation bits ignored
         24,                               // 16Bit Z-Buffer (Depth Buffer)
-        8,                                // Some Stencil Buffer
-        0,                                // No Auxiliary Buffer
-        PFD_MAIN_PLANE,                   // Main Drawing Layer
+        8,                                // Some stencil buffer
+        0,                                // No auxiliary buffer
+        PFD_MAIN_PLANE,                   // Main drawing layer
         0,                                // Reserved
-        0, 0, 0                           // Layer Masks Ignored
+        0, 0, 0                           // layer masks ignored
     };
 
     // On the first run, create a regular window with the previous pfd
     // If multisampling is supported on the second run, use the alternate
     // pfd to create an anti-aliased window
-    int PixelFormat;
+    int pixelFormat;
     if (!m_arbMultisampleSupported) {
-        PixelFormat = ChoosePixelFormat(m_hdc, &pfd);
-        if (PixelFormat == 0) {
+        pixelFormat = ChoosePixelFormat(m_hdc, &pfd);
+        if (pixelFormat == 0) {
             ReleaseDC(m_hWndMain, m_hdc);
             DestroyWindow(m_hWndMain);
             RGERROR("ChoosePixelFormat - failed");
             return false;
         }
     } else {
-        PixelFormat = m_arbMultisampleFormat;
+        pixelFormat = m_arbMultisampleFormat;
     }
 
     // Set the pixel format for the window
-    if (!SetPixelFormat(m_hdc, PixelFormat, &pfd)) {
+    if (!SetPixelFormat(m_hdc, pixelFormat, &pfd)) {
         ReleaseDC(m_hWndMain, m_hdc);
         m_hdc = nullptr;
         DestroyWindow(m_hWndMain);
@@ -570,37 +568,36 @@ bool Window::createHGLRC() {
     return true;
 }
 
-bool Window::wglIisExtensionSupported(const char *extension) {
-    const auto extlen{ strlen(extension) };
-    const char *supported{ nullptr };
+bool Window::wglIisExtensionSupported(const std::string& extension) {
+    std::string supported;
 
-    // Try To Use wglGetExtensionStringARB On Current DC, If Possible
-    const auto wglGetExtString{ wglGetProcAddress("wglGetExtensionsStringARB") };
+    // Try To Use wglGetExtensionStringARB on current dc, if possible
+    const auto wglGetExtString{ reinterpret_cast<PFNWGLGETEXTENSIONSSTRINGARBPROC>(wglGetProcAddress("wglGetExtensionsStringARB")) };
 
     if (wglGetExtString) {
-        supported = ((char*(__stdcall*)(HDC))wglGetExtString)(wglGetCurrentDC());
+        supported = wglGetExtString(wglGetCurrentDC());
     }
 
-    // If That Failed, Try Standard Opengl Extensions String
-    if (!supported) {
+    // If that failed, try standard opengl extensions string
+    if (supported.empty()) {
         supported = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
     }
 
-    // If That Failed Too, Must Be No Extensions Supported
-    if (!supported) {
+    // If that failed too, must be no extensions supported
+    if (supported.empty()) {
         return false;
     }
 
-    // Begin Examination At Start Of String, Increment By 1 On False Match
-    for (const char* p = supported; ; p++) {
-        // Advance p Up To The Next Possible Match
-        p = strstr(p, extension);
+    // Begin examination at start of string, increment by 1 on false match
+    for (const char* p = supported.c_str(); ; p++) {
+        // Advance p up to the next possible match
+        p = strstr(p, extension.c_str());
         if (!p) {
             return false;
         }
 
-        if ((p == supported || p[-1] == ' ') &&
-            (p[extlen] == '\0' || p[extlen] == ' ')) {
+        if ((p == supported.c_str() || p[-1] == ' ') &&
+            (p[extension.size()] == '\0' || p[extension.size()] == ' ')) {
 
             return true;
         }
@@ -608,24 +605,22 @@ bool Window::wglIisExtensionSupported(const char *extension) {
 }
 
 bool Window::initMultisample() {
-    // See If The String Exists In WGL
     if (!wglIisExtensionSupported("WGL_ARB_multisample")) {
         m_arbMultisampleSupported = false;
         return false;
     }
 
-    // Get Our Pixel Format
     const auto wglChoosePixelFormatARB = reinterpret_cast<PFNWGLCHOOSEPIXELFORMATARBPROC>(wglGetProcAddress("wglChoosePixelFormatARB"));
     if (!wglChoosePixelFormatARB) {
         m_arbMultisampleSupported = false;
         return false;
     }
 
-    // These Attributes Are The Bits We Want To Test For In Our Sample
-    // Everything Is Pretty Standard, The Only One We Want To
-    // Really Focus On Is The SAMPLE BUFFERS ARB And WGL SAMPLES
-    // These Two Are Going To Do The Main Testing For Whether Or Not
-    // We Support Multisampling On This Hardware.
+    // These attributes are the bits we want to test for in our sample.
+    // Everything is pretty standard, the only one we want to
+    // really focus on is the SAMPLE BUFFERS ARB and WGL SAMPLES.
+    // These two are going to do the main testing for whether or not
+    // we support multisampling on this hardware.
     int iAttributes[] = {
         WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
         WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
@@ -636,45 +631,44 @@ bool Window::initMultisample() {
         WGL_STENCIL_BITS_ARB, 0,
         WGL_DOUBLE_BUFFER_ARB, GL_TRUE,
         WGL_SAMPLE_BUFFERS_ARB, GL_TRUE,
-        WGL_SAMPLES_ARB, m_aaSamples,
+        WGL_SAMPLES_ARB, 8,
         0, 0
     };
 
-    HDC hDC = GetDC(m_hWndMain);
     int pixelFormat;
     int valid;
     unsigned int numFormats;
     float fAttributes[] = { 0, 0 };
 
-    // First We Check To See If We Can Get A Pixel Format For 8 Samples
-    valid = wglChoosePixelFormatARB(hDC, iAttributes, fAttributes, 1,
+    // First we check to see if we can get a pixel format for 8 samples
+    valid = wglChoosePixelFormatARB(m_hdc, iAttributes, fAttributes, 1,
                                     &pixelFormat, &numFormats);
 
-    // If We Returned True, And Our Format Count Is Greater Than 1
+    // If we returned true, and our format count is greater than 1
     if (valid && numFormats >= 1) {
         m_arbMultisampleSupported = true;
         m_arbMultisampleFormat = pixelFormat;
-        return m_arbMultisampleSupported;
+        return true;
     }
 
-    // Our Pixel Format With 8 Samples Failed, Test For 4 Samples
+    // Our pixel format with 8 samples failed, test for 4 samples
     iAttributes[19] = 4;
-    valid = wglChoosePixelFormatARB(hDC, iAttributes, fAttributes, 1,
+    valid = wglChoosePixelFormatARB(m_hdc, iAttributes, fAttributes, 1,
                                     &pixelFormat,&numFormats);
     if (valid && numFormats >= 1) {
         m_arbMultisampleSupported = true;
         m_arbMultisampleFormat = pixelFormat;
-        return m_arbMultisampleSupported;
+        return true;
     }
 
-    // Our Pixel Format With 2 Samples Failed, Test For 2 Samples
+    // Our pixel format with 2 samples failed, test for 2 samples
     iAttributes[19] = 2;
-    valid = wglChoosePixelFormatARB(hDC, iAttributes, fAttributes, 1,
+    valid = wglChoosePixelFormatARB(m_hdc, iAttributes, fAttributes, 1,
                                     &pixelFormat,&numFormats);
     if (valid && numFormats >= 1) {
         m_arbMultisampleSupported = true;
         m_arbMultisampleFormat = pixelFormat;
-        return m_arbMultisampleSupported;
+        return true;
     }
 
     return m_arbMultisampleSupported;

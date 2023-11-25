@@ -39,8 +39,8 @@ bool MainWidget::needsDraw(int ticks) const {
 }
 
 void MainWidget::draw() const {
-    drawParticles();
     drawParticleLines();
+    drawParticles();
 }
 
 void MainWidget::reloadShaders() {

@@ -47,17 +47,3 @@ hdd read/write usage
 NOTES:
 Foobar status format:
 %title% | [%album artist%] | [%album%[ CD%discnumber%][ #%tracknumber%]] | $if(%ispaused%,Paused,Playing) | [%_time_elapsed_seconds%, %_time_total_seconds%] | 
-
-Immediate Mode vs VBO performance:
-
-IM: Renderer::Draw() (with animation running) = 33.51%
-IM: Renderer::Draw() (without animation running) = 30.15%
-IM: AnimationState ON = ~2% GPU usage in task manager
-IM: AnimationState OFF = ~.1% GPU usage in task manager
-
-Github README:
-	Images of retrograph
-	dependency explanation:
-		Nvidia GPU
-		extra CPU stats require CoreTemp
-		Foobar for media display

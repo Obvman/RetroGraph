@@ -8,6 +8,7 @@ import "GLHeaderUnit.h";
 
 namespace rg {
 
+// #TODO Refactor this class out so Widgets themselves handle VBO/VAOs.
 export class VBOController {
 public:
     static VBOController & inst() { static VBOController i; return i; }

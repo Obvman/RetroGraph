@@ -21,14 +21,14 @@ export {
     constexpr auto particleMaxSpeed = float{ 0.1f };
 
     using CellParticleList = std::vector<const Particle*>;
-    using CellContainer = std::array<std::array<CellParticleList, numCellsPerSide>, numCellsPerSide>;
+    using Cells = std::array<std::array<CellParticleList, numCellsPerSide>, numCellsPerSide>;
 }
 
 export struct Particle {
     // Initialises members with random values. Should seed before constructing.
     Particle();
 
-    void update(CellContainer& as, float dt);
+    void update(Cells& cells, float dt);
 
     float x{ 0.0f };
     float y{ 0.0f };

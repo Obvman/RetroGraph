@@ -44,7 +44,7 @@ private:
     // Members for spatial partitioning
     // The world space coordinates range from -1.0 to 1.0 for both x and y,
     // so we have a range of 2.0 for our world sides
-    CellContainer m_cells;
+    Cells m_cells;
 
     int m_animationFPS;
     RefreshProcHandle m_refreshProcHandle;
