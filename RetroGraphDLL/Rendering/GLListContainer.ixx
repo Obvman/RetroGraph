@@ -27,12 +27,9 @@ private:
     void initSerifList() const;
     void initWidgetBGList() const;
 
-    GLuint m_listStart;
-
     GLuint m_vpBorderList;
     GLuint m_borderList;
     GLuint m_serifList;
-    GLuint m_circleList;
     GLuint m_widgetBGList;
 };
 

@@ -13,8 +13,8 @@ export {
     constexpr auto cellSize = float{ particleConnectionDistance };
     constexpr auto numCellsPerSide = int{ 10 };
 
-    constexpr auto particleMinSize = float{ 0.005f };
-    constexpr auto particleMaxSize = float{ 0.012f };
+    constexpr auto particleMinSize = float{ 1.0f };
+    constexpr auto particleMaxSize = float{ 10.0f };
     constexpr auto particleMinPos = float{ -0.998f };
     constexpr auto particleMaxPos = float{ 0.998f };
     constexpr auto particleMinSpeed = float{ 0.01f };

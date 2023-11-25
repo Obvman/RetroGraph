@@ -22,6 +22,9 @@ MainWidget::MainWidget(const FontManager* fontManager, std::shared_ptr<const Ani
 
     createParticleLinesVAO(maxLines);
     createParticleVAO();
+
+    updateShaderModelMatrix(m_particleShader);
+    updateShaderModelMatrix(m_particleLinesShader);
 }
 
 bool MainWidget::needsDraw(int ticks) const {
@@ -36,50 +39,59 @@ bool MainWidget::needsDraw(int ticks) const {
 }
 
 void MainWidget::draw() const {
-    // Scale by the aspect ratio of the viewport so circles aren't skewed
-    const float aspectRatio = static_cast<float>(m_viewport.width) / static_cast<float>(m_viewport.height);
-    glPushMatrix(); {
-        glScalef(1.0f, aspectRatio, 1.0f);
-
-        drawParticles(aspectRatio);
-        drawParticleLines(aspectRatio);
-    } glPopMatrix();
+    drawParticles();
+    drawParticleLines();
 }
 
 void MainWidget::reloadShaders() {
     m_particleLinesShader.reload();
     m_particleShader.reload();
+
+    updateShaderModelMatrix(m_particleShader);
+    updateShaderModelMatrix(m_particleLinesShader);
 }
 
-void MainWidget::drawParticles(float aspectRatio) const {
-    (void)aspectRatio;
+void MainWidget::drawParticles() const {
+    updateParticleVAO();
 
+    auto shaderScope{ m_particleShader.bind() };
     auto vaoScope{ m_particleVAO.bind() };
-    auto vboScope{ m_particleVBO.bind() };
 
-    glColor4f(PARTICLE_R, PARTICLE_G, PARTICLE_B, PARTICLE_A);
-    for (const auto& p : m_animationState->getParticles()) {
-        glPushMatrix(); {
-            glTranslatef(p.x, p.y, 0.0f);
-            glScalef(p.size, p.size, 1.0f);
-            glDrawArrays(GL_TRIANGLE_FAN, 0, m_particleVBO.size());
-        } glPopMatrix();
-    }
+    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+
+    glDrawArrays(GL_POINTS, 0, m_particleVBO.size());
 }
 
-void MainWidget::drawParticleLines(float aspectRatio) const {
+void MainWidget::drawParticleLines() const {
     updateParticleLinesVAO();
 
     auto shaderScope{ m_particleLinesShader.bind() };
     auto vaoScope{ m_particleLinesVAO.bind() };
 
-    glm::vec3 const scale{ glm::vec3(1.0f, aspectRatio, 1.0f) }; // #TODO only do this when aspectRatio changes.
-    glm::mat4 modelMatrix{ glm::mat4() };
-    modelMatrix = glm::scale(modelMatrix, scale);
-    GLuint const location = m_particleLinesShader.getUniformLocation("model");
-    glUniformMatrix4fv(location, 1, false, glm::value_ptr(modelMatrix));
-
     glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(m_animationState->getNumLines() * 2));
+}
+
+void MainWidget::createParticleVAO() {
+    constexpr GLuint vertexLocationIndex{ 0 };
+    constexpr GLuint scaleLocationIndex{ 1 };
+
+    m_particleVBO.reserve(m_animationState->getParticles().size());
+    auto& verts{ m_particleVBO.data };
+    for (const auto& particle : m_animationState->getParticles()) {
+        verts.emplace_back(particle);
+    }
+
+    auto vaoScope{ m_particleVAO.bind() };
+    auto vboScope{ m_particleVBO.bind() };
+
+    glEnableVertexAttribArray(vertexLocationIndex);
+    glVertexAttribPointer(vertexLocationIndex, 2, GL_FLOAT, GL_FALSE, m_particleVBO.elemBytes(), nullptr);
+
+    glEnableVertexAttribArray(scaleLocationIndex);
+    glVertexAttribPointer(scaleLocationIndex, 1, GL_FLOAT, GL_FALSE, m_particleVBO.elemBytes(),
+                          reinterpret_cast<GLvoid*>(sizeof(glm::vec2)));
+
+    glBufferData(GL_ARRAY_BUFFER, m_particleVBO.sizeBytes(), verts.data(), GL_STATIC_DRAW);
 }
 
 void MainWidget::createParticleLinesVAO(size_t numLines) {
@@ -101,25 +113,17 @@ void MainWidget::createParticleLinesVAO(size_t numLines) {
     glBufferData(GL_ARRAY_BUFFER, m_particleLinesVBO.sizeBytes(), m_particleLinesVBO.data.data(), GL_STREAM_DRAW);
 }
 
-void MainWidget::createParticleVAO() {
-    constexpr auto circleLines = int{ 10 };
-    constexpr GLuint vertexLocationIndex{ 0 };
-
+void MainWidget::updateParticleVAO() const {
     auto& verts{ m_particleVBO.data };
-
-    verts.emplace_back(0.0f, 0.0f);
-    for (int i = 0; i < circleLines; ++i) {
-        const auto theta{ 2.0f * 3.1415926f * static_cast<float>(i) / static_cast<float>(circleLines - 1) };
-        verts.emplace_back(cosf(theta), sinf(theta));
+    for (int i{ 0 }; i < m_animationState->getParticles().size(); ++i) {
+        const auto& particle{ m_animationState->getParticles()[i] };
+        verts[i].position = { particle.x, particle.y };
     }
 
     auto vaoScope{ m_particleVAO.bind() };
     auto vboScope{ m_particleVBO.bind() };
 
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(vertexLocationIndex, 2, GL_FLOAT, GL_FALSE, m_particleVBO.elemBytes(), nullptr);
-
-    glBufferData(GL_ARRAY_BUFFER, m_particleVBO.sizeBytes(), verts.data(), GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 0,  m_particleVBO.sizeBytes(), verts.data());
 }
 
 void MainWidget::updateParticleLinesVAO() const {
@@ -134,6 +138,16 @@ void MainWidget::updateParticleLinesVAO() const {
     auto vboScope{ m_particleLinesVBO.bind() };
 
     glBufferSubData(GL_ARRAY_BUFFER, 0, numLines * m_particleLinesVBO.elemBytes(), verts.data());
+}
+
+void MainWidget::updateShaderModelMatrix(const Shader& shader) const {
+    auto shaderScope{ shader.bind() };
+
+    // Draw things slightly larger than the viewport so it's not as jarring when particles go past
+    // the edge and lines disappear
+    glm::mat4 modelMatrix{};
+    modelMatrix = glm::scale(modelMatrix, { 1.2f, 1.2f, 1.0f });
+    glUniformMatrix4fv(shader.getUniformLocation("model"), 1, false, glm::value_ptr(modelMatrix));
 }
 
 } // namespace rg
