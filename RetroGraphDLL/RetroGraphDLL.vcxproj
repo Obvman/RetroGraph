@@ -208,8 +208,8 @@
     <ClCompile Include="Rendering\FontManager.ixx" />
     <ClCompile Include="Rendering\GLListContainer.cpp" />
     <ClCompile Include="Rendering\GLListContainer.ixx" />
-    <ClCompile Include="Rendering\GLShader.cpp" />
-    <ClCompile Include="Rendering\GLShader.ixx" />
+    <ClCompile Include="Rendering\Shader.cpp" />
+    <ClCompile Include="Rendering\Shader.ixx" />
     <ClCompile Include="Rendering\VAO.ixx" />
     <ClCompile Include="Rendering\VBOController.cpp" />
     <ClCompile Include="Rendering\VBOController.ixx" />

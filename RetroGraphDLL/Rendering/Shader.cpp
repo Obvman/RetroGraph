@@ -1,23 +1,23 @@
-module Rendering.GLShader;
+module Rendering.Shader;
 
 import "GLHeaderUnit.h";
 import "RGAssert.h";
 
 namespace rg {
 
-GLShader::~GLShader() {
+Shader::~Shader() {
     if (id > 0)
         glDeleteProgram(id);
 }
 
-void GLShader::reload() {
+void Shader::reload() {
     if (id > 0)
         glDeleteProgram(id);
 
     loadShader(vertFilename, fragFilename);
 }
 
-GLuint GLShader::loadShader(const std::string& vFile, const std::string& fFile) {
+GLuint Shader::loadShader(const std::string& vFile, const std::string& fFile) {
     const auto vShader{ glCreateShader(GL_VERTEX_SHADER) };
     const auto fShader{ glCreateShader(GL_FRAGMENT_SHADER) };
 
@@ -90,7 +90,7 @@ GLuint GLShader::loadShader(const std::string& vFile, const std::string& fFile) 
     return program;
 }
 
-std::string GLShader::readShaderFile(const std::string& filePath) const {
+std::string Shader::readShaderFile(const std::string& filePath) const {
     std::ifstream fileStream(filePath, std::ios::in);
     std::string fileContents{};
 

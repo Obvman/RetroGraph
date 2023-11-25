@@ -1,4 +1,4 @@
-export module Rendering.GLShader;
+export module Rendering.Shader;
 
 import Utils;
 
@@ -29,15 +29,15 @@ public:
 /* Compiles and links the given vertex and fragment shaders returns the ID
    of the compiled program if successful, otherwise presents a fatal
    message box with the GLSL compilation error message */
-export class GLShader {
+export class Shader {
 public:
-    GLShader(const std::string& vertFilename_, const std::string& fragFilename_)
+    Shader(const std::string& vertFilename_, const std::string& fragFilename_)
         : id{ loadShader(vertFilename_, fragFilename_) }
         , vertFilename{ vertFilename_ }
         , fragFilename{ fragFilename_ } { }
-    GLShader(const std::string& baseName)
-        : GLShader{ baseName + ".vert", baseName + ".frag" } { }
-    ~GLShader();
+    Shader(const std::string& baseName)
+        : Shader{ baseName + ".vert", baseName + ".frag" } { }
+    ~Shader();
 
     void reload();
     GLShaderBindScope bind() const { return { id }; }

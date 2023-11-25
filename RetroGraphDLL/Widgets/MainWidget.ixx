@@ -4,7 +4,7 @@ import Measures.AnimationState;
 import Measures.ParticleLine;
 
 import Rendering.FontManager;
-import Rendering.GLShader;
+import Rendering.Shader;
 import Rendering.VAO;
 import Rendering.VBO;
 
@@ -39,11 +39,11 @@ private:
 
     VAO m_particleLinesVAO;
     mutable VBO<ParticleLine> m_particleLinesVBO; //#TODO mutable
-    GLShader m_particleLinesShader;
+    Shader m_particleLinesShader;
 
     VAO m_particleVAO;
     VBO<glm::vec2> m_particleVBO;
-    GLShader m_particleShader;
+    Shader m_particleShader;
 };
 
 } // namespace rg
