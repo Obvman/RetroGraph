@@ -7,14 +7,7 @@ import "RGAssert.h";
 
 namespace rg {
 
-constexpr int NVAPI_MAX_USAGES_PER_GPU{ 34 };
 constexpr int NVAPI_GPU_UTILIZATION_DOMAIN_GPU{ 0U };
-
-using NvAPI_QueryInterface_t = int *(*)(unsigned int offset);
-using NvAPI_GPU_GetUsages_t = int (*)(NvPhysicalGpuHandle handle, NvU32* usages);
-
-NvAPI_QueryInterface_t NvAPI_QueryInterface{ nullptr };
-NvAPI_GPU_GetUsages_t NvAPI_GPU_GetUsages{ nullptr };
 
 GPUMeasure::GPUMeasure()
     : m_dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-GPUGraph.NumUsageSamples") }
@@ -36,13 +29,11 @@ GPUMeasure::GPUMeasure()
         return;
     }
 
-    //DoThing();
-
     NvU32 driverVersion;
     NvAPI_ShortString buildBranchStr;
     NvAPI_SYS_GetDriverAndBranchVersion(&driverVersion, buildBranchStr);
 
-    m_driverVersion = std::to_string(driverVersion);
+    m_driverVersion = std::to_string(driverVersion) + " " + buildBranchStr;
     // Insert a period after 3rd digit since NVIDIA drivers are formatted as xxx.xx
     m_driverVersion.insert(3, ".");
 
