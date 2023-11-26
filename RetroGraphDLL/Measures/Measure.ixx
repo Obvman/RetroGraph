@@ -4,10 +4,14 @@ import Utils;
 
 import std.core;
 
+import "EventppHeaderUnit.h";
+
 namespace rg {
 
 export using Hz = int;
 export using Seconds = int;
+
+export using PostUpdateCallback = eventpp::CallbackList<void()>;
 
 export enum class MeasureType : size_t {
     CPU = 0U,
@@ -40,6 +44,8 @@ public:
      * By default, most measures update every 2 seconds.
      */
     virtual bool shouldUpdate(int ticks) const { return ticksMatchRate(ticks, 2); }
+
+    mutable PostUpdateCallback postUpdate;
 
 protected:
 

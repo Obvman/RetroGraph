@@ -22,8 +22,22 @@ auto CPUStatsWidget::createCoreGraphs(const CPUMeasure& cpuMeasure) {
 CPUStatsWidget::CPUStatsWidget(const FontManager* fontManager, std::shared_ptr<const CPUMeasure> cpuMeasure)
     : Widget{ fontManager }
     , m_cpuMeasure{ cpuMeasure }
-    , m_coreGraphs{ createCoreGraphs(*cpuMeasure) } {
+    , m_coreGraphs{ createCoreGraphs(*cpuMeasure) }
+    , m_postUpdateHandle{ RegisterPostUpdateCallback() } {
 
+}
+
+CPUStatsWidget::~CPUStatsWidget() {
+    m_cpuMeasure->postUpdate.remove(m_postUpdateHandle);
+}
+
+PostUpdateCallback::Handle CPUStatsWidget::RegisterPostUpdateCallback() {
+    return m_cpuMeasure->postUpdate.append(
+        [this]() {
+            if (m_coreGraphs.size() != m_cpuMeasure->getPerCoreUsageData().size()) {
+                m_coreGraphs = createCoreGraphs(*m_cpuMeasure);
+            }
+        });
 }
 
 void CPUStatsWidget::setViewport(const Viewport& vp) { 

@@ -32,6 +32,8 @@ void RAMMeasure::update(int) {
     // Add value to the list of load values and shift the list left
     m_usageData.front() = getLoadPercentagef();
     std::rotate(m_usageData.begin(), m_usageData.begin() + 1, m_usageData.end());
+
+    postUpdate();
 }
 
 float RAMMeasure::getLoadPercentagef() const {

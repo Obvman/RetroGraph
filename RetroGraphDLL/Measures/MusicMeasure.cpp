@@ -28,6 +28,8 @@ void MusicMeasure::update(int /*ticks*/) {
 
         if (oldTitle != m_playerWindowTitle) {
             scrapeInfoFromTitle();
+
+            postUpdate();
         }
     }
 }

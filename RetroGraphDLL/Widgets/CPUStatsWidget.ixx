@@ -17,6 +17,7 @@ namespace rg {
 export class CPUStatsWidget : public Widget {
 public:
     CPUStatsWidget(const FontManager* fontManager, std::shared_ptr<const CPUMeasure> cpuMeasure);
+    ~CPUStatsWidget();
 
     void draw() const override;
     void setViewport(const Viewport& vp) override;
@@ -24,6 +25,7 @@ public:
 private:
     auto createCoreGraphs(const CPUMeasure& cpuMeasure);
 
+    PostUpdateCallback::Handle RegisterPostUpdateCallback();
     void drawCoreGraphs() const;
     void drawStats() const;
     void drawNoInfoState() const;
@@ -34,6 +36,8 @@ private:
     std::shared_ptr<const CPUMeasure> m_cpuMeasure{ nullptr };
 
     std::vector<LineGraph> m_coreGraphs;
+
+    PostUpdateCallback::Handle m_postUpdateHandle;
 };
 
 } // namespace rg

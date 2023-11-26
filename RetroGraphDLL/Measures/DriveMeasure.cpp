@@ -42,6 +42,7 @@ DriveMeasure::DriveMeasure() {
 }
 
 void DriveMeasure::update(int ticks) {
+    bool didUpdate{ false };
     if (ticksMatchSeconds(ticks, 15)) {
         /* Refresh drive statistics. We won't consider drives being
          * added/removed since these are fixed drives and the program shouldn't
@@ -64,6 +65,8 @@ void DriveMeasure::update(int ticks) {
                 di.totalBytes = totalBytes.QuadPart;
                 di.updateCapacityStr();
             }
+
+            didUpdate = true;
         }
     }
 
@@ -79,7 +82,11 @@ void DriveMeasure::update(int ticks) {
                 di.volumeName = std::string{ volumeNameBuff };
             }
         }
+        didUpdate = true;
     }
+
+    if (didUpdate)
+        postUpdate();
 }
 
 bool DriveMeasure::shouldUpdate(int ticks) const {

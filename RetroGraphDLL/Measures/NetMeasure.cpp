@@ -174,6 +174,8 @@ void NetMeasure::update(int ticks) {
     m_upBytes[0] = m_adapterEntry->OutOctets - oldUp;
     std::rotate(m_upBytes.begin(), m_upBytes.begin() + 1, m_upBytes.end());
     m_upMaxVal = *std::max_element(m_upBytes.cbegin(), m_upBytes.cend());
+
+    postUpdate();
 }
 
 bool NetMeasure::isConnected() const {

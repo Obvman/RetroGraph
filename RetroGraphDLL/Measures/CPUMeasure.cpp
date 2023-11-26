@@ -54,15 +54,15 @@ void CPUMeasure::update(int) {
     // Add to the usageData vector by overwriting the oldest value and
     // shifting the elements in the vector
     m_usageData[0] = totalLoad;
-    std::rotate(m_usageData.begin(), m_usageData.begin() + 1,
-                m_usageData.end());
+    std::rotate(m_usageData.begin(), m_usageData.begin() + 1, m_usageData.end());
 
     for (unsigned int i = 0U; i < m_perCoreData.size(); ++i) {
         const auto coreUsage = float{ m_coreTempPlugin.getLoad(i) / 100.0f };
         m_perCoreData[i][0] = coreUsage;
-        std::rotate(m_perCoreData[i].begin(),
-                    m_perCoreData[i].begin() + 1, m_perCoreData[i].end());
+        std::rotate(m_perCoreData[i].begin(), m_perCoreData[i].begin() + 1, m_perCoreData[i].end());
     }
+
+    postUpdate();
 }
 
 void CPUMeasure::updateCPUName() {

@@ -8,11 +8,12 @@ namespace rg {
 
 constexpr auto numGridVertLines = size_t{ 14U };
 constexpr auto numGridHorizLines = size_t{ 7U };
+constexpr auto numGridVerts = size_t{ 2 * (numGridVertLines + numGridHorizLines) };
 
 LineGraph::LineGraph(size_t numGraphSamples, const glm::vec4& color, bool drawBackground)
     : m_graphPointsVBO{ static_cast<GLsizei>(numGraphSamples), GL_ARRAY_BUFFER, GL_STREAM_DRAW }
-    , m_graphGridVerts{ static_cast<GLsizei>(2 * (numGridVertLines + numGridHorizLines)), GL_ARRAY_BUFFER, GL_STATIC_DRAW }
-    , m_graphGridIndices{ static_cast<GLsizei>(2 * (numGridVertLines + numGridHorizLines)), GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW }
+    , m_graphGridVerts{ static_cast<GLsizei>(numGridVerts), GL_ARRAY_BUFFER, GL_STATIC_DRAW }
+    , m_graphGridIndices{ static_cast<GLsizei>(numGridVerts), GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW }
     , m_color{ color }
     , m_drawBackground{ drawBackground } {
 

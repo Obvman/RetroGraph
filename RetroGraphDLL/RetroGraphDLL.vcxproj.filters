@@ -321,6 +321,9 @@
     <ClCompile Include="Widgets\LineGraph.cpp">
       <Filter>Modules\Widgets</Filter>
     </ClCompile>
+    <ClCompile Include="EventppHeaderUnit.h">
+      <Filter>Header Units</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resources\resource.h">

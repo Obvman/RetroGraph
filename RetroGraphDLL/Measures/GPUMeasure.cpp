@@ -75,6 +75,8 @@ void GPUMeasure::update(int) {
 
     m_usageData[0] = m_gpuUsage / 100.0f;
     std::rotate(m_usageData.begin(), m_usageData.begin() + 1, m_usageData.end());
+
+    postUpdate();
 }
 
 float GPUMeasure::getMemUsagePercent() const {

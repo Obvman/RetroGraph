@@ -40,9 +40,12 @@ ProcessMeasure::~ProcessMeasure() {
 }
 
 void ProcessMeasure::update(int ticks) {
+    bool didUpdate{ false };
+
     // Update the process list vector every 10 seconds
     if (ticksMatchSeconds(ticks, 10)) {
         detectNewProcesses();
+        didUpdate = true;
     }
 
     if (ticksMatchSeconds(ticks, 2)) {
@@ -86,11 +89,18 @@ void ProcessMeasure::update(int ticks) {
         }
 
         fillCPUData();
+
+        didUpdate = true;
     }
 
     if (ticksMatchSeconds(ticks, 5)) {
         fillRAMData();
+
+        didUpdate = true;
     }
+
+    if (didUpdate)
+        postUpdate();
 }
 
 int ProcessMeasure::getPIDFromName(std::string_view name) const {

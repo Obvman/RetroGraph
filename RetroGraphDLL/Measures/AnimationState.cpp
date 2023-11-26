@@ -52,6 +52,8 @@ void AnimationState::update(int) {
         p.update(m_cells, dt);
 
     updateParticleLines();
+
+    postUpdate();
 }
 
 bool AnimationState::shouldUpdate(int ticks) const {
