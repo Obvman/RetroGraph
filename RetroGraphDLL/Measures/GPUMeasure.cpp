@@ -11,8 +11,8 @@ constexpr int NVAPI_GPU_UTILIZATION_DOMAIN_GPU{ 0U };
 
 GPUMeasure::GPUMeasure()
     : m_dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-GPUGraph.NumUsageSamples") }
-    , m_refreshProcHandle{
-        UserSettings::inst().registerRefreshProc(
+    , m_configChangedHandle{
+        UserSettings::inst().configChanged.append(
             [&]() {
                 const size_t newDataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-GPUGraph.NumUsageSamples") };
                 if (m_dataSize != newDataSize) {
@@ -64,7 +64,7 @@ GPUMeasure::GPUMeasure()
 
 GPUMeasure::~GPUMeasure() {
     NvAPI_Unload();
-    UserSettings::inst().releaseRefreshProc(m_refreshProcHandle);
+    UserSettings::inst().configChanged.remove(m_configChangedHandle);
 }
 
 void GPUMeasure::update(int) {

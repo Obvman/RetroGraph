@@ -7,13 +7,15 @@ import Widgets.WidgetType;
 
 import std.core;
 
+import "EventppHeaderUnit.h";
 import "RGAssert.h";
 import "WindowsHeaderUnit.h";
 import <inih/INIReader.h>;
 
 namespace rg {
 
-export using RefreshProcHandle = int;
+export using ConfigRefreshedCallbackList = eventpp::CallbackList<void()>;
+export using ConfigRefreshedCallbackHandle = ConfigRefreshedCallbackList::Handle;
 
 using SettingVariant = std::variant<int, bool, double, std::string>;
 
@@ -48,8 +50,7 @@ public:
     bool checkConfigChanged() const;
     void refresh();
 
-    RefreshProcHandle registerRefreshProc(std::function<void(void)> const& refreshProc);
-    void releaseRefreshProc(RefreshProcHandle handle);
+    ConfigRefreshedCallbackList configChanged;
 
 private:
     UserSettings();
@@ -78,9 +79,6 @@ private:
         {"bottom-middle", WidgetPosition::BOT_MID},
         {"bottom-right",  WidgetPosition::BOT_RIGHT},
     };
-
-    std::map<RefreshProcHandle, std::function<void(void)>> m_refreshProcs;
-    RefreshProcHandle m_refreshProcCounter;
 };
 
 } // namespace rg

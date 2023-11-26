@@ -11,7 +11,8 @@ namespace rg {
 export using Hz = int;
 export using Seconds = int;
 
-export using PostUpdateCallback = eventpp::CallbackList<void()>;
+export using PostUpdateCallbackList = eventpp::CallbackList<void()>;
+export using PostUpdateCallbackHandle = PostUpdateCallbackList::Handle;
 
 export enum class MeasureType : size_t {
     CPU = 0U,
@@ -45,7 +46,7 @@ public:
      */
     virtual bool shouldUpdate(int ticks) const { return ticksMatchRate(ticks, 2); }
 
-    mutable PostUpdateCallback postUpdate;
+    mutable PostUpdateCallbackList postUpdate;
 
 protected:
 

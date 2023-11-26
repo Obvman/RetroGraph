@@ -13,8 +13,8 @@ NetMeasure::NetMeasure()
     : m_pingServer{ UserSettings::inst().getVal<std::string>("Network.PingServer") }
     , m_pingFreqSec{ UserSettings::inst().getVal<int>("Network.PingFrequency") }
     , m_dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-NetGraph.NumUsageSamples") }
-    , m_refreshProcHandle{
-        UserSettings::inst().registerRefreshProc(
+    , m_configChangedHandle{
+        UserSettings::inst().configChanged.append(
             [&]() {
                 destroyNetworkThread();
 
@@ -64,7 +64,7 @@ NetMeasure::NetMeasure()
 
 NetMeasure::~NetMeasure() {
     destroyNetworkThread();
-    UserSettings::inst().releaseRefreshProc(m_refreshProcHandle);
+    UserSettings::inst().configChanged.remove(m_configChangedHandle);
 }
 
 void NetMeasure::getMACAndLocalIP() {

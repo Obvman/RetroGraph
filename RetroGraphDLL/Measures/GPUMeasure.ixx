@@ -67,7 +67,7 @@ private:
 
     size_t m_dataSize{ 40U };
     std::vector<float> m_usageData{ };
-    RefreshProcHandle m_refreshProcHandle;
+    ConfigRefreshedCallbackHandle m_configChangedHandle;
 };
 
 } // namespace rg

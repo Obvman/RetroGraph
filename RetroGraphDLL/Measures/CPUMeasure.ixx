@@ -80,7 +80,7 @@ private:
 
     std::chrono::milliseconds m_uptime{ 0 };
     std::string m_cpuName{ "" };
-    RefreshProcHandle m_refreshProcHandle;
+    ConfigRefreshedCallbackHandle m_configChangedHandle;
 };
 
 } // namespace rg

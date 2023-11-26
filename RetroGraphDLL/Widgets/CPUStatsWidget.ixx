@@ -25,7 +25,7 @@ public:
 private:
     auto createCoreGraphs(const CPUMeasure& cpuMeasure);
 
-    PostUpdateCallback::Handle RegisterPostUpdateCallback();
+    PostUpdateCallbackHandle RegisterPostUpdateCallback();
     void drawCoreGraphs() const;
     void drawStats() const;
     void drawNoInfoState() const;
@@ -37,7 +37,7 @@ private:
 
     std::vector<LineGraph> m_coreGraphs;
 
-    PostUpdateCallback::Handle m_postUpdateHandle;
+    PostUpdateCallbackHandle m_postUpdateHandle;
 };
 
 } // namespace rg

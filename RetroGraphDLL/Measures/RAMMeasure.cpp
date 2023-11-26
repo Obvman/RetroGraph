@@ -4,8 +4,8 @@ namespace rg {
 
 RAMMeasure::RAMMeasure()
     : m_dataSize{ UserSettings::inst().getVal<int>("Widgets-RAMGraph.NumUsageSamples") }
-    , m_refreshProcHandle{
-        UserSettings::inst().registerRefreshProc(
+    , m_configChangedHandle{
+        UserSettings::inst().configChanged.append(
             [&]() {
                 const int newDataSize{ UserSettings::inst().getVal<int>("Widgets-RAMGraph.NumUsageSamples") };
                 if (m_dataSize != newDataSize) {
@@ -23,7 +23,7 @@ RAMMeasure::RAMMeasure()
 }
 
 RAMMeasure::~RAMMeasure() {
-    UserSettings::inst().releaseRefreshProc(m_refreshProcHandle);
+    UserSettings::inst().configChanged.remove(m_configChangedHandle);
 }
 
 void RAMMeasure::update(int) {

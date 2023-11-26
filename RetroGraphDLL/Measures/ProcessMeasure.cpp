@@ -12,8 +12,8 @@ namespace rg {
 ProcessMeasure::ProcessMeasure()
     : m_numCPUProcessesToDisplay{ UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesCPU.NumProcessesDisplayed") }
     , m_numRAMProcessesToDisplay{ UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesRAM.NumProcessesDisplayed") }
-    , m_refreshProcHandle{
-        UserSettings::inst().registerRefreshProc(
+    , m_configChangedHandle{
+        UserSettings::inst().configChanged.append(
             [&]() {
                 m_numCPUProcessesToDisplay = UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesCPU.NumProcessesDisplayed");
                 m_numRAMProcessesToDisplay = UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesRAM.NumProcessesDisplayed");
@@ -36,7 +36,7 @@ ProcessMeasure::ProcessMeasure()
 }
 
 ProcessMeasure::~ProcessMeasure() {
-    UserSettings::inst().releaseRefreshProc(m_refreshProcHandle);
+    UserSettings::inst().configChanged.remove(m_configChangedHandle);
 }
 
 void ProcessMeasure::update(int ticks) {

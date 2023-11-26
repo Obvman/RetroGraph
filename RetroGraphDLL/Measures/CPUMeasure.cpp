@@ -12,8 +12,8 @@ unsigned long long fileTimeToInt64(const FILETIME & ft) {
 CPUMeasure::CPUMeasure()
     : m_dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-CPUGraph.NumUsageSamples") }
     , m_usageData( m_dataSize, 0.0f )
-    , m_refreshProcHandle{
-        UserSettings::inst().registerRefreshProc(
+    , m_configChangedHandle{
+        UserSettings::inst().configChanged.append(
             [&]() {
                 const size_t newDataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-CPUGraph.NumUsageSamples") };
                 if (m_dataSize != newDataSize) {
@@ -34,7 +34,7 @@ CPUMeasure::CPUMeasure()
 }
 
 CPUMeasure::~CPUMeasure() {
-    UserSettings::inst().releaseRefreshProc(m_refreshProcHandle);
+    UserSettings::inst().configChanged.remove(m_configChangedHandle);
 }
 
 void CPUMeasure::update(int) {

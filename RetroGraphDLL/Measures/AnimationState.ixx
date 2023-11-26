@@ -47,7 +47,7 @@ private:
     Cells m_cells;
 
     int m_animationFPS;
-    RefreshProcHandle m_refreshProcHandle;
+    ConfigRefreshedCallbackHandle m_configChangedHandle;
 
     friend struct Particle;
 };

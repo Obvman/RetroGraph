@@ -31,7 +31,7 @@ CPUStatsWidget::~CPUStatsWidget() {
     m_cpuMeasure->postUpdate.remove(m_postUpdateHandle);
 }
 
-PostUpdateCallback::Handle CPUStatsWidget::RegisterPostUpdateCallback() {
+PostUpdateCallbackHandle CPUStatsWidget::RegisterPostUpdateCallback() {
     return m_cpuMeasure->postUpdate.append(
         [this]() {
             if (m_coreGraphs.size() != m_cpuMeasure->getPerCoreUsageData().size()) {

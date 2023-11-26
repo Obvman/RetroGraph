@@ -53,7 +53,7 @@ private:
     MEMORYSTATUSEX m_memStatus{ };
     int m_dataSize{ 40 }; // max number of usage percentages to store
     std::vector<float> m_usageData{ };
-    RefreshProcHandle m_refreshProcHandle;
+    ConfigRefreshedCallbackHandle m_configChangedHandle;
 };
 
 } // namespace rg

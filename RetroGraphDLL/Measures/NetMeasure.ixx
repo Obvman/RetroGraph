@@ -59,7 +59,7 @@ private:
     size_t m_dataSize{ 40U };
     std::vector<int64_t> m_downBytes{ };
     std::vector<int64_t> m_upBytes{ };
-    RefreshProcHandle m_refreshProcHandle;
+    ConfigRefreshedCallbackHandle m_configChangedHandle;
 };
 
 } // namespace rg

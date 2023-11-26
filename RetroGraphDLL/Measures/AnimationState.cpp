@@ -12,8 +12,8 @@ AnimationState::AnimationState()
     , m_particleLines{}
     , m_numLines{ 0 }
     , m_animationFPS{ UserSettings::inst().getVal<int>("Widgets-Main.FPS") }
-    , m_refreshProcHandle{
-        UserSettings::inst().registerRefreshProc(
+    , m_configChangedHandle{
+        UserSettings::inst().configChanged.append(
             [&]() {
                 m_animationFPS = UserSettings::inst().getVal<int>("Widgets-Main.FPS");
                 FPSLimiter::inst().setMaxFPS(m_animationFPS);
@@ -25,7 +25,7 @@ AnimationState::AnimationState()
 }
 
 AnimationState::~AnimationState() {
-    UserSettings::inst().releaseRefreshProc(m_refreshProcHandle);
+    UserSettings::inst().configChanged.remove(m_configChangedHandle);
 }
 
 auto AnimationState::createParticles() -> decltype(m_particles) {
