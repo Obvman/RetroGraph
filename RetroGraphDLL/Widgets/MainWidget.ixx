@@ -55,11 +55,11 @@ private:
     std::shared_ptr<const AnimationState> m_animationState;
 
     VAO m_particleLinesVAO;
-    mutable VBO<ParticleLine> m_particleLinesVBO; //#TODO mutable
+    VBO m_particleLinesVBO;
     Shader m_particleLinesShader;
 
     VAO m_particleVAO;
-    mutable VBO<ParticleRenderData> m_particleVBO; // #TODO mutable
+    mutable OwningVBO<ParticleRenderData> m_particleVBO; // #TODO mutable
     Shader m_particleShader;
 };
 

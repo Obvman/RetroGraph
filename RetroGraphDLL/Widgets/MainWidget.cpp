@@ -1,7 +1,6 @@
 module Widgets.MainWidget;
 
 import Colors;
-import Colors;
 import Units;
 
 import Rendering.DrawUtils;
@@ -14,10 +13,10 @@ MainWidget::MainWidget(const FontManager* fontManager, std::shared_ptr<const Ani
     : Widget{ fontManager }
     , m_animationState{ animationState }
     , m_particleLinesVAO{}
-    , m_particleLinesVBO{ GL_ARRAY_BUFFER }
+    , m_particleLinesVBO{ GL_ARRAY_BUFFER, GL_STREAM_DRAW }
     , m_particleLinesShader{ "particleLine" }
     , m_particleVAO{}
-    , m_particleVBO{ GL_ARRAY_BUFFER }
+    , m_particleVBO{ static_cast<GLsizei>(m_animationState->getParticles().size()), GL_ARRAY_BUFFER, GL_STREAM_DRAW }
     , m_particleShader{ "particle" } {
 
     createParticleLinesVAO(maxLines);
@@ -28,8 +27,7 @@ MainWidget::MainWidget(const FontManager* fontManager, std::shared_ptr<const Ani
 }
 
 bool MainWidget::needsDraw(int ticks) const {
-    // Only draw if visible and we need to draw to keep
-    // up with the animation framerate
+    // Only draw if we need to draw to keep // up with the animation framerate
     if ((ticks != 0 &&
          ticks % std::lround(static_cast<float>(rg::ticksPerSecond) / m_animationState->getAnimationFPS()) != 0)) {
 
@@ -75,10 +73,9 @@ void MainWidget::createParticleVAO() {
     constexpr GLuint vertexLocationIndex{ 0 };
     constexpr GLuint scaleLocationIndex{ 1 };
 
-    m_particleVBO.reserve(m_animationState->getParticles().size());
-    auto& verts{ m_particleVBO.data };
-    for (const auto& particle : m_animationState->getParticles()) {
-        verts.emplace_back(particle);
+    auto& verts{ m_particleVBO.data() };
+    for (int i{ 0 }; i < m_animationState->getParticles().size(); ++i) {
+        verts[i] = m_animationState->getParticles()[i];
     }
 
     auto vaoScope{ m_particleVAO.bind() };
@@ -91,7 +88,7 @@ void MainWidget::createParticleVAO() {
     glVertexAttribPointer(scaleLocationIndex, 1, GL_FLOAT, GL_FALSE, m_particleVBO.elemBytes(),
                           reinterpret_cast<GLvoid*>(sizeof(glm::vec2)));
 
-    glBufferData(GL_ARRAY_BUFFER, m_particleVBO.sizeBytes(), verts.data(), GL_STATIC_DRAW);
+    m_particleVBO.bufferData();
 }
 
 void MainWidget::createParticleLinesVAO(size_t numLines) {
@@ -99,8 +96,6 @@ void MainWidget::createParticleLinesVAO(size_t numLines) {
     constexpr GLuint lineLengthLocationIndex{ 1 };
 
     auto vaoScope{ m_particleLinesVAO.bind() };
-
-    m_particleLinesVBO.resize(numLines);
     auto vboScope{ m_particleLinesVBO.bind() };
 
     glEnableVertexAttribArray(vertexLocationIndex);
@@ -110,11 +105,11 @@ void MainWidget::createParticleLinesVAO(size_t numLines) {
     glVertexAttribPointer(lineLengthLocationIndex, 1, GL_FLOAT, GL_FALSE,
                           3 * sizeof(GLfloat), reinterpret_cast<GLvoid*>(sizeof(glm::vec2)));
 
-    glBufferData(GL_ARRAY_BUFFER, m_particleLinesVBO.sizeBytes(), m_particleLinesVBO.data.data(), GL_STREAM_DRAW);
+    m_particleLinesVBO.bufferData(numLines * sizeof(ParticleLine), m_animationState->getLines().data());
 }
 
 void MainWidget::updateParticleVAO() const {
-    auto& verts{ m_particleVBO.data };
+    auto& verts{ m_particleVBO.data() };
     for (int i{ 0 }; i < m_animationState->getParticles().size(); ++i) {
         const auto& particle{ m_animationState->getParticles()[i] };
         verts[i].position = { particle.x, particle.y };
@@ -123,21 +118,15 @@ void MainWidget::updateParticleVAO() const {
     auto vaoScope{ m_particleVAO.bind() };
     auto vboScope{ m_particleVBO.bind() };
 
-    glBufferSubData(GL_ARRAY_BUFFER, 0,  m_particleVBO.sizeBytes(), verts.data());
+    m_particleVBO.bufferSubData(0,  m_particleVBO.sizeBytes());
 }
 
 void MainWidget::updateParticleLinesVAO() const {
-    const auto numLines{ m_animationState->getNumLines() };
-
-    auto& verts{ m_particleLinesVBO.data };
-    for (int i = 0; i < numLines; ++i) {
-        verts[i] = m_animationState->getLines()[i];
-    }
-
     auto vaoScope{ m_particleLinesVAO.bind() };
     auto vboScope{ m_particleLinesVBO.bind() };
 
-    glBufferSubData(GL_ARRAY_BUFFER, 0, numLines * m_particleLinesVBO.elemBytes(), verts.data());
+    m_particleLinesVBO.bufferSubData(0, m_animationState->getNumLines() * sizeof(ParticleLine),
+                                     m_animationState->getLines().data());
 }
 
 void MainWidget::updateShaderModelMatrix(const Shader& shader) const {

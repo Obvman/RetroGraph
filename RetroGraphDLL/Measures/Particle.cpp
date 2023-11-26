@@ -15,7 +15,6 @@ Particle::Particle()
     , cellY{ static_cast<int>((y + 1.0f) / cellSize) } {
 }
 
-// TODO this is bugged, particles get stuck in the corners of the window
 void Particle::update(Cells& cells, float dt) {
     x += speed * dirX * dt;
     y += speed * dirY * dt;
@@ -24,11 +23,11 @@ void Particle::update(Cells& cells, float dt) {
     bool teleported{ false };
     if (x < particleMinPos) {
         x = particleMaxPos;
-        y = -y;
+        y = std::clamp(-y, particleMinPos, particleMaxPos);
         teleported = true;
     } else if (x > particleMaxPos) {
         x = particleMinPos;
-        y = -y;
+        y = std::clamp(-y, particleMinPos, particleMaxPos);
         teleported = true;
     } 
 
@@ -36,10 +35,10 @@ void Particle::update(Cells& cells, float dt) {
     // otherwise we'll just put the particle back in the same spot and it will be stuck forever
     if (!teleported) {
         if (y < particleMinPos) {
-            x = -x;
+            x = std::clamp(-x, particleMinPos, particleMaxPos);
             y = particleMaxPos;
         } else if (y > particleMaxPos) {
-            x = -x;
+            x = std::clamp(-x, particleMinPos, particleMaxPos);
             y = particleMinPos;
         }
     }

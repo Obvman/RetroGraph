@@ -6,10 +6,13 @@ import "GLHeaderUnit.h";
 
 namespace rg {
 
+constexpr auto numGridVertLines = size_t{ 14U };
+constexpr auto numGridHorizLines = size_t{ 7U };
+
 LineGraph::LineGraph(size_t numGraphSamples, const glm::vec4& color, bool drawBackground)
-    : m_graphPointsVBO{ static_cast<GLsizei>(numGraphSamples), GL_ARRAY_BUFFER }
-    , m_graphGridVerts{ GL_ARRAY_BUFFER }
-    , m_graphGridIndices{ GL_ELEMENT_ARRAY_BUFFER }
+    : m_graphPointsVBO{ static_cast<GLsizei>(numGraphSamples), GL_ARRAY_BUFFER, GL_STREAM_DRAW }
+    , m_graphGridVerts{ static_cast<GLsizei>(2 * (numGridVertLines + numGridHorizLines)), GL_ARRAY_BUFFER, GL_STATIC_DRAW }
+    , m_graphGridIndices{ static_cast<GLsizei>(2 * (numGridVertLines + numGridHorizLines)), GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW }
     , m_color{ color }
     , m_drawBackground{ drawBackground } {
 
@@ -29,7 +32,7 @@ void LineGraph::draw() const {
 }
 
 void LineGraph::updatePoints(const std::vector<GLfloat>& values) const {
-    auto& verts{ m_graphPointsVBO.data };
+    auto& verts{ m_graphPointsVBO.data()};
     auto vboScope{ m_graphPointsVBO.bind() };
 
     // Value vectors can change size (infrequently).
@@ -42,65 +45,54 @@ void LineGraph::updatePoints(const std::vector<GLfloat>& values) const {
                          values[i] * 2.0f - 1.0f };
         }
 
-        glBufferData(GL_ARRAY_BUFFER, m_graphPointsVBO.sizeBytes(), verts.data(), GL_STREAM_DRAW);
+        m_graphPointsVBO.bufferData();
     } else {
         for (size_t i = 0; i < values.size(); ++i) {
             verts[i] = { (static_cast<GLfloat>(i) / (values.size() - 1)) * 2.0f - 1.0f,
                          values[i] * 2.0f - 1.0f };
         }
 
-        glBufferSubData(GL_ARRAY_BUFFER, 0, m_graphPointsVBO.sizeBytes(), verts.data());
+        m_graphPointsVBO.bufferSubData(0, m_graphPointsVBO.sizeBytes());
     }
 }
 
 void LineGraph::initGridVBO() {
-    constexpr auto numVertLines = size_t{ 14U };
-    constexpr auto numHorizLines = size_t{ 7U };
-
-    auto& verts{ m_graphGridVerts.data };
-    verts.reserve(4 * (numVertLines + numHorizLines));
-    auto& indices{ m_graphGridIndices.data };
-    indices.reserve(2 * (numVertLines + numHorizLines));
+    auto& verts{ m_graphGridVerts.data()};
+    auto& indices{ m_graphGridIndices.data()};
 
     // Fill the vertex and index arrays with data for drawing grid as VBO
-    for (unsigned int i = 0U; i < numVertLines; ++i) {
-        const float x{ (i) / static_cast<float>(numVertLines - 1) * 2.0f - 1.0f };
-        verts.push_back(x);
-        verts.push_back(1.0f); // Vertical line top vert
+    for (unsigned int i = 0U; i < numGridVertLines; ++i) {
+        const float x{ (i) / static_cast<float>(numGridVertLines - 1) * 2.0f - 1.0f };
+        verts[2 * i]     = { x, 1.0f }; // Vertical line top vert
+        verts[2 * i + 1] = { x, -1.0f }; // Vertical line bottom vert
 
-        verts.push_back(x);
-        verts.push_back(-1.0f); // Vertical line bottom vert
-
-        indices.push_back(2 * i);
-        indices.push_back(2 * i + 1);
+        indices[2 * i] = 2 * i;
+        indices[2 * i + 1] = 2 * i + 1;
     }
 
     // Offset value for the index array
-    const auto vertLineIndexCount{ static_cast<unsigned int>(indices.size()) };
-    for (unsigned int i = 0U; i < numHorizLines; ++i) {
-        const float y{ static_cast<float>(i) / (numHorizLines - 1) * 2.0f - 1.0f };
-        verts.push_back(-1.0f);
-        verts.push_back(y); // Horizontal line left vert
+    const auto vertLineIndexCount{ numGridVertLines * 2 };
+    for (unsigned int i = 0U; i < numGridHorizLines; ++i) {
+        const float y{ static_cast<float>(i) / (numGridHorizLines - 1) * 2.0f - 1.0f };
+        verts[2 * (i + numGridVertLines)]     = { -1.0f, y }; // Horizontal line left vert
+        verts[2 * (i + numGridVertLines) + 1] = { 1.0f, y }; // Horizontal line right vert
 
-        verts.push_back(1.0f);
-        verts.push_back(y); // Horizontal line right vert
-
-        indices.push_back(vertLineIndexCount + 2 * i);
-        indices.push_back(vertLineIndexCount + 2 * i + 1);
+        indices[2 * (i + numGridVertLines)] = vertLineIndexCount + 2 * i;
+        indices[2 * (i + numGridVertLines) + 1] = vertLineIndexCount + 2 * i + 1;
     }
 
     // Initialise the graph grid VBO
     auto vertsVBOScope{ m_graphGridVerts.bind() };
-    glBufferData(GL_ARRAY_BUFFER, m_graphGridVerts.sizeBytes(), verts.data(), GL_STATIC_DRAW);
+    m_graphGridVerts.bufferData();
 
     // Initialise graph grid index array
     auto indicesVBOScope{ m_graphGridIndices.bind() };
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_graphGridIndices.sizeBytes(), indices.data(), GL_STATIC_DRAW);
+    m_graphGridIndices.bufferData();
 }
 
 void LineGraph::initPointsVBO() {
     auto vboScope{ m_graphPointsVBO.bind() };
-    glBufferData(GL_ARRAY_BUFFER, m_graphPointsVBO.sizeBytes(), m_graphPointsVBO.data.data(), GL_STREAM_DRAW);
+    m_graphPointsVBO.bufferData();
 }
 
 void LineGraph::drawGrid() const {

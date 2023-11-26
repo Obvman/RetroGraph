@@ -28,9 +28,9 @@ private:
     void drawGrid() const;
     void drawPoints() const;
 
-    VBO<GLfloat> m_graphGridVerts;
-    VBO<GLuint> m_graphGridIndices;
-    mutable VBO<glm::vec2> m_graphPointsVBO; // #TODO mutable
+    OwningVBO<glm::vec2> m_graphGridVerts;
+    OwningVBO<GLuint> m_graphGridIndices;
+    mutable OwningVBO<glm::vec2> m_graphPointsVBO; // #TODO mutable
     glm::vec4 m_color;
     bool m_drawBackground;
 };
