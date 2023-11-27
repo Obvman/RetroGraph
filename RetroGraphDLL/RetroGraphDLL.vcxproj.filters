@@ -168,9 +168,6 @@
     <ClCompile Include="Rendering\FontManager.ixx">
       <Filter>Modules\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="VBO.ixx">
-      <Filter>Modules\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="RGAssert.h">
       <Filter>Header Units</Filter>
     </ClCompile>
@@ -323,6 +320,9 @@
     </ClCompile>
     <ClCompile Include="EventppHeaderUnit.h">
       <Filter>Header Units</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\VBO.ixx">
+      <Filter>Modules\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

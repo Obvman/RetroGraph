@@ -25,10 +25,10 @@ public:
 private:
     auto createCoreGraphs(const CPUMeasure& cpuMeasure);
 
-    PostUpdateCallbackHandle RegisterPostUpdateCallback();
     void drawCoreGraphs() const;
     void drawStats() const;
     void drawNoInfoState() const;
+    PostUpdateCallbackHandle RegisterPostUpdateCallback();
 
     Viewport m_coreGraphViewport{ };
     Viewport m_statsViewport{ };

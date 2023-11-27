@@ -211,6 +211,7 @@
     <ClCompile Include="Rendering\Shader.cpp" />
     <ClCompile Include="Rendering\Shader.ixx" />
     <ClCompile Include="Rendering\VAO.ixx" />
+    <ClCompile Include="Rendering\VBO.ixx" />
     <ClCompile Include="Rendering\Viewport.ixx" />
     <ClCompile Include="RetroGraph.cpp" />
     <ClCompile Include="RetroGraphDLL.cpp" />
@@ -240,7 +241,6 @@
     <ClCompile Include="UserSettings.ixx" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Utils.ixx" />
-    <ClCompile Include="VBO.ixx" />
     <ClCompile Include="Widgets\CPUStatsWidget.cpp" />
     <ClCompile Include="Widgets\CPUStatsWidget.ixx" />
     <ClCompile Include="Widgets\FPSWidget.cpp" />

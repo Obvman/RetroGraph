@@ -13,15 +13,19 @@ GraphWidget::GraphWidget(const FontManager* fontManager, size_t numGraphSamples)
 
 GPUGraphWidget::GPUGraphWidget(const FontManager* fontManager, std::shared_ptr<const GPUMeasure> gpuMeasure)
     : GraphWidget{ fontManager, gpuMeasure->getUsageData().size() }
-    , m_gpuMeasure{ gpuMeasure } {
+    , m_gpuMeasure{ gpuMeasure }
+    , m_postUpdateHandle{ RegisterPostUpdateCallback() } {
 
+}
+
+GPUGraphWidget::~GPUGraphWidget() {
+    m_gpuMeasure->postUpdate.remove(m_postUpdateHandle);
 }
 
 void GPUGraphWidget::draw() const {
     if (m_gpuMeasure->isEnabled()) {
         // Set the viewport for the graph to be left section
         glViewport(m_viewport.x, m_viewport.y, (m_viewport.width * 4) / 5, m_viewport.height);
-        m_graph.updatePoints(m_gpuMeasure->getUsageData());
         m_graph.draw();
     }
 
@@ -37,17 +41,29 @@ void GPUGraphWidget::draw() const {
                              RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
 }
 
+PostUpdateCallbackHandle GPUGraphWidget::RegisterPostUpdateCallback() {
+    return m_gpuMeasure->postUpdate.append(
+        [this]() {
+            if (m_gpuMeasure->isEnabled()) {
+                m_graph.updatePoints(m_gpuMeasure->getUsageData());
+            }
+        });
+}
 
 CPUGraphWidget::CPUGraphWidget(const FontManager* fontManager, std::shared_ptr<const CPUMeasure> cpuMeasure)
     : GraphWidget{ fontManager, cpuMeasure->getUsageData().size() }
-    , m_cpuMeasure{ cpuMeasure } {
+    , m_cpuMeasure{ cpuMeasure }
+    , m_postUpdateHandle{ RegisterPostUpdateCallback() } {
 
+}
+
+CPUGraphWidget::~CPUGraphWidget() {
+    m_cpuMeasure->postUpdate.remove(m_postUpdateHandle);
 }
 
 void CPUGraphWidget::draw() const {
     // Set the viewport for the graph to be left section
     glViewport(m_viewport.x, m_viewport.y, (m_viewport.width * 4)/5, m_viewport.height);
-    m_graph.updatePoints(m_cpuMeasure->getUsageData());
     m_graph.draw();
 
     // Text
@@ -62,16 +78,27 @@ void CPUGraphWidget::draw() const {
                              RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
 }
 
+PostUpdateCallbackHandle CPUGraphWidget::RegisterPostUpdateCallback() {
+    return m_cpuMeasure->postUpdate.append(
+        [this]() {
+            m_graph.updatePoints(m_cpuMeasure->getUsageData());
+        });
+}
+
 RAMGraphWidget::RAMGraphWidget(const FontManager* fontManager, std::shared_ptr<const RAMMeasure> ramMeasure)
     : GraphWidget{ fontManager, ramMeasure->getUsageData().size() }
-    , m_ramMeasure{ ramMeasure } {
+    , m_ramMeasure{ ramMeasure }
+    , m_postUpdateHandle{ RegisterPostUpdateCallback() } {
 
+}
+
+RAMGraphWidget::~RAMGraphWidget() {
+    m_ramMeasure->postUpdate.remove(m_postUpdateHandle);
 }
 
 void RAMGraphWidget::draw() const {
     // Set the viewport for the graph itself to be left section
     glViewport(m_viewport.x, m_viewport.y, (m_viewport.width*4)/5 , m_viewport.height);
-    m_graph.updatePoints(m_ramMeasure->getUsageData());
     m_graph.draw();
 
     // Set viewport for text drawing
@@ -88,37 +115,31 @@ void RAMGraphWidget::draw() const {
 
 }
 
+PostUpdateCallbackHandle RAMGraphWidget::RegisterPostUpdateCallback() {
+    return m_ramMeasure->postUpdate.append(
+        [this]() {
+            m_graph.updatePoints(m_ramMeasure->getUsageData());
+        });
+}
+
 NetGraphWidget::NetGraphWidget(const FontManager* fontManager, std::shared_ptr<const NetMeasure> netMeasure)
     : GraphWidget{ fontManager, netMeasure->getDownData().size() }
     , m_netMeasure{ netMeasure }
-    , m_netUpGraph{ m_netMeasure->getUpData().size(), { PINK1_R, PINK1_G, PINK1_B, 0.7f }, false } {
+    , m_netUpGraph{ m_netMeasure->getUpData().size(), { PINK1_R, PINK1_G, PINK1_B, 0.7f }, false }
+    , m_postUpdateHandle{ RegisterPostUpdateCallback() } {
 
     m_graph.setColor({ GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.7f });
 }
 
+NetGraphWidget::~NetGraphWidget() {
+    m_netMeasure->postUpdate.remove(m_postUpdateHandle);
+}
+
 void NetGraphWidget::draw() const {
-    // Set the viewport for the graph to be left section
-    glViewport(m_viewport.x, m_viewport.y, (m_viewport.width * 4) / 5, m_viewport.height);
 
     {// Draw the line graphs
-        const auto& downData{ m_netMeasure->getDownData() };
-        const auto& upData{ m_netMeasure->getUpData() };
-        const auto maxDownValMB{ m_netMeasure->getMaxDownValue() / static_cast<float>(MB) };
-        const auto maxUpValMB{ m_netMeasure->getMaxUpValue() / static_cast<float>(MB) };
-
-        const auto maxValMB{ std::max(maxUpValMB, maxDownValMB) };
-
-        std::vector<float> normalizedDownData(downData.size());
-        for (auto i = int{ 0 }; i < downData.size(); ++i) {
-            normalizedDownData[i] = (downData[i] / static_cast<float>(MB)) / maxValMB;
-        }
-        std::vector<float> normalizedUpData(upData.size());
-        for (auto i = int{ 0 }; i < upData.size(); ++i) {
-            normalizedUpData[i] = (upData[i] / static_cast<float>(MB)) / maxValMB;
-        }
-        m_netUpGraph.updatePoints(normalizedUpData);
-        m_graph.updatePoints(normalizedDownData);
-
+        // Set the viewport for the graph to be left section
+        glViewport(m_viewport.x, m_viewport.y, (m_viewport.width * 4) / 5, m_viewport.height);
         m_netUpGraph.draw();
         m_graph.draw();
     }
@@ -161,6 +182,29 @@ void NetGraphWidget::draw() const {
         m_fontManager->renderLine(RG_FONT_SMALL, "0B", 0, 0, m_viewport.width / 5, m_viewport.height,
                                   RG_ALIGN_BOTTOM | RG_ALIGN_LEFT);
     }
+}
+
+PostUpdateCallbackHandle NetGraphWidget::RegisterPostUpdateCallback() {
+    return m_netMeasure->postUpdate.append(
+        [this]() {
+            const auto& downData{ m_netMeasure->getDownData() };
+            const auto& upData{ m_netMeasure->getUpData() };
+            const auto maxDownValMB{ m_netMeasure->getMaxDownValue() / static_cast<float>(MB) };
+            const auto maxUpValMB{ m_netMeasure->getMaxUpValue() / static_cast<float>(MB) };
+
+            const auto maxValMB{ std::max(maxUpValMB, maxDownValMB) };
+
+            std::vector<float> normalizedDownData(downData.size());
+            for (auto i = int{ 0 }; i < downData.size(); ++i) {
+                normalizedDownData[i] = (downData[i] / static_cast<float>(MB)) / maxValMB;
+            }
+            std::vector<float> normalizedUpData(upData.size());
+            for (auto i = int{ 0 }; i < upData.size(); ++i) {
+                normalizedUpData[i] = (upData[i] / static_cast<float>(MB)) / maxValMB;
+            }
+            m_netUpGraph.updatePoints(normalizedUpData);
+            m_graph.updatePoints(normalizedDownData);
+        });
 }
 
 } // namespace rg

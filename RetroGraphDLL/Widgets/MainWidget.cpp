@@ -12,6 +12,7 @@ namespace rg {
 MainWidget::MainWidget(const FontManager* fontManager, std::shared_ptr<const AnimationState> animationState)
     : Widget{ fontManager }
     , m_animationState{ animationState }
+    , m_postUpdateHandle{ RegisterPostUpdateCallback() }
     , m_particleLinesVAO{}
     , m_particleLinesVBO{ GL_ARRAY_BUFFER, GL_STREAM_DRAW }
     , m_particleLinesShader{ "particleLine" }
@@ -24,6 +25,10 @@ MainWidget::MainWidget(const FontManager* fontManager, std::shared_ptr<const Ani
 
     updateShaderModelMatrix(m_particleShader);
     updateShaderModelMatrix(m_particleLinesShader);
+}
+
+MainWidget::~MainWidget() {
+    m_animationState->postUpdate.remove(m_postUpdateHandle);
 }
 
 bool MainWidget::needsDraw(int ticks) const {
@@ -50,8 +55,6 @@ void MainWidget::reloadShaders() {
 }
 
 void MainWidget::drawParticles() const {
-    updateParticleVAO();
-
     auto shaderScope{ m_particleShader.bind() };
     auto vaoScope{ m_particleVAO.bind() };
 
@@ -61,8 +64,6 @@ void MainWidget::drawParticles() const {
 }
 
 void MainWidget::drawParticleLines() const {
-    updateParticleLinesVAO();
-
     auto shaderScope{ m_particleLinesShader.bind() };
     auto vaoScope{ m_particleLinesVAO.bind() };
 
@@ -108,7 +109,7 @@ void MainWidget::createParticleLinesVAO(size_t numLines) {
     m_particleLinesVBO.bufferData(numLines * sizeof(ParticleLine), m_animationState->getLines().data());
 }
 
-void MainWidget::updateParticleVAO() const {
+void MainWidget::updateParticleVAO() {
     auto& verts{ m_particleVBO.data() };
     for (int i{ 0 }; i < m_animationState->getParticles().size(); ++i) {
         const auto& particle{ m_animationState->getParticles()[i] };
@@ -121,7 +122,7 @@ void MainWidget::updateParticleVAO() const {
     m_particleVBO.bufferSubData(0,  m_particleVBO.sizeBytes());
 }
 
-void MainWidget::updateParticleLinesVAO() const {
+void MainWidget::updateParticleLinesVAO() {
     auto vaoScope{ m_particleLinesVAO.bind() };
     auto vboScope{ m_particleLinesVBO.bind() };
 
@@ -137,6 +138,14 @@ void MainWidget::updateShaderModelMatrix(const Shader& shader) const {
     glm::mat4 modelMatrix{};
     modelMatrix = glm::scale(modelMatrix, { 1.2f, 1.2f, 1.0f });
     glUniformMatrix4fv(shader.getUniformLocation("model"), 1, false, glm::value_ptr(modelMatrix));
+}
+
+PostUpdateCallbackHandle MainWidget::RegisterPostUpdateCallback() {
+    return m_animationState->postUpdate.append(
+        [this]() {
+            updateParticleVAO();
+            updateParticleLinesVAO();
+        });
 }
 
 } // namespace rg

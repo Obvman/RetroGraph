@@ -32,7 +32,7 @@ void LineGraph::draw() const {
     drawPoints();
 }
 
-void LineGraph::updatePoints(const std::vector<GLfloat>& values) const {
+void LineGraph::updatePoints(const std::vector<GLfloat>& values) {
     auto& verts{ m_graphPointsVBO.data()};
     auto vboScope{ m_graphPointsVBO.bind() };
 

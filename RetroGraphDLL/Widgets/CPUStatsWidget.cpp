@@ -31,15 +31,6 @@ CPUStatsWidget::~CPUStatsWidget() {
     m_cpuMeasure->postUpdate.remove(m_postUpdateHandle);
 }
 
-PostUpdateCallbackHandle CPUStatsWidget::RegisterPostUpdateCallback() {
-    return m_cpuMeasure->postUpdate.append(
-        [this]() {
-            if (m_coreGraphs.size() != m_cpuMeasure->getPerCoreUsageData().size()) {
-                m_coreGraphs = createCoreGraphs(*m_cpuMeasure);
-            }
-        });
-}
-
 void CPUStatsWidget::setViewport(const Viewport& vp) { 
     m_viewport = vp;
     m_coreGraphViewport = {vp.x, vp.y, (vp.width / 4) * 3, vp.height};
@@ -86,19 +77,16 @@ void CPUStatsWidget::drawCoreGraphs() const {
 
     // Draw x rows of core graphs, with 2 graphs per row until all graphs
     // are drawn
-    const auto numCores{ std::max(static_cast<int>(m_cpuMeasure->getPerCoreUsageData().size()), 4) };
-    RGASSERT(numCores == m_coreGraphs.size(), "CPU core count mismatch");
+    const auto numGraphs{ static_cast<int>(m_coreGraphs.size()) };
 
-    for (int i = 0U; i < numCores; ++i) {
+    for (int i = 0U; i < numGraphs; ++i) {
         // Set the viewport for the current graph. Draws top to bottom
-        const auto yOffset{ (numCores - 1) * m_coreGraphViewport.height/numCores - 
-            i*m_coreGraphViewport.height/numCores };
+        const auto yOffset{ (numGraphs - 1) * m_coreGraphViewport.height/numGraphs - i*m_coreGraphViewport.height/numGraphs };
         glViewport(m_coreGraphViewport.x, 
                    m_coreGraphViewport.y + yOffset,
                    3 * m_coreGraphViewport.width / 4,
-                   m_coreGraphViewport.height / numCores);
+                   m_coreGraphViewport.height / numGraphs);
 
-        m_coreGraphs[i].updatePoints(m_cpuMeasure->getPerCoreUsageData()[i]);
         m_coreGraphs[i].draw();
 
         // Draw a label for the core graph
@@ -112,13 +100,28 @@ void CPUStatsWidget::drawCoreGraphs() const {
         glViewport(m_coreGraphViewport.x + 3*m_coreGraphViewport.width/4,
                    m_coreGraphViewport.y + yOffset,
                    m_coreGraphViewport.width/4,
-                   m_coreGraphViewport.height/static_cast<GLsizei>(numCores));
+                   m_coreGraphViewport.height/static_cast<GLsizei>(numGraphs));
         char tempBuff[6];
         snprintf(tempBuff, sizeof(tempBuff), "%.0fC", m_cpuMeasure->getTemp(i));
         m_fontManager->renderLine(RG_FONT_MUSIC_LARGE, tempBuff, 0, 0, 0, 0,
                                   RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_CENTERED_VERTICAL,
                                   0, 0);
     }
+}
+
+PostUpdateCallbackHandle CPUStatsWidget::RegisterPostUpdateCallback() {
+    return m_cpuMeasure->postUpdate.append(
+        [this]() {
+            if (m_coreGraphs.size() != m_cpuMeasure->getPerCoreUsageData().size()) {
+                m_coreGraphs = createCoreGraphs(*m_cpuMeasure);
+            }
+
+            const auto numCores{ static_cast<int>(m_cpuMeasure->getPerCoreUsageData().size()) };
+            RGASSERT(numCores == m_coreGraphs.size(), "CPU core count mismatch");
+            for (int i = 0U; i < numCores; ++i) {
+                m_coreGraphs[i].updatePoints(m_cpuMeasure->getPerCoreUsageData()[i]);
+            }
+        });
 }
 
 } // namespace rg

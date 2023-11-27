@@ -17,7 +17,7 @@ public:
               bool drawBackground = true);
 
     void draw() const;
-    void updatePoints(const std::vector<GLfloat>& values) const;
+    void updatePoints(const std::vector<GLfloat>& values);
 
     void setColor(glm::vec4 color) { m_color = color; }
 
@@ -30,7 +30,7 @@ private:
 
     OwningVBO<glm::vec2> m_graphGridVerts;
     OwningVBO<GLuint> m_graphGridIndices;
-    mutable OwningVBO<glm::vec2> m_graphPointsVBO; // #TODO mutable
+    OwningVBO<glm::vec2> m_graphPointsVBO;
     glm::vec4 m_color;
     bool m_drawBackground;
 };

@@ -33,7 +33,7 @@ struct ParticleRenderData {
 export class MainWidget : public Widget {
 public:
     MainWidget(const FontManager* fontManager, std::shared_ptr<const AnimationState> animationState);
-    ~MainWidget() noexcept = default;
+    ~MainWidget() noexcept;
 
     /* Checks if the widget should draw to maintain the target FPS */
     bool needsDraw(int ticks) const;
@@ -47,19 +47,22 @@ private:
     void createParticleVAO();
     void createParticleLinesVAO(size_t numLines);
 
-    void updateParticleVAO() const;
-    void updateParticleLinesVAO() const;
+    void updateParticleVAO();
+    void updateParticleLinesVAO();
 
     void updateShaderModelMatrix(const Shader& shader) const;
 
+    PostUpdateCallbackHandle RegisterPostUpdateCallback();
+
     std::shared_ptr<const AnimationState> m_animationState;
+    PostUpdateCallbackHandle m_postUpdateHandle;
 
     VAO m_particleLinesVAO;
     VBO m_particleLinesVBO;
     Shader m_particleLinesShader;
 
     VAO m_particleVAO;
-    mutable OwningVBO<ParticleRenderData> m_particleVBO; // #TODO mutable
+    OwningVBO<ParticleRenderData> m_particleVBO;
     Shader m_particleShader;
 };
 
