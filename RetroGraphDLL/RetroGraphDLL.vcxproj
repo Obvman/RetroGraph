@@ -245,6 +245,8 @@
     <ClCompile Include="Widgets\CPUStatsWidget.ixx" />
     <ClCompile Include="Widgets\FPSWidget.cpp" />
     <ClCompile Include="Widgets\FPSWidget.ixx" />
+    <ClCompile Include="Widgets\GraphGrid.cpp" />
+    <ClCompile Include="Widgets\GraphGrid.ixx" />
     <ClCompile Include="Widgets\GraphWidget.cpp" />
     <ClCompile Include="Widgets\GraphWidget.ixx" />
     <ClCompile Include="Widgets\HDDWidget.cpp" />
@@ -293,6 +295,12 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\AppIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\RetroGraph\Resources\shaders\particle.frag" />
+    <None Include="..\RetroGraph\Resources\shaders\particle.vert" />
+    <None Include="..\RetroGraph\Resources\shaders\particleLine.frag" />
+    <None Include="..\RetroGraph\Resources\shaders\particleLine.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

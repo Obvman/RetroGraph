@@ -28,6 +28,9 @@
     <Filter Include="Modules\Widgets">
       <UniqueIdentifier>{023c0db9-90cc-4bda-9b5f-a6d2778c8414}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resources\shaders">
+      <UniqueIdentifier>{1e6a2311-6c7d-417b-bacb-311e7539085c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RetroGraphDLL.cpp">
@@ -324,6 +327,12 @@
     <ClCompile Include="Rendering\VBO.ixx">
       <Filter>Modules\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="Widgets\GraphGrid.ixx">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\GraphGrid.cpp">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resources\resource.h">
@@ -342,5 +351,19 @@
     <Image Include="Resources\AppIcon.ico">
       <Filter>Resources</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\RetroGraph\Resources\shaders\particle.frag">
+      <Filter>Resources\shaders</Filter>
+    </None>
+    <None Include="..\RetroGraph\Resources\shaders\particle.vert">
+      <Filter>Resources\shaders</Filter>
+    </None>
+    <None Include="..\RetroGraph\Resources\shaders\particleLine.frag">
+      <Filter>Resources\shaders</Filter>
+    </None>
+    <None Include="..\RetroGraph\Resources\shaders\particleLine.vert">
+      <Filter>Resources\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

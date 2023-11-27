@@ -148,7 +148,7 @@ void NetGraphWidget::draw() const {
         glViewport(m_viewport.x + (4 * m_viewport.width) / 5, m_viewport.y, m_viewport.width / 5, m_viewport.height);
         glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
-        const auto maxVal{ m_netMeasure->getMaxDownValue() };
+        const auto maxVal{ std::max(m_netMeasure->getMaxDownValue(), m_netMeasure->getMaxUpValue()) };
 
         const std::string_view suffix = [maxVal]() {
             if (maxVal > 1000 * 1000)
@@ -189,9 +189,9 @@ PostUpdateCallbackHandle NetGraphWidget::RegisterPostUpdateCallback() {
         [this]() {
             const auto& downData{ m_netMeasure->getDownData() };
             const auto& upData{ m_netMeasure->getUpData() };
+
             const auto maxDownValMB{ m_netMeasure->getMaxDownValue() / static_cast<float>(MB) };
             const auto maxUpValMB{ m_netMeasure->getMaxUpValue() / static_cast<float>(MB) };
-
             const auto maxValMB{ std::max(maxUpValMB, maxDownValMB) };
 
             std::vector<float> normalizedDownData(downData.size());

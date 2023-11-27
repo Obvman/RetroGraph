@@ -228,10 +228,6 @@
   <ItemGroup>
     <None Include="Resources\config.ini" />
     <None Include="Resources\default_config.ini" />
-    <None Include="Resources\shaders\particle.frag" />
-    <None Include="Resources\shaders\particle.vert" />
-    <None Include="Resources\shaders\particleLine.frag" />
-    <None Include="Resources\shaders\particleLine.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

@@ -4,6 +4,8 @@ import Colors;
 
 import Rendering.VBO;
 
+import Widgets.GraphGrid;
+
 import std.core;
 
 import "GLHeaderUnit.h";
