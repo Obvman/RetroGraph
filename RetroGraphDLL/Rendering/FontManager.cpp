@@ -189,62 +189,6 @@ void FontManager::renderLines(RGFONTCODE fontCode,
     glViewport(vp[0], vp[1], vp[2], vp[3]);
 }
 
-void FontManager::renderLines(RGFONTCODE fontCode,
-                              const std::vector<std::string_view>& lines,
-                              int areaX,
-                              int areaY,
-                              int areaWidth,
-                              int areaHeight,
-                              int alignFlags,
-                              int alignMarginX /*=10U*/,
-                              int alignMarginY /*=10U*/) const {
-    GLint vp[4];
-    glGetIntegerv(GL_VIEWPORT, vp);
-
-    /* If width and height are given default values, use the current viewport 
-       as area */
-    if (areaWidth == 0 && areaHeight == 0 && areaX == 0 && areaY == 0) {
-        areaWidth = vp[2];
-        areaHeight = vp[3];
-    } else {
-        glViewport(vp[0] + areaX, vp[1] + areaY, areaWidth, areaHeight);
-    }
-
-    // Set the Y position of the first line according to alignment rules
-    const auto renderHeight{ areaHeight - alignMarginY * 2 };
-    const auto fontHeight{ m_fontCharHeights[fontCode] };
-    const auto rasterLineDeltaY{ (renderHeight - fontHeight) / (static_cast<int>(lines.size()) - 1) };
-
-    // Start at top, render downwards
-    auto rasterYPx = int{ areaHeight - alignMarginY - fontHeight };
-    if (alignFlags & RG_ALIGN_CENTERED_VERTICAL) {
-        // Default behaviour
-    } else if (alignFlags & RG_ALIGN_TOP) {
-        // TODO
-    } else if (alignFlags & RG_ALIGN_BOTTOM) {
-        // TODO
-    }
-
-    for (const auto str : lines) {
-        // Handle X alignment for the string
-        const auto strWidthPx{ calculateStringWidth(str, fontCode) };
-
-        const auto rasterX{ getRasterXAlignment(alignFlags, strWidthPx,
-                                                areaWidth, alignMarginX) };
-        const auto rasterY{ pixelsToVPCoords(rasterYPx, areaHeight) };
-
-        // Draw the string
-        glRasterPos2f(rasterX, rasterY);
-        glListBase(m_fontBases[fontCode]);
-        glCallLists(static_cast<GLsizei>(str.size()), GL_UNSIGNED_BYTE, str.data());
-
-        // Set the raster position to the next line
-        rasterYPx -= static_cast<decltype(rasterYPx)>(rasterLineDeltaY);
-    }
-
-    glViewport(vp[0], vp[1], vp[2], vp[3]);
-}
-
 void FontManager::initFonts(int windowHeight) {
     /* List of fonts for quick experimentation */
     const char* const typefaces[] = {

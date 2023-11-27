@@ -14,13 +14,16 @@ namespace rg {
 export class NetStatsWidget : public Widget {
 public:
     NetStatsWidget(const FontManager* fontManager, std::shared_ptr<const NetMeasure> netMeasure);
-    ~NetStatsWidget() noexcept = default;
+    ~NetStatsWidget() noexcept;
 
     void draw() const override;
 
 private:
+    PostUpdateCallbackHandle RegisterPostUpdateCallback();
+
     std::shared_ptr<const NetMeasure> m_netMeasure;
     std::vector<std::string> m_statsStrings;
+    PostUpdateCallbackHandle m_postUpdateHandle;
 };
 
 } // namespace rg

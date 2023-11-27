@@ -78,13 +78,6 @@ public:
                      int alignMarginX = 10U,
                      int alignMarginY = 10U) const;
 
-    void renderLines(RGFONTCODE fontCode,
-                     const std::vector<std::string_view>& lines,
-                     int areaX, int areaY, int areaWidth, int areaHeight,
-                     int alignFlags = RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_CENTERED_VERTICAL,
-                     int alignMarginX = 10U,
-                     int alignMarginY = 10U) const;
-
 private:
     void initFonts(int windowHeight);
 
