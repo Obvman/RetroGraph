@@ -123,7 +123,7 @@
     <ClCompile Include="Widgets\FPSWidget.ixx">
       <Filter>Modules\Widgets</Filter>
     </ClCompile>
-    <ClCompile Include="Widgets\GraphWidget.ixx">
+    <ClCompile Include="Widgets\RAMGraphWidget.ixx">
       <Filter>Modules\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="Widgets\HDDWidget.ixx">
@@ -252,7 +252,7 @@
     <ClCompile Include="Widgets\WidgetPosition.ixx">
       <Filter>Modules\Widgets</Filter>
     </ClCompile>
-    <ClCompile Include="Widgets\GraphWidget.cpp">
+    <ClCompile Include="Widgets\RAMGraphWidget.cpp">
       <Filter>Modules\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="Widgets\HDDWidget.cpp">
@@ -331,6 +331,30 @@
       <Filter>Modules\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="Widgets\GraphGrid.cpp">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\MirrorLineGraph.ixx">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\MirrorLineGraph.cpp">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\NetGraphWidget.ixx">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\NetGraphWidget.cpp">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\CPUGraphWidget.cpp">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\CPUGraphWidget.ixx">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\GPUGraphWidget.cpp">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\GPUGraphWidget.ixx">
       <Filter>Modules\Widgets</Filter>
     </ClCompile>
   </ItemGroup>

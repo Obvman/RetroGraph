@@ -103,7 +103,7 @@ void CPUStatsWidget::drawCoreGraphs() const {
                    m_coreGraphViewport.height/static_cast<GLsizei>(numGraphs));
         char tempBuff[6];
         snprintf(tempBuff, sizeof(tempBuff), "%.0fC", m_cpuMeasure->getTemp(i));
-        m_fontManager->renderLine(RG_FONT_MUSIC_LARGE, tempBuff, 0, 0, 0, 0,
+        m_fontManager->renderLine(RG_FONT_SMALL, tempBuff, 0, 0, 0, 0,
                                   RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_CENTERED_VERTICAL,
                                   0, 0);
     }

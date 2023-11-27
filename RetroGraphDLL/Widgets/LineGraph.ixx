@@ -14,27 +14,18 @@ namespace rg {
 
 export class LineGraph {
 public:
-    LineGraph(size_t numGraphSamples,
-              const glm::vec4& color = { GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A },
-              bool drawBackground = true);
+    LineGraph(size_t numGraphSample);
 
-    void draw() const;
     void updatePoints(const std::vector<GLfloat>& values);
-
-    void setColor(glm::vec4 color) { m_color = color; }
+    void draw() const;
 
 private:
-    void initGridVBO();
     void initPointsVBO();
 
-    void drawGrid() const;
     void drawPoints() const;
 
-    OwningVBO<glm::vec2> m_graphGridVerts;
-    OwningVBO<GLuint> m_graphGridIndices;
+    GraphGrid m_graphGrid;
     OwningVBO<glm::vec2> m_graphPointsVBO;
-    glm::vec4 m_color;
-    bool m_drawBackground;
 };
 
 }

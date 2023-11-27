@@ -43,7 +43,7 @@ export {
     constexpr float TEXT_R{ WHITE_R };
     constexpr float TEXT_G{ WHITE_G };
     constexpr float TEXT_B{ WHITE_B };
-    constexpr float TEXT_A{ 0.7f };
+    constexpr float TEXT_A{ 0.5f };
 
     constexpr float WARNING_TEXT_R{ RED_R };
     constexpr float WARNING_TEXT_G{ RED_G };
@@ -87,18 +87,14 @@ export {
     constexpr float BGCOLOR_B{ BLACK_B };
     constexpr float BGCOLOR_A{ 0.0f };
 
-    constexpr float BARFILLED_R{ WHITE_R };
-    constexpr float BARFILLED_G{ WHITE_G };
-    constexpr float BARFILLED_B{ WHITE_B };
+    constexpr float BARFILLED_R{ TEXT_R };
+    constexpr float BARFILLED_G{ TEXT_G };
+    constexpr float BARFILLED_B{ TEXT_B };
+    constexpr float BARFILLED_A{ TEXT_A };
 
     constexpr float BARFREE_R{ GREY_R };
     constexpr float BARFREE_G{ GREY_G };
     constexpr float BARFREE_B{ GREY_B };
-
-    constexpr float PARTICLE_R{ 0.8f };
-    constexpr float PARTICLE_G{ 0.8f };
-    constexpr float PARTICLE_B{ 0.8f };
-    constexpr float PARTICLE_A{ 0.5f };
 }
 
 }

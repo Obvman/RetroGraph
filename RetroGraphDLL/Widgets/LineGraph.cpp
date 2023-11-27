@@ -1,26 +1,22 @@
 module Widgets.LineGraph;
 
+import Rendering.DrawUtils;
 import Rendering.GLListContainer;
 
 import "GLHeaderUnit.h";
 
 namespace rg {
 
-LineGraph::LineGraph(size_t numGraphSamples, const glm::vec4& color, bool drawBackground)
+LineGraph::LineGraph(size_t numGraphSamples)
     : m_graphGrid{}
-    , m_graphPointsVBO{ static_cast<GLsizei>(numGraphSamples), GL_ARRAY_BUFFER, GL_STREAM_DRAW }
-    , m_color{ color }
-    , m_drawBackground{ drawBackground } {
+    , m_graphPointsVBO{ static_cast<GLsizei>(numGraphSamples), GL_ARRAY_BUFFER, GL_STREAM_DRAW } {
 
     initPointsVBO();
 }
 
 void LineGraph::draw() const {
-    if (m_drawBackground) {
-        GLListContainer::inst().drawBorder();
-        m_graphGrid.draw();
-    }
-
+    GLListContainer::inst().drawBorder();
+    m_graphGrid.draw();
     drawPoints();
 }
 
@@ -55,7 +51,7 @@ void LineGraph::initPointsVBO() {
 }
 
 void LineGraph::drawPoints() const {
-    glColor4f(m_color.x, m_color.y, m_color.z, m_color.w);
+    glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
 
     auto vboScope{ m_graphPointsVBO.bind() };
     glEnableClientState(GL_VERTEX_ARRAY);

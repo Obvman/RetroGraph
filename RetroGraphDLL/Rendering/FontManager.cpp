@@ -210,7 +210,7 @@ void FontManager::initFonts(int windowHeight) {
 
     createFont(72, FW_NORMAL, typefaces[7], RG_FONT_TIME);
 
-    createFont(7*standardFontHeight/8, FW_NORMAL, typefaces[1], RG_FONT_SMALL);
+    createFont(7*standardFontHeight/8, FW_NORMAL, typefaces[0], RG_FONT_SMALL);
 
     createFont(3*standardFontHeight/2, FW_BOLD, typefaces[0], RG_FONT_MUSIC_LARGE);
 

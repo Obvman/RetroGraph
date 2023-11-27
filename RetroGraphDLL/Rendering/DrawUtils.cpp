@@ -64,7 +64,7 @@ void drawVerticalProgressBar(float barWidth, float startY, float endY,
     const auto rangeY{ endY - startY };
 
     glBegin(GL_QUADS); {
-        glColor3f(BARFILLED_R, BARFILLED_G, BARFILLED_B);
+        glColor4f(BARFILLED_R, BARFILLED_G, BARFILLED_B, BARFILLED_A);
         glVertex2f(startX + barWidth, startY);
         glVertex2f(startX, startY);
         // Draw high percentages in warning colour gradient
@@ -90,7 +90,7 @@ void drawHorizontalProgressBar(float barWidth, float startX, float endX,
     const auto rangeX{ endX - startX };
 
     glBegin(GL_QUADS); {
-        glColor3f(BARFILLED_R, BARFILLED_G, BARFILLED_B);
+        glColor4f(BARFILLED_R, BARFILLED_G, BARFILLED_B, BARFILLED_A);
         glVertex2f(startX,                       barStartY);
         glVertex2f(startX,                       barStartY + barWidth);
         glVertex2f(startX + percentage * rangeX, barStartY + barWidth);
