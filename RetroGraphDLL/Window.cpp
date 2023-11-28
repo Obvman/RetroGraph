@@ -415,6 +415,11 @@ void Window::initOpenGL() {
     if constexpr (debugMode) {
         glEnable(GL_DEBUG_OUTPUT);
         glDebugMessageCallback(GLMessageCallback, reinterpret_cast<void*>(this));
+
+        // Filter messages about VBO memory usage
+        constexpr GLuint ignoredMessageIds[] = { 131185 };
+        glDebugMessageControl(GL_DEBUG_SOURCE_API, GL_DEBUG_TYPE_OTHER, GL_DONT_CARE,
+                              sizeof(ignoredMessageIds) / sizeof(GLuint), ignoredMessageIds, GL_FALSE);
     }
 
     glEnable(GL_ALPHA_TEST);

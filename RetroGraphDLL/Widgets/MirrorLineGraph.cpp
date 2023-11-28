@@ -5,13 +5,14 @@ import Colors;
 import Rendering.DrawUtils;
 import Rendering.GLListContainer;
 
+import Widgets.GraphGrid;
+
 import "GLHeaderUnit.h";
 
 namespace rg {
 
 MirrorLineGraph::MirrorLineGraph(size_t numTopGraphSamples, size_t numBottomGraphSamples)
-    : m_graphGrid{}
-    , m_topGraphPointsVBO{ static_cast<GLsizei>(numTopGraphSamples), GL_ARRAY_BUFFER, GL_STREAM_DRAW }
+    : m_topGraphPointsVBO{ static_cast<GLsizei>(numTopGraphSamples), GL_ARRAY_BUFFER, GL_STREAM_DRAW }
     , m_bottomGraphPointsVBO{ static_cast<GLsizei>(numBottomGraphSamples), GL_ARRAY_BUFFER, GL_STREAM_DRAW } {
 
     initPointsVBO(m_topGraphPointsVBO);
@@ -20,7 +21,7 @@ MirrorLineGraph::MirrorLineGraph(size_t numTopGraphSamples, size_t numBottomGrap
 
 void MirrorLineGraph::draw() const {
     GLListContainer::inst().drawBorder();
-    m_graphGrid.draw();
+    GraphGrid::inst().draw();
 
     auto viewport{ getGLViewport() };
 

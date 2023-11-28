@@ -357,6 +357,9 @@
     <ClCompile Include="Widgets\GPUGraphWidget.ixx">
       <Filter>Modules\Widgets</Filter>
     </ClCompile>
+    <ClCompile Include="Rendering\VBO.cpp">
+      <Filter>Modules\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resources\resource.h">

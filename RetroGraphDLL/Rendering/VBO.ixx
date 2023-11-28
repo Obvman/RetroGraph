@@ -33,35 +33,15 @@ public:
         , usage{ GL_STATIC_DRAW } {
     }
 
-    explicit VBO(GLenum target_, GLenum usage_) noexcept
-        : id{ invalidID }
-        , target{ target_ }
-        , usage{ usage_ } {
+    explicit VBO(GLenum target_, GLenum usage_) noexcept;
 
-        glGenBuffers(1, &id);
-    }
-
-    virtual ~VBO() {
-        if (id != invalidID) {
-            glDeleteBuffers(1, &id);
-        }
-    }
+    virtual ~VBO();
 
     VBO(const VBO&) = delete;
     VBO& operator=(const VBO&) = delete;
 
-    VBO(VBO&& other) { *this = std::move(other); }
-
-    VBO& operator=(VBO&& other) {
-        if (this != &other) {
-            id = other.id;
-            other.id = invalidID;
-
-            target = other.target;
-        }
-
-        return *this;
-    }
+    VBO(VBO&& other);
+    VBO& operator=(VBO&& other);
 
     VBOBindScope bind() const { return { id, target }; }
 

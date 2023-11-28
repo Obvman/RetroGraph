@@ -3,20 +3,21 @@ module Widgets.LineGraph;
 import Rendering.DrawUtils;
 import Rendering.GLListContainer;
 
+import Widgets.GraphGrid;
+
 import "GLHeaderUnit.h";
 
 namespace rg {
 
 LineGraph::LineGraph(size_t numGraphSamples)
-    : m_graphGrid{}
-    , m_graphPointsVBO{ static_cast<GLsizei>(numGraphSamples), GL_ARRAY_BUFFER, GL_STREAM_DRAW } {
+    : m_graphPointsVBO{ static_cast<GLsizei>(numGraphSamples), GL_ARRAY_BUFFER, GL_STREAM_DRAW } {
 
     initPointsVBO();
 }
 
 void LineGraph::draw() const {
     GLListContainer::inst().drawBorder();
-    m_graphGrid.draw();
+    GraphGrid::inst().draw();
     drawPoints();
 }
 

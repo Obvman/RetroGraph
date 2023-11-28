@@ -1,4 +1,6 @@
-module Widgets.LineGraph;
+module Widgets.GraphGrid;
+
+import Colors;
 
 import "GLHeaderUnit.h";
 

@@ -211,6 +211,7 @@
     <ClCompile Include="Rendering\Shader.cpp" />
     <ClCompile Include="Rendering\Shader.ixx" />
     <ClCompile Include="Rendering\VAO.ixx" />
+    <ClCompile Include="Rendering\VBO.cpp" />
     <ClCompile Include="Rendering\VBO.ixx" />
     <ClCompile Include="Rendering\Viewport.ixx" />
     <ClCompile Include="RetroGraph.cpp" />

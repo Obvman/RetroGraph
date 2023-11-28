@@ -2,8 +2,6 @@ export module Widgets.MirrorLineGraph;
 
 import Rendering.VBO;
 
-import Widgets.GraphGrid;
-
 import std.core;
 
 import "GLHeaderUnit.h";
@@ -22,8 +20,6 @@ private:
     void updatePoints(OwningVBO<glm::vec2>& vbo, const std::vector<GLfloat>& values);
 
     void drawPoints(const OwningVBO<glm::vec2>& vbo) const;
-
-    GraphGrid m_graphGrid;
 
     OwningVBO<glm::vec2> m_topGraphPointsVBO;
     OwningVBO<glm::vec2> m_bottomGraphPointsVBO;
