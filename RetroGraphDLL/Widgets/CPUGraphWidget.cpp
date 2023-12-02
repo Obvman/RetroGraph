@@ -8,7 +8,7 @@ CPUGraphWidget::CPUGraphWidget(const FontManager* fontManager, std::shared_ptr<c
     : Widget{ fontManager }
     , m_cpuMeasure{ cpuMeasure }
     , m_postUpdateHandle{ RegisterPostUpdateCallback() }
-    , m_graph{ cpuMeasure->getUsageData().size() } {
+    , m_graph{} {
 
 }
 

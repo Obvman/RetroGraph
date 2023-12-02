@@ -43,7 +43,7 @@ GLuint Shader::loadShader(const std::string& vFile, const std::string& fFile) {
         glGetShaderInfoLog(vShader, logLength, nullptr, &vertShaderError[0]);
 
         errorMessage.append(&vertShaderError[0]);
-        std::cout << &vertShaderError[0] << '\n';
+        RGERROR(errorMessage.c_str());
         return 0;
     }
 
@@ -58,7 +58,7 @@ GLuint Shader::loadShader(const std::string& vFile, const std::string& fFile) {
         glGetShaderInfoLog(fShader, logLength, nullptr, &fragShaderError[0]);
 
         errorMessage.append(&fragShaderError[0]);
-        std::cout << &fragShaderError[0] << '\n';
+        RGERROR(errorMessage.c_str());
         return 0;
     }
 

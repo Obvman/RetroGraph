@@ -1,12 +1,5 @@
 unit tests
 
-UserSettings should update when changing widgets via right-click menu. Save to settings file and read from there
-instead of .ini file.
-
-Build script take platform/configuration arguments
-
-make particle line shader. for each vertex, send the position of that vertex's partner. Calculate position + transparency.
-
 Enforce position restrictions on FPS/Graph/Main/CPUStats widgets
 
 high-performance mode - switch between low and high FPS for main widget, graphs
@@ -27,8 +20,6 @@ Allow user-defined ordering of widgets in multi-widget positions
 fix vertical text line centering
 
 network: show how many MB have been downloaded since retrograph started
-
-change font colour
 
 Music widget:
     Play/paused indication

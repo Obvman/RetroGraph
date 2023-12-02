@@ -12,9 +12,7 @@ namespace rg {
 auto CPUStatsWidget::createCoreGraphs(const CPUMeasure& cpuMeasure) {
     decltype(m_coreGraphs) coreGraphs{};
 
-    for (const auto& coreUsageData : cpuMeasure.getPerCoreUsageData()) {
-        coreGraphs.emplace_back(coreUsageData.size());
-    }
+    coreGraphs.resize(cpuMeasure.getPerCoreUsageData().size());
 
     return coreGraphs;
 }

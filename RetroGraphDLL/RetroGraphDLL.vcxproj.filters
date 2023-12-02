@@ -31,6 +31,9 @@
     <Filter Include="Resources\shaders">
       <UniqueIdentifier>{1e6a2311-6c7d-417b-bacb-311e7539085c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Modules\Core">
+      <UniqueIdentifier>{3b8b9494-7922-4d61-8caa-1e46d5e75132}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RetroGraphDLL.cpp">
@@ -360,6 +363,9 @@
     <ClCompile Include="Rendering\VBO.cpp">
       <Filter>Modules\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="Widgets\Spline.ixx">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resources\resource.h">
@@ -390,6 +396,12 @@
       <Filter>Resources\shaders</Filter>
     </None>
     <None Include="..\RetroGraph\Resources\shaders\particleLine.vert">
+      <Filter>Resources\shaders</Filter>
+    </None>
+    <None Include="..\RetroGraph\Resources\shaders\lineGraph.vert">
+      <Filter>Resources\shaders</Filter>
+    </None>
+    <None Include="..\RetroGraph\Resources\shaders\lineGraph.frag">
       <Filter>Resources\shaders</Filter>
     </None>
   </ItemGroup>

@@ -1,6 +1,5 @@
 module Rendering.DrawUtils;
 
-import UserSettings;
 import Units;
 
 import Rendering.GLListContainer;
@@ -51,9 +50,7 @@ void drawLineGraph(const std::vector<float>& data) {
 }
 
 void drawWidgetBackground() {
-    if (UserSettings::inst().getVal<bool>("Window.WidgetBackground")) {
-        GLListContainer::inst().drawWidgetBackground();
-    }
+    GLListContainer::inst().drawWidgetBackground();
 }
 
 void drawVerticalProgressBar(float barWidth, float startY, float endY,

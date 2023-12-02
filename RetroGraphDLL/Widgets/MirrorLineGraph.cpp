@@ -6,6 +6,7 @@ import Rendering.DrawUtils;
 import Rendering.GLListContainer;
 
 import Widgets.GraphGrid;
+import Widgets.Spline;
 
 import "GLHeaderUnit.h";
 
@@ -38,8 +39,8 @@ void MirrorLineGraph::draw() const {
 }
 
 void MirrorLineGraph::updatePoints(const std::vector<GLfloat>& topValues, const std::vector<GLfloat>& bottomValues) {
-    updatePoints(m_topGraphPointsVBO, topValues);
-    updatePoints(m_bottomGraphPointsVBO, bottomValues);
+    updatePointsVBO(m_topGraphPointsVBO, topValues);
+    updatePointsVBO(m_bottomGraphPointsVBO, bottomValues);
 }
 
 void MirrorLineGraph::initPointsVBO(OwningVBO<glm::vec2>& vbo) {
@@ -47,7 +48,7 @@ void MirrorLineGraph::initPointsVBO(OwningVBO<glm::vec2>& vbo) {
     vbo.bufferData();
 }
 
-void MirrorLineGraph::updatePoints(OwningVBO<glm::vec2>& vbo, const std::vector<GLfloat>& values) {
+void MirrorLineGraph::updatePointsVBO(OwningVBO<glm::vec2>& vbo, const std::vector<GLfloat>& values) {
     auto& verts{ vbo.data()};
     auto vboScope{ vbo.bind() };
 
@@ -82,6 +83,33 @@ void MirrorLineGraph::drawPoints(const OwningVBO<glm::vec2>& vbo) const {
     glDrawArrays(GL_LINE_STRIP, 0, vbo.size());
 
     glDisableClientState(GL_VERTEX_ARRAY);
+}
+
+SmoothMirrorLineGraph::SmoothMirrorLineGraph(size_t precisionPoints)
+    : MirrorLineGraph{ precisionPoints, precisionPoints }
+    , m_precisionPoints{ precisionPoints } {
+
+}
+
+void SmoothMirrorLineGraph::updatePointsVBO(OwningVBO<glm::vec2>& vbo, const std::vector<GLfloat>& values) {
+    auto& verts{ vbo.data()};
+    auto vboScope{ vbo.bind() };
+
+    std::vector<float> rawX (values.size());
+    std::vector<float> rawY (values.size());
+    for (size_t i = 0; i < values.size(); ++i) {
+        rawX[i] = (static_cast<GLfloat>(i) / (values.size() - 1)) * 2.0f - 1.0f;
+        rawY[i] = values[i] * 2.0f - 1.0f;
+    }
+
+    tk::spline spl(rawX, rawY, tk::spline::cspline_hermite);
+    for (size_t i = 0; i < m_precisionPoints; ++i) {
+        float const x{ (static_cast<float>(i) / m_precisionPoints) * 2.0f - 1.0f};
+        verts[i] = { x, std::clamp(spl(x), -1.0f, 1.0f) };
+    }
+
+    // #TODO sliding buffer so we don't need to copy/reallocate every update.
+    vbo.bufferSubData(0, vbo.sizeBytes());
 }
 
 }

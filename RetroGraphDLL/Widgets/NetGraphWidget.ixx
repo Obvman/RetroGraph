@@ -24,7 +24,7 @@ private:
 
     std::shared_ptr<const NetMeasure> m_netMeasure{ nullptr };
     PostUpdateCallbackHandle m_postUpdateHandle;
-    MirrorLineGraph m_netGraph;
+    SmoothMirrorLineGraph m_netGraph;
 };
 
 }

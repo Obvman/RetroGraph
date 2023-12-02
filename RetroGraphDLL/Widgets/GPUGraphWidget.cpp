@@ -8,7 +8,7 @@ GPUGraphWidget::GPUGraphWidget(const FontManager* fontManager, std::shared_ptr<c
     : Widget{ fontManager }
     , m_gpuMeasure{ gpuMeasure }
     , m_postUpdateHandle{ RegisterPostUpdateCallback() }
-    , m_graph{ gpuMeasure->getUsageData().size() } {
+    , m_graph{} {
 
 }
 
@@ -28,11 +28,11 @@ void GPUGraphWidget::draw() const {
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
     m_fontManager->renderLine(RG_FONT_SMALL, "0%", 0, 0, m_viewport.width/5, m_viewport.height,
-                             RG_ALIGN_BOTTOM | RG_ALIGN_LEFT, 10);
+                              RG_ALIGN_BOTTOM | RG_ALIGN_LEFT, 10);
     m_fontManager->renderLine(RG_FONT_SMALL, "GPU Load", 0, 0, m_viewport.width/5, m_viewport.height,
-                             RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT, 10);
+                              RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT, 10);
     m_fontManager->renderLine(RG_FONT_SMALL, "100%", 0, 0, m_viewport.width/5, m_viewport.height,
-                             RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
+                              RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
 }
 
 PostUpdateCallbackHandle GPUGraphWidget::RegisterPostUpdateCallback() {

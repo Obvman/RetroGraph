@@ -45,6 +45,7 @@ private:
     Viewport m_viewport;
     WidgetPosition m_pos;
     ContainerType m_type;
+    bool m_drawBackground;
 };
 
 } // namespace rg

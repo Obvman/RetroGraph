@@ -69,7 +69,7 @@ void CPUMeasure::updateCPUName() {
     if (m_cpuName.empty() && m_coreTempPlugin.getCoreTempInfoSuccess()) {
         const auto cpuName{ m_coreTempPlugin.getCPUName() };
         if (!cpuName.empty())
-            m_cpuName = "CPU: " + std::string{ cpuName };
+            m_cpuName = "CPU: " + cpuName;
     }
 }
 

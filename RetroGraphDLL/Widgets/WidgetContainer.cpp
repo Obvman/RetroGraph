@@ -1,5 +1,7 @@
 module Widgets.WidgetContainer;
 
+import UserSettings;
+
 import Rendering.DrawUtils;
 import Rendering.GLListContainer;
 
@@ -12,8 +14,10 @@ WidgetContainer::WidgetContainer(WidgetPosition p)
     : m_children{}
     , m_viewport{}
     , m_pos{ p }
-    , m_type{ getFillTypeFromPosition(p) } {
+    , m_type{ getFillTypeFromPosition(p) }
+    , m_drawBackground{ UserSettings::inst().getVal<bool>("Window.WidgetBackground") } {
 
+    // #TODO update m_drawBackground if config changes.
 }
 
 bool WidgetContainer::isVisible() const {
@@ -80,7 +84,8 @@ void WidgetContainer::draw() const {
         clear();
         for (const auto* widget : m_children) {
             setGLViewport(widget->getViewport());
-            rg::drawWidgetBackground();
+            if (m_drawBackground)
+                rg::drawWidgetBackground();
             GLListContainer::inst().drawTopAndBottomSerifs();
 
             widget->draw();

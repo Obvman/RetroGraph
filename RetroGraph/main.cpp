@@ -1,3 +1,4 @@
+import IRetroGraph;
 import RetroGraph;
 import Utils;
 import Units;
@@ -7,7 +8,7 @@ import std.core;
 import "../RetroGraphDLL/RGAssert.h";
 import "../RetroGraphDLL/WindowsHeaderUnit.h";
 
-void mainLoop(rg::RetroGraph& retroGraph);
+void mainLoop(rg::IRetroGraph& retroGraph);
 
 // Allows debug mode to show debug console, and release mode hides it
 #if _DEBUG
@@ -30,7 +31,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
     return 0;
 }
 
-void mainLoop(rg::RetroGraph& retroGraph) {
+void mainLoop(rg::IRetroGraph& retroGraph) {
     using namespace std::chrono;
 
     auto frameStartTime{ duration_cast<milliseconds>(

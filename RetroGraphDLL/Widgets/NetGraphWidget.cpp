@@ -8,7 +8,7 @@ namespace rg {
 NetGraphWidget::NetGraphWidget(const FontManager* fontManager, std::shared_ptr<const NetMeasure> netMeasure)
     : Widget{ fontManager }
     , m_netMeasure{ netMeasure }
-    , m_netGraph{ m_netMeasure->getDownData().size(), m_netMeasure->getUpData().size() }
+    , m_netGraph{}
     , m_postUpdateHandle{ RegisterPostUpdateCallback() } {
 }
 

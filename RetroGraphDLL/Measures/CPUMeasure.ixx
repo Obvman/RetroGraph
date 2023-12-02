@@ -75,7 +75,7 @@ private:
     size_t m_dataSize{ 40U };
     std::vector<float> m_usageData{};
 
-    size_t perCoreDataSize{ 80U };
+    size_t perCoreDataSize{ 40U }; // #TODO make configurable
     std::vector<std::vector<float>> m_perCoreData{};
 
     std::chrono::milliseconds m_uptime{ 0 };
