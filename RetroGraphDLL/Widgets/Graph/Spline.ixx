@@ -24,7 +24,7 @@
  *
  */
 
-export module Widgets.Spline;
+export module Widgets.Graph.Spline;
 
 import std.core;
 

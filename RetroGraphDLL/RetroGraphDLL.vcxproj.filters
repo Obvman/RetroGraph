@@ -34,6 +34,9 @@
     <Filter Include="Modules\Core">
       <UniqueIdentifier>{3b8b9494-7922-4d61-8caa-1e46d5e75132}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Modules\Widgets\Graph">
+      <UniqueIdentifier>{a0504038-f37c-4a0c-891a-7fd38ef29e45}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RetroGraphDLL.cpp">
@@ -318,29 +321,11 @@
     <ClCompile Include="Rendering\VAO.ixx">
       <Filter>Modules\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Widgets\LineGraph.ixx">
-      <Filter>Modules\Widgets</Filter>
-    </ClCompile>
-    <ClCompile Include="Widgets\LineGraph.cpp">
-      <Filter>Modules\Widgets</Filter>
-    </ClCompile>
     <ClCompile Include="EventppHeaderUnit.h">
       <Filter>Header Units</Filter>
     </ClCompile>
     <ClCompile Include="Rendering\VBO.ixx">
       <Filter>Modules\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Widgets\GraphGrid.ixx">
-      <Filter>Modules\Widgets</Filter>
-    </ClCompile>
-    <ClCompile Include="Widgets\GraphGrid.cpp">
-      <Filter>Modules\Widgets</Filter>
-    </ClCompile>
-    <ClCompile Include="Widgets\MirrorLineGraph.ixx">
-      <Filter>Modules\Widgets</Filter>
-    </ClCompile>
-    <ClCompile Include="Widgets\MirrorLineGraph.cpp">
-      <Filter>Modules\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="Widgets\NetGraphWidget.ixx">
       <Filter>Modules\Widgets</Filter>
@@ -363,8 +348,32 @@
     <ClCompile Include="Rendering\VBO.cpp">
       <Filter>Modules\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Widgets\Spline.ixx">
-      <Filter>Modules\Widgets</Filter>
+    <ClCompile Include="Widgets\Graph\GraphPointBuffer.ixx">
+      <Filter>Modules\Widgets\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\Graph\LineGraph.ixx">
+      <Filter>Modules\Widgets\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\Graph\MirrorLineGraph.cpp">
+      <Filter>Modules\Widgets\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\Graph\MirrorLineGraph.ixx">
+      <Filter>Modules\Widgets\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\Graph\Spline.ixx">
+      <Filter>Modules\Widgets\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\Graph\GraphGrid.cpp">
+      <Filter>Modules\Widgets\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\Graph\GraphGrid.ixx">
+      <Filter>Modules\Widgets\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\Graph\LineGraph.cpp">
+      <Filter>Modules\Widgets\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\Graph\GraphPointBuffer.cpp">
+      <Filter>Modules\Widgets\Graph</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,4 @@
-export module Widgets.GraphGrid;
+export module Widgets.Graph.GraphGrid;
 
 import Rendering.VBO;
 

@@ -1,12 +1,12 @@
-module Widgets.MirrorLineGraph;
+module Widgets.Graph.MirrorLineGraph;
 
 import Colors;
 
 import Rendering.DrawUtils;
 import Rendering.GLListContainer;
 
-import Widgets.GraphGrid;
-import Widgets.Spline;
+import Widgets.Graph.GraphGrid;
+import Widgets.Graph.Spline;
 
 import "GLHeaderUnit.h";
 
@@ -58,15 +58,15 @@ void MirrorLineGraph::updatePointsVBO(OwningVBO<glm::vec2>& vbo, const std::vect
         verts.resize(values.size());
 
         for (size_t i = 0; i < values.size(); ++i) {
-            verts[i] = { (static_cast<GLfloat>(i) / (values.size() - 1)) * 2.0f - 1.0f,
-                         values[i] * 2.0f - 1.0f };
+            verts[i] = { percentageToVP(static_cast<GLfloat>(i) / (values.size() - 1)),
+                         percentageToVP(values[i]) };
         }
 
         vbo.bufferData();
     } else {
         for (size_t i = 0; i < values.size(); ++i) {
-            verts[i] = { (static_cast<GLfloat>(i) / (values.size() - 1)) * 2.0f - 1.0f,
-                         values[i] * 2.0f - 1.0f };
+            verts[i] = { percentageToVP(static_cast<GLfloat>(i) / (values.size() - 1)),
+                         percentageToVP(values[i]) };
         }
 
         vbo.bufferSubData(0, vbo.sizeBytes());
@@ -98,14 +98,14 @@ void SmoothMirrorLineGraph::updatePointsVBO(OwningVBO<glm::vec2>& vbo, const std
     std::vector<float> rawX (values.size());
     std::vector<float> rawY (values.size());
     for (size_t i = 0; i < values.size(); ++i) {
-        rawX[i] = (static_cast<GLfloat>(i) / (values.size() - 1)) * 2.0f - 1.0f;
-        rawY[i] = values[i] * 2.0f - 1.0f;
+        rawX[i] = percentageToVP(static_cast<GLfloat>(i) / (values.size() - 1));
+        rawY[i] = percentageToVP(values[i]);
     }
 
     tk::spline spl(rawX, rawY, tk::spline::cspline_hermite);
     for (size_t i = 0; i < m_precisionPoints; ++i) {
-        float const x{ (static_cast<float>(i) / m_precisionPoints) * 2.0f - 1.0f};
-        verts[i] = { x, std::clamp(spl(x), -1.0f, 1.0f) };
+        float const x{ percentageToVP(static_cast<float>(i) / m_precisionPoints) };
+        verts[i] = { x, clampToViewport(spl(x)) };
     }
 
     // #TODO sliding buffer so we don't need to copy/reallocate every update.

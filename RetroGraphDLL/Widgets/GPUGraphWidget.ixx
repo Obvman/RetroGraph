@@ -4,8 +4,8 @@ import Measures.GPUMeasure;
 
 import Rendering.FontManager;
 
-import Widgets.LineGraph;
 import Widgets.Widget;
+import Widgets.Graph.LineGraph;
 
 import std.memory;
 

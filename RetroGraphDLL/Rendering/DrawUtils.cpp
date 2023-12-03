@@ -15,40 +15,6 @@ void scissorClear(GLint x, GLint y, GLint w, GLint h) {
     glDisable(GL_SCISSOR_TEST);
 }
 
-void drawFilledGraph(const std::vector<float>& data) {
-    glBegin(GL_QUADS); {
-        glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.7f);
-        for (auto i = size_t{ 0U }; i < data.size() - 1; ++i) {
-            const auto x1 = float{ (static_cast<float>(i) / (data.size() - 1)) *
-                                   2.0f - 1.0f };
-            const auto y1 = float{ data[i] * 2.0f - 1.0f };
-            const auto x2 = float{ (static_cast<float>(i+1) / (data.size() - 1)) *
-                                   2.0f - 1.0f };
-            const auto y2 = float{ data[i+1] * 2.0f - 1.0f };
-
-            glVertex2f(x1, -1.0f); // Bottom-left
-            glVertex2f(x1, y1); // Top-left
-            glVertex2f(x2, y2); // Top-right
-            glVertex2f(x2, -1.0f); // Bottom-right
-        }
-    } glEnd();
-}
-
-void drawLineGraph(const std::vector<float>& data) {
-    glBegin(GL_LINE_STRIP); {
-        glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
-        // Draw each node in the graph
-        for (auto i = size_t{ 0U }; i < data.size(); ++i) {
-
-            const auto x = float{ (static_cast<float>(i) / (data.size() - 1))
-                                   * 2.0f - 1.0f };
-            const auto y = float{ data[i] * 2.0f - 1.0f };
-
-            glVertex2f(x, y);
-        }
-    } glEnd();
-}
-
 void drawWidgetBackground() {
     GLListContainer::inst().drawWidgetBackground();
 }
@@ -57,7 +23,7 @@ void drawVerticalProgressBar(float barWidth, float startY, float endY,
                              float currValue, float totalValue, 
                              bool warningColor) {
     const auto percentage{ currValue / totalValue };
-    const auto startX = float{ ((2.0f - barWidth) / 2.0f) - 1.0f };
+    const auto startX = float{ ((viewportWidth - barWidth) / viewportWidth) - 1.0f };
     const auto rangeY{ endY - startY };
 
     glBegin(GL_QUADS); {
@@ -83,7 +49,7 @@ void drawHorizontalProgressBar(float barWidth, float startX, float endX,
                                float currValue, float totalValue) {
 
     const auto percentage{ currValue / totalValue };
-    const auto barStartY = float{ ((2.0f - barWidth) / 2.0f) - 1.0f };
+    const auto barStartY = float{ ((viewportWidth - barWidth) / viewportWidth) - 1.0f };
     const auto rangeX{ endX - startX };
 
     glBegin(GL_QUADS); {

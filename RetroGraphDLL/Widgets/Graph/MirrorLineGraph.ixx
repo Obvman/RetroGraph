@@ -1,4 +1,4 @@
-export module Widgets.MirrorLineGraph;
+export module Widgets.Graph.MirrorLineGraph;
 
 import Rendering.VBO;
 

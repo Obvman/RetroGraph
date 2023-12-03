@@ -4,8 +4,8 @@ import Measures.NetMeasure;
 
 import Rendering.FontManager;
 
-import Widgets.MirrorLineGraph;
 import Widgets.Widget;
+import Widgets.Graph.MirrorLineGraph;
 
 import std.memory;
 

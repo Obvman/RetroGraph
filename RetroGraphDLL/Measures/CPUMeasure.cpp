@@ -53,6 +53,7 @@ void CPUMeasure::update(int) {
     const auto totalLoad{ getCPULoad() };
     // Add to the usageData vector by overwriting the oldest value and
     // shifting the elements in the vector
+    // TODO do not maintain these buffers, simply report single values in update events for the widgets.
     m_usageData[0] = totalLoad;
     std::rotate(m_usageData.begin(), m_usageData.begin() + 1, m_usageData.end());
 

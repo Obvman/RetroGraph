@@ -20,6 +20,7 @@ void CPUGraphWidget::draw() const {
     // Set the viewport for the graph to be left section
     glViewport(m_viewport.x, m_viewport.y, (m_viewport.width * 4)/5, m_viewport.height);
     m_graph.draw();
+    m_graph2.draw();
 
     // Text
     glViewport(m_viewport.x + (4 * m_viewport.width) / 5, m_viewport.y, m_viewport.width / 5, m_viewport.height);
@@ -37,6 +38,7 @@ PostUpdateCallbackHandle CPUGraphWidget::RegisterPostUpdateCallback() {
     return m_cpuMeasure->postUpdate.append(
         [this]() {
             m_graph.updatePoints(m_cpuMeasure->getUsageData());
+            m_graph2.updatePoints(m_cpuMeasure->getUsageData());
         });
 }
 

@@ -10,13 +10,15 @@ import "GLHeaderUnit.h";
 
 namespace rg {
 
+export constexpr auto viewportMin = float{ -1.0f };
+export constexpr auto viewportMax = float{ 1.0f };
+export constexpr auto viewportWidth = float{ 2.0f };
+
 /* Minimum distance from the edge of the screen to draw each object (in pixels) */
 export constexpr auto marginX = int{ 16 };
 export constexpr auto marginY = int{ 10 };
 
 export void scissorClear(GLint x, GLint y, GLint w, GLint h);
-export void drawFilledGraph(const std::vector<float>& data);
-export void drawLineGraph(const std::vector<float>& data);
 export void drawWidgetBackground();
 
 /* Draws a vertical bar that is centerred horizontally in the current viewport */
@@ -37,16 +39,25 @@ export Viewport getGLViewport();
 
 export void checkGLErrors();
 
+export constexpr inline float clampToViewport(float f) {
+    return std::clamp(f, viewportMin, viewportMax);
+}
+
+// Given a percentage float value (from 0.0f -> 1.0f), this maps it into the viewport space
+export constexpr inline float percentageToVP(float percentage) {
+    return percentage * viewportWidth - 1.0f;
+}
+
 // Given a pixel value (x or y) and the current viewport width/height in pixels,
 // converts the pixel value to the corresponding viewport ordinate
-export constexpr inline float pixelsToVPCoords(int p, int vpWidth) {
-    return (static_cast<float>(p) / vpWidth) * 2.0f - 1.0f;
+export constexpr inline float pixelsToVPCoords(int p, int vpWidthPx) {
+    return percentageToVP(static_cast<float>(p) / vpWidthPx);
 }
 
 // Given a viewport ordinate (x or y) and the viewport width/height in pixels,
 // converts the ordinate into a pixel value relative to the viewport origin
-export constexpr inline int vpCoordsToPixels(float vpCoord, int vpWidth) {
-    return static_cast<int>(((vpCoord + 1.0f) / 2.0f) * vpWidth);
+export constexpr inline int vpCoordsToPixels(float vpCoord, int vpWidthPx) {
+    return static_cast<int>(((vpCoord + 1.0f) / viewportWidth) * vpWidthPx);
 }
 
 }

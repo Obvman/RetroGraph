@@ -24,10 +24,10 @@ void TimeWidget::draw() const {
     drawSerifLine(-0.9f, 0.9f, midDivY);
 
     glBegin(GL_LINES); {
-        glVertex2f(leftDivX, -1.0f);
+        glVertex2f(leftDivX, viewportMin);
         glVertex2f(leftDivX, -0.3f); // Left vertical
 
-        glVertex2f(rightDivX, -1.0f);
+        glVertex2f(rightDivX, viewportMin);
         glVertex2f(rightDivX, -0.3f); // Right vertical
     } glEnd();
 

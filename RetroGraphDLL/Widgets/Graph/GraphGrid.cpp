@@ -1,6 +1,8 @@
-module Widgets.GraphGrid;
+module Widgets.Graph.GraphGrid;
 
 import Colors;
+
+import Rendering.DrawUtils;
 
 import "GLHeaderUnit.h";
 
@@ -37,9 +39,9 @@ void GraphGrid::initVBO() {
 
     // Fill the vertex and index arrays with data for drawing grid as VBO
     for (unsigned int i = 0U; i < numGridVertLines; ++i) {
-        const float x{ (i) / static_cast<float>(numGridVertLines - 1) * 2.0f - 1.0f };
-        verts[2 * i]     = { x, 1.0f }; // Vertical line top vert
-        verts[2 * i + 1] = { x, -1.0f }; // Vertical line bottom vert
+        const float x{ percentageToVP(i / static_cast<float>(numGridVertLines - 1)) };
+        verts[2 * i]     = { x, viewportMax }; // Vertical line top vert
+        verts[2 * i + 1] = { x, viewportMin }; // Vertical line bottom vert
 
         indices[2 * i] = 2 * i;
         indices[2 * i + 1] = 2 * i + 1;
@@ -47,9 +49,9 @@ void GraphGrid::initVBO() {
 
     const auto vertLineIndexCount{ numGridVertLines * 2 };
     for (unsigned int i = 0U; i < numGridHorizLines; ++i) {
-        const float y{ static_cast<float>(i) / (numGridHorizLines - 1) * 2.0f - 1.0f };
-        verts[2 * (i + numGridVertLines)]     = { -1.0f, y }; // Horizontal line left vert
-        verts[2 * (i + numGridVertLines) + 1] = { 1.0f, y }; // Horizontal line right vert
+        const float y{ percentageToVP(static_cast<float>(i) / (numGridHorizLines - 1)) };
+        verts[2 * (i + numGridVertLines)]     = { viewportMin, y }; // Horizontal line left vert
+        verts[2 * (i + numGridVertLines) + 1] = { viewportMax, y }; // Horizontal line right vert
 
         indices[2 * (i + numGridVertLines)] = vertLineIndexCount + 2 * i;
         indices[2 * (i + numGridVertLines) + 1] = vertLineIndexCount + 2 * i + 1;
