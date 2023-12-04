@@ -258,6 +258,8 @@
     <ClCompile Include="Widgets\Graph\LineGraph.ixx" />
     <ClCompile Include="Widgets\Graph\MirrorLineGraph.cpp" />
     <ClCompile Include="Widgets\Graph\MirrorLineGraph.ixx" />
+    <ClCompile Include="Widgets\Graph\SmoothLineGraph.cpp" />
+    <ClCompile Include="Widgets\Graph\SmoothLineGraph.ixx" />
     <ClCompile Include="Widgets\Graph\Spline.ixx" />
     <ClCompile Include="Widgets\RAMGraphWidget.cpp" />
     <ClCompile Include="Widgets\RAMGraphWidget.ixx" />

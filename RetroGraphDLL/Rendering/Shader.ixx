@@ -4,9 +4,13 @@ import Utils;
 
 import std.core;
 
+import "EventppHeaderUnit.h";
 import "GLHeaderUnit.h";
 
 namespace rg {
+
+using RefreshCallbackList = eventpp::CallbackList<void()>;
+using RefreshCallbackHandle = RefreshCallbackList::Handle;
 
 // The executable path is different whether we start the program from the
 // visual studio or debugger, so this handles the two cases
@@ -31,25 +35,25 @@ public:
    message box with the GLSL compilation error message */
 export class Shader {
 public:
-    Shader(const std::string& vertFilename_, const std::string& fragFilename_)
-        : id{ loadShader(vertFilename_, fragFilename_) }
-        , vertFilename{ vertFilename_ }
-        , fragFilename{ fragFilename_ } { }
+    Shader(const std::string& vertFilename_, const std::string& fragFilename_);
     Shader(const std::string& baseName)
         : Shader{ baseName + ".vert", baseName + ".frag" } { }
     ~Shader();
 
-    void reload();
-    GLShaderBindScope bind() const { return { id }; }
-    GLuint getUniformLocation(const char* uniformName) const { return glGetUniformLocation(id, uniformName); }
+    GLShaderBindScope bind() const { return { m_id }; }
+    GLuint getUniformLocation(const char* uniformName) const { return glGetUniformLocation(m_id, uniformName); }
+
+    static inline RefreshCallbackList onRefresh;
 
 private:
     GLuint loadShader(const std::string& vFile, const std::string& fFile);
     std::string readShaderFile(const std::string& filePath) const;
+    void reload();
 
-    GLuint id;
-    std::string vertFilename;
-    std::string fragFilename;
+    GLuint m_id;
+    std::string m_vertFilename;
+    std::string m_fragFilename;
+    RefreshCallbackHandle m_onRefreshHandle;
 };
 
 } // namespace rg

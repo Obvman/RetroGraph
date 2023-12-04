@@ -5,16 +5,25 @@ import "RGAssert.h";
 
 namespace rg {
 
+Shader::Shader(const std::string& vertFilename_, const std::string& fragFilename_)
+    : m_id{ loadShader(vertFilename_, fragFilename_) }
+    , m_vertFilename{ vertFilename_ }
+    , m_fragFilename{ fragFilename_ }
+    , m_onRefreshHandle{ Shader::onRefresh.append([this]() { reload(); }) } {
+}
+
 Shader::~Shader() {
-    if (id > 0)
-        glDeleteProgram(id);
+    if (m_id > 0)
+        glDeleteProgram(m_id);
+
+    Shader::onRefresh.remove(m_onRefreshHandle);
 }
 
 void Shader::reload() {
-    if (id > 0)
-        glDeleteProgram(id);
+    if (m_id > 0)
+        glDeleteProgram(m_id);
 
-    loadShader(vertFilename, fragFilename);
+    loadShader(m_vertFilename, m_fragFilename);
 }
 
 GLuint Shader::loadShader(const std::string& vFile, const std::string& fFile) {

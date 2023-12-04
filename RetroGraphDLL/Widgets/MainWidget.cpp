@@ -47,9 +47,6 @@ void MainWidget::draw() const {
 }
 
 void MainWidget::reloadShaders() {
-    m_particleLinesShader.reload();
-    m_particleShader.reload();
-
     updateShaderModelMatrix(m_particleShader);
     updateShaderModelMatrix(m_particleLinesShader);
 }

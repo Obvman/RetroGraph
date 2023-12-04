@@ -8,7 +8,7 @@ CPUGraphWidget::CPUGraphWidget(const FontManager* fontManager, std::shared_ptr<c
     : Widget{ fontManager }
     , m_cpuMeasure{ cpuMeasure }
     , m_postUpdateHandle{ RegisterPostUpdateCallback() }
-    , m_graph{} {
+    , m_graph{ cpuMeasure->getUsageData().size() } {
 
 }
 
@@ -20,7 +20,6 @@ void CPUGraphWidget::draw() const {
     // Set the viewport for the graph to be left section
     glViewport(m_viewport.x, m_viewport.y, (m_viewport.width * 4)/5, m_viewport.height);
     m_graph.draw();
-    m_graph2.draw();
 
     // Text
     glViewport(m_viewport.x + (4 * m_viewport.width) / 5, m_viewport.y, m_viewport.width / 5, m_viewport.height);
@@ -38,7 +37,6 @@ PostUpdateCallbackHandle CPUGraphWidget::RegisterPostUpdateCallback() {
     return m_cpuMeasure->postUpdate.append(
         [this]() {
             m_graph.updatePoints(m_cpuMeasure->getUsageData());
-            m_graph2.updatePoints(m_cpuMeasure->getUsageData());
         });
 }
 

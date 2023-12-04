@@ -375,6 +375,12 @@
     <ClCompile Include="Widgets\Graph\GraphPointBuffer.cpp">
       <Filter>Modules\Widgets\Graph</Filter>
     </ClCompile>
+    <ClCompile Include="Widgets\Graph\SmoothLineGraph.ixx">
+      <Filter>Modules\Widgets\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets\Graph\SmoothLineGraph.cpp">
+      <Filter>Modules\Widgets\Graph</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resources\resource.h">

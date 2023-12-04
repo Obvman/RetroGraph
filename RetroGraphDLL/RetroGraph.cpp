@@ -137,6 +137,7 @@ void RetroGraph::toggleWidget(WidgetType widgetType) {
 void RetroGraph::reloadResources() {
     refreshConfig(0);
 
+    Shader::onRefresh();
     for (auto i = int{ 0 }; i < static_cast<int>(WidgetType::NumWidgets); ++i) {
         if (m_widgets[i])
             m_widgets[i]->reloadShaders();

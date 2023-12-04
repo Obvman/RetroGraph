@@ -13,7 +13,7 @@ GraphPointBuffer::GraphPointBuffer(size_t numPoints_)
     }
 }
 
-void GraphPointBuffer::setPoints(std::span<const GLfloat> values) {
+void GraphPointBuffer::setPoints(std::span<const float> values) {
     m_head = values.size() - 1;
     m_tail = 0;
     if (numPoints() != values.size()) {
@@ -24,10 +24,9 @@ void GraphPointBuffer::setPoints(std::span<const GLfloat> values) {
     }
 
     for (size_t i = m_tail; i <= m_head; ++i) {
-        const auto x{ static_cast<GLfloat>(i) / m_head * viewportWidth };
+        const auto x{ static_cast<float>(i) / m_head * viewportWidth };
         // Copy the values into the first half of the buffer
-        // TODO the viewport normalization should not be done in here it should be done in the client
-        m_rollingBuffer[i] = { x, percentageToVP(values[i]) };
+        m_rollingBuffer[i] = { x, values[i] };
 
         // Initialize the static x values in the second half of the buffer.
         // y values will be written as the buffer rolls forward
@@ -35,10 +34,10 @@ void GraphPointBuffer::setPoints(std::span<const GLfloat> values) {
     }
 }
 
-bool GraphPointBuffer::pushPoint(GLfloat value) {
+bool GraphPointBuffer::pushPoint(float value) {
     ++m_head;
     ++m_tail;
-    m_rollingBuffer[m_head].y = percentageToVP(value);
+    m_rollingBuffer[m_head].y = value;
 
     // When the head of the rolling buffer hits the end, copy the second half of the buffer into the first half
     // and update the pointers to target the first half of the buffer.
@@ -59,7 +58,7 @@ bool GraphPointBuffer::pushPoint(GLfloat value) {
 
 void GraphPointBuffer::initPoints() {
     for (size_t i = m_tail; i <= m_head; ++i) {
-        const auto x{ static_cast<GLfloat>(i) / m_head * viewportWidth };
+        const auto x{ static_cast<float>(i) / m_head * viewportWidth };
         // Copy the values into the first half of the buffer
         m_rollingBuffer[i] = { x, viewportMin };
 

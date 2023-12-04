@@ -15,11 +15,11 @@ export class GraphPointBuffer {
 public:
     explicit GraphPointBuffer(size_t numPoints_ = 0);
 
-    void setPoints(std::span<const GLfloat> values);
+    void setPoints(std::span<const float> values);
 
     // Returns true if the underlying buffer was moved.
     // Returns false if the point was pushed in place
-    bool pushPoint(GLfloat value);
+    bool pushPoint(float value);
 
     glm::vec2& operator[](size_t index) { return m_rollingBuffer[index]; }
     const glm::vec2& operator[](size_t index) const { return m_rollingBuffer[index]; }
@@ -38,7 +38,7 @@ private:
     void initPoints();
 
     std::vector<glm::vec2> m_rollingBuffer;
-    size_t m_head; // iterator. TODO
+    size_t m_head;
     size_t m_tail;
 };
 
