@@ -40,6 +40,11 @@ public:
         : Shader{ baseName + ".vert", baseName + ".frag" } { }
     ~Shader();
 
+    Shader(const Shader&) = delete;
+    Shader& operator=(const Shader&) = delete;
+    Shader(Shader&& other) = delete;
+    Shader& operator=(Shader&& other) = delete;
+
     GLShaderBindScope bind() const { return { m_id }; }
     GLuint getUniformLocation(const char* uniformName) const { return glGetUniformLocation(m_id, uniformName); }
 

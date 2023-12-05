@@ -12,11 +12,11 @@ export class MirrorLineGraph {
 public:
     MirrorLineGraph(size_t numTopGraphSamples, size_t numBottomGraphSamples);
 
-    void updatePoints(const std::vector<GLfloat>& topValues, const std::vector<GLfloat>& bottomValues);
+    void updatePoints(const std::vector<float>& topValues, const std::vector<float>& bottomValues);
     void draw() const;
 
 protected:
-    virtual void updatePointsVBO(OwningVBO<glm::vec2>& vbo, const std::vector<GLfloat>& values);
+    virtual void updatePointsVBO(OwningVBO<glm::vec2>& vbo, const std::vector<float>& values);
 
     OwningVBO<glm::vec2> m_topGraphPointsVBO;
     OwningVBO<glm::vec2> m_bottomGraphPointsVBO;
@@ -34,7 +34,7 @@ public:
     SmoothMirrorLineGraph(size_t precisionPoints = defaultPrecisionPoints);
 
 private:
-    void updatePointsVBO(OwningVBO<glm::vec2>& vbo, const std::vector<GLfloat>& values) override;
+    void updatePointsVBO(OwningVBO<glm::vec2>& vbo, const std::vector<float>& values) override;
 
     size_t m_precisionPoints;
 };

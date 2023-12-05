@@ -12,7 +12,8 @@ namespace rg {
 auto CPUStatsWidget::createCoreGraphs(const CPUMeasure& cpuMeasure) {
     decltype(m_coreGraphs) coreGraphs{};
 
-    coreGraphs.resize(cpuMeasure.getPerCoreUsageData().size());
+    for (const auto& usageData : cpuMeasure.getPerCoreUsageData())
+        coreGraphs.emplace_back(usageData.size());
 
     return coreGraphs;
 }
@@ -31,10 +32,8 @@ CPUStatsWidget::~CPUStatsWidget() {
 
 void CPUStatsWidget::setViewport(const Viewport& vp) { 
     m_viewport = vp;
-    m_coreGraphViewport = {vp.x, vp.y, (vp.width / 4) * 3, vp.height};
-    m_statsViewport = {m_coreGraphViewport.width + vp.x, vp.y,
-                       (vp.width / 4), vp.height};
-
+    m_coreGraphViewport = { vp.x, vp.y, (vp.width / 4) * 3, vp.height };
+    m_statsViewport = { m_coreGraphViewport.width + vp.x, vp.y, (vp.width / 4), vp.height };
 };
 
 void CPUStatsWidget::draw() const {

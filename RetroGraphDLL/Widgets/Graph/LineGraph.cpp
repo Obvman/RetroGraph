@@ -5,6 +5,7 @@ import Colors;
 import Rendering.DrawUtils;
 import Rendering.GLListContainer;
 
+import Widgets.WidgetShaderController;
 import Widgets.Graph.GraphGrid;
 
 import "GLHeaderUnit.h";
@@ -14,8 +15,7 @@ namespace rg {
 
 LineGraph::LineGraph(size_t numGraphSamples)
     : m_graphVerticesVBO{ GL_ARRAY_BUFFER, GL_STREAM_DRAW }
-    , m_pointBuffer{ numGraphSamples }
-    , m_shader{ "lineGraph" } {
+    , m_pointBuffer{ numGraphSamples } {
 
     initPointsVBO();
 }
@@ -64,11 +64,12 @@ void LineGraph::initPointsVBO() {
 }
 
 void LineGraph::drawPoints() const {
-    auto shaderScope{ m_shader.bind() };
+    const auto& shader{ WidgetShaderController::inst().getLineGraphShader() };
+    auto shaderScope{ shader.bind() };
     float const xOffset{ (m_pointBuffer.tail() * -m_pointBuffer.getHorizontalPointInterval()) - 1.0f };
 
-    glUniform1f(m_shader.getUniformLocation("xOffset"), xOffset);
-    glUniform4f(m_shader.getUniformLocation("color"), GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
+    glUniform1f(shader.getUniformLocation("xOffset"), xOffset);
+    glUniform4f(shader.getUniformLocation("color"), GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
 
     auto vaoScope{ m_graphVAO.bind() };
     glDrawArrays(GL_LINE_STRIP, static_cast<GLint>(m_pointBuffer.tail()), m_pointBuffer.numPoints());

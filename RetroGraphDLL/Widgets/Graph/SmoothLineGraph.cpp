@@ -4,14 +4,23 @@ import Rendering.DrawUtils;
 
 namespace rg {
 
+size_t getNumberOfCurvePoints(size_t numGraphSamples) {
+    return (defaultPrecisionPoints - 1) * (numGraphSamples - 1) + 1;
+}
+
 SmoothLineGraph::SmoothLineGraph(size_t numGraphSamples)
-    : LineGraph{ (defaultPrecisionPoints - 1) * (numGraphSamples - 1) + 1 }
+    : LineGraph{ getNumberOfCurvePoints(numGraphSamples) }
     , m_precisionPoints{ defaultPrecisionPoints }
     , m_spline{} {
 }
 
 void SmoothLineGraph::updatePoints(const std::vector<float>& values) {
-    // #TODO buffer is not reallocated when changing size of graph samples
+    // If the number of samples has changed rebuild the graph with an appropriately sized buffer
+    if (m_pointBuffer.numPoints() != getNumberOfCurvePoints(values.size())) {
+        m_pointBuffer = GraphPointBuffer{ getNumberOfCurvePoints(values.size()) };
+        m_graphVerticesVBO.bufferData(m_pointBuffer.bufferSize() * sizeof(glm::vec2), m_pointBuffer.data());
+        return;
+    }
 
     // Rebuild the last few segments of the spline. We only need to rebuild a
     // few segments since the earlier parts of the spline are not modified by adding a new point.

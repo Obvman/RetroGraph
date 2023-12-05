@@ -8,7 +8,7 @@ GPUGraphWidget::GPUGraphWidget(const FontManager* fontManager, std::shared_ptr<c
     : Widget{ fontManager }
     , m_gpuMeasure{ gpuMeasure }
     , m_postUpdateHandle{ RegisterPostUpdateCallback() }
-    , m_graph{} {
+    , m_graph{ m_gpuMeasure->getUsageData().size() } {
 
 }
 

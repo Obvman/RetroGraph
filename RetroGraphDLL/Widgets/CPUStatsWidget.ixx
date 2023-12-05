@@ -5,7 +5,7 @@ import Measures.CPUMeasure;
 import Rendering.FontManager;
 
 import Widgets.Widget;
-import Widgets.Graph.LineGraph;
+import Widgets.Graph.SmoothLineGraph;
 
 import std.core;
 
@@ -35,7 +35,7 @@ private:
 
     std::shared_ptr<const CPUMeasure> m_cpuMeasure{ nullptr };
 
-    std::vector<LineGraph> m_coreGraphs;
+    std::vector<SmoothLineGraph> m_coreGraphs;
 
     PostUpdateCallbackHandle m_postUpdateHandle;
 };

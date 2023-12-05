@@ -5,7 +5,7 @@ import Measures.RAMMeasure;
 import Rendering.FontManager;
 
 import Widgets.Widget;
-import Widgets.Graph.LineGraph;
+import Widgets.Graph.SmoothLineGraph;
 
 import std.memory;
 
@@ -23,7 +23,7 @@ private:
 
     std::shared_ptr<const RAMMeasure> m_ramMeasure{ nullptr };
     PostUpdateCallbackHandle m_postUpdateHandle;
-    LineGraph m_graph;
+    SmoothLineGraph m_graph;
 };
 
 }

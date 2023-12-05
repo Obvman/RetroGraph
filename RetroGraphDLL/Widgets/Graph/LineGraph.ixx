@@ -1,6 +1,5 @@
 export module Widgets.Graph.LineGraph;
 
-import Rendering.Shader;
 import Rendering.VAO;
 import Rendering.VBO;
 
@@ -22,7 +21,6 @@ protected:
 
     VAO m_graphVAO;
     VBO m_graphVerticesVBO;
-    Shader m_shader;
 
     GraphPointBuffer m_pointBuffer;
 

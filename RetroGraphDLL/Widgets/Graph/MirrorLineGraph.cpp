@@ -38,7 +38,7 @@ void MirrorLineGraph::draw() const {
     } glPopMatrix();
 }
 
-void MirrorLineGraph::updatePoints(const std::vector<GLfloat>& topValues, const std::vector<GLfloat>& bottomValues) {
+void MirrorLineGraph::updatePoints(const std::vector<float>& topValues, const std::vector<float>& bottomValues) {
     updatePointsVBO(m_topGraphPointsVBO, topValues);
     updatePointsVBO(m_bottomGraphPointsVBO, bottomValues);
 }
@@ -48,7 +48,7 @@ void MirrorLineGraph::initPointsVBO(OwningVBO<glm::vec2>& vbo) {
     vbo.bufferData();
 }
 
-void MirrorLineGraph::updatePointsVBO(OwningVBO<glm::vec2>& vbo, const std::vector<GLfloat>& values) {
+void MirrorLineGraph::updatePointsVBO(OwningVBO<glm::vec2>& vbo, const std::vector<float>& values) {
     auto& verts{ vbo.data()};
     auto vboScope{ vbo.bind() };
 
@@ -58,14 +58,14 @@ void MirrorLineGraph::updatePointsVBO(OwningVBO<glm::vec2>& vbo, const std::vect
         verts.resize(values.size());
 
         for (size_t i = 0; i < values.size(); ++i) {
-            verts[i] = { percentageToVP(static_cast<GLfloat>(i) / (values.size() - 1)),
+            verts[i] = { percentageToVP(static_cast<float>(i) / (values.size() - 1)),
                          percentageToVP(values[i]) };
         }
 
         vbo.bufferData();
     } else {
         for (size_t i = 0; i < values.size(); ++i) {
-            verts[i] = { percentageToVP(static_cast<GLfloat>(i) / (values.size() - 1)),
+            verts[i] = { percentageToVP(static_cast<float>(i) / (values.size() - 1)),
                          percentageToVP(values[i]) };
         }
 
@@ -91,14 +91,14 @@ SmoothMirrorLineGraph::SmoothMirrorLineGraph(size_t precisionPoints)
 
 }
 
-void SmoothMirrorLineGraph::updatePointsVBO(OwningVBO<glm::vec2>& vbo, const std::vector<GLfloat>& values) {
+void SmoothMirrorLineGraph::updatePointsVBO(OwningVBO<glm::vec2>& vbo, const std::vector<float>& values) {
     auto& verts{ vbo.data()};
     auto vboScope{ vbo.bind() };
 
     std::vector<float> rawX (values.size());
     std::vector<float> rawY (values.size());
     for (size_t i = 0; i < values.size(); ++i) {
-        rawX[i] = percentageToVP(static_cast<GLfloat>(i) / (values.size() - 1));
+        rawX[i] = percentageToVP(static_cast<float>(i) / (values.size() - 1));
         rawY[i] = percentageToVP(values[i]);
     }
 

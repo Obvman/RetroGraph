@@ -286,6 +286,7 @@
     <ClCompile Include="Widgets\WidgetContainer.cpp" />
     <ClCompile Include="Widgets\WidgetContainer.ixx" />
     <ClCompile Include="Widgets\WidgetPosition.ixx" />
+    <ClCompile Include="Widgets\WidgetShaderController.ixx" />
     <ClCompile Include="Widgets\WidgetType.ixx" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="Window.ixx" />

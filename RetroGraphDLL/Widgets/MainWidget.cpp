@@ -5,6 +5,8 @@ import Units;
 
 import Rendering.DrawUtils;
 
+import Widgets.WidgetShaderController;
+
 import "GLHeaderUnit.h";
 
 namespace rg {
@@ -15,16 +17,14 @@ MainWidget::MainWidget(const FontManager* fontManager, std::shared_ptr<const Ani
     , m_postUpdateHandle{ RegisterPostUpdateCallback() }
     , m_particleLinesVAO{}
     , m_particleLinesVBO{ GL_ARRAY_BUFFER, GL_STREAM_DRAW }
-    , m_particleLinesShader{ "particleLine" }
     , m_particleVAO{}
-    , m_particleVBO{ static_cast<GLsizei>(m_animationState->getParticles().size()), GL_ARRAY_BUFFER, GL_STREAM_DRAW }
-    , m_particleShader{ "particle" } {
+    , m_particleVBO{ static_cast<GLsizei>(m_animationState->getParticles().size()), GL_ARRAY_BUFFER, GL_STREAM_DRAW } {
 
     createParticleLinesVAO(maxLines);
     createParticleVAO();
 
-    updateShaderModelMatrix(m_particleShader);
-    updateShaderModelMatrix(m_particleLinesShader);
+    updateShaderModelMatrix(WidgetShaderController::inst().getParticleShader());
+    updateShaderModelMatrix(WidgetShaderController::inst().getParticleLineShader());
 }
 
 MainWidget::~MainWidget() {
@@ -47,12 +47,12 @@ void MainWidget::draw() const {
 }
 
 void MainWidget::reloadShaders() {
-    updateShaderModelMatrix(m_particleShader);
-    updateShaderModelMatrix(m_particleLinesShader);
+    updateShaderModelMatrix(WidgetShaderController::inst().getParticleShader());
+    updateShaderModelMatrix(WidgetShaderController::inst().getParticleLineShader());
 }
 
 void MainWidget::drawParticles() const {
-    auto shaderScope{ m_particleShader.bind() };
+    auto shaderScope{ WidgetShaderController::inst().getParticleShader().bind() };
     auto vaoScope{ m_particleVAO.bind() };
 
     glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
@@ -61,7 +61,7 @@ void MainWidget::drawParticles() const {
 }
 
 void MainWidget::drawParticleLines() const {
-    auto shaderScope{ m_particleLinesShader.bind() };
+    auto shaderScope{ WidgetShaderController::inst().getParticleLineShader().bind() };
     auto vaoScope{ m_particleLinesVAO.bind() };
 
     glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(m_animationState->getNumLines() * 2));

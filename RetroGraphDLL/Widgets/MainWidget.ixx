@@ -59,11 +59,9 @@ private:
 
     VAO m_particleLinesVAO;
     VBO m_particleLinesVBO;
-    Shader m_particleLinesShader;
 
     VAO m_particleVAO;
     OwningVBO<ParticleRenderData> m_particleVBO;
-    Shader m_particleShader;
 };
 
 } // namespace rg
