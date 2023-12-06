@@ -1,28 +1,32 @@
+module;
+
+#include <pdh.h>
+#include <pdhmsg.h>
+#include <strsafe.h>
+
 module Measures.GPUMeasure;
 
 import "NvidiaHeaderUnit.h";
 import "RGAssert.h";
 
 #pragma comment(lib, "nvapi64.lib")
+#pragma comment(lib, "pdh.lib")
 
 namespace rg {
 
 constexpr int NVAPI_GPU_UTILIZATION_DOMAIN_GPU{ 0U };
 
 GPUMeasure::GPUMeasure()
-    : m_dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-GPUGraph.NumUsageSamples") }
+    : m_usageData(UserSettings::inst().getVal<int, size_t>("Widgets-GPUGraph.NumUsageSamples"))
     , m_configChangedHandle{
         UserSettings::inst().configChanged.append(
             [&]() {
                 const size_t newDataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-GPUGraph.NumUsageSamples") };
-                if (m_dataSize != newDataSize) {
+                if (m_usageData.size() != newDataSize) {
                     m_usageData.assign(newDataSize, 0.0f);
-                    m_dataSize = newDataSize;
                 }
             })
     } {
-
-    m_usageData.assign(m_dataSize, 0.0f);
 
     if (NvAPI_Initialize() != NVAPI_OK) {
         m_isEnabled = false;
@@ -71,9 +75,8 @@ void GPUMeasure::update(int) {
     //updateGpuTemp(); // High CPU usage function
     //getClockFrequencies(); // High CPU usage function
     //getMemInformation();
-    getGpuUsage();
 
-    m_usageData[0] = m_gpuUsage / 100.0f;
+    m_usageData[0] = getGpuUsage();
     std::rotate(m_usageData.begin(), m_usageData.begin() + 1, m_usageData.end());
 
     postUpdate();
@@ -114,9 +117,89 @@ void GPUMeasure::getMemInformation() {
     m_totalMemory = m_memInfo.availableDedicatedVideoMemory;
 }
 
-void GPUMeasure::getGpuUsage() {
-    RGVERIFY(NvAPI_GPU_GetDynamicPstatesInfoEx(m_gpuHandle, &m_pStateInfo) == NVAPI_OK, "Failed to get GPU usage percentage");
-    m_gpuUsage = m_pStateInfo.utilization[NVAPI_GPU_UTILIZATION_DOMAIN_GPU].percentage;
+float GPUMeasure::getGpuUsage() const {
+    static auto prevCallTime{ std::chrono::steady_clock::now() };
+    static int64_t prevRunningTime{ GetGpuRunningTimeTotal() };
+
+    const std::chrono::steady_clock::time_point now{ std::chrono::steady_clock::now() };
+    const std::chrono::steady_clock::duration elapsed{ now - prevCallTime };
+
+    const int64_t elapsedNs{ std::chrono::duration_cast<std::chrono::nanoseconds>(elapsed).count() };
+    const int64_t runningTime{ GetGpuRunningTimeTotal() };
+
+    float percentage{ static_cast<float>(runningTime - prevRunningTime) / elapsedNs * 100 };
+
+    prevCallTime = now;
+    prevRunningTime = runningTime;
+
+    return std::clamp(percentage, 0.0f, 1.0f);
+}
+
+int64_t GPUMeasure::GetGpuRunningTimeTotal() const {
+    DWORD counterListSize{ 0 };
+    DWORD instanceListSize{ 0 };
+    const auto COUNTER_OBJECT{ "GPU Engine" };
+    PDH_STATUS status = PdhEnumObjectItemsA(nullptr, nullptr, COUNTER_OBJECT, nullptr,
+                                            &counterListSize, nullptr, &instanceListSize,
+                                            PERF_DETAIL_WIZARD, 0);
+    if (status != PDH_MORE_DATA) {
+        throw std::runtime_error("failed PdhEnumObjectItems()");
+    }
+
+    std::vector<char> counterList(counterListSize);
+    std::vector<char> instanceList(instanceListSize);
+    status = ::PdhEnumObjectItemsA(nullptr, nullptr, COUNTER_OBJECT, counterList.data(), &counterListSize,
+                                   instanceList.data(), &instanceListSize, PERF_DETAIL_WIZARD, 0);
+    if (status != ERROR_SUCCESS) {
+        throw std::runtime_error("failed PdhEnumObjectItems()");
+    }
+
+    int64_t totalRunningTime{ 0 };
+    for (const char* pTemp = instanceList.data(); *pTemp != 0; pTemp += ::strlen(pTemp) + 1) {
+        if (::strstr(pTemp, "engtype_3D") == nullptr) {
+            continue;
+        }
+
+        char buffer[1024];
+        ::StringCchCopyA(buffer, 1024, "\\GPU Engine(");
+        ::StringCchCatA(buffer, 1024, pTemp);
+        ::StringCchCatA(buffer, 1024, ")\\Running time");
+
+        HQUERY hQuery{ nullptr };
+        status = ::PdhOpenQueryA(nullptr, 0, &hQuery);
+        if (status != ERROR_SUCCESS) {
+            continue;
+        }
+
+        HCOUNTER hCounter{ nullptr };
+        if (::PdhAddCounterA(hQuery, buffer, 0, &hCounter) != ERROR_SUCCESS) {
+            ::PdhCloseQuery(hQuery);
+            continue;
+        }
+
+        if (::PdhCollectQueryData(hQuery) != ERROR_SUCCESS) {
+            ::PdhCloseQuery(hQuery);
+            continue;
+        }
+
+        if (::PdhCollectQueryData(hQuery) != ERROR_SUCCESS) {
+            ::PdhCloseQuery(hQuery);
+            continue;
+        }
+
+        const DWORD dwFormat{ PDH_FMT_LONG };
+        PDH_FMT_COUNTERVALUE ItemBuffer;
+        status = ::PdhGetFormattedCounterValue(hCounter, dwFormat, nullptr, &ItemBuffer);
+        if (ERROR_SUCCESS != status) {
+            ::PdhCloseQuery(hQuery);
+            continue;
+        }
+        totalRunningTime += ItemBuffer.longValue;
+
+        ::PdhCloseQuery(hQuery);
+    }
+
+    return totalRunningTime;
 }
 
 } // namespace rg

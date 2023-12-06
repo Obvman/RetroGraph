@@ -29,7 +29,6 @@ public:
     int getGraphicsClockHz() const { return m_graphicsClock; }
     int getCurrAvailableMemoryKB() const { return m_currAvailableMemory; }
     int getTotalMemoryKB() const { return m_totalMemory; }
-    int getGpuUsage() const { return m_gpuUsage; }
     float getMemUsagePercent() const;
     int getCurrentTempC() const { return m_currentTemp; }
     const std::string& getDriverVersion() const { return m_driverVersion; }
@@ -42,7 +41,8 @@ private:
     void updateGpuTemp();
     void getClockFrequencies();
     void getMemInformation();
-    void getGpuUsage();
+    float getGpuUsage() const;
+    int64_t GetGpuRunningTimeTotal() const;
 
     bool m_isEnabled{ true };
 
@@ -63,9 +63,7 @@ private:
     NvU32 m_frameBufferSize{ 0U };
     NvU32 m_currAvailableMemory{ 0U };
     NvU32 m_totalMemory{ 0U };
-    NvU32 m_gpuUsage{ 0U };
 
-    size_t m_dataSize{ 40U };
     std::vector<float> m_usageData{ };
     ConfigRefreshedCallbackHandle m_configChangedHandle;
 };
