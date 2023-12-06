@@ -17,8 +17,7 @@ SmoothLineGraph::SmoothLineGraph(size_t numGraphSamples)
 void SmoothLineGraph::updatePoints(const std::vector<float>& values) {
     // If the number of samples has changed rebuild the graph with an appropriately sized buffer
     if (m_pointBuffer.numPoints() != getNumberOfCurvePoints(values.size())) {
-        m_pointBuffer = GraphPointBuffer{ getNumberOfCurvePoints(values.size()) };
-        m_graphVerticesVBO.bufferData(m_pointBuffer.bufferSize() * sizeof(glm::vec2), m_pointBuffer.data());
+        resetPoints(values);
         return;
     }
 
@@ -71,6 +70,26 @@ void SmoothLineGraph::updatePoints(const std::vector<float>& values) {
                                          (m_pointBuffer.head() - oldSegmentStartIndex + 1) * sizeof(glm::vec2),
                                          &m_pointBuffer[oldSegmentStartIndex]);
     }
+}
+
+void SmoothLineGraph::resetPoints(const std::vector<float>& values) {
+    std::vector<float> rawX;
+    std::vector<float> rawY;
+    for (int i{ 0 }; i < values.size(); ++i) {
+        rawX.push_back(percentageToVP(static_cast<float>(i) / (values.size() - 1)));
+        rawY.push_back(values[i]);
+    }
+    m_spline.set_points(rawX, rawY, tk::spline::cspline_hermite);
+
+    m_pointBuffer = GraphPointBuffer{ getNumberOfCurvePoints(values.size()) };
+    for (int i{ 0 }; i < m_pointBuffer.numPoints(); ++i) {
+        float const splineX{ percentageToVP(static_cast<float>(i) / (m_pointBuffer.numPoints() - 1)) };
+        float const splineY{ clampToViewport(percentageToVP(m_spline(splineX))) };
+        m_pointBuffer.pushPoint(splineY);
+    }
+
+    auto vboScope{ m_graphVerticesVBO.bind() };
+    m_graphVerticesVBO.bufferData(m_pointBuffer.bufferSize() * sizeof(glm::vec2), m_pointBuffer.data());
 }
 
 }

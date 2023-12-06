@@ -5,7 +5,7 @@ import Measures.NetMeasure;
 import Rendering.FontManager;
 
 import Widgets.Widget;
-import Widgets.Graph.MirrorLineGraph;
+import Widgets.Graph.SmoothMirrorLineGraph;
 
 import std.memory;
 
@@ -25,6 +25,8 @@ private:
     std::shared_ptr<const NetMeasure> m_netMeasure{ nullptr };
     PostUpdateCallbackHandle m_postUpdateHandle;
     SmoothMirrorLineGraph m_netGraph;
+    int64_t m_maxDownValue;
+    int64_t m_maxUpValue;
 };
 
 }

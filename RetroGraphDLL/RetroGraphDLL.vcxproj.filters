@@ -354,10 +354,10 @@
     <ClCompile Include="Widgets\Graph\LineGraph.ixx">
       <Filter>Modules\Widgets\Graph</Filter>
     </ClCompile>
-    <ClCompile Include="Widgets\Graph\MirrorLineGraph.cpp">
+    <ClCompile Include="Widgets\Graph\SmoothMirrorLineGraph.cpp">
       <Filter>Modules\Widgets\Graph</Filter>
     </ClCompile>
-    <ClCompile Include="Widgets\Graph\MirrorLineGraph.ixx">
+    <ClCompile Include="Widgets\Graph\SmoothMirrorLineGraph.ixx">
       <Filter>Modules\Widgets\Graph</Filter>
     </ClCompile>
     <ClCompile Include="Widgets\Graph\Spline.ixx">

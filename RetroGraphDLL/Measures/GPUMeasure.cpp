@@ -143,7 +143,8 @@ int64_t GPUMeasure::GetGpuRunningTimeTotal() const {
                                             &counterListSize, nullptr, &instanceListSize,
                                             PERF_DETAIL_WIZARD, 0);
     if (status != PDH_MORE_DATA) {
-        throw std::runtime_error("failed PdhEnumObjectItems()");
+        RGERROR("failed PdhEnumObjectItems()");
+        return 0;
     }
 
     std::vector<char> counterList(counterListSize);
@@ -151,7 +152,8 @@ int64_t GPUMeasure::GetGpuRunningTimeTotal() const {
     status = ::PdhEnumObjectItemsA(nullptr, nullptr, COUNTER_OBJECT, counterList.data(), &counterListSize,
                                    instanceList.data(), &instanceListSize, PERF_DETAIL_WIZARD, 0);
     if (status != ERROR_SUCCESS) {
-        throw std::runtime_error("failed PdhEnumObjectItems()");
+        RGERROR("failed PdhEnumObjectItems()");
+        return 0;
     }
 
     int64_t totalRunningTime{ 0 };

@@ -14,15 +14,21 @@ import "RGAssert.h";
 namespace rg {
 
 LineGraph::LineGraph(size_t numGraphSamples)
-    : m_graphVerticesVBO{ GL_ARRAY_BUFFER, GL_STREAM_DRAW }
-    , m_pointBuffer{ numGraphSamples } {
+    : m_graphVAO{}
+    , m_graphVerticesVBO{ GL_ARRAY_BUFFER, GL_STREAM_DRAW }
+    , m_pointBuffer{ numGraphSamples }
+    , m_drawDecorations{ true }
+    , m_modelView{} {
 
     initPointsVBO();
 }
 
 void LineGraph::draw() const {
-    GLListContainer::inst().drawBorder();
-    GraphGrid::inst().draw();
+    if (m_drawDecorations) {
+        GLListContainer::inst().drawBorder();
+        GraphGrid::inst().draw();
+    }
+
     drawPoints();
 }
 
@@ -32,12 +38,7 @@ void LineGraph::updatePoints(const std::vector<float>& values) {
     // Value vectors can change size (infrequently).
     // In this case we need to reallocate buffer data instead of just writing to it
     if (m_pointBuffer.numPoints() != values.size()) {
-        std::vector<float> normalizedValues{ values.cbegin(), values.cend() };
-        for (auto& value : normalizedValues)
-            value = percentageToVP(value);
-
-        m_pointBuffer.setPoints(normalizedValues);
-        m_graphVerticesVBO.bufferData(m_pointBuffer.bufferSize() * sizeof(glm::vec2), m_pointBuffer.data());
+        resetPoints(values);
     } else {
         if (m_pointBuffer.pushPoint(percentageToVP(values.back()))) {
             // All of the points have changed in this case so update the whole range of points in the VBO
@@ -49,6 +50,17 @@ void LineGraph::updatePoints(const std::vector<float>& values) {
                                              sizeof(glm::vec2), m_pointBuffer.back());
         }
     }
+}
+
+void LineGraph::resetPoints(const std::vector<float>& values) {
+    m_pointBuffer = GraphPointBuffer{ values.size() };
+
+    std::vector<float> normalizedValues{ values.cbegin(), values.cend() };
+    for (auto& value : normalizedValues)
+        value = percentageToVP(value);
+
+    m_pointBuffer.setPoints(normalizedValues);
+    m_graphVerticesVBO.bufferData(m_pointBuffer.bufferSize() * sizeof(glm::vec2), m_pointBuffer.data());
 }
 
 void LineGraph::initPointsVBO() {
@@ -70,6 +82,7 @@ void LineGraph::drawPoints() const {
 
     glUniform1f(shader.getUniformLocation("xOffset"), xOffset);
     glUniform4f(shader.getUniformLocation("color"), GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
+    glUniformMatrix4fv(shader.getUniformLocation("model"), 1, false, glm::value_ptr(m_modelView));
 
     auto vaoScope{ m_graphVAO.bind() };
     glDrawArrays(GL_LINE_STRIP, static_cast<GLint>(m_pointBuffer.tail()), m_pointBuffer.numPoints());

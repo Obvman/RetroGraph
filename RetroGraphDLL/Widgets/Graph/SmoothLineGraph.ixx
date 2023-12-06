@@ -14,6 +14,7 @@ public:
     explicit SmoothLineGraph(size_t numGraphSamples);
 
     void updatePoints(const std::vector<float>& values) override;
+    void resetPoints(const std::vector<float>& values) override;
 
 private:
     int m_precisionPoints;

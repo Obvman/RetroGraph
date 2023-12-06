@@ -8,7 +8,9 @@ namespace rg {
 NetGraphWidget::NetGraphWidget(const FontManager* fontManager, std::shared_ptr<const NetMeasure> netMeasure)
     : Widget{ fontManager }
     , m_netMeasure{ netMeasure }
-    , m_netGraph{}
+    , m_netGraph{ netMeasure->getUpData().size(), netMeasure->getDownData().size() }
+    , m_maxDownValue{ netMeasure->getMaxDownValue() }
+    , m_maxUpValue{ netMeasure->getMaxUpValue() }
     , m_postUpdateHandle{ RegisterPostUpdateCallback() } {
 }
 
@@ -27,12 +29,12 @@ void NetGraphWidget::draw() const {
         glViewport(m_viewport.x + (4 * m_viewport.width) / 5, m_viewport.y, m_viewport.width / 5, m_viewport.height);
         glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
-        m_fontManager->renderLine(RG_FONT_SMALL, getScaleLabel(m_netMeasure->getMaxDownValue()), 0, 0, m_viewport.width / 5, m_viewport.height,
+        m_fontManager->renderLine(RG_FONT_SMALL, getScaleLabel(m_maxDownValue), 0, 0, m_viewport.width / 5, m_viewport.height,
                                   RG_ALIGN_TOP | RG_ALIGN_LEFT);
 
         m_fontManager->renderLine(RG_FONT_SMALL, "Down / Up", 0, 0, m_viewport.width / 5, m_viewport.height,
                                   RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT);
-        m_fontManager->renderLine(RG_FONT_SMALL, getScaleLabel(m_netMeasure->getMaxUpValue()), 0, 0, m_viewport.width / 5, m_viewport.height,
+        m_fontManager->renderLine(RG_FONT_SMALL, getScaleLabel(m_maxUpValue), 0, 0, m_viewport.width / 5, m_viewport.height,
                                   RG_ALIGN_BOTTOM | RG_ALIGN_LEFT);
     }
 }
@@ -68,8 +70,18 @@ PostUpdateCallbackHandle NetGraphWidget::RegisterPostUpdateCallback() {
             const auto& downData{ m_netMeasure->getDownData() };
             const auto& upData{ m_netMeasure->getUpData() };
 
-            const auto maxDownValMB{ m_netMeasure->getMaxDownValue() / static_cast<float>(MB) };
-            const auto maxUpValMB{ m_netMeasure->getMaxUpValue() / static_cast<float>(MB) };
+            bool scaleChanged{ false };
+            if (m_maxDownValue != m_netMeasure->getMaxDownValue()) {
+                m_maxDownValue = m_netMeasure->getMaxDownValue();
+                scaleChanged = true;
+            }
+            if (m_maxUpValue != m_netMeasure->getMaxUpValue()) {
+                m_maxUpValue = m_netMeasure->getMaxUpValue();
+                scaleChanged = true;
+            }
+
+            const auto maxDownValMB{ m_maxDownValue / static_cast<float>(MB) };
+            const auto maxUpValMB{ m_maxUpValue / static_cast<float>(MB) };
 
             std::vector<float> normalizedDownData(downData.size());
             for (auto i = int{ 0 }; i < downData.size(); ++i) {
@@ -79,7 +91,11 @@ PostUpdateCallbackHandle NetGraphWidget::RegisterPostUpdateCallback() {
             for (auto i = int{ 0 }; i < upData.size(); ++i) {
                 normalizedUpData[i] = (upData[i] / static_cast<float>(MB)) / maxUpValMB;
             }
-            m_netGraph.updatePoints(normalizedDownData, normalizedUpData);
+
+            if (scaleChanged)
+                m_netGraph.resetPoints(normalizedDownData, normalizedUpData);
+            else
+                m_netGraph.updatePoints(normalizedDownData, normalizedUpData);
         });
 }
 
