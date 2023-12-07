@@ -90,11 +90,14 @@ Viewport getGLViewport() {
     return { vp[0], vp[1], vp[2], vp[3] };
 }
 
-void checkGLErrors() {
-    GLenum err{ 0 };
+GLenum checkGLErrors() {
+    GLenum err{ GL_NO_ERROR };
+    GLenum lastErr{ GL_NO_ERROR };
     while ((err = glGetError()) != GL_NO_ERROR) {
         std::cout << err << std::endl;
+        lastErr = err;
     }
+    return lastErr;
 }
 
 } // namespace rg

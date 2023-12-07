@@ -29,6 +29,7 @@ VBO& VBO::operator=(VBO&& other) {
         other.id = invalidID;
 
         target = other.target;
+        usage = other.usage;
     }
 
     return *this;

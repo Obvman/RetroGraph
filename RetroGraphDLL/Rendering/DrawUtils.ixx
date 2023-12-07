@@ -37,7 +37,7 @@ export void setGLViewport(const Viewport& vp);
 
 export Viewport getGLViewport();
 
-export void checkGLErrors();
+export GLenum checkGLErrors();
 
 export constexpr inline float clampToViewport(float f) {
     return std::clamp(f, viewportMin, viewportMax);

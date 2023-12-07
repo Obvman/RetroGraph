@@ -11,10 +11,20 @@ NetGraphWidget::NetGraphWidget(const FontManager* fontManager, std::shared_ptr<c
     , m_netGraph{ netMeasure->getUpData().size(), netMeasure->getDownData().size() }
     , m_maxDownValue{ netMeasure->getMaxDownValue() }
     , m_maxUpValue{ netMeasure->getMaxUpValue() }
-    , m_postUpdateHandle{ RegisterPostUpdateCallback() } {
+    , m_postUpdateHandle{ RegisterPostUpdateCallback() }
+    , m_downLowerBound{ UserSettings::inst().getVal<int, int64_t>("Widgets-NetGraph.DownloadDataScaleLowerBoundKB")}
+    , m_upLowerBound{ UserSettings::inst().getVal<int, int64_t>("Widgets-NetGraph.UploadDataScaleLowerBoundKB")}
+    , m_configChangedHandle{
+        UserSettings::inst().configChanged.append(
+            [&]() {
+                m_downLowerBound = UserSettings::inst().getVal<int, int64_t>("Widgets-NetGraph.DownloadDataScaleLowerBoundKB");
+                m_upLowerBound = UserSettings::inst().getVal<int, int64_t>("Widgets-NetGraph.UploadDataScaleLowerBoundKB");
+            })
+    } {
 }
 
 NetGraphWidget::~NetGraphWidget() {
+    UserSettings::inst().configChanged.remove(m_configChangedHandle);
     m_netMeasure->postUpdate.remove(m_postUpdateHandle);
 }
 
@@ -72,11 +82,11 @@ PostUpdateCallbackHandle NetGraphWidget::RegisterPostUpdateCallback() {
 
             bool scaleChanged{ false };
             if (m_maxDownValue != m_netMeasure->getMaxDownValue()) {
-                m_maxDownValue = m_netMeasure->getMaxDownValue();
+                m_maxDownValue = std::max(m_netMeasure->getMaxDownValue(), m_downLowerBound * KB);
                 scaleChanged = true;
             }
             if (m_maxUpValue != m_netMeasure->getMaxUpValue()) {
-                m_maxUpValue = m_netMeasure->getMaxUpValue();
+                m_maxUpValue = std::max(m_netMeasure->getMaxUpValue(), m_upLowerBound * KB);
                 scaleChanged = true;
             }
 

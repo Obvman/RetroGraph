@@ -58,20 +58,23 @@ void UserSettings::readConfig() {
 }
 
 void UserSettings::readMembers(const INIReader& reader) {
-    m_settings["Application.AutoReadConfig"]                   = reader.GetBoolean("Application",          "AutoReadConfig", true);
-    m_settings["Window.Monitor"]                               = reader.GetInteger("Window",               "Monitor", 0);
-    m_settings["Window.WidgetBackground"]                      = reader.GetBoolean("Window",               "WidgetBackground", true);
-    m_settings["Network.PingServer"]                           = reader.Get       ("Network",              "PingServer", "http://www.google.com/");
-    m_settings["Network.PingFrequency"]                        = reader.GetInteger("Network",              "PingFrequency", 10);
-    m_settings["Widgets-ProcessesCPU.NumProcessesDisplayed"]   = reader.GetInteger("Widgets-ProcessesCPU", "NumProcessesDisplayed", 10);
-    m_settings["Widgets-ProcessesCPU.HighCPUUsageThreshold"]   = reader.GetReal   ("Widgets-ProcessesCPU", "HighCPUUsageThreshold", 0.2);
-    m_settings["Widgets-ProcessesRAM.NumProcessesDisplayed"]   = reader.GetInteger("Widgets-ProcessesRAM", "NumProcessesDisplayed", 10);
-    m_settings["Widgets-ProcessesRAM.HighRAMUsageThresholdMB"] = reader.GetInteger("Widgets-ProcessesRAM", "HighRAMUsageThresholdMB", 1024);
-    m_settings["Widgets-NetGraph.NumUsageSamples"]             = reader.GetInteger("Widgets-NetGraph",     "NumUsageSamples", 40);
-    m_settings["Widgets-CPUGraph.NumUsageSamples"]             = reader.GetInteger("Widgets-CPUGraph",     "NumUsageSamples", 40);
-    m_settings["Widgets-GPUGraph.NumUsageSamples"]             = reader.GetInteger("Widgets-GPUGraph",     "NumUsageSamples", 40);
-    m_settings["Widgets-RAMGraph.NumUsageSamples"]             = reader.GetInteger("Widgets-RAMGraph",     "NumUsageSamples", 40);
-    m_settings["Widgets-Main.FPS"]                             = reader.GetInteger("Widgets-Main",         "FPS", 30);
+    m_settings["Application.AutoReadConfig"]                     = reader.GetBoolean("Application",          "AutoReadConfig", true);
+    m_settings["Window.Monitor"]                                 = reader.GetInteger("Window",               "Monitor", 0);
+    m_settings["Window.WidgetBackground"]                        = reader.GetBoolean("Window",               "WidgetBackground", true);
+    m_settings["Network.PingServer"]                             = reader.Get       ("Network",              "PingServer", "http://www.google.com/");
+    m_settings["Network.PingFrequency"]                          = reader.GetInteger("Network",              "PingFrequency", 10);
+    m_settings["Widgets-ProcessesCPU.NumProcessesDisplayed"]     = reader.GetInteger("Widgets-ProcessesCPU", "NumProcessesDisplayed", 10);
+    m_settings["Widgets-ProcessesCPU.HighCPUUsageThreshold"]     = reader.GetReal   ("Widgets-ProcessesCPU", "HighCPUUsageThreshold", 0.2);
+    m_settings["Widgets-ProcessesRAM.NumProcessesDisplayed"]     = reader.GetInteger("Widgets-ProcessesRAM", "NumProcessesDisplayed", 10);
+    m_settings["Widgets-ProcessesRAM.HighRAMUsageThresholdMB"]   = reader.GetInteger("Widgets-ProcessesRAM", "HighRAMUsageThresholdMB", 1024);
+    m_settings["Widgets-NetGraph.NumUsageSamples"]               = reader.GetInteger("Widgets-NetGraph",     "NumUsageSamples", 40);
+    m_settings["Widgets-NetGraph.DownloadDataScaleLowerBoundKB"] = reader.GetInteger("Widgets-NetGraph",     "DownloadDataScaleLowerBoundKB", 100);
+    m_settings["Widgets-NetGraph.UploadDataScaleLowerBoundKB"]   = reader.GetInteger("Widgets-NetGraph",     "UploadDataScaleLowerBoundKB", 100);
+    m_settings["Widgets-CPUGraph.NumUsageSamples"]               = reader.GetInteger("Widgets-CPUGraph",     "NumUsageSamples", 40);
+    m_settings["Widgets-CPUStats.NumUsageSamples"]               = reader.GetInteger("Widgets-CPUStats",     "NumUsageSamples", 40);
+    m_settings["Widgets-GPUGraph.NumUsageSamples"]               = reader.GetInteger("Widgets-GPUGraph",     "NumUsageSamples", 40);
+    m_settings["Widgets-RAMGraph.NumUsageSamples"]               = reader.GetInteger("Widgets-RAMGraph",     "NumUsageSamples", 40);
+    m_settings["Widgets-Main.FPS"]                               = reader.GetInteger("Widgets-Main",         "FPS", 30);
 
     m_widgetVisibilities[static_cast<int>(WidgetType::Time)]        = reader.GetBoolean("Widgets-Time",         "Visible", true);
     m_widgetVisibilities[static_cast<int>(WidgetType::CPUStats)]    = reader.GetBoolean("Widgets-CPUStats",     "Visible", true);

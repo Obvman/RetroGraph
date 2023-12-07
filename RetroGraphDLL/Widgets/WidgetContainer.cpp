@@ -1,7 +1,5 @@
 module Widgets.WidgetContainer;
 
-import UserSettings;
-
 import Rendering.DrawUtils;
 import Rendering.GLListContainer;
 
@@ -15,9 +13,16 @@ WidgetContainer::WidgetContainer(WidgetPosition p)
     , m_viewport{}
     , m_pos{ p }
     , m_type{ getFillTypeFromPosition(p) }
-    , m_drawBackground{ UserSettings::inst().getVal<bool>("Window.WidgetBackground") } {
+    , m_drawBackground{ UserSettings::inst().getVal<bool>("Window.WidgetBackground") }
+    , m_configChangedHandle{
+        UserSettings::inst().configChanged.append(
+            [&]() { m_drawBackground = UserSettings::inst().getVal<bool>("Window.WidgetBackground"); })
+    } {
 
-    // #TODO update m_drawBackground if config changes.
+}
+
+WidgetContainer::~WidgetContainer() {
+    UserSettings::inst().configChanged.remove(m_configChangedHandle);
 }
 
 bool WidgetContainer::isVisible() const {

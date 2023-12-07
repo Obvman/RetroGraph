@@ -1,5 +1,7 @@
 export module Widgets.NetGraphWidget;
 
+import UserSettings;
+
 import Measures.NetMeasure;
 
 import Rendering.FontManager;
@@ -24,9 +26,12 @@ private:
 
     std::shared_ptr<const NetMeasure> m_netMeasure{ nullptr };
     PostUpdateCallbackHandle m_postUpdateHandle;
+    ConfigRefreshedCallbackHandle m_configChangedHandle;
     SmoothMirrorLineGraph m_netGraph;
     int64_t m_maxDownValue;
     int64_t m_maxUpValue;
+    int64_t m_downLowerBound;
+    int64_t m_upLowerBound;
 };
 
 }

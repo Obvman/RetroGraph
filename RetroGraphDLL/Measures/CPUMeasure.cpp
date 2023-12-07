@@ -11,6 +11,7 @@ unsigned long long fileTimeToInt64(const FILETIME & ft) {
 
 CPUMeasure::CPUMeasure()
     : m_dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-CPUGraph.NumUsageSamples") }
+    , m_perCoreDataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-CPUStats.NumUsageSamples") }
     , m_usageData( m_dataSize, 0.0f )
     , m_configChangedHandle{
         UserSettings::inst().configChanged.append(
@@ -19,6 +20,14 @@ CPUMeasure::CPUMeasure()
                 if (m_dataSize != newDataSize) {
                     m_usageData.assign(newDataSize, 0.0f);
                     m_dataSize = newDataSize;
+                }
+                const size_t newPerCoreDataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-CPUStats.NumUsageSamples") };
+                if (m_perCoreDataSize != newPerCoreDataSize) {
+                    m_perCoreDataSize = newPerCoreDataSize;
+                    m_perCoreData.resize(m_coreTempPlugin.getNumCores());
+                    for (auto& vec : m_perCoreData) {
+                        vec.assign(m_perCoreDataSize, 0.0f);
+                    }
                 }
             })
     } {
@@ -29,7 +38,7 @@ CPUMeasure::CPUMeasure()
     // default core usage values
     m_perCoreData.resize(m_coreTempPlugin.getNumCores());
     for (auto& vec : m_perCoreData) {
-        vec.assign(perCoreDataSize, 0.0f);
+        vec.assign(m_perCoreDataSize, 0.0f);
     }
 }
 
@@ -123,7 +132,7 @@ void CPUMeasure::resetData() {
     m_perCoreData.clear();
     m_perCoreData.resize(m_coreTempPlugin.getNumCores());
     for (auto& vec : m_perCoreData) {
-        vec.assign(perCoreDataSize, 0.0f);
+        vec.assign(m_perCoreDataSize, 0.0f);
     }
 }
 

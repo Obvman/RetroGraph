@@ -36,6 +36,13 @@ void SmoothMirrorLineGraph::draw() const {
     GLListContainer::inst().drawBorder();
     GraphGrid::inst().draw();
 
+    // Draw a dividing line between the two graphs
+    glBegin(GL_LINES); {
+        glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.3f);
+        glVertex2f(-1.0f, 0.0f);
+        glVertex2f(1.0f, 0.0f);
+    } glEnd();
+
     auto viewport{ getGLViewport() };
 
     // Draw the top graph in the top half of the viewport

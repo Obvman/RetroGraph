@@ -1,5 +1,7 @@
 export module Widgets.WidgetContainer;
 
+import UserSettings;
+
 import Rendering.Viewport;
 
 import Widgets.Widget;
@@ -23,7 +25,7 @@ export enum class ContainerType {
 export class WidgetContainer {
 public:
     explicit WidgetContainer(WidgetPosition p);
-    ~WidgetContainer() = default;
+    ~WidgetContainer();
 
     void draw() const;
     void clear() const;
@@ -46,6 +48,7 @@ private:
     WidgetPosition m_pos;
     ContainerType m_type;
     bool m_drawBackground;
+    ConfigRefreshedCallbackHandle m_configChangedHandle;
 };
 
 } // namespace rg

@@ -49,9 +49,7 @@ public:
     const std::vector<float>& getUsageData() const { return m_usageData; }
 
     /* Returns list of each core's load history */
-    const std::vector<std::vector<float>>& getPerCoreUsageData() const {
-        return m_perCoreData;
-    }
+    const std::vector<std::vector<float>>& getPerCoreUsageData() const { return m_perCoreData; }
 
     /* Returns the maximum number of CPU usage samples stored */
     size_t getDataSize() const { return m_dataSize; }
@@ -75,7 +73,7 @@ private:
     size_t m_dataSize{ 40U };
     std::vector<float> m_usageData{};
 
-    size_t perCoreDataSize{ 40U }; // #TODO make configurable
+    size_t m_perCoreDataSize{ 40U };
     std::vector<std::vector<float>> m_perCoreData{};
 
     std::chrono::milliseconds m_uptime{ 0 };
