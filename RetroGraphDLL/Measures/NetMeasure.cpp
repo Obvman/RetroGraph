@@ -12,7 +12,6 @@ namespace rg {
 NetMeasure::NetMeasure()
     : m_pingServer{ UserSettings::inst().getVal<std::string>("Network.PingServer") }
     , m_pingFreqSec{ UserSettings::inst().getVal<int>("Network.PingFrequency") }
-    , m_dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-NetGraph.NumUsageSamples") }
     , m_configChangedHandle{
         UserSettings::inst().configChanged.append(
             [&]() {
@@ -21,20 +20,9 @@ NetMeasure::NetMeasure()
                 m_pingServer = UserSettings::inst().getVal<std::string>("Network.PingServer");
                 m_pingFreqSec = UserSettings::inst().getVal<int>("Network.PingFrequency");
 
-                const size_t newDataSize = UserSettings::inst().getVal<int, size_t>("Widgets-NetGraph.NumUsageSamples");
-                if (m_dataSize != newDataSize) {
-                    m_downBytes.assign(newDataSize, 0U);
-                    m_upBytes.assign(newDataSize, 0U);
-                    m_dataSize = newDataSize;
-                }
-
                 startNetworkThread();
             })
     } {
-
-    // Fill data vectors with default values
-    m_downBytes.assign(m_dataSize, 0);
-    m_upBytes.assign(m_dataSize, 0);
 
     RGVERIFY(GetIfTable2(&m_table) == NO_ERROR, "GetIfTable failed");
 
@@ -59,7 +47,6 @@ NetMeasure::NetMeasure()
     getMACAndLocalIP();
 
     startNetworkThread();
-
 }
 
 NetMeasure::~NetMeasure() {
@@ -167,14 +154,8 @@ void NetMeasure::update(int ticks) {
 
     RGVERIFY(GetIfEntry2(m_adapterEntry) == NO_ERROR, "GetIfEntry2 failed");
 
-    m_downBytes[0] = m_adapterEntry->InOctets - oldDown;
-    std::rotate(m_downBytes.begin(), m_downBytes.begin() + 1, m_downBytes.end());
-    m_downMaxVal = *std::max_element(m_downBytes.cbegin(), m_downBytes.cend());
-
-    m_upBytes[0] = m_adapterEntry->OutOctets - oldUp;
-    std::rotate(m_upBytes.begin(), m_upBytes.begin() + 1, m_upBytes.end());
-    m_upMaxVal = *std::max_element(m_upBytes.cbegin(), m_upBytes.cend());
-
+    onDownBytes(m_adapterEntry->InOctets - oldDown);
+    onUpBytes(m_adapterEntry->OutOctets - oldUp);
     postUpdate();
 }
 

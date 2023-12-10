@@ -1,21 +1,24 @@
 export module Measures.RAMMeasure;
 
 import Units;
-import UserSettings;
 
 import Measures.Measure;
 
 import std.core;
 
+import "EventppHeaderUnit.h";
 import "WindowsHeaderUnit.h";
 
 namespace rg {
+
+export using RAMUsageCallbackList = eventpp::CallbackList<void (float)>;
+export using RAMUsageCallbackHandle = RAMUsageCallbackList::Handle;
 
 /* Stores capacity totals and availability for system RAM */
 export class RAMMeasure : public Measure {
 public:
     RAMMeasure();
-    ~RAMMeasure() noexcept;
+    ~RAMMeasure() noexcept = default;
 
     /* Updates the system memory status values */
     void update(int ticks) override;
@@ -41,19 +44,13 @@ public:
     DWORDLONG getUsedPhysicalMB() const { return getTotalPhysicalMB() - getAvailablePhysicalMB(); }
     float getUsedPhysicalGB() const { return getTotalPhysicalGB() - getAvailablePhysicalGB(); }
 
-    /* Returns memory load as integer from 0 - 100 */
-    int getLoadPercentage() const { return m_memStatus.dwMemoryLoad; }
-
-    const std::vector<float> getUsageData() const { return m_usageData; }
+    mutable RAMUsageCallbackList onRAMUsage;
 
 private:
     /* Returns more accurate load percentage as a float from 0.0 - 1.0 */
     float getLoadPercentagef() const;
 
     MEMORYSTATUSEX m_memStatus{ };
-    int m_dataSize{ 40 }; // max number of usage percentages to store
-    std::vector<float> m_usageData{ };
-    ConfigRefreshedCallbackHandle m_configChangedHandle;
 };
 
 } // namespace rg

@@ -1,14 +1,16 @@
 export module Measures.GPUMeasure;
 
-import UserSettings;
-
 import Measures.Measure;
 
 import std.core;
 
+import "EventppHeaderUnit.h";
 import "NvidiaHeaderUnit.h";
 
 namespace rg {
+
+export using GPUUsageCallbackList = eventpp::CallbackList<void (float)>;
+export using GPUUsageCallbackHandle = GPUUsageCallbackList::Handle;
 
 export class GPUMeasure : public Measure {
 public:
@@ -34,7 +36,8 @@ public:
     const std::string& getDriverVersion() const { return m_driverVersion; }
     const std::string& getGpuName() const { return m_gpuName; }
     const std::string& getGpuDescription() const { return m_gpuDescription; }
-    const std::vector<float>& getUsageData() const { return m_usageData; }
+
+    mutable GPUUsageCallbackList onGPUUsage;
 
 private:
     NvPhysicalGpuHandle getGpuHandle() const;
@@ -63,9 +66,6 @@ private:
     NvU32 m_frameBufferSize{ 0U };
     NvU32 m_currAvailableMemory{ 0U };
     NvU32 m_totalMemory{ 0U };
-
-    std::vector<float> m_usageData{ };
-    ConfigRefreshedCallbackHandle m_configChangedHandle;
 };
 
 } // namespace rg

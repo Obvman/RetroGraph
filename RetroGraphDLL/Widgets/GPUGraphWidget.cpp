@@ -7,13 +7,16 @@ namespace rg {
 GPUGraphWidget::GPUGraphWidget(const FontManager* fontManager, std::shared_ptr<const GPUMeasure> gpuMeasure)
     : Widget{ fontManager }
     , m_gpuMeasure{ gpuMeasure }
-    , m_postUpdateHandle{ RegisterPostUpdateCallback() }
-    , m_graph{ m_gpuMeasure->getUsageData().size() } {
+    , m_onGPUUsageHandle{ RegisterGPUUsageCallback() }
+    , m_graphSampleSize{ UserSettings::inst().getVal<int>("Widgets-GPUGraph.NumUsageSamples") }
+    , m_graph{ static_cast<size_t>(m_graphSampleSize) }
+    , m_configRefreshedHandle{ RegisterConfigRefreshedCallback() } {
 
 }
 
 GPUGraphWidget::~GPUGraphWidget() {
-    m_gpuMeasure->postUpdate.remove(m_postUpdateHandle);
+    m_gpuMeasure->onGPUUsage.remove(m_onGPUUsageHandle);
+    UserSettings::inst().configChanged.remove(m_configRefreshedHandle);
 }
 
 void GPUGraphWidget::draw() const {
@@ -35,13 +38,26 @@ void GPUGraphWidget::draw() const {
                               RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
 }
 
-PostUpdateCallbackHandle GPUGraphWidget::RegisterPostUpdateCallback() {
-    return m_gpuMeasure->postUpdate.append(
+GPUUsageCallbackHandle GPUGraphWidget::RegisterGPUUsageCallback() {
+    return m_gpuMeasure->onGPUUsage.append(
+        [this](float usage) {
+            if (m_gpuMeasure->isEnabled())
+                m_graph.addPoint(usage);
+        });
+}
+
+ConfigRefreshedCallbackHandle GPUGraphWidget::RegisterConfigRefreshedCallback() {
+    return UserSettings::inst().configChanged.append(
         [this]() {
             if (m_gpuMeasure->isEnabled()) {
-                m_graph.updatePoints(m_gpuMeasure->getUsageData());
+                const int newGraphSampleSize{ UserSettings::inst().getVal<int>("Widgets-GPUGraph.NumUsageSamples") };
+                if (m_graphSampleSize != newGraphSampleSize) {
+                    m_graphSampleSize = newGraphSampleSize;
+                    m_graph.resetPoints(m_graphSampleSize);
+                }
             }
-        });
+        }
+    );
 }
 
 } // namespace rg

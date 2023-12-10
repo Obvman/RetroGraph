@@ -13,10 +13,10 @@ import "RGAssert.h";
 
 namespace rg {
 
-LineGraph::LineGraph(size_t numGraphSamples)
+LineGraph::LineGraph(size_t numPoints)
     : m_graphVAO{}
     , m_graphVerticesVBO{ GL_ARRAY_BUFFER, GL_STREAM_DRAW }
-    , m_pointBuffer{ numGraphSamples }
+    , m_pointBuffer{ numPoints }
     , m_drawDecorations{ true }
     , m_modelView{} {
 
@@ -32,27 +32,30 @@ void LineGraph::draw() const {
     drawPoints();
 }
 
-void LineGraph::updatePoints(const std::vector<float>& values) {
+void LineGraph::addPoint(float valueY) {
     auto vboScope{ m_graphVerticesVBO.bind() };
 
     // Value vectors can change size (infrequently).
     // In this case we need to reallocate buffer data instead of just writing to it
-    if (m_pointBuffer.numPoints() != values.size()) {
-        resetPoints(values);
+    if (m_pointBuffer.pushPoint(percentageToVP(valueY))) {
+        // All of the points have changed in this case so update the whole range of points in the VBO
+        m_graphVerticesVBO.bufferSubData(m_pointBuffer.tail() * sizeof(glm::vec2),
+                                         m_pointBuffer.numPoints() * sizeof(glm::vec2), m_pointBuffer.front());
     } else {
-        if (m_pointBuffer.pushPoint(percentageToVP(values.back()))) {
-            // All of the points have changed in this case so update the whole range of points in the VBO
-            m_graphVerticesVBO.bufferSubData(m_pointBuffer.tail() * sizeof(glm::vec2),
-                                             m_pointBuffer.numPoints() * sizeof(glm::vec2), m_pointBuffer.front());
-        } else {
-            // Only one point has changed here
-            m_graphVerticesVBO.bufferSubData(m_pointBuffer.head() * sizeof(glm::vec2),
-                                             sizeof(glm::vec2), m_pointBuffer.back());
-        }
+        // Only one point has changed here
+        m_graphVerticesVBO.bufferSubData(m_pointBuffer.head() * sizeof(glm::vec2),
+                                         sizeof(glm::vec2), m_pointBuffer.back());
     }
 }
 
-void LineGraph::resetPoints(const std::vector<float>& values) {
+void LineGraph::resetPoints(size_t numPoints) {
+    m_pointBuffer = GraphPointBuffer{ numPoints };
+
+    auto vboScope{ m_graphVerticesVBO.bind() };
+    m_graphVerticesVBO.bufferData(m_pointBuffer.bufferSize() * sizeof(glm::vec2), m_pointBuffer.data());
+}
+
+void LineGraph::setPoints(const std::vector<float>& values) {
     m_pointBuffer = GraphPointBuffer{ values.size() };
 
     std::vector<float> normalizedValues{ values.cbegin(), values.cend() };
@@ -60,6 +63,8 @@ void LineGraph::resetPoints(const std::vector<float>& values) {
         value = percentageToVP(value);
 
     m_pointBuffer.setPoints(normalizedValues);
+
+    auto vboScope{ m_graphVerticesVBO.bind() };
     m_graphVerticesVBO.bufferData(m_pointBuffer.bufferSize() * sizeof(glm::vec2), m_pointBuffer.data());
 }
 

@@ -9,12 +9,13 @@ import Widgets.Graph.GraphGrid;
 import Widgets.Graph.Spline;
 
 import "GLHeaderUnit.h";
+import "RGAssert.h";
 
 namespace rg {
 
-SmoothMirrorLineGraph::SmoothMirrorLineGraph(size_t numTopGraphSamples, size_t numBottomGraphSamples)
-    : m_topGraph{numTopGraphSamples}
-    , m_bottomGraph{ numBottomGraphSamples } {
+SmoothMirrorLineGraph::SmoothMirrorLineGraph(size_t numGraphSamples)
+    : m_topGraph{ numGraphSamples }
+    , m_bottomGraph{ numGraphSamples } {
 
     glm::mat4 verticalInversionMatrix{};
     m_bottomGraph.setModelView(glm::scale(verticalInversionMatrix, { 1.0f, -1.0f, 1.0f }));
@@ -22,14 +23,25 @@ SmoothMirrorLineGraph::SmoothMirrorLineGraph(size_t numTopGraphSamples, size_t n
     m_topGraph.setDrawDecorations(false);
 }
 
-void SmoothMirrorLineGraph::updatePoints(const std::vector<float>& topValues, const std::vector<float>& bottomValues) {
-    m_topGraph.updatePoints(topValues);
-    m_bottomGraph.updatePoints(bottomValues);
+void SmoothMirrorLineGraph::addTopPoint(float valueY) {
+    m_topGraph.addPoint(valueY);
 }
 
-void SmoothMirrorLineGraph::resetPoints(const std::vector<float>& topValues, const std::vector<float>& bottomValues) {
-    m_topGraph.resetPoints(topValues);
-    m_bottomGraph.resetPoints(bottomValues);
+void SmoothMirrorLineGraph::addBottomPoint(float valueY) {
+    m_bottomGraph.addPoint(valueY);
+}
+
+void SmoothMirrorLineGraph::setTopPoints(const std::vector<float>& values) {
+    m_topGraph.setPoints(values);
+}
+
+void SmoothMirrorLineGraph::setBottomPoints(const std::vector<float>& values) {
+    m_bottomGraph.setPoints(values);
+}
+
+void SmoothMirrorLineGraph::resetPoints(size_t numGraphSamples) {
+    m_topGraph.resetPoints(numGraphSamples);
+    m_bottomGraph.resetPoints(numGraphSamples);
 }
 
 void SmoothMirrorLineGraph::draw() const {

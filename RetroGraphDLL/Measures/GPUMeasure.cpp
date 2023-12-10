@@ -16,18 +16,7 @@ namespace rg {
 
 constexpr int NVAPI_GPU_UTILIZATION_DOMAIN_GPU{ 0U };
 
-GPUMeasure::GPUMeasure()
-    : m_usageData(UserSettings::inst().getVal<int, size_t>("Widgets-GPUGraph.NumUsageSamples"))
-    , m_configChangedHandle{
-        UserSettings::inst().configChanged.append(
-            [&]() {
-                const size_t newDataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-GPUGraph.NumUsageSamples") };
-                if (m_usageData.size() != newDataSize) {
-                    m_usageData.assign(newDataSize, 0.0f);
-                }
-            })
-    } {
-
+GPUMeasure::GPUMeasure() {
     if (NvAPI_Initialize() != NVAPI_OK) {
         m_isEnabled = false;
         return;
@@ -68,7 +57,6 @@ GPUMeasure::GPUMeasure()
 
 GPUMeasure::~GPUMeasure() {
     NvAPI_Unload();
-    UserSettings::inst().configChanged.remove(m_configChangedHandle);
 }
 
 void GPUMeasure::update(int) {
@@ -76,9 +64,7 @@ void GPUMeasure::update(int) {
     //getClockFrequencies(); // High CPU usage function
     //getMemInformation();
 
-    m_usageData[0] = getGpuUsage();
-    std::rotate(m_usageData.begin(), m_usageData.begin() + 1, m_usageData.end());
-
+    onGPUUsage(getGpuUsage());
     postUpdate();
 }
 

@@ -7,13 +7,16 @@ namespace rg {
 CPUGraphWidget::CPUGraphWidget(const FontManager* fontManager, std::shared_ptr<const CPUMeasure> cpuMeasure)
     : Widget{ fontManager }
     , m_cpuMeasure{ cpuMeasure }
-    , m_postUpdateHandle{ RegisterPostUpdateCallback() }
-    , m_graph{ cpuMeasure->getUsageData().size() } {
+    , m_onCPUUsageHandle{ RegisterCPUUsageCallback() }
+    , m_graphSampleSize{ UserSettings::inst().getVal<int>("Widgets-CPUGraph.NumUsageSamples") }
+    , m_graph{ static_cast<size_t>(m_graphSampleSize) }
+    , m_configRefreshedHandle{ RegisterConfigRefreshedCallback() } {
 
 }
 
 CPUGraphWidget::~CPUGraphWidget() {
-    m_cpuMeasure->postUpdate.remove(m_postUpdateHandle);
+    UserSettings::inst().configChanged.remove(m_configRefreshedHandle);
+    m_cpuMeasure->onCPUUsage.remove(m_onCPUUsageHandle);
 }
 
 void CPUGraphWidget::draw() const {
@@ -33,11 +36,20 @@ void CPUGraphWidget::draw() const {
                              RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
 }
 
-PostUpdateCallbackHandle CPUGraphWidget::RegisterPostUpdateCallback() {
-    return m_cpuMeasure->postUpdate.append(
+CPUUsageCallbackHandle CPUGraphWidget::RegisterCPUUsageCallback() {
+    return m_cpuMeasure->onCPUUsage.append([this](float usage) { m_graph.addPoint(usage); });
+}
+
+ConfigRefreshedCallbackHandle CPUGraphWidget::RegisterConfigRefreshedCallback() {
+    return UserSettings::inst().configChanged.append(
         [this]() {
-            m_graph.updatePoints(m_cpuMeasure->getUsageData());
-        });
+            const int newGraphSampleSize{ UserSettings::inst().getVal<int>("Widgets-CPUGraph.NumUsageSamples") };
+            if (m_graphSampleSize != newGraphSampleSize) {
+                m_graphSampleSize = newGraphSampleSize;
+                m_graph.resetPoints(m_graphSampleSize);
+            }
+        }
+    );
 }
 
 } // namespace rg

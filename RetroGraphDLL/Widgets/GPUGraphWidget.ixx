@@ -1,5 +1,7 @@
 export module Widgets.GPUGraphWidget;
 
+import UserSettings;
+
 import Measures.GPUMeasure;
 
 import Rendering.FontManager;
@@ -19,10 +21,13 @@ public:
     void draw() const override;
 
 private:
-    PostUpdateCallbackHandle RegisterPostUpdateCallback();
+    GPUUsageCallbackHandle RegisterGPUUsageCallback();
+    ConfigRefreshedCallbackHandle RegisterConfigRefreshedCallback();
 
     std::shared_ptr<const GPUMeasure> m_gpuMeasure{ nullptr };
-    PostUpdateCallbackHandle m_postUpdateHandle;
+    GPUUsageCallbackHandle m_onGPUUsageHandle;
+    ConfigRefreshedCallbackHandle m_configRefreshedHandle;
+    int m_graphSampleSize;
     SmoothLineGraph m_graph;
 };
 

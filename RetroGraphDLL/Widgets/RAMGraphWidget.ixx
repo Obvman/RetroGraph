@@ -1,5 +1,7 @@
 export module Widgets.RAMGraphWidget;
 
+import UserSettings;
+
 import Measures.RAMMeasure;
 
 import Rendering.FontManager;
@@ -19,10 +21,13 @@ public:
     void draw() const override;
 
 private:
-    PostUpdateCallbackHandle RegisterPostUpdateCallback();
+    RAMUsageCallbackHandle RegisterRAMUsageCallback();
+    ConfigRefreshedCallbackHandle RegisterConfigRefreshedCallback();
 
     std::shared_ptr<const RAMMeasure> m_ramMeasure{ nullptr };
-    PostUpdateCallbackHandle m_postUpdateHandle;
+    RAMUsageCallbackHandle m_onRAMUsageHandle;
+    ConfigRefreshedCallbackHandle m_configRefreshedHandle;
+    int m_graphSampleSize;
     SmoothLineGraph m_graph;
 };
 

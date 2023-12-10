@@ -9,74 +9,38 @@ unsigned long long fileTimeToInt64(const FILETIME & ft) {
         | (static_cast<unsigned long long> (ft.dwLowDateTime));
 }
 
-CPUMeasure::CPUMeasure()
-    : m_dataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-CPUGraph.NumUsageSamples") }
-    , m_perCoreDataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-CPUStats.NumUsageSamples") }
-    , m_usageData( m_dataSize, 0.0f )
-    , m_configChangedHandle{
-        UserSettings::inst().configChanged.append(
-            [&]() {
-                const size_t newDataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-CPUGraph.NumUsageSamples") };
-                if (m_dataSize != newDataSize) {
-                    m_usageData.assign(newDataSize, 0.0f);
-                    m_dataSize = newDataSize;
-                }
-                const size_t newPerCoreDataSize{ UserSettings::inst().getVal<int, size_t>("Widgets-CPUStats.NumUsageSamples") };
-                if (m_perCoreDataSize != newPerCoreDataSize) {
-                    m_perCoreDataSize = newPerCoreDataSize;
-                    m_perCoreData.resize(m_coreTempPlugin.getNumCores());
-                    for (auto& vec : m_perCoreData) {
-                        vec.assign(m_perCoreDataSize, 0.0f);
-                    }
-                }
-            })
-    } {
-
+CPUMeasure::CPUMeasure() {
     updateCPUName();
-
-    // Create one vector for each core in the machine, and fill each vector with
-    // default core usage values
-    m_perCoreData.resize(m_coreTempPlugin.getNumCores());
-    for (auto& vec : m_perCoreData) {
-        vec.assign(m_perCoreDataSize, 0.0f);
-    }
 }
 
 CPUMeasure::~CPUMeasure() {
-    UserSettings::inst().configChanged.remove(m_configChangedHandle);
 }
 
 void CPUMeasure::update(int) {
     m_coreTempPlugin.update();
 
-    /* If the coretemp program was started in the last frame, reset usage
-     * vectors and resize them to the number of cores provided by coretemp
-     */
     if (m_coreTempPlugin.coreTempWasStarted())
-        resetData();
+        onCPUCoreDataStateChanged(true);
+    if (m_coreTempPlugin.coreTempWasStopped())
+        onCPUCoreDataStateChanged(false);
 
     m_uptime = std::chrono::milliseconds(GetTickCount64());
 
     updateCPUName();
 
-    const auto totalLoad{ getCPULoad() };
-    // Add to the usageData vector by overwriting the oldest value and
-    // shifting the elements in the vector
-    // TODO do not maintain these buffers, simply report single values in update events for the widgets.
-    m_usageData[0] = totalLoad;
-    std::rotate(m_usageData.begin(), m_usageData.begin() + 1, m_usageData.end());
-
-    for (unsigned int i = 0U; i < m_perCoreData.size(); ++i) {
-        const auto coreUsage = float{ m_coreTempPlugin.getLoad(i) / 100.0f };
-        m_perCoreData[i][0] = coreUsage;
-        std::rotate(m_perCoreData[i].begin(), m_perCoreData[i].begin() + 1, m_perCoreData[i].end());
+    if (getCoreTempInfoSuccess()) {
+        for (int i{ 0 }; i < getNumCores(); ++i) {
+            const auto coreUsage = float{ m_coreTempPlugin.getLoad(i) / 100.0f };
+            onCPUCoreUsage(i, coreUsage);
+        }
     }
 
+    onCPUUsage(getCPULoad());
     postUpdate();
 }
 
 void CPUMeasure::updateCPUName() {
-    if (m_cpuName.empty() && m_coreTempPlugin.getCoreTempInfoSuccess()) {
+    if (m_cpuName.empty() && getCoreTempInfoSuccess()) {
         const auto cpuName{ m_coreTempPlugin.getCPUName() };
         if (!cpuName.empty())
             m_cpuName = "CPU: " + cpuName;
@@ -126,14 +90,6 @@ float CPUMeasure::calculateCPULoad(uint64_t idleTicks, uint64_t totalTicks) {
     prevIdleTicks = idleTicks;
 
     return cpuLoad;
-}
-
-void CPUMeasure::resetData() {
-    m_perCoreData.clear();
-    m_perCoreData.resize(m_coreTempPlugin.getNumCores());
-    for (auto& vec : m_perCoreData) {
-        vec.assign(m_perCoreDataSize, 0.0f);
-    }
 }
 
 } // namespace rg

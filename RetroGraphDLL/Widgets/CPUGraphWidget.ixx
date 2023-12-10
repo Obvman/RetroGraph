@@ -1,5 +1,7 @@
 export module Widgets.CPUGraphWidget;
 
+import UserSettings;
+
 import Measures.CPUMeasure;
 
 import Rendering.FontManager;
@@ -19,10 +21,13 @@ public:
     void draw() const override;
 
 private:
-    PostUpdateCallbackHandle RegisterPostUpdateCallback();
+    CPUUsageCallbackHandle RegisterCPUUsageCallback();
+    ConfigRefreshedCallbackHandle RegisterConfigRefreshedCallback();
 
     std::shared_ptr<const CPUMeasure> m_cpuMeasure{ nullptr };
-    PostUpdateCallbackHandle m_postUpdateHandle;
+    CPUUsageCallbackHandle m_onCPUUsageHandle;
+    ConfigRefreshedCallbackHandle m_configRefreshedHandle;
+    int m_graphSampleSize;
     SmoothLineGraph m_graph;
 };
 

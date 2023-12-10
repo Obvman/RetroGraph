@@ -30,6 +30,7 @@ CPUPlugin::~CPUPlugin() noexcept {
 
 void CPUPlugin::update() {
     m_coreTempWasStarted = false;
+    m_coreTempWasStopped = false;
 
     /* If coreTemp failed to get information last frame but got it this frame,
      * then the program must have been started
@@ -38,6 +39,9 @@ void CPUPlugin::update() {
     if (!m_getCoreTempInfoSuccess && coreTempSuccessThisFrame) {
         m_getCoreTempInfoSuccess = true;
         m_coreTempWasStarted = true;
+    } else if (m_getCoreTempInfoSuccess && !coreTempSuccessThisFrame) {
+        m_getCoreTempInfoSuccess = false;
+        m_coreTempWasStopped = true;
     } else {
         m_getCoreTempInfoSuccess = coreTempSuccessThisFrame;
     }

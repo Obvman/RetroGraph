@@ -8,24 +8,23 @@ namespace rg {
 NetGraphWidget::NetGraphWidget(const FontManager* fontManager, std::shared_ptr<const NetMeasure> netMeasure)
     : Widget{ fontManager }
     , m_netMeasure{ netMeasure }
-    , m_netGraph{ netMeasure->getUpData().size(), netMeasure->getDownData().size() }
-    , m_maxDownValue{ netMeasure->getMaxDownValue() }
-    , m_maxUpValue{ netMeasure->getMaxUpValue() }
-    , m_postUpdateHandle{ RegisterPostUpdateCallback() }
-    , m_downLowerBound{ UserSettings::inst().getVal<int, int64_t>("Widgets-NetGraph.DownloadDataScaleLowerBoundKB")}
-    , m_upLowerBound{ UserSettings::inst().getVal<int, int64_t>("Widgets-NetGraph.UploadDataScaleLowerBoundKB")}
-    , m_configChangedHandle{
-        UserSettings::inst().configChanged.append(
-            [&]() {
-                m_downLowerBound = UserSettings::inst().getVal<int, int64_t>("Widgets-NetGraph.DownloadDataScaleLowerBoundKB");
-                m_upLowerBound = UserSettings::inst().getVal<int, int64_t>("Widgets-NetGraph.UploadDataScaleLowerBoundKB");
-            })
-    } {
+    , m_onDownBytesHandle{ RegisterNetDownBytesCallback() }
+    , m_onUpBytesHandle{ RegisterNetUpBytesCallback() }
+    , m_configRefreshedHandle{ RegisterConfigRefreshedCallback() }
+    , m_graphSampleSize{ UserSettings::inst().getVal<int>("Widgets-NetGraph.NumUsageSamples") }
+    , m_netGraph{ static_cast<size_t> (m_graphSampleSize) }
+    , m_downLowerBound{ KB * UserSettings::inst().getVal<int, int64_t>("Widgets-NetGraph.DownloadDataScaleLowerBoundKB") }
+    , m_upLowerBound{ KB * UserSettings::inst().getVal<int, int64_t>("Widgets-NetGraph.UploadDataScaleLowerBoundKB") }
+    , m_maxDownValue{ m_downLowerBound }
+    , m_maxUpValue{ m_upLowerBound }
+    , m_downBytes( static_cast<size_t> (m_graphSampleSize), 0 )
+    , m_upBytes( static_cast<size_t> (m_graphSampleSize), 0 ) {
 }
 
 NetGraphWidget::~NetGraphWidget() {
-    UserSettings::inst().configChanged.remove(m_configChangedHandle);
-    m_netMeasure->postUpdate.remove(m_postUpdateHandle);
+    UserSettings::inst().configChanged.remove(m_configRefreshedHandle);
+    m_netMeasure->onUpBytes.remove(m_onUpBytesHandle);
+    m_netMeasure->onDownBytes.remove(m_onDownBytesHandle);
 }
 
 void NetGraphWidget::draw() const {
@@ -74,39 +73,98 @@ std::string NetGraphWidget::getScaleLabel(int64_t bytesTransferred) const {
     }
 }
 
-PostUpdateCallbackHandle NetGraphWidget::RegisterPostUpdateCallback() {
-    return m_netMeasure->postUpdate.append(
-        [this]() {
-            const auto& downData{ m_netMeasure->getDownData() };
-            const auto& upData{ m_netMeasure->getUpData() };
+NetUsageCallbackHandle NetGraphWidget::RegisterNetDownBytesCallback() {
+    return m_netMeasure->onDownBytes.append(
+        [this](int64_t downBytes) {
+
+            // Remove old data and add the new to ensure queue maintains fixed size
+            m_downBytes.pop_front();
+            m_downBytes.push_back(downBytes);
+
+            // Calculate the maximum value in the dataset to determine the scale to use.
+            int64_t downMaxVal{ *std::max_element(m_downBytes.cbegin(), m_downBytes.cend()) };
+
+            // Make sure the scale never goes lower than the lower bound set by the user.
+            downMaxVal = std::max(downMaxVal, m_downLowerBound);
 
             bool scaleChanged{ false };
-            if (m_maxDownValue != m_netMeasure->getMaxDownValue()) {
-                m_maxDownValue = std::max(m_netMeasure->getMaxDownValue(), m_downLowerBound * KB);
-                scaleChanged = true;
-            }
-            if (m_maxUpValue != m_netMeasure->getMaxUpValue()) {
-                m_maxUpValue = std::max(m_netMeasure->getMaxUpValue(), m_upLowerBound * KB);
+            if (m_maxDownValue != downMaxVal) {
+                m_maxDownValue = downMaxVal;
                 scaleChanged = true;
             }
 
             const auto maxDownValMB{ m_maxDownValue / static_cast<float>(MB) };
-            const auto maxUpValMB{ m_maxUpValue / static_cast<float>(MB) };
-
-            std::vector<float> normalizedDownData(downData.size());
-            for (auto i = int{ 0 }; i < downData.size(); ++i) {
-                normalizedDownData[i] = (downData[i] / static_cast<float>(MB)) / maxDownValMB;
+            if (scaleChanged) {
+                std::vector<float> normalizedDownData;
+                normalizedDownData.reserve(m_downBytes.size());
+                for (const auto down : m_downBytes) {
+                    normalizedDownData.push_back((down / static_cast<float>(MB)) / maxDownValMB);
+                }
+                // If the scale of our data changed then we need to set all of the points again in the graph
+                // so can recalculate the whole curve
+                m_netGraph.setTopPoints(normalizedDownData);
+            } else {
+                float normalizedDownMB{ (m_downBytes.back() / static_cast<float>(MB)) / maxDownValMB };
+                m_netGraph.addTopPoint(normalizedDownMB);
             }
-            std::vector<float> normalizedUpData(upData.size());
-            for (auto i = int{ 0 }; i < upData.size(); ++i) {
-                normalizedUpData[i] = (upData[i] / static_cast<float>(MB)) / maxUpValMB;
-            }
-
-            if (scaleChanged)
-                m_netGraph.resetPoints(normalizedDownData, normalizedUpData);
-            else
-                m_netGraph.updatePoints(normalizedDownData, normalizedUpData);
         });
+}
+
+NetUsageCallbackHandle NetGraphWidget::RegisterNetUpBytesCallback() {
+    return m_netMeasure->onUpBytes.append(
+        [this](int64_t upBytes) {
+            // #TODO duplication with downbyte handling above.
+
+            // Remove old data and add the new to ensure queue maintains fixed size
+            m_upBytes.pop_front();
+            m_upBytes.push_back(upBytes);
+
+            // Calculate the maximum value in the dataset to determine the scale to use.
+            int64_t upMaxVal{ *std::max_element(m_upBytes.cbegin(), m_upBytes.cend()) };
+
+            // Make sure the scale never goes lower than the lower bound set by the user.
+            upMaxVal = std::max(upMaxVal, m_upLowerBound);
+
+            bool scaleChanged{ false };
+            if (m_maxUpValue != upMaxVal) {
+                m_maxUpValue = upMaxVal;
+                scaleChanged = true;
+            }
+
+            const auto maxUpValMB{ m_maxUpValue / static_cast<float>(MB) };
+            if (scaleChanged) {
+                std::vector<float> normalizedUpData;
+                normalizedUpData.reserve(m_upBytes.size());
+                for (const auto up : m_upBytes) {
+                    normalizedUpData.push_back((up / static_cast<float>(MB)) / maxUpValMB);
+                }
+                // If the scale of our data changed then we need to set all of the points again in the graph
+                // so can recalculate the whole curve
+                m_netGraph.setBottomPoints(normalizedUpData);
+            } else {
+                float normalizedUpMB{ (m_upBytes.back() / static_cast<float>(MB)) / maxUpValMB };
+                m_netGraph.addBottomPoint(normalizedUpMB);
+            }
+        });
+}
+
+ConfigRefreshedCallbackHandle NetGraphWidget::RegisterConfigRefreshedCallback() {
+    return UserSettings::inst().configChanged.append(
+        [this]() {
+            m_downLowerBound = KB * UserSettings::inst().getVal<int, int64_t>("Widgets-NetGraph.DownloadDataScaleLowerBoundKB");
+            m_upLowerBound = KB * UserSettings::inst().getVal<int, int64_t>("Widgets-NetGraph.UploadDataScaleLowerBoundKB");
+
+            const int newGraphSampleSize{ UserSettings::inst().getVal<int>("Widgets-NetGraph.NumUsageSamples") };
+            if (m_graphSampleSize != newGraphSampleSize) {
+                m_graphSampleSize = newGraphSampleSize;
+                m_netGraph.resetPoints(m_graphSampleSize);
+                m_maxDownValue = m_downLowerBound;
+                m_maxUpValue = m_upLowerBound;
+                m_downBytes = NetBytesQueue(static_cast<size_t>(m_graphSampleSize), 0);
+                m_upBytes = NetBytesQueue(static_cast<size_t>(m_graphSampleSize), 0);
+            }
+        }
+    );
 }
 
 } // namespace rg

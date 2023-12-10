@@ -13,10 +13,11 @@ namespace rg {
 
 export class LineGraph {
 public:
-    explicit LineGraph(size_t numGraphSamples = 0);
+    explicit LineGraph(size_t numPoints);
 
-    virtual void updatePoints(const std::vector<float>& values);
-    virtual void resetPoints(const std::vector<float>& values);
+    virtual void addPoint(float valueY);
+    virtual void resetPoints(size_t numPoints);
+    virtual void setPoints(const std::vector<float>& values);
     void draw() const;
 
     void setModelView(const glm::mat4& modelView) { m_modelView = modelView; }

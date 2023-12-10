@@ -1,13 +1,20 @@
 export module Measures.CPUMeasure;
 
-import UserSettings;
-
 import Measures.CPUPlugin;
 import Measures.Measure;
 
 import std.core;
 
+import "EventppHeaderUnit.h";
+
 namespace rg {
+
+export using CPUUsageCallbackList = eventpp::CallbackList<void (float)>;
+export using CPUUsageCallbackHandle = CPUUsageCallbackList::Handle;
+export using CPUCoreUsageCallbackList = eventpp::CallbackList<void (int, float)>;
+export using CPUCoreUsageCallbackHandle = CPUCoreUsageCallbackList::Handle;
+export using CPUCoreDataStateChangedCallbackList = eventpp::CallbackList<void (bool)>;
+export using CPUCoreDataStateChangedCallbackHandle = CPUCoreDataStateChangedCallbackList::Handle;
 
 /* Measures statistics about the system CPU: Model name, total CPU load*/
 export class CPUMeasure : public Measure {
@@ -35,9 +42,7 @@ public:
     float getVoltage() const { return m_coreTempPlugin.getVoltage(); }
 
     /* Returns the temperature of the specified core */
-    float getTemp(int coreNum) const {
-        return m_coreTempPlugin.getTemp(coreNum);
-    }
+    float getTemp(int coreNum) const { return m_coreTempPlugin.getTemp(coreNum); }
 
     /* Returns the maximum allowable CPU temperature in degrees celsius */
     int getTjMax() const { return m_coreTempPlugin.getTjMax(); }
@@ -45,18 +50,12 @@ public:
     /* Gets description of the CPU model */
     const std::string& getCPUName() const { return m_cpuName; }
 
-    /* Returns the CPU's total load history */
-    const std::vector<float>& getUsageData() const { return m_usageData; }
-
-    /* Returns list of each core's load history */
-    const std::vector<std::vector<float>>& getPerCoreUsageData() const { return m_perCoreData; }
-
-    /* Returns the maximum number of CPU usage samples stored */
-    size_t getDataSize() const { return m_dataSize; }
-
-    bool getCoreTempInfoSuccess() const {
-        return m_coreTempPlugin.getCoreTempInfoSuccess();
+    bool getCoreTempInfoSuccess() const { return m_coreTempPlugin.getCoreTempInfoSuccess();
     }
+
+    mutable CPUUsageCallbackList onCPUUsage;
+    mutable CPUCoreUsageCallbackList onCPUCoreUsage;
+    mutable CPUCoreDataStateChangedCallbackList onCPUCoreDataStateChanged;
 
 private:
     /* Fill CPU name if CoreTemp interfacing was successful */
@@ -65,20 +64,10 @@ private:
     /* Calculates the total CPU load with the given tick information */
     float calculateCPULoad(uint64_t idleTicks, uint64_t totalTicks);
 
-    /* Resets core usage data vector */
-    void resetData();
-
     CPUPlugin m_coreTempPlugin{};
-
-    size_t m_dataSize{ 40U };
-    std::vector<float> m_usageData{};
-
-    size_t m_perCoreDataSize{ 40U };
-    std::vector<std::vector<float>> m_perCoreData{};
 
     std::chrono::milliseconds m_uptime{ 0 };
     std::string m_cpuName{ "" };
-    ConfigRefreshedCallbackHandle m_configChangedHandle;
 };
 
 } // namespace rg

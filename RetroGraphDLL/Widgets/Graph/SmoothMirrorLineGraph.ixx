@@ -12,10 +12,16 @@ namespace rg {
 
 export class SmoothMirrorLineGraph {
 public:
-    SmoothMirrorLineGraph(size_t numTopGraphSamples, size_t numBottomGraphSamples);
+    SmoothMirrorLineGraph(size_t numGraphSamples);
 
-    void updatePoints(const std::vector<float>& topValues, const std::vector<float>& bottomValues);
-    void resetPoints(const std::vector<float>& topValues, const std::vector<float>& bottomValues);
+    void addTopPoint(float valueY);
+    void addBottomPoint(float valueY);
+
+    void setTopPoints(const std::vector<float>& values);
+    void setBottomPoints(const std::vector<float>& values);
+
+    void resetPoints(size_t numGraphSamples);
+
     void draw() const;
 
 private:

@@ -1,5 +1,7 @@
 export module Widgets.CPUStatsWidget;
 
+import UserSettings;
+
 import Measures.CPUMeasure;
 
 import Rendering.FontManager;
@@ -28,16 +30,22 @@ private:
     void drawCoreGraphs() const;
     void drawStats() const;
     void drawNoInfoState() const;
-    PostUpdateCallbackHandle RegisterPostUpdateCallback();
+    CPUCoreUsageCallbackHandle RegisterOnCPUCoreUsageCallback();
+    CPUCoreDataStateChangedCallbackHandle RegisterOnCPUCoreDataStateChangedCallback();
+    ConfigRefreshedCallbackHandle RegisterConfigRefreshedCallback();
 
     Viewport m_coreGraphViewport{ };
     Viewport m_statsViewport{ };
 
     std::shared_ptr<const CPUMeasure> m_cpuMeasure{ nullptr };
 
+    bool m_coreDataAvailable;
+    int m_coreGraphSampleSize;
     std::vector<SmoothLineGraph> m_coreGraphs;
 
-    PostUpdateCallbackHandle m_postUpdateHandle;
+    CPUCoreUsageCallbackHandle m_onCPUCoreUsageHandle;
+    CPUCoreDataStateChangedCallbackHandle m_onCPUCoreDataStateChangedHandle;
+    ConfigRefreshedCallbackHandle m_configRefreshedHandle;
 };
 
 } // namespace rg

@@ -12,8 +12,8 @@ namespace rg {
 auto CPUStatsWidget::createCoreGraphs(const CPUMeasure& cpuMeasure) {
     decltype(m_coreGraphs) coreGraphs{};
 
-    for (const auto& usageData : cpuMeasure.getPerCoreUsageData())
-        coreGraphs.emplace_back(usageData.size());
+    for (int i{ 0 }; i < cpuMeasure.getNumCores(); ++i)
+        coreGraphs.emplace_back(static_cast<size_t>(m_coreGraphSampleSize));
 
     return coreGraphs;
 }
@@ -21,13 +21,19 @@ auto CPUStatsWidget::createCoreGraphs(const CPUMeasure& cpuMeasure) {
 CPUStatsWidget::CPUStatsWidget(const FontManager* fontManager, std::shared_ptr<const CPUMeasure> cpuMeasure)
     : Widget{ fontManager }
     , m_cpuMeasure{ cpuMeasure }
+    , m_coreDataAvailable{ cpuMeasure->getCoreTempInfoSuccess() }
+    , m_coreGraphSampleSize{ UserSettings::inst().getVal<int>("Widgets-CPUStats.NumUsageSamples") }
     , m_coreGraphs{ createCoreGraphs(*cpuMeasure) }
-    , m_postUpdateHandle{ RegisterPostUpdateCallback() } {
+    , m_onCPUCoreUsageHandle{ RegisterOnCPUCoreUsageCallback() }
+    , m_onCPUCoreDataStateChangedHandle{ RegisterOnCPUCoreDataStateChangedCallback() }
+    , m_configRefreshedHandle{ RegisterConfigRefreshedCallback() } {
 
 }
 
 CPUStatsWidget::~CPUStatsWidget() {
-    m_cpuMeasure->postUpdate.remove(m_postUpdateHandle);
+    UserSettings::inst().configChanged.remove(m_configRefreshedHandle);
+    m_cpuMeasure->onCPUCoreDataStateChanged.remove(m_onCPUCoreDataStateChangedHandle);
+    m_cpuMeasure->onCPUCoreUsage.remove(m_onCPUCoreUsageHandle);
 }
 
 void CPUStatsWidget::setViewport(const Viewport& vp) { 
@@ -37,7 +43,7 @@ void CPUStatsWidget::setViewport(const Viewport& vp) {
 };
 
 void CPUStatsWidget::draw() const {
-    if (m_cpuMeasure->getCoreTempInfoSuccess()) {
+    if (m_coreDataAvailable) {
         drawCoreGraphs();
         drawStats();
     } else {
@@ -106,19 +112,44 @@ void CPUStatsWidget::drawCoreGraphs() const {
     }
 }
 
-PostUpdateCallbackHandle CPUStatsWidget::RegisterPostUpdateCallback() {
-    return m_cpuMeasure->postUpdate.append(
-        [this]() {
-            if (m_coreGraphs.size() != m_cpuMeasure->getPerCoreUsageData().size()) {
+CPUCoreUsageCallbackHandle CPUStatsWidget::RegisterOnCPUCoreUsageCallback() {
+    return m_cpuMeasure->onCPUCoreUsage.append(
+        [this](int coreIdx, float coreUsage) {
+            RGASSERT(coreIdx < m_coreGraphs.size(), "CPU core index out of range");
+
+            if (m_coreGraphs.size() != m_cpuMeasure->getNumCores()) {
+                RGERROR("How did the CPU core count change?");
                 m_coreGraphs = createCoreGraphs(*m_cpuMeasure);
             }
 
-            const auto numCores{ static_cast<int>(m_cpuMeasure->getPerCoreUsageData().size()) };
-            RGASSERT(numCores == m_coreGraphs.size(), "CPU core count mismatch");
-            for (int i = 0U; i < numCores; ++i) {
-                m_coreGraphs[i].updatePoints(m_cpuMeasure->getPerCoreUsageData()[i]);
+            m_coreGraphs[coreIdx].addPoint(coreUsage);
+        });
+}
+
+CPUCoreDataStateChangedCallbackHandle CPUStatsWidget::RegisterOnCPUCoreDataStateChangedCallback() {
+    return m_cpuMeasure->onCPUCoreDataStateChanged.append(
+        [this](bool enabled) {
+            m_coreDataAvailable = enabled;
+            if (m_coreDataAvailable) {
+                m_coreGraphs = createCoreGraphs(*m_cpuMeasure);
+            } else {
+                m_coreGraphs.clear();
             }
         });
+}
+
+ConfigRefreshedCallbackHandle CPUStatsWidget::RegisterConfigRefreshedCallback() {
+    return UserSettings::inst().configChanged.append(
+        [this]() {
+            const int newGraphSampleSize{ UserSettings::inst().getVal<int>("Widgets-CPUStats.NumUsageSamples") };
+            if (m_coreGraphSampleSize != newGraphSampleSize) {
+                m_coreGraphSampleSize = newGraphSampleSize;
+                for (auto& coreGraph : m_coreGraphs) {
+                    coreGraph.resetPoints(m_coreGraphSampleSize);
+                }
+            }
+        }
+    );
 }
 
 } // namespace rg

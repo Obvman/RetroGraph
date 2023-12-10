@@ -4,6 +4,8 @@ Enforce position restrictions on FPS/Graph/Main/CPUStats widgets
 
 remove measure dependency on widget usersettings.
 
+Event driven detection of settings file changes instead of polling
+
 high-performance mode - switch between low and high FPS for main widget, graphs
 
 foobar media controls - enter foobar path in config file

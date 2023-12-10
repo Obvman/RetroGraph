@@ -8,9 +8,13 @@ import Measures.Measure;
 import std.core;
 import std.threading;
 
+import "EventppHeaderUnit.h";
 import "WindowsNetworkHeaderUnit.h";
 
 namespace rg {
+
+export using NetUsageCallbackList = eventpp::CallbackList<void (int64_t)>;
+export using NetUsageCallbackHandle = NetUsageCallbackList::Handle;
 
 export class NetMeasure : public Measure {
 public:
@@ -19,16 +23,15 @@ public:
 
     void update(int ticks) override;
 
-    int64_t getMaxDownValue() const { return m_downMaxVal; }
-    int64_t getMaxUpValue() const { return m_upMaxVal; }
-    const std::vector<int64_t>& getDownData() const { return m_downBytes; }
-    const std::vector<int64_t>& getUpData() const { return m_upBytes; }
     const std::string& getDNS() const { return m_DNSIP; }
     const std::string& getHostname() const { return m_hostname; }
     const std::string& getAdapterMAC() const { return m_mainAdapterMAC; }
     const std::string& getAdapterIP() const { return m_mainAdapterIP; }
     bool isConnected() const;
     void setIsConnected(bool b);
+
+    mutable NetUsageCallbackList onDownBytes;
+    mutable NetUsageCallbackList onUpBytes;
 
 private:
     void startNetworkThread();
@@ -54,11 +57,6 @@ private:
     std::atomic<bool> m_threadRunning{ false };
     std::thread m_netConnectionThread{ };
 
-    int64_t m_downMaxVal{ 10U * GB };
-    int64_t m_upMaxVal{ 10U * GB };
-    size_t m_dataSize{ 40U };
-    std::vector<int64_t> m_downBytes{ };
-    std::vector<int64_t> m_upBytes{ };
     ConfigRefreshedCallbackHandle m_configChangedHandle;
 };
 

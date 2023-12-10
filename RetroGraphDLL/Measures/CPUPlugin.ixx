@@ -47,11 +47,13 @@ public:
     bool getCoreTempInfoSuccess() const { return m_getCoreTempInfoSuccess; }
 
     bool coreTempWasStarted() const { return m_coreTempWasStarted; }
+    bool coreTempWasStopped() const { return m_coreTempWasStopped; }
 
 private:
     HMODULE m_libHandle{ nullptr };
     CORE_TEMP_SHARED_DATA m_ctData{};
     bool m_coreTempWasStarted{ false };
+    bool m_coreTempWasStopped{ false };
 
     mutable bool m_getCoreTempInfoSuccess{ false };
 };
