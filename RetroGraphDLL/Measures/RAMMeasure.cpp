@@ -8,7 +8,7 @@ RAMMeasure::RAMMeasure() {
     GlobalMemoryStatusEx(&m_memStatus);
 }
 
-void RAMMeasure::update(int) {
+void RAMMeasure::update() {
     GlobalMemoryStatusEx(&m_memStatus);
 
     onRAMUsage(getLoadPercentagef());

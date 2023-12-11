@@ -18,7 +18,9 @@ public:
     ~GPUMeasure() noexcept;
 
     /* Get latest GPU stats from OpenGL or nvapi and updates dynamic members */
-    void update(int ticks) override;
+    void update() override;
+
+    std::chrono::microseconds updateInterval() const override { return std::chrono::seconds{ 1 }; }
 
     /* Returns true if the measure successfully initialized and is getting data,
      * And false if it failed to initialise

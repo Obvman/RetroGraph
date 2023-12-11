@@ -11,7 +11,7 @@ public:
     DisplayMeasure();
     ~DisplayMeasure() noexcept = default;
 
-    void update(int /*ticks*/) override { /* Do nothing */ }
+    void update() override { /* Do nothing */ }
 
     const Monitors* getMonitors() const { return &m_monitors; }
 

@@ -184,7 +184,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Colors.ixx" />
+    <ClCompile Include="Core\Math.ixx" />
+    <ClCompile Include="Core\Time.ixx" />
+    <ClCompile Include="FPSCounter.cpp" />
     <ClCompile Include="FPSLimiter.cpp" />
+    <ClCompile Include="FPSLimiter.ixx" />
     <ClCompile Include="Measures\AnimationState.cpp" />
     <ClCompile Include="Measures\CPUMeasure.cpp" />
     <ClCompile Include="Measures\CPUPlugin.cpp" />
@@ -216,7 +220,7 @@
     <ClCompile Include="Rendering\Viewport.ixx" />
     <ClCompile Include="RetroGraph.cpp" />
     <ClCompile Include="RetroGraphDLL.cpp" />
-    <ClCompile Include="FPSLimiter.ixx" />
+    <ClCompile Include="FPSCounter.ixx" />
     <ClCompile Include="IRetroGraph.ixx" />
     <ClCompile Include="Measures\AnimationState.ixx" />
     <ClCompile Include="Measures\CPUMeasure.ixx" />

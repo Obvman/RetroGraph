@@ -59,7 +59,7 @@ GPUMeasure::~GPUMeasure() {
     NvAPI_Unload();
 }
 
-void GPUMeasure::update(int) {
+void GPUMeasure::update() {
     //updateGpuTemp(); // High CPU usage function
     //getClockFrequencies(); // High CPU usage function
     //getMemInformation();

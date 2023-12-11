@@ -1,8 +1,11 @@
 module RetroGraph;
 
 import Colors;
-import FPSLimiter;
 import UserSettings;
+
+import Core.Time;
+
+import Rendering.Shader;
 
 import Widgets.CPUGraphWidget;
 import Widgets.CPUStatsWidget;
@@ -48,72 +51,54 @@ RetroGraph::RetroGraph(HINSTANCE hInstance)
     : m_measures( static_cast<int>(MeasureType::NumMeasures) )
     , m_window{ this, getMeasure<DisplayMeasure>(), hInstance, UserSettings::inst().getVal<int>("Window.Monitor") }
     , m_fontManager{ m_window.getHwnd(), m_window.getHeight() }
+    , m_fpsCounter{}
     , m_widgets{ createWidgets() }
     , m_widgetContainers{ createWidgetContainers() } {
 
     setViewports(m_window.getWidth(), m_window.getHeight());
 
-    update(0);
-    draw(0);
+    update();
+    draw();
 }
 
 RetroGraph::~RetroGraph() {
 }
 
-void RetroGraph::update(int ticks) {
-    refreshConfig(ticks);
+void RetroGraph::update() {
+    refreshConfig();
 
-    // Update with a tick offset so all measures don't update in the same
-    // cycle and spike the CPU
-    auto offset = int{ 0U };
+    using namespace std::chrono;
+
+    // TODO make member?
+    static std::map<const Measure*, steady_clock::time_point> lastUpdateTimes;
+    steady_clock::time_point currentUpdateCycleStart{ steady_clock::now() };
+
     for (auto i = size_t{ 0U }; i < static_cast<int>(MeasureType::NumMeasures); ++i) {
         const auto& measurePtr{ m_measures[i] };
-        if (measurePtr && measurePtr->shouldUpdate(ticks + ++offset)) {
-            measurePtr->update(ticks + offset);
+        bool timeForUpdate{!lastUpdateTimes.contains(measurePtr.get()) 
+                           || since(lastUpdateTimes[measurePtr.get()]) > measurePtr->updateInterval()};
+        if (measurePtr && timeForUpdate) {
+
+            measurePtr->update();
+
+            // TODO remove measure pointer when they get deleted
+            lastUpdateTimes[measurePtr.get()] = currentUpdateCycleStart;
         }
     }
 }
 
-void RetroGraph::draw(int ticks) const {
-    // If the main widget is running, draw at it's target FPS,
-    // Otherwise, we don't have to waste cycles swapping buffers when
-    // the other measures update twice a second, so just draw at 2 FPS
-    auto framesPerSecond = int{ 2 };
-    if (m_widgets[static_cast<int>(WidgetType::Main)]) {
-        const auto* animationState{ m_measures[static_cast<int> (MeasureType::AnimationState)].get() };
-        if (animationState) {
-            framesPerSecond = dynamic_cast<const AnimationState*> (animationState)->getAnimationFPS();
-        }
-    }
+void RetroGraph::draw() const {
+    auto hdc{ GetDC(m_window.getHwnd()) };
+    wglMakeCurrent(hdc, m_window.getHGLRC());
 
-    if (ticksMatchRate(ticks, 2U) || ticksMatchRate(ticks, framesPerSecond)) {
+    glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
 
-        auto hdc{ GetDC(m_window.getHwnd()) };
-        wglMakeCurrent(hdc, m_window.getHGLRC());
+    // TODO Render the bulk of widgets at a low FPS to keep light on resources
+    for (const auto& widgetContainer : m_widgetContainers)
+        widgetContainer->draw();
 
-        glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
-
-        // Render the bulk of widgets at a low FPS to keep light on resources
-        if (ticksMatchRate(ticks, 2U)) {
-            for (const auto& widgetContainer : m_widgetContainers)
-                widgetContainer->draw();
-
-        } else if (ticksMatchRate(ticks, framesPerSecond)) {
-            // The main widget can have a higher framerate, so call every tick
-            const auto* mainWidget{ dynamic_cast<const MainWidget*>(m_widgets[static_cast<int>(WidgetType::Main)].get()) };
-            if (mainWidget) {
-                const auto& mainWidgetContainer{ m_widgetContainers[static_cast<int>(WidgetPosition::MID_MID)] };
-                if (mainWidget->needsDraw(ticks))
-                    mainWidgetContainer->draw();
-            }
-        }
-
-        SwapBuffers(hdc);
-        ReleaseDC(m_window.getHwnd(), hdc);
-
-        FPSLimiter::inst().end();
-        FPSLimiter::inst().begin();
-    }
+    SwapBuffers(hdc);
+    ReleaseDC(m_window.getHwnd(), hdc);
 }
 
 void RetroGraph::updateWindowSize(int newWidth, int newHeight) {
@@ -131,12 +116,10 @@ void RetroGraph::toggleWidget(WidgetType widgetType) {
     }
 
     setViewports(m_window.getWidth(), m_window.getHeight());
-    draw(0);
+    draw();
 }
 
 void RetroGraph::reloadResources() {
-    refreshConfig(0);
-
     Shader::onRefresh();
     for (auto i = int{ 0 }; i < static_cast<int>(WidgetType::NumWidgets); ++i) {
         if (m_widgets[i])
@@ -147,15 +130,25 @@ void RetroGraph::reloadResources() {
 void RetroGraph::shutdown() {
 }
 
-void RetroGraph::refreshConfig(int ticks) {
-    if (ticksMatchSeconds(ticks, 5) && UserSettings::inst().checkConfigChanged()) {
-        UserSettings::inst().refresh();
+void RetroGraph::refreshConfig() {
+    using namespace std::chrono;
 
-        for (auto i = size_t{ 0U }; i < static_cast<int>(WidgetType::NumWidgets); ++i) {
-            if (static_cast<bool> (m_widgets[i]) != UserSettings::inst().isVisible(static_cast<WidgetType>(i))) {
-                toggleWidget(static_cast<WidgetType>(i));
+    static steady_clock::time_point lastConfigChangedUpdateTime;
+    duration configChangedUpdateInterval{ seconds{5} };
+    steady_clock::time_point currentUpdateCycleStart{ steady_clock::now() };
+
+    if (since(lastConfigChangedUpdateTime) > configChangedUpdateInterval) {
+        if (UserSettings::inst().checkConfigChanged()) {
+            UserSettings::inst().refresh();
+
+            for (auto i = size_t{ 0U }; i < static_cast<int>(WidgetType::NumWidgets); ++i) {
+                if (static_cast<bool> (m_widgets[i]) != UserSettings::inst().isVisible(static_cast<WidgetType>(i))) {
+                    toggleWidget(static_cast<WidgetType>(i));
+                }
             }
         }
+
+        lastConfigChangedUpdateTime = currentUpdateCycleStart;
     }
 }
 
@@ -212,7 +205,7 @@ std::unique_ptr<Widget> RetroGraph::createWidget(WidgetType widgetType) {
     case WidgetType::Main:
         return std::make_unique<MainWidget>(&m_fontManager, getMeasure<AnimationState>());
     case WidgetType::FPS:
-        return std::make_unique<FPSWidget>(&m_fontManager);
+        return std::make_unique<FPSWidget>(&m_fontManager, m_fpsCounter);
     case WidgetType::NetStats:
         return std::make_unique<NetStatsWidget>(&m_fontManager, getMeasure<NetMeasure>());
     case WidgetType::CPUGraph:

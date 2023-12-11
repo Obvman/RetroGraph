@@ -150,7 +150,7 @@
     <ClCompile Include="Colors.ixx">
       <Filter>Modules</Filter>
     </ClCompile>
-    <ClCompile Include="FPSLimiter.ixx">
+    <ClCompile Include="FPSCounter.ixx">
       <Filter>Modules</Filter>
     </ClCompile>
     <ClCompile Include="IRetroGraph.ixx">
@@ -291,7 +291,7 @@
     <ClCompile Include="Monitors.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
-    <ClCompile Include="FPSLimiter.cpp">
+    <ClCompile Include="FPSCounter.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
     <ClCompile Include="RetroGraph.cpp">
@@ -383,6 +383,18 @@
     </ClCompile>
     <ClCompile Include="Widgets\WidgetShaderController.ixx">
       <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="FPSLimiter.ixx">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="FPSLimiter.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Time.ixx">
+      <Filter>Modules\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Math.ixx">
+      <Filter>Modules\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

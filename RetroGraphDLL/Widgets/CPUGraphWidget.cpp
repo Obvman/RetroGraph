@@ -15,7 +15,7 @@ CPUGraphWidget::CPUGraphWidget(const FontManager* fontManager, std::shared_ptr<c
 }
 
 CPUGraphWidget::~CPUGraphWidget() {
-    UserSettings::inst().configChanged.remove(m_configRefreshedHandle);
+    UserSettings::inst().configRefreshed.remove(m_configRefreshedHandle);
     m_cpuMeasure->onCPUUsage.remove(m_onCPUUsageHandle);
 }
 
@@ -41,7 +41,7 @@ CPUUsageCallbackHandle CPUGraphWidget::RegisterCPUUsageCallback() {
 }
 
 ConfigRefreshedCallbackHandle CPUGraphWidget::RegisterConfigRefreshedCallback() {
-    return UserSettings::inst().configChanged.append(
+    return UserSettings::inst().configRefreshed.append(
         [this]() {
             const int newGraphSampleSize{ UserSettings::inst().getVal<int>("Widgets-CPUGraph.NumUsageSamples") };
             if (m_graphSampleSize != newGraphSampleSize) {

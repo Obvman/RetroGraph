@@ -21,7 +21,9 @@ public:
     ~RAMMeasure() noexcept = default;
 
     /* Updates the system memory status values */
-    void update(int ticks) override;
+    void update() override;
+
+    std::chrono::microseconds updateInterval() const override { return std::chrono::seconds{ 1 }; }
 
     /* Gets the total size of the system's physical memory in different
        byte units */

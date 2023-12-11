@@ -1,5 +1,7 @@
 module Measures.MusicMeasure;
 
+import Utils;
+
 import "RGAssert.h";
 import "WindowsHeaderUnit.h";
 
@@ -8,10 +10,10 @@ namespace rg {
 constexpr const char * foobarWindowClassName{ "{97E27FAA-C0B3-4b8e-A693-ED7881E99FC1}" };
 
 MusicMeasure::MusicMeasure() {
-    force_update();
+    update();
 }
 
-void MusicMeasure::update(int /*ticks*/) {
+void MusicMeasure::update() {
 
     // Check if the player window is currently open by matching the class name
     // We must validate existence of window every time before we scrape
@@ -109,10 +111,6 @@ void MusicMeasure::scrapeInfoFromTitle() {
     std::string_view total = strtok_s(nullptr, ", ", &nextToken);
     m_elapsedTime = strToNum<decltype(m_elapsedTime)>(elapsed);
     m_totalTime = strToNum<decltype(m_totalTime)>(total);
-}
-
-bool MusicMeasure::shouldUpdate(int ticks) const {
-    return ticksMatchSeconds(ticks, 1);
 }
 
 } // namespace rg

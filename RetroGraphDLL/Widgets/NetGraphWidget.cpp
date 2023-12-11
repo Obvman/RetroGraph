@@ -22,7 +22,7 @@ NetGraphWidget::NetGraphWidget(const FontManager* fontManager, std::shared_ptr<c
 }
 
 NetGraphWidget::~NetGraphWidget() {
-    UserSettings::inst().configChanged.remove(m_configRefreshedHandle);
+    UserSettings::inst().configRefreshed.remove(m_configRefreshedHandle);
     m_netMeasure->onUpBytes.remove(m_onUpBytesHandle);
     m_netMeasure->onDownBytes.remove(m_onDownBytesHandle);
 }
@@ -149,7 +149,7 @@ NetUsageCallbackHandle NetGraphWidget::RegisterNetUpBytesCallback() {
 }
 
 ConfigRefreshedCallbackHandle NetGraphWidget::RegisterConfigRefreshedCallback() {
-    return UserSettings::inst().configChanged.append(
+    return UserSettings::inst().configRefreshed.append(
         [this]() {
             m_downLowerBound = KB * UserSettings::inst().getVal<int, int64_t>("Widgets-NetGraph.DownloadDataScaleLowerBoundKB");
             m_upLowerBound = KB * UserSettings::inst().getVal<int, int64_t>("Widgets-NetGraph.UploadDataScaleLowerBoundKB");

@@ -39,20 +39,10 @@ public:
     Measure(Measure&&)                 = delete;
     Measure& operator=(Measure&&)      = delete;
 
-    virtual void update(int) = 0;
-
-    /* Must true if the Measure should update this frame 
-     * By default, most measures update every 2 seconds.
-     */
-    virtual bool shouldUpdate(int ticks) const { return ticksMatchRate(ticks, 2); }
+    virtual void update() = 0;
+    virtual std::chrono::microseconds updateInterval() const { return std::chrono::seconds{ 2 }; }
 
     mutable PostUpdateCallbackList postUpdate;
-
-protected:
-
-    // Updates the measure so it *should* bypass checks against ticks 
-    // that may prevent an update
-    inline void force_update() { update(0); }
 };
 
 }

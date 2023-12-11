@@ -51,7 +51,7 @@ public:
     bool checkConfigChanged() const;
     void refresh();
 
-    ConfigRefreshedCallbackList configChanged;
+    ConfigRefreshedCallbackList configRefreshed;
 
 private:
     UserSettings();

@@ -1,6 +1,5 @@
 module Measures.AnimationState;
 
-import FPSLimiter; // Invalid dependency
 import Units;
 
 import Rendering.GLListContainer;
@@ -10,22 +9,10 @@ namespace rg {
 AnimationState::AnimationState()
     : m_particles( createParticles() )
     , m_particleLines{}
-    , m_numLines{ 0 }
-    , m_animationFPS{ UserSettings::inst().getVal<int>("Widgets-Main.FPS") }
-    , m_configChangedHandle{
-        UserSettings::inst().configChanged.append(
-            [&]() {
-                m_animationFPS = UserSettings::inst().getVal<int>("Widgets-Main.FPS");
-                FPSLimiter::inst().setMaxFPS(m_animationFPS);
-            })
-    } {
+    , m_numLines{ 0 } {
 
     for (const auto& p : m_particles)
         m_cells[p.cellX][p.cellY].push_back(&p);
-}
-
-AnimationState::~AnimationState() {
-    UserSettings::inst().configChanged.remove(m_configChangedHandle);
 }
 
 auto AnimationState::createParticles() -> decltype(m_particles) {
@@ -33,7 +20,7 @@ auto AnimationState::createParticles() -> decltype(m_particles) {
     return decltype(m_particles)( numParticles );
 }
 
-void AnimationState::update(int) {
+void AnimationState::update() {
     using namespace std::chrono;
     using clock = std::chrono::high_resolution_clock;
 
@@ -54,10 +41,6 @@ void AnimationState::update(int) {
     updateParticleLines();
 
     postUpdate();
-}
-
-bool AnimationState::shouldUpdate(int ticks) const {
-    return ticksMatchRate(ticks, m_animationFPS);
 }
 
 void AnimationState::updateParticleLines() {

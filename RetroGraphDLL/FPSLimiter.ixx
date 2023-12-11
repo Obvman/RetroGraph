@@ -6,36 +6,17 @@ namespace rg {
 
 export class FPSLimiter {
 public:
-    static FPSLimiter& inst() { static FPSLimiter i; return i; }
+    __declspec(dllexport) FPSLimiter(int fps);
 
-    ~FPSLimiter() noexcept = default;
-    FPSLimiter(const FPSLimiter&) = delete;
-    FPSLimiter& operator=(const FPSLimiter&) = delete;
-    FPSLimiter(FPSLimiter&&) = delete;
-    FPSLimiter& operator=(FPSLimiter&&) = delete;
+    __declspec(dllexport) void setFPS(int fps);
 
-    /* Call at the beginning of the frame */
-    void begin();
+    __declspec(dllexport) void startFrame();
+    __declspec(dllexport) void endFrame();
 
-    /* Called at the end of the frame to calculate frame time */
-    void end();
-
-    float getFPS() const { return m_fps;  }
-
-    void setMaxFPS(int maxFPS) { m_maxFPS = maxFPS; }
 private:
-    FPSLimiter();
-
-    /* Calculates the framerate using multiple previous frame times to smooth 
-     * the value 
-     */
-    void calculateFPS();
-
-    float m_fps;
-    int m_maxFPS;
-    float m_frameTime;
-    int64_t m_startTicks;
-    int64_t m_freq;
+    std::chrono::microseconds m_frameTime;
+    std::chrono::system_clock::time_point m_currentFrameStart;
+    std::chrono::system_clock::time_point m_currentFrameEnd;
 };
 
 } // namespace rg

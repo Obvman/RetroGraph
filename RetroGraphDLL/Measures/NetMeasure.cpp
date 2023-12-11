@@ -1,5 +1,7 @@
 module Measures.NetMeasure;
 
+import Core.Time;
+
 import "RGAssert.h";
 import "WindowsNetworkHeaderUnit.h";
 
@@ -12,8 +14,8 @@ namespace rg {
 NetMeasure::NetMeasure()
     : m_pingServer{ UserSettings::inst().getVal<std::string>("Network.PingServer") }
     , m_pingFreqSec{ UserSettings::inst().getVal<int>("Network.PingFrequency") }
-    , m_configChangedHandle{
-        UserSettings::inst().configChanged.append(
+    , m_configRefreshedHandle{
+        UserSettings::inst().configRefreshed.append(
             [&]() {
                 destroyNetworkThread();
 
@@ -51,7 +53,7 @@ NetMeasure::NetMeasure()
 
 NetMeasure::~NetMeasure() {
     destroyNetworkThread();
-    UserSettings::inst().configChanged.remove(m_configChangedHandle);
+    UserSettings::inst().configRefreshed.remove(m_configRefreshedHandle);
 }
 
 void NetMeasure::getMACAndLocalIP() {
@@ -134,10 +136,16 @@ void NetMeasure::getDNSAndHostname() {
     free(pFixedInfo);
 }
 
-void NetMeasure::update(int ticks) {
+void NetMeasure::update() {
+    using namespace std::chrono;
+
+    static steady_clock::time_point lastBestInterfaceUpdateTime;
+    constexpr duration bestInterfaceUpdateInterval{ seconds{ 30 } };
+    steady_clock::time_point currentUpdateCycleStart{ steady_clock::now() };
+
     // Check if the best network interface has changed and update to the new
     // one if so.
-    if (ticksMatchSeconds(ticks, 30)) {
+    if (since(lastBestInterfaceUpdateTime) > bestInterfaceUpdateInterval) {
         DWORD bestIfaceIndex;
         if (GetBestInterface(INADDR_ANY, &bestIfaceIndex) != NO_ERROR) {
             RGERROR("Failed to get best interface");
@@ -147,6 +155,8 @@ void NetMeasure::update(int ticks) {
         if (bestIfaceIndex != m_adapterEntry->InterfaceIndex) {
             m_adapterEntry = &(m_table->Table[bestIfaceIndex]);
         }
+
+        lastBestInterfaceUpdateTime = currentUpdateCycleStart;
     }
 
     const auto oldDown{ m_adapterEntry->InOctets };

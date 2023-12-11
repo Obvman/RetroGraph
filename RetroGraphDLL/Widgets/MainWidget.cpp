@@ -31,16 +31,6 @@ MainWidget::~MainWidget() {
     m_animationState->postUpdate.remove(m_postUpdateHandle);
 }
 
-bool MainWidget::needsDraw(int ticks) const {
-    // Only draw if we need to draw to keep // up with the animation framerate
-    if ((ticks != 0 &&
-         ticks % std::lround(static_cast<float>(rg::ticksPerSecond) / m_animationState->getAnimationFPS()) != 0)) {
-
-        return false;
-    }
-    return true;
-}
-
 void MainWidget::draw() const {
     drawParticleLines();
     drawParticles();

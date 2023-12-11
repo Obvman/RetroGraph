@@ -1,12 +1,11 @@
 module Widgets.FPSWidget;
 
 import Colors;
-import FPSLimiter;
 
 namespace rg {
 
 void FPSWidget::draw() const {
-    const auto fps{ FPSLimiter::inst().getFPS() };
+    const auto fps{ m_fpsCounter->getFPS() };
     if (fps < 1000.0f) {
         char fpsStr[5];
         snprintf(fpsStr, sizeof(fpsStr), "%.1f", fps);

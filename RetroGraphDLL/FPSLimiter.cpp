@@ -1,62 +1,42 @@
 module FPSLimiter;
 
-import UserSettings;
-
-import "WindowsHeaderUnit.h";
+import Core.Time;
 
 namespace rg {
 
-FPSLimiter::FPSLimiter()
-    : m_maxFPS{ UserSettings::inst().getVal<int>("Widgets-Main.FPS") }
-    , m_fps{ 0 }
-    , m_frameTime{ 0.0 }
-    , m_startTicks{ 0 }
-    , m_freq{ 0 } {
+using namespace std::chrono;
 
-    QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&m_freq));
+constexpr microseconds fpsToFrameTime(int fps) {
+    return duration_cast<microseconds>(duration<double>{ 1 } / fps);
 }
 
+FPSLimiter::FPSLimiter(int fps)
+    : m_frameTime{ fpsToFrameTime(fps) }
+    , m_currentFrameStart{ system_clock::now() }
+    , m_currentFrameEnd{ m_currentFrameStart + m_frameTime } {
 
-void FPSLimiter::begin() {
-    QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&m_startTicks));
 }
 
-void FPSLimiter::end() {
-    calculateFPS();
+void FPSLimiter::setFPS(int fps) {
+    m_frameTime = fpsToFrameTime(fps);
 }
 
-void FPSLimiter::calculateFPS() {
-    static const int NUM_SAMPLES = 4;
-    static float frameTimes[NUM_SAMPLES];
-    static int currFrame = 0;
+void FPSLimiter::startFrame() {
+    const auto now = system_clock::now();
+    //std::cerr << "This frame: " << round<milliseconds>(now - m_currentFrameStart) << '\n';
+    m_currentFrameStart = now;
+}
 
-    int64_t currTicks;
-    QueryPerformanceCounter((LARGE_INTEGER*)&currTicks);
-    static int64_t prevTicks{ currTicks };
+void FPSLimiter::endFrame() {
+    const auto now = system_clock::now();
 
-    m_frameTime = static_cast<float>(currTicks - prevTicks) / m_freq;
-    frameTimes[currFrame % NUM_SAMPLES] = m_frameTime;
-    prevTicks = currTicks;
+    sleepUntil(m_currentFrameEnd);
 
-    int count;
-    ++currFrame;
-    if (currFrame < NUM_SAMPLES) {
-        count = currFrame;
-    } else {
-        count = NUM_SAMPLES;
-    }
+    // Handle large jumps in time (e.g. pausing the debugger or putting computer to sleep)
+    if (m_currentFrameEnd < now)
+        m_currentFrameEnd = now;
 
-    float frameTimeAverage = 0;
-    for (int i = 0; i < count; ++i) {
-        frameTimeAverage += frameTimes[i];
-    }
-    frameTimeAverage /= count;
-
-    if (frameTimeAverage > 0) {
-        m_fps = 1.0f / frameTimeAverage;
-    } else {
-        m_fps = 0.0f;
-    }
+    m_currentFrameEnd += m_frameTime;
 }
 
 } // namespace rg

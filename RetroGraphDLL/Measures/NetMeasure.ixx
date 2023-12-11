@@ -21,7 +21,9 @@ public:
     NetMeasure();
     ~NetMeasure() noexcept;
 
-    void update(int ticks) override;
+    void update() override;
+
+    std::chrono::microseconds updateInterval() const override { return std::chrono::seconds{ 1 }; }
 
     const std::string& getDNS() const { return m_DNSIP; }
     const std::string& getHostname() const { return m_hostname; }
@@ -57,7 +59,7 @@ private:
     std::atomic<bool> m_threadRunning{ false };
     std::thread m_netConnectionThread{ };
 
-    ConfigRefreshedCallbackHandle m_configChangedHandle;
+    ConfigRefreshedCallbackHandle m_configRefreshedHandle;
 };
 
 } // namespace rg

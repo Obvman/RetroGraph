@@ -41,56 +41,41 @@ DriveMeasure::DriveMeasure() {
     }
 }
 
-void DriveMeasure::update(int ticks) {
-    bool didUpdate{ false };
-    if (ticksMatchSeconds(ticks, 15)) {
-        /* Refresh drive statistics. We won't consider drives being
-         * added/removed since these are fixed drives and the program shouldn't
-         * be running in those events
-         */
-        for (auto& di : m_drives) {
-            char path[] = { di.driveLetter, ':', '\\', '\0' };
+void DriveMeasure::update() {
+    /* Refresh drive statistics. We won't consider drives being
+     * added/removed since these are fixed drives and the program shouldn't
+     * be running in those events
+     */
+    for (auto& di : m_drives) {
+        char path[] = { di.driveLetter, ':', '\\', '\0' };
 
-            ULARGE_INTEGER freeBytesAvailable;
-            ULARGE_INTEGER totalBytes;
-            ULARGE_INTEGER totalFreeBytes;
-            GetDiskFreeSpaceEx(path, &freeBytesAvailable,
-                               &totalBytes, &totalFreeBytes);
+        ULARGE_INTEGER freeBytesAvailable;
+        ULARGE_INTEGER totalBytes;
+        ULARGE_INTEGER totalFreeBytes;
+        GetDiskFreeSpaceEx(path, &freeBytesAvailable,
+                           &totalBytes, &totalFreeBytes);
 
-            di.totalFreeBytes = totalFreeBytes.QuadPart;
+        di.totalFreeBytes = totalFreeBytes.QuadPart;
 
-            // Some rare cases allow a drive's max capacity to change
-            // (like unlocking a bitlocked drive)
-            if (totalBytes.QuadPart != di.totalBytes) {
-                di.totalBytes = totalBytes.QuadPart;
-                di.updateCapacityStr();
-            }
-
-            didUpdate = true;
+        // Some rare cases allow a drive's max capacity to change
+        // (like unlocking a bitlocked drive)
+        if (totalBytes.QuadPart != di.totalBytes) {
+            di.totalBytes = totalBytes.QuadPart;
+            di.updateCapacityStr();
         }
     }
 
-    // Check for drive name updates every 20 minutes
-    if (ticksMatchSeconds(ticks, 60 * 20)) {
-        for (auto& di : m_drives) {
-            char path[] = { di.driveLetter, ':', '\\', '\0' };
-            char volumeNameBuff[maxVolumeNameSize];
-            GetVolumeInformation(path, volumeNameBuff, maxVolumeNameSize,
-                                 nullptr, nullptr, nullptr, nullptr, 0);
+    for (auto& di : m_drives) {
+        char path[] = { di.driveLetter, ':', '\\', '\0' };
+        char volumeNameBuff[maxVolumeNameSize];
+        GetVolumeInformation(path, volumeNameBuff, maxVolumeNameSize,
+                             nullptr, nullptr, nullptr, nullptr, 0);
 
-            if (di.volumeName != volumeNameBuff) {
-                di.volumeName = std::string{ volumeNameBuff };
-            }
+        if (di.volumeName != volumeNameBuff) {
+            di.volumeName = std::string{ volumeNameBuff };
         }
-        didUpdate = true;
     }
-
-    if (didUpdate)
-        postUpdate();
-}
-
-bool DriveMeasure::shouldUpdate(int ticks) const {
-    return ticksMatchSeconds(ticks, 15) || ticksMatchSeconds(ticks, 60 * 20);
+    postUpdate();
 }
 
 } // namespace rg

@@ -16,7 +16,7 @@ GPUGraphWidget::GPUGraphWidget(const FontManager* fontManager, std::shared_ptr<c
 
 GPUGraphWidget::~GPUGraphWidget() {
     m_gpuMeasure->onGPUUsage.remove(m_onGPUUsageHandle);
-    UserSettings::inst().configChanged.remove(m_configRefreshedHandle);
+    UserSettings::inst().configRefreshed.remove(m_configRefreshedHandle);
 }
 
 void GPUGraphWidget::draw() const {
@@ -47,7 +47,7 @@ GPUUsageCallbackHandle GPUGraphWidget::RegisterGPUUsageCallback() {
 }
 
 ConfigRefreshedCallbackHandle GPUGraphWidget::RegisterConfigRefreshedCallback() {
-    return UserSettings::inst().configChanged.append(
+    return UserSettings::inst().configRefreshed.append(
         [this]() {
             if (m_gpuMeasure->isEnabled()) {
                 const int newGraphSampleSize{ UserSettings::inst().getVal<int>("Widgets-GPUGraph.NumUsageSamples") };

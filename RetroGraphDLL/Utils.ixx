@@ -29,23 +29,6 @@ export {
     /* Subtracts the FILETIMES and returns result as 64 bit unsigned integer */
     uint64_t subtractTimes(const FILETIME& ftA, const FILETIME& ftB);
 
-    /* Linear interpolation */
-    constexpr inline float lerp(float x1, float x2, float t) {
-        return (1 - t) * x1 + t * x2;
-    }
-
-    /* Checks if the current tick is in line with the frequency given
-       Use this if you want to perform an action [hz] times per second */
-    constexpr inline bool ticksMatchRate(int ticks, int hz) {
-        return (ticks % static_cast<int>(static_cast<float>(rg::ticksPerSecond)/hz + 0.5)) == 0;
-    }
-
-    /* Checks if the current tick is in line with the number of seconds given
-       Use this if you want to perform an action every [s] seconds */
-    constexpr inline bool ticksMatchSeconds(int ticks, int s) {
-        return (ticks % (rg::ticksPerSecond * s)) == 0;
-    }
-
     /* Prints how long the given function f took to execute */
     void printTimeToExecuteMs(const char* funcName, std::regular_invocable auto f) {
         const auto start{ clock() };

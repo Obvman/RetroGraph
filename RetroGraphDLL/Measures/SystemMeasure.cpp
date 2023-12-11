@@ -27,9 +27,6 @@ SystemMeasure::SystemMeasure() {
     m_computerName.append(cNameBuf);
 }
 
-void SystemMeasure::update(int /*ticks*/) {
-}
-
 void SystemMeasure::getOSVersionInfo() {
     // Use kernel32.dll's meta information to get the OS version
     const char* filePath{ "kernel32.dll" };

@@ -20,7 +20,8 @@ public:
      * to find it. If the class name is set, then searches windows with the
      * class name as a key to determine if the window is still open or not
      */
-    void update(int ticks) override;
+    void update() override;
+    std::chrono::microseconds updateInterval() const override { return std::chrono::seconds{ 1 }; }
 
     /* Returns true if the music player window is currently running */
     bool isPlayerRunning() const { return m_playerRunning; }
@@ -33,8 +34,6 @@ public:
     int getTotalTime() const { return m_totalTime; }
 
 private:
-    bool shouldUpdate(int ticks) const override;
-
     void updateTitleString();
 
     void scrapeInfoFromTitle();

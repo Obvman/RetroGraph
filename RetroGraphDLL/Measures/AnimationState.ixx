@@ -1,7 +1,5 @@
 export module Measures.AnimationState;
 
-import UserSettings;
-
 import Measures.Measure;
 import Measures.Particle;
 import Measures.ParticleLine;
@@ -17,19 +15,17 @@ export class AnimationState : public Measure {
 
 public:
     AnimationState();
-    ~AnimationState();
+    ~AnimationState() = default;
 
     /* Updates the positions of all particles */
-    void update(int ticks) override;
+    void update() override;
+    std::chrono::microseconds updateInterval() const override { return std::chrono::microseconds{ 0 }; }
 
-    int getAnimationFPS() const { return m_animationFPS; };
     const std::array<ParticleLine, maxLines>& getLines() const { return m_particleLines; }
     const std::vector<Particle>& getParticles() const { return m_particles; }
     int getNumLines() const { return m_numLines; }
 
 private:
-    bool shouldUpdate(int ticks) const override;
-
     void updateParticleLines();
     void addLine(const Particle* const p1, const Particle* const p2);
 
@@ -45,9 +41,6 @@ private:
     // The world space coordinates range from -1.0 to 1.0 for both x and y,
     // so we have a range of 2.0 for our world sides
     Cells m_cells;
-
-    int m_animationFPS;
-    ConfigRefreshedCallbackHandle m_configChangedHandle;
 
     friend struct Particle;
 };

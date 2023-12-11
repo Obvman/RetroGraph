@@ -38,7 +38,7 @@ bool UserSettings::checkConfigChanged() const {
 
 void UserSettings::refresh() {
     readConfig();
-    configChanged();
+    configRefreshed();
 }
 
 void UserSettings::readConfig() {
@@ -59,6 +59,7 @@ void UserSettings::readConfig() {
 
 void UserSettings::readMembers(const INIReader& reader) {
     m_settings["Application.AutoReadConfig"]                     = reader.GetBoolean("Application",          "AutoReadConfig", true);
+    m_settings["Application.FPS"]                                = reader.GetInteger("Application",          "FPS", 30);
     m_settings["Window.Monitor"]                                 = reader.GetInteger("Window",               "Monitor", 0);
     m_settings["Window.WidgetBackground"]                        = reader.GetBoolean("Window",               "WidgetBackground", true);
     m_settings["Network.PingServer"]                             = reader.Get       ("Network",              "PingServer", "http://www.google.com/");
@@ -74,7 +75,6 @@ void UserSettings::readMembers(const INIReader& reader) {
     m_settings["Widgets-CPUStats.NumUsageSamples"]               = reader.GetInteger("Widgets-CPUStats",     "NumUsageSamples", 40);
     m_settings["Widgets-GPUGraph.NumUsageSamples"]               = reader.GetInteger("Widgets-GPUGraph",     "NumUsageSamples", 40);
     m_settings["Widgets-RAMGraph.NumUsageSamples"]               = reader.GetInteger("Widgets-RAMGraph",     "NumUsageSamples", 40);
-    m_settings["Widgets-Main.FPS"]                               = reader.GetInteger("Widgets-Main",         "FPS", 30);
 
     m_widgetVisibilities[static_cast<int>(WidgetType::Time)]        = reader.GetBoolean("Widgets-Time",         "Visible", true);
     m_widgetVisibilities[static_cast<int>(WidgetType::CPUStats)]    = reader.GetBoolean("Widgets-CPUStats",     "Visible", true);

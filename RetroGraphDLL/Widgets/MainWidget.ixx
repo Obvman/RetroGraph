@@ -35,8 +35,6 @@ public:
     MainWidget(const FontManager* fontManager, std::shared_ptr<const AnimationState> animationState);
     ~MainWidget() noexcept;
 
-    /* Checks if the widget should draw to maintain the target FPS */
-    bool needsDraw(int ticks) const;
     void draw() const override;
     void reloadShaders() override;
 

@@ -106,7 +106,7 @@ private:
     bool m_arbMultisampleSupported{ false };
     int m_arbMultisampleFormat{ 0 };
     HINSTANCE m_hInstance{ nullptr };
-    ConfigRefreshedCallbackHandle m_configChangedHandle;
+    ConfigRefreshedCallbackHandle m_configRefreshedHandle;
 };
 
 } // namespace rg

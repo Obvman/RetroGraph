@@ -19,7 +19,7 @@ public:
 
     /* Updates the currently tracked processes and their CPU usage.
        Stops tracking any processes that have exited */
-    void update(int ticks) override;
+    void update() override;
 
     size_t getNumProcessesRunning() const { return m_allProcessData.size(); }
 
@@ -32,8 +32,6 @@ public:
     const std::vector<std::pair<std::string, size_t>>& getProcRAMData() const { return m_procRAMListData; }
 
 private:
-    bool shouldUpdate(int ticks) const override;
-
     /* Sets the debug privileges of the programs to allow reading of system processes */
     bool setDebugPrivileges(HANDLE hToken, LPCTSTR Privilege, bool enablePrivilege);
 
@@ -58,7 +56,7 @@ private:
     unsigned int m_numRAMProcessesToDisplay{ 10U };
     std::vector<std::pair<std::string, double>> m_procCPUListData{ m_numCPUProcessesToDisplay };
     std::vector<std::pair<std::string, size_t>> m_procRAMListData{ m_numRAMProcessesToDisplay };
-    ConfigRefreshedCallbackHandle m_configChangedHandle;
+    ConfigRefreshedCallbackHandle m_configRefreshedHandle;
 };
 
 } // namespace rg

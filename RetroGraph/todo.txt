@@ -2,7 +2,10 @@ unit tests
 
 Enforce position restrictions on FPS/Graph/Main/CPUStats widgets
 
+Color scheme definition in usersettings
+
 remove measure dependency on widget usersettings.
+  Almost done just need to deal with process measure
 
 Event driven detection of settings file changes instead of polling
 

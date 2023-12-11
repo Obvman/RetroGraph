@@ -1,5 +1,9 @@
 module Measures.ProcessMeasure;
 
+import Utils;
+
+import Core.Time;
+
 import Measures.NtDefs;
 
 import "RGAssert.h";
@@ -12,8 +16,8 @@ namespace rg {
 ProcessMeasure::ProcessMeasure()
     : m_numCPUProcessesToDisplay{ UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesCPU.NumProcessesDisplayed") }
     , m_numRAMProcessesToDisplay{ UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesRAM.NumProcessesDisplayed") }
-    , m_configChangedHandle{
-        UserSettings::inst().configChanged.append(
+    , m_configRefreshedHandle{
+        UserSettings::inst().configRefreshed.append(
             [&]() {
                 m_numCPUProcessesToDisplay = UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesCPU.NumProcessesDisplayed");
                 m_numRAMProcessesToDisplay = UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesRAM.NumProcessesDisplayed");
@@ -36,71 +40,66 @@ ProcessMeasure::ProcessMeasure()
 }
 
 ProcessMeasure::~ProcessMeasure() {
-    UserSettings::inst().configChanged.remove(m_configChangedHandle);
+    UserSettings::inst().configRefreshed.remove(m_configRefreshedHandle);
 }
 
-void ProcessMeasure::update(int ticks) {
-    bool didUpdate{ false };
+void ProcessMeasure::update() {
+    using namespace std::chrono;
+
+    // #TODO encapsulate this duplicated logic in a class.
+    static steady_clock::time_point lastNewProcessUpdateTime;
+    duration newProcessUpdateInterval{ seconds{10} };
+    steady_clock::time_point currentUpdateCycleStart{ steady_clock::now() };
 
     // Update the process list vector every 10 seconds
-    if (ticksMatchSeconds(ticks, 10)) {
+    if (since(lastNewProcessUpdateTime) > newProcessUpdateInterval) {
         detectNewProcesses();
-        didUpdate = true;
+        fillRAMData();
+        lastNewProcessUpdateTime = currentUpdateCycleStart;
     }
 
-    if (ticksMatchSeconds(ticks, 2)) {
-        // Track iterator outside while scope for std::erase
-        auto it{ m_allProcessData.begin() };
-        while (it != m_allProcessData.end()) {
-            auto& pd{ **it }; // get reference to ProcessData for convenience
+    // Track iterator outside while scope for std::erase
+    auto it{ m_allProcessData.begin() };
+    while (it != m_allProcessData.end()) {
+        auto& pd{ **it }; // get reference to ProcessData for convenience
 
-            // Get the process relating to the ProcessData object
-            const auto pHandle{ OpenProcess(PROCESS_QUERY_INFORMATION |
-                                            PROCESS_VM_READ, false,
-                                            pd.getPID()) };
-            if (!pHandle) {
-                const auto error{ GetLastError() };
-                // If access is denied or the process is the system idle 
-                // process, just silently skip the process
-                if (error != ERROR_ACCESS_DENIED && pd.getPID() != 0) {
-                    printf(std::format("Failed to open process. Code: {}. ProcessID: {}\n", error, pd.getPID()).c_str());
-                }
-                continue;
+        // Get the process relating to the ProcessData object
+        const auto pHandle{ OpenProcess(PROCESS_QUERY_INFORMATION |
+                                        PROCESS_VM_READ, false,
+                                        pd.getPID()) };
+        if (!pHandle) {
+            const auto error{ GetLastError() };
+            // If access is denied or the process is the system idle 
+            // process, just silently skip the process
+            if (error != ERROR_ACCESS_DENIED && pd.getPID() != 0) {
+                printf(std::format("Failed to open process. Code: {}. ProcessID: {}\n", error, pd.getPID()).c_str());
             }
-
-            // Check for processes that have exited and remove them from the list
-            auto exitCode = DWORD{ 1U };
-            if (!GetExitCodeProcess(pHandle, &exitCode)) {
-                printf(std::format("Failed to retreive exit code of process. Error: {}", GetLastError()).c_str());
-                CloseHandle(pHandle);
-                continue;
-            }
-            if (exitCode == 0 || exitCode == 1) {
-                it = m_allProcessData.erase(it);
-            } else {
-                // Get new timing information and calculate the CPU usage
-                const auto cpuUsage{ calculateCPUUsage(pHandle, pd) };
-                pd.setCpuUsage(cpuUsage);
-                pd.updateMemCounters();
-
-                ++it;
-            }
-            CloseHandle(pHandle);
+            continue;
         }
 
-        fillCPUData();
+        // Check for processes that have exited and remove them from the list
+        auto exitCode = DWORD{ 1U };
+        if (!GetExitCodeProcess(pHandle, &exitCode)) {
+            printf(std::format("Failed to retreive exit code of process. Error: {}", GetLastError()).c_str());
+            CloseHandle(pHandle);
+            continue;
+        }
+        if (exitCode == 0 || exitCode == 1) {
+            it = m_allProcessData.erase(it);
+        } else {
+            // Get new timing information and calculate the CPU usage
+            const auto cpuUsage{ calculateCPUUsage(pHandle, pd) };
+            pd.setCpuUsage(cpuUsage);
+            pd.updateMemCounters();
 
-        didUpdate = true;
+            ++it;
+        }
+        CloseHandle(pHandle);
     }
 
-    if (ticksMatchSeconds(ticks, 5)) {
-        fillRAMData();
+    fillCPUData();
 
-        didUpdate = true;
-    }
-
-    if (didUpdate)
-        postUpdate();
+    postUpdate();
 }
 
 int ProcessMeasure::getPIDFromName(std::string_view name) const {
@@ -116,10 +115,6 @@ int ProcessMeasure::getPIDFromName(std::string_view name) const {
     } else {
         return -1;
     }
-}
-
-bool ProcessMeasure::shouldUpdate(int ticks) const {
-    return ticksMatchSeconds(ticks, 2) || ticksMatchSeconds(ticks, 5);
 }
 
 bool ProcessMeasure::setDebugPrivileges(HANDLE hToken, LPCTSTR privilege,
