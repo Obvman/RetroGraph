@@ -9,8 +9,8 @@ import "GLHeaderUnit.h";
 
 namespace rg {
 
-using RefreshCallbackList = eventpp::CallbackList<void()>;
-using RefreshCallbackHandle = RefreshCallbackList::Handle;
+export using RefreshCallbackList = eventpp::CallbackList<void()>;
+export using RefreshCallbackHandle = RefreshCallbackList::Handle;
 
 // The executable path is different whether we start the program from the
 // visual studio or debugger, so this handles the two cases
@@ -48,7 +48,10 @@ public:
     GLShaderBindScope bind() const { return { m_id }; }
     GLuint getUniformLocation(const char* uniformName) const { return glGetUniformLocation(m_id, uniformName); }
 
-    static inline RefreshCallbackList onRefresh;
+    static void requestShaderRefresh() { onRefreshRequested(); }
+
+    // Raised after the shader gets reloaded
+    mutable RefreshCallbackList onRefresh;
 
 private:
     GLuint loadShader(const std::string& vFile, const std::string& fFile);
@@ -58,7 +61,9 @@ private:
     GLuint m_id;
     std::string m_vertFilename;
     std::string m_fragFilename;
-    RefreshCallbackHandle m_onRefreshHandle;
+    RefreshCallbackHandle m_onRefreshRequestedHandle;
+
+    static inline RefreshCallbackList onRefreshRequested;
 };
 
 } // namespace rg

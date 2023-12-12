@@ -18,7 +18,16 @@ MainWidget::MainWidget(const FontManager* fontManager, std::shared_ptr<const Ani
     , m_particleLinesVAO{}
     , m_particleLinesVBO{ GL_ARRAY_BUFFER, GL_STREAM_DRAW }
     , m_particleVAO{}
-    , m_particleVBO{ static_cast<GLsizei>(m_animationState->getParticles().size()), GL_ARRAY_BUFFER, GL_STREAM_DRAW } {
+    , m_particleVBO{ static_cast<GLsizei>(m_animationState->getParticles().size()), GL_ARRAY_BUFFER, GL_STREAM_DRAW }
+    , m_onParticleShaderRefreshHandle{
+        WidgetShaderController::inst().getParticleShader().onRefresh.append(
+            [this]() { updateShaderModelMatrix(WidgetShaderController::inst().getParticleShader()); })
+    }
+    , m_onParticleLineShaderRefreshHandle{
+        WidgetShaderController::inst().getParticleLineShader().onRefresh.append(
+            [this]() { updateShaderModelMatrix(WidgetShaderController::inst().getParticleLineShader()); })
+    }
+{
 
     createParticleLinesVAO(maxLines);
     createParticleVAO();
@@ -28,17 +37,14 @@ MainWidget::MainWidget(const FontManager* fontManager, std::shared_ptr<const Ani
 }
 
 MainWidget::~MainWidget() {
+    WidgetShaderController::inst().getParticleLineShader().onRefresh.remove(m_onParticleLineShaderRefreshHandle);
+    WidgetShaderController::inst().getParticleShader().onRefresh.remove(m_onParticleShaderRefreshHandle);
     m_animationState->postUpdate.remove(m_postUpdateHandle);
 }
 
 void MainWidget::draw() const {
     drawParticleLines();
     drawParticles();
-}
-
-void MainWidget::reloadShaders() {
-    updateShaderModelMatrix(WidgetShaderController::inst().getParticleShader());
-    updateShaderModelMatrix(WidgetShaderController::inst().getParticleLineShader());
 }
 
 void MainWidget::drawParticles() const {

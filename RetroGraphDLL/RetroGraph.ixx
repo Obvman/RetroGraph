@@ -87,6 +87,7 @@ private:
         return dynamic_pointer_cast<const T> (measure);
     }
 
+    void tryRefreshConfig();
     void refreshConfig();
     void setViewports(int windowWidth, int windowHeight);
     std::unique_ptr<Widget> createWidget(WidgetType widgetType);

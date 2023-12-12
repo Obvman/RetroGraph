@@ -11,8 +11,11 @@ namespace rg {
 
 export class Widget {
 public:
-    Widget(const FontManager* fm) : 
-        m_fontManager{ fm } { }
+    Widget(const FontManager* fm)
+        : m_viewport{}
+        , m_fontManager{ fm }
+        , m_needsRedraw{ true } {
+    }
     virtual ~Widget();
     Widget(const Widget&) = delete;
     Widget& operator=(const Widget&) = delete;
@@ -25,8 +28,8 @@ public:
     /* Clears the widget's entire viewport */
     virtual void clear() const;
 
-    /* Reloads and recompiles shader files */
-    virtual void reloadShaders() {}
+    /* Mark the widget to be redrawn */
+    virtual void invalidate() { m_needsRedraw = true; }
 
     /* Sets the viewport for the entire widget. Should be overriden
        for widgets with sub-viewports */
@@ -35,8 +38,11 @@ public:
     const Viewport& getViewport() const { return m_viewport; }
 
 protected:
-    Viewport m_viewport{};
+    Viewport m_viewport;
     const FontManager* m_fontManager;
+
+private:
+    bool m_needsRedraw;
 };
 
 } // namespace rg

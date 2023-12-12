@@ -65,7 +65,7 @@ RetroGraph::~RetroGraph() {
 }
 
 void RetroGraph::update() {
-    refreshConfig();
+    tryRefreshConfig();
 
     for (auto i = size_t{ 0U }; i < static_cast<int>(MeasureType::NumMeasures); ++i) {
         const auto& measurePtr{ m_measures[i] };
@@ -108,30 +108,30 @@ void RetroGraph::toggleWidget(WidgetType widgetType) {
 }
 
 void RetroGraph::reloadResources() {
-    Shader::onRefresh();
-    for (auto i = int{ 0 }; i < static_cast<int>(WidgetType::NumWidgets); ++i) {
-        if (m_widgets[i])
-            m_widgets[i]->reloadShaders();
-    }
+    Shader::requestShaderRefresh();
+    refreshConfig();
 }
 
 void RetroGraph::shutdown() {
 }
 
-void RetroGraph::refreshConfig() {
+void RetroGraph::tryRefreshConfig() {
     static Timer configChangedUpdateTimer{ std::chrono::seconds{ 5 } };
     if (configChangedUpdateTimer.hasElapsed()) {
-        if (UserSettings::inst().checkConfigChanged()) {
-            UserSettings::inst().refresh();
+        refreshConfig();
+        configChangedUpdateTimer.restart();
+    }
+}
 
-            for (auto i = size_t{ 0U }; i < static_cast<int>(WidgetType::NumWidgets); ++i) {
-                if (static_cast<bool> (m_widgets[i]) != UserSettings::inst().isVisible(static_cast<WidgetType>(i))) {
-                    toggleWidget(static_cast<WidgetType>(i));
-                }
+void RetroGraph::refreshConfig() {
+    if (UserSettings::inst().checkConfigChanged()) {
+        UserSettings::inst().refresh();
+
+        for (auto i = size_t{ 0U }; i < static_cast<int>(WidgetType::NumWidgets); ++i) {
+            if (static_cast<bool> (m_widgets[i]) != UserSettings::inst().isVisible(static_cast<WidgetType>(i))) {
+                toggleWidget(static_cast<WidgetType>(i));
             }
         }
-
-        configChangedUpdateTimer.restart();
     }
 }
 

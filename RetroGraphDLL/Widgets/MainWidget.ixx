@@ -36,7 +36,6 @@ public:
     ~MainWidget() noexcept;
 
     void draw() const override;
-    void reloadShaders() override;
 
 private:
     void drawParticles() const;
@@ -60,6 +59,9 @@ private:
 
     VAO m_particleVAO;
     OwningVBO<ParticleRenderData> m_particleVBO;
+
+    RefreshCallbackHandle m_onParticleShaderRefreshHandle;
+    RefreshCallbackHandle m_onParticleLineShaderRefreshHandle;
 };
 
 } // namespace rg

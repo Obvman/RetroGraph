@@ -13,7 +13,8 @@ constexpr microseconds fpsToFrameTime(int fps) {
 FPSLimiter::FPSLimiter()
     : m_frameTime{ fpsToFrameTime(UserSettings::inst().getVal<int>("Application.FPS")) }
     , m_currentFrameStart{ system_clock::now() }
-    , m_currentFrameEnd{ m_currentFrameStart + m_frameTime } {
+    , m_currentFrameEnd{ m_currentFrameStart + m_frameTime }
+    , m_configRefreshedHandle{ RegisterConfigRefreshedCallback() } {
 
 }
 
