@@ -136,16 +136,11 @@ void NetMeasure::getDNSAndHostname() {
     free(pFixedInfo);
 }
 
-void NetMeasure::update() {
-    using namespace std::chrono;
-
-    static steady_clock::time_point lastBestInterfaceUpdateTime;
-    constexpr duration bestInterfaceUpdateInterval{ seconds{ 30 } };
-    steady_clock::time_point currentUpdateCycleStart{ steady_clock::now() };
-
+void NetMeasure::updateInternal() {
     // Check if the best network interface has changed and update to the new
     // one if so.
-    if (since(lastBestInterfaceUpdateTime) > bestInterfaceUpdateInterval) {
+    static Timer updateBestInterfaceTime{ std::chrono::seconds{ 30 } };
+    if (updateBestInterfaceTime.hasElapsed()) {
         DWORD bestIfaceIndex;
         if (GetBestInterface(INADDR_ANY, &bestIfaceIndex) != NO_ERROR) {
             RGERROR("Failed to get best interface");
@@ -156,7 +151,7 @@ void NetMeasure::update() {
             m_adapterEntry = &(m_table->Table[bestIfaceIndex]);
         }
 
-        lastBestInterfaceUpdateTime = currentUpdateCycleStart;
+        updateBestInterfaceTime.restart();
     }
 
     const auto oldDown{ m_adapterEntry->InOctets };

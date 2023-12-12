@@ -16,13 +16,6 @@ public:
     MusicMeasure();
     ~MusicMeasure() noexcept = default;
 
-    /* If the player class name isn't yet set, enumerates all running windows
-     * to find it. If the class name is set, then searches windows with the
-     * class name as a key to determine if the window is still open or not
-     */
-    void update() override;
-    std::chrono::microseconds updateInterval() const override { return std::chrono::seconds{ 1 }; }
-
     /* Returns true if the music player window is currently running */
     bool isPlayerRunning() const { return m_playerRunning; }
 
@@ -32,6 +25,14 @@ public:
     std::string_view getAlbum() const { return m_album; }
     int getElapsedTime() const { return m_elapsedTime; }
     int getTotalTime() const { return m_totalTime; }
+
+protected:
+    /* If the player class name isn't yet set, enumerates all running windows
+     * to find it. If the class name is set, then searches windows with the
+     * class name as a key to determine if the window is still open or not
+     */
+    void updateInternal() override;
+    std::chrono::microseconds updateInterval() const override { return std::chrono::seconds{ 1 }; }
 
 private:
     void updateTitleString();

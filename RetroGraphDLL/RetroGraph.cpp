@@ -67,22 +67,10 @@ RetroGraph::~RetroGraph() {
 void RetroGraph::update() {
     refreshConfig();
 
-    using namespace std::chrono;
-
-    // TODO make member?
-    static std::map<const Measure*, steady_clock::time_point> lastUpdateTimes;
-    steady_clock::time_point currentUpdateCycleStart{ steady_clock::now() };
-
     for (auto i = size_t{ 0U }; i < static_cast<int>(MeasureType::NumMeasures); ++i) {
         const auto& measurePtr{ m_measures[i] };
-        bool timeForUpdate{!lastUpdateTimes.contains(measurePtr.get()) 
-                           || since(lastUpdateTimes[measurePtr.get()]) > measurePtr->updateInterval()};
-        if (measurePtr && timeForUpdate) {
-
+        if (measurePtr) {
             measurePtr->update();
-
-            // TODO remove measure pointer when they get deleted
-            lastUpdateTimes[measurePtr.get()] = currentUpdateCycleStart;
         }
     }
 }
@@ -131,13 +119,8 @@ void RetroGraph::shutdown() {
 }
 
 void RetroGraph::refreshConfig() {
-    using namespace std::chrono;
-
-    static steady_clock::time_point lastConfigChangedUpdateTime;
-    duration configChangedUpdateInterval{ seconds{5} };
-    steady_clock::time_point currentUpdateCycleStart{ steady_clock::now() };
-
-    if (since(lastConfigChangedUpdateTime) > configChangedUpdateInterval) {
+    static Timer configChangedUpdateTimer{ std::chrono::seconds{ 5 } };
+    if (configChangedUpdateTimer.hasElapsed()) {
         if (UserSettings::inst().checkConfigChanged()) {
             UserSettings::inst().refresh();
 
@@ -148,7 +131,7 @@ void RetroGraph::refreshConfig() {
             }
         }
 
-        lastConfigChangedUpdateTime = currentUpdateCycleStart;
+        configChangedUpdateTimer.restart();
     }
 }
 

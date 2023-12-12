@@ -20,11 +20,6 @@ public:
     RAMMeasure();
     ~RAMMeasure() noexcept = default;
 
-    /* Updates the system memory status values */
-    void update() override;
-
-    std::chrono::microseconds updateInterval() const override { return std::chrono::seconds{ 1 }; }
-
     /* Gets the total size of the system's physical memory in different
        byte units */
     DWORDLONG getTotalPhysicalB() const { return m_memStatus.ullTotalPhys; }
@@ -47,6 +42,12 @@ public:
     float getUsedPhysicalGB() const { return getTotalPhysicalGB() - getAvailablePhysicalGB(); }
 
     mutable RAMUsageCallbackList onRAMUsage;
+
+protected:
+    /* Updates the system memory status values */
+    void updateInternal() override;
+
+    std::chrono::microseconds updateInterval() const override { return std::chrono::seconds{ 1 }; }
 
 private:
     /* Returns more accurate load percentage as a float from 0.0 - 1.0 */

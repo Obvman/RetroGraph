@@ -5,7 +5,7 @@ namespace rg {
 DisplayMeasure::DisplayMeasure()
     : m_monitors{} {
 
-    update();
+    updateInternal();
 }
 
 } // namespace rg

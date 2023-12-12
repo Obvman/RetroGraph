@@ -17,13 +17,15 @@ public:
     AnimationState();
     ~AnimationState() = default;
 
-    /* Updates the positions of all particles */
-    void update() override;
-    std::chrono::microseconds updateInterval() const override { return std::chrono::microseconds{ 0 }; }
-
     const std::array<ParticleLine, maxLines>& getLines() const { return m_particleLines; }
     const std::vector<Particle>& getParticles() const { return m_particles; }
     int getNumLines() const { return m_numLines; }
+
+protected:
+
+    /* Updates the positions of all particles */
+    void updateInternal() override;
+    std::chrono::microseconds updateInterval() const override { return std::chrono::microseconds{ 0 }; }
 
 private:
     void updateParticleLines();

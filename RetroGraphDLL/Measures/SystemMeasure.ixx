@@ -12,8 +12,6 @@ public:
     SystemMeasure();
     ~SystemMeasure() noexcept = default;
 
-    void update() override {}
-
     /* Returns string of current operating system version/build number */
     std::string_view getOSInfoStr() const { return m_osInfoStr; }
 
@@ -28,6 +26,9 @@ public:
     std::string_view getUserName() const { return m_userName; }
 
     std::string_view getComputerName() const { return m_computerName; }
+
+protected:
+    void updateInternal() override {}
 
 private:
     /* Sets the contents of m_osInfoStr. Only needs to be called once */

@@ -43,19 +43,13 @@ ProcessMeasure::~ProcessMeasure() {
     UserSettings::inst().configRefreshed.remove(m_configRefreshedHandle);
 }
 
-void ProcessMeasure::update() {
-    using namespace std::chrono;
-
-    // #TODO encapsulate this duplicated logic in a class.
-    static steady_clock::time_point lastNewProcessUpdateTime;
-    duration newProcessUpdateInterval{ seconds{10} };
-    steady_clock::time_point currentUpdateCycleStart{ steady_clock::now() };
-
+void ProcessMeasure::updateInternal() {
     // Update the process list vector every 10 seconds
-    if (since(lastNewProcessUpdateTime) > newProcessUpdateInterval) {
+    static Timer newProcessUpdateTimer{ std::chrono::seconds{ 10 } };
+    if (newProcessUpdateTimer.hasElapsed()) {
         detectNewProcesses();
         fillRAMData();
-        lastNewProcessUpdateTime = currentUpdateCycleStart;
+        newProcessUpdateTimer.restart();
     }
 
     // Track iterator outside while scope for std::erase

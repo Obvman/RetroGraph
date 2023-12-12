@@ -41,7 +41,7 @@ DriveMeasure::DriveMeasure() {
     }
 }
 
-void DriveMeasure::update() {
+void DriveMeasure::updateInternal() {
     /* Refresh drive statistics. We won't consider drives being
      * added/removed since these are fixed drives and the program shouldn't
      * be running in those events

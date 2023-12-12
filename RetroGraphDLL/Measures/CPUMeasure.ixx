@@ -22,11 +22,6 @@ public:
     CPUMeasure();
     ~CPUMeasure() noexcept;
 
-    /* Updates the total system's CPU usage statistics */
-    void update() override;
-
-    std::chrono::microseconds updateInterval() const override { return std::chrono::seconds{ 1 }; }
-
     /* Returns the current system CPU load as a percentage */
     float getCPULoad();
 
@@ -57,6 +52,12 @@ public:
     mutable CPUUsageCallbackList onCPUUsage;
     mutable CPUCoreUsageCallbackList onCPUCoreUsage;
     mutable CPUCoreDataStateChangedCallbackList onCPUCoreDataStateChanged;
+
+protected:
+    /* Updates the total system's CPU usage statistics */
+    void updateInternal() override;
+
+    std::chrono::microseconds updateInterval() const override { return std::chrono::seconds{ 1 }; }
 
 private:
     /* Fill CPU name if CoreTemp interfacing was successful */

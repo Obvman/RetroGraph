@@ -15,15 +15,16 @@ public:
     DriveMeasure();
     ~DriveMeasure() noexcept = default;
 
-    /* Updates each drive with new values */
-    void update() override;
-    std::chrono::microseconds updateInterval() const override { return std::chrono::seconds{ 30 }; }
-
     /* Returns the number of fixed drives active in the system */
     size_t getNumDrives() const { return m_drives.size(); }
 
     /* Returns the drive list */
     const std::vector<DriveInfo>& getDrives() const { return m_drives; }
+
+protected:
+    /* Updates each drive with new values */
+    void updateInternal() override;
+    std::chrono::microseconds updateInterval() const override { return std::chrono::seconds{ 30 }; }
 
 private:
     std::vector<std::string> m_drivePaths{ };

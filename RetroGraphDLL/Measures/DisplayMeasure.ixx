@@ -11,9 +11,10 @@ public:
     DisplayMeasure();
     ~DisplayMeasure() noexcept = default;
 
-    void update() override { /* Do nothing */ }
-
     const Monitors* getMonitors() const { return &m_monitors; }
+
+protected:
+    void updateInternal() override { /* Do nothing */ }
 
 private:
     Monitors m_monitors;

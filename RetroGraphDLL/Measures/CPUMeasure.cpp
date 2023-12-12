@@ -16,7 +16,7 @@ CPUMeasure::CPUMeasure() {
 CPUMeasure::~CPUMeasure() {
 }
 
-void CPUMeasure::update() {
+void CPUMeasure::updateInternal() {
     m_coreTempPlugin.update();
 
     if (m_coreTempPlugin.coreTempWasStarted())

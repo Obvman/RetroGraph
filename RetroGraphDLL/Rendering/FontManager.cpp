@@ -8,8 +8,8 @@ import "GLHeaderUnit.h";
 
 namespace rg {
 
-FontManager::FontManager(HWND hWnd, int windowHeight) :
-    m_hWnd{ hWnd } {
+FontManager::FontManager(HWND hWnd, int windowHeight)
+    : m_hWnd{ hWnd } {
 
     initFonts(windowHeight);
 }

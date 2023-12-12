@@ -21,10 +21,6 @@ public:
     NetMeasure();
     ~NetMeasure() noexcept;
 
-    void update() override;
-
-    std::chrono::microseconds updateInterval() const override { return std::chrono::seconds{ 1 }; }
-
     const std::string& getDNS() const { return m_DNSIP; }
     const std::string& getHostname() const { return m_hostname; }
     const std::string& getAdapterMAC() const { return m_mainAdapterMAC; }
@@ -34,6 +30,11 @@ public:
 
     mutable NetUsageCallbackList onDownBytes;
     mutable NetUsageCallbackList onUpBytes;
+
+protected:
+    void updateInternal() override;
+
+    std::chrono::microseconds updateInterval() const override { return std::chrono::seconds{ 1 }; }
 
 private:
     void startNetworkThread();

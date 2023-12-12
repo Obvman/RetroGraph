@@ -17,10 +17,6 @@ public:
     ProcessMeasure();
     ~ProcessMeasure() noexcept;
 
-    /* Updates the currently tracked processes and their CPU usage.
-       Stops tracking any processes that have exited */
-    void update() override;
-
     size_t getNumProcessesRunning() const { return m_allProcessData.size(); }
 
     int getPIDFromName(std::string_view name) const;
@@ -30,6 +26,11 @@ public:
 
     /* Gets vector containing top RAM using processes and their RAM usage */
     const std::vector<std::pair<std::string, size_t>>& getProcRAMData() const { return m_procRAMListData; }
+
+protected:
+    /* Updates the currently tracked processes and their CPU usage.
+       Stops tracking any processes that have exited */
+    void updateInternal() override;
 
 private:
     /* Sets the debug privileges of the programs to allow reading of system processes */

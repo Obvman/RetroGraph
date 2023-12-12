@@ -10,11 +10,10 @@ namespace rg {
 constexpr const char * foobarWindowClassName{ "{97E27FAA-C0B3-4b8e-A693-ED7881E99FC1}" };
 
 MusicMeasure::MusicMeasure() {
-    update();
+    updateInternal();
 }
 
-void MusicMeasure::update() {
-
+void MusicMeasure::updateInternal() {
     // Check if the player window is currently open by matching the class name
     // We must validate existence of window every time before we scrape
     // title information
