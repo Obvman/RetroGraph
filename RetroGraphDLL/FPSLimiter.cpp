@@ -10,15 +10,15 @@ constexpr microseconds fpsToFrameTime(int fps) {
     return duration_cast<microseconds>(duration<double>{ 1 } / fps);
 }
 
-FPSLimiter::FPSLimiter(int fps)
-    : m_frameTime{ fpsToFrameTime(fps) }
+FPSLimiter::FPSLimiter()
+    : m_frameTime{ fpsToFrameTime(UserSettings::inst().getVal<int>("Application.FPS")) }
     , m_currentFrameStart{ system_clock::now() }
     , m_currentFrameEnd{ m_currentFrameStart + m_frameTime } {
 
 }
 
-void FPSLimiter::setFPS(int fps) {
-    m_frameTime = fpsToFrameTime(fps);
+FPSLimiter::~FPSLimiter() {
+    UserSettings::inst().configRefreshed.remove(m_configRefreshedHandle);
 }
 
 void FPSLimiter::startFrame() {
@@ -37,6 +37,14 @@ void FPSLimiter::endFrame() {
         m_currentFrameEnd = now;
 
     m_currentFrameEnd += m_frameTime;
+}
+
+ConfigRefreshedCallbackHandle FPSLimiter::RegisterConfigRefreshedCallback() {
+    return UserSettings::inst().configRefreshed.append(
+        [this]() {
+            m_frameTime = fpsToFrameTime(UserSettings::inst().getVal<int>("Application.FPS"));
+        }
+    );
 }
 
 } // namespace rg

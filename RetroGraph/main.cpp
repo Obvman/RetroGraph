@@ -35,8 +35,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 void mainLoop(rg::IRetroGraph& retroGraph) {
     using namespace std::chrono;
 
-    // #TODO FPS get from UserSettings
-    rg::FPSLimiter fpsLimiter{ 30 };
+    rg::FPSLimiter fpsLimiter;
 
     // Enter main update/draw loop
     while (retroGraph.isRunning()) {

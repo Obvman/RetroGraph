@@ -1,7 +1,5 @@
 module FPSCounter;
 
-import UserSettings;
-
 import "WindowsHeaderUnit.h";
 
 namespace rg {
@@ -10,7 +8,9 @@ FPSCounter::FPSCounter()
     : m_fps{ 0 }
     , m_frameTime{ 0.0 }
     , m_startTicks{ 0 }
-    , m_freq{ 0 } {
+    , m_freq{ 0 }
+    , m_frameTimeHistory{ 0.0f }
+    , m_currFrameIdx{ 0 } {
 
     QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&m_freq));
 }
@@ -24,31 +24,21 @@ void FPSCounter::endFrame() {
 }
 
 void FPSCounter::calculateFPS() {
-    constexpr int NUM_SAMPLES = 15;
+    int64_t endTicks;
+    QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&endTicks));
 
-    // #TODO static variables into members
-    static float frameTimes[NUM_SAMPLES];
-    static int currFrame = 0;
+    m_frameTime = static_cast<float>(endTicks - m_startTicks) / m_freq;
+    m_frameTimeHistory[m_currFrameIdx % numFrameTimeSamples] = m_frameTime;
 
-    int64_t currTicks;
-    QueryPerformanceCounter((LARGE_INTEGER*)&currTicks);
-    static int64_t prevTicks{ currTicks };
-
-    m_frameTime = static_cast<float>(currTicks - prevTicks) / m_freq;
-    frameTimes[currFrame % NUM_SAMPLES] = m_frameTime;
-    prevTicks = currTicks;
-
-    int count;
-    ++currFrame;
-    if (currFrame < NUM_SAMPLES) {
-        count = currFrame;
-    } else {
-        count = NUM_SAMPLES;
+    int count{ numFrameTimeSamples };
+    ++m_currFrameIdx;
+    if (m_currFrameIdx < numFrameTimeSamples) {
+        count = m_currFrameIdx;
     }
 
-    float frameTimeAverage = 0;
+    float frameTimeAverage{ 0.0f };
     for (int i = 0; i < count; ++i) {
-        frameTimeAverage += frameTimes[i];
+        frameTimeAverage += m_frameTimeHistory[i];
     }
     frameTimeAverage /= count;
 

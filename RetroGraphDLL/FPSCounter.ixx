@@ -30,6 +30,10 @@ private:
     float m_frameTime;
     int64_t m_startTicks;
     int64_t m_freq;
+
+    static constexpr int numFrameTimeSamples{ 15 };
+    std::array<float, numFrameTimeSamples> m_frameTimeHistory;
+    int m_currFrameIdx;
 };
 
 } // namespace rg
