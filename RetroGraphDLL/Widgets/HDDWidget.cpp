@@ -8,14 +8,25 @@ import "GLHeaderUnit.h";
 
 namespace rg {
 
+HDDWidget::HDDWidget(const FontManager* fontManager, std::shared_ptr<const DriveMeasure> driveMeasure)
+    : Widget{ fontManager }
+    , m_driveMeasure{ driveMeasure }
+    , m_postUpdateHandle{ RegisterPostUpdateCallback() } {
+
+}
+
+HDDWidget::~HDDWidget() {
+    m_driveMeasure->postUpdate.remove(m_postUpdateHandle);
+}
+
 void HDDWidget::draw() const {
     // Draw each drive status section
     const auto& drives{ m_driveMeasure->getDrives() };
-    const auto driveSize{ static_cast<GLsizei>(drives.size()) };
-    for (int i = 0; i < driveSize; ++i) {
-        glViewport(m_viewport.x + i * (m_viewport.width / driveSize),
+    const auto numDrives{ static_cast<GLsizei>(drives.size()) };
+    for (int i = 0; i < numDrives; ++i) {
+        glViewport(m_viewport.x + i * (m_viewport.width / numDrives),
                    m_viewport.y,
-                   m_viewport.width / driveSize,
+                   m_viewport.width / numDrives,
                    m_viewport.height);
 
         // Draw the drive label on the bottom
@@ -33,6 +44,13 @@ void HDDWidget::draw() const {
                                 static_cast<float>(drives[i].totalBytes - drives[i].totalFreeBytes),
                                 static_cast<float>(drives[i].totalBytes), true);
     }
+}
+
+PostUpdateCallbackHandle HDDWidget::RegisterPostUpdateCallback() {
+    return m_driveMeasure->postUpdate.append(
+        [this]() {
+            invalidate();
+        });
 }
 
 } // namespace rg

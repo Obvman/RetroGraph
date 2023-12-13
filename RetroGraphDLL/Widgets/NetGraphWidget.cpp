@@ -107,6 +107,7 @@ NetUsageCallbackHandle NetGraphWidget::RegisterNetDownBytesCallback() {
                 float normalizedDownMB{ (m_downBytes.back() / static_cast<float>(MB)) / maxDownValMB };
                 m_netGraph.addTopPoint(normalizedDownMB);
             }
+            invalidate();
         });
 }
 
@@ -145,6 +146,7 @@ NetUsageCallbackHandle NetGraphWidget::RegisterNetUpBytesCallback() {
                 float normalizedUpMB{ (m_upBytes.back() / static_cast<float>(MB)) / maxUpValMB };
                 m_netGraph.addBottomPoint(normalizedUpMB);
             }
+            invalidate();
         });
 }
 
@@ -163,6 +165,7 @@ ConfigRefreshedCallbackHandle NetGraphWidget::RegisterConfigRefreshedCallback() 
                 m_downBytes = NetBytesQueue(static_cast<size_t>(m_graphSampleSize), 0);
                 m_upBytes = NetBytesQueue(static_cast<size_t>(m_graphSampleSize), 0);
             }
+            invalidate();
         }
     );
 }

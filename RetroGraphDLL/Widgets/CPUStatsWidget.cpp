@@ -123,6 +123,7 @@ CPUCoreUsageCallbackHandle CPUStatsWidget::RegisterOnCPUCoreUsageCallback() {
             }
 
             m_coreGraphs[coreIdx].addPoint(coreUsage);
+            invalidate();
         });
 }
 
@@ -135,6 +136,7 @@ CPUCoreDataStateChangedCallbackHandle CPUStatsWidget::RegisterOnCPUCoreDataState
             } else {
                 m_coreGraphs.clear();
             }
+            invalidate();
         });
 }
 
@@ -147,6 +149,7 @@ ConfigRefreshedCallbackHandle CPUStatsWidget::RegisterConfigRefreshedCallback() 
                 for (auto& coreGraph : m_coreGraphs) {
                     coreGraph.resetPoints(m_coreGraphSampleSize);
                 }
+                invalidate();
             }
         }
     );

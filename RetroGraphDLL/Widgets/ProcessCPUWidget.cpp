@@ -4,6 +4,17 @@ import Colors;
 
 namespace rg {
 
+ProcessCPUWidget::ProcessCPUWidget(const FontManager* fontManager, std::shared_ptr<const ProcessMeasure> processMeasure)
+    : Widget{ fontManager }
+    , m_procMeasure{ processMeasure }
+    , m_postUpdateHandle{ RegisterPostUpdateCallback() } {
+
+}
+
+ProcessCPUWidget::~ProcessCPUWidget() {
+    m_procMeasure->postUpdate.remove(m_postUpdateHandle);
+}
+
 void ProcessCPUWidget::draw() const {
     // Draw the list itself
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
@@ -27,6 +38,13 @@ void ProcessCPUWidget::draw() const {
     m_fontManager->renderLines(RG_FONT_STANDARD, procPercentages, 0, 0, 0, 0,
                                RG_ALIGN_RIGHT | RG_ALIGN_CENTERED_VERTICAL,
                                15, 5);
+}
+
+PostUpdateCallbackHandle ProcessCPUWidget::RegisterPostUpdateCallback() {
+    return m_procMeasure->postUpdate.append(
+        [this]() {
+            invalidate();
+        });
 }
 
 } // namespace rg

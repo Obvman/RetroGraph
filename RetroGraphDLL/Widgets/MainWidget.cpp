@@ -138,6 +138,7 @@ PostUpdateCallbackHandle MainWidget::RegisterPostUpdateCallback() {
         [this]() {
             updateParticleVAO();
             updateParticleLinesVAO();
+            invalidate();
         });
 }
 

@@ -23,6 +23,9 @@ public:
     ~TimeWidget() noexcept = default;
 
     void draw() const override;
+
+    // TODO use invalidation
+    bool needsRedraw() const { return true; } // draw every frame
 private:
     std::shared_ptr<const CPUMeasure> m_cpuMeasure{ nullptr };
     std::shared_ptr<const NetMeasure> m_netMeasure{ nullptr };

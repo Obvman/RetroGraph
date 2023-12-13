@@ -4,6 +4,17 @@ Enforce position restrictions on FPS/Graph/Main/CPUStats widgets
 
 Color scheme definition in usersettings
 
+GPU measure hits a block and starts reporting garbage data until a restart
+
+encapsulate callback lists in a class to hide mutable-ness
+
+More draw call improvements:
+    Some measures still render every frame instead of after change to data
+
+    FontManager needs to be reworked for less CPU intensive rendering of text.
+
+    CPU seems to be getting spiked again by performing all updates in one frame.
+
 remove measure dependency on widget usersettings.
   Almost done just need to deal with process measure
 

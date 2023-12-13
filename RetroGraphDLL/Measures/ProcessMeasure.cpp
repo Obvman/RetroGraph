@@ -55,7 +55,7 @@ void ProcessMeasure::updateInternal() {
     // Track iterator outside while scope for std::erase
     auto it{ m_allProcessData.begin() };
     while (it != m_allProcessData.end()) {
-        auto& pd{ **it }; // get reference to ProcessData for convenience
+        auto& pd{ **it };
 
         // Get the process relating to the ProcessData object
         const auto pHandle{ OpenProcess(PROCESS_QUERY_INFORMATION |

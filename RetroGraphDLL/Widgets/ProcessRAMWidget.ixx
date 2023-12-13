@@ -16,11 +16,15 @@ public:
         Widget{ fontManager },
         m_procMeasure{ processMeasure } {}
 
-    ~ProcessRAMWidget() noexcept = default;
+    ~ProcessRAMWidget();
 
     void draw() const override;
+
 private:
+    PostUpdateCallbackHandle RegisterPostUpdateCallback();
+
     std::shared_ptr<const ProcessMeasure> m_procMeasure{ nullptr };
+    PostUpdateCallbackHandle m_postUpdateHandle;
 };
 
 } // namespace rg

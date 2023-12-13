@@ -407,7 +407,7 @@ size_t spline::find_closest(float x) const
 float spline::operator() (float x) const
 {
     // polynomial evaluation using Horner's scheme
-    // TODO: consider more numerically accurate algorithms, e.g.:
+    // consider more numerically accurate algorithms, e.g.:
     //   - Clenshaw
     //   - Even-Odd method by A.C.R. Newbery
     //   - Compensated Horner Scheme

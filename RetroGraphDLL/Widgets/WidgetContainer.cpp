@@ -29,11 +29,6 @@ bool WidgetContainer::isVisible() const {
     return !m_children.empty();
 }
 
-void WidgetContainer::clear() const {
-    setGLViewport(m_viewport);
-    scissorClear(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height);
-}
-
 void rg::WidgetContainer::setViewport(int windowWidth, int windowHeight, WidgetPosition pos) {
     const auto widgetW{ windowWidth / 5 };
     const auto widgetH{ windowHeight / 6 };
@@ -74,27 +69,42 @@ void rg::WidgetContainer::setViewport(int windowWidth, int windowHeight, WidgetP
             break;
     }
     setChildViewports(vp, pos);
+    invalidate();
 }
 
 void WidgetContainer::addChild(Widget * child) {
     m_children.push_back(child);
+    invalidate();
 }
 
 void WidgetContainer::removeChild(Widget * child) {
     m_children.erase(std::remove(m_children.begin(), m_children.end(), child), m_children.end());
+    invalidate();
 }
 
 void WidgetContainer::draw() const {
     if (isVisible()) {
-        clear();
         for (const auto* widget : m_children) {
-            setGLViewport(widget->getViewport());
-            if (m_drawBackground)
-                rg::drawWidgetBackground();
-            GLListContainer::inst().drawTopAndBottomSerifs();
+            if (widget->needsRedraw()) {
+                widget->clear();
 
-            widget->draw();
+                setGLViewport(widget->getViewport());
+
+                if (m_drawBackground)
+                    rg::drawWidgetBackground();
+
+                GLListContainer::inst().drawTopAndBottomSerifs();
+
+                widget->draw();
+                widget->validate();
+            }
         }
+    }
+}
+
+void WidgetContainer::invalidate() {
+    for (auto* widget : m_children) {
+        widget->invalidate();
     }
 }
 

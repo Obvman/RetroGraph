@@ -37,7 +37,11 @@ void CPUGraphWidget::draw() const {
 }
 
 CPUUsageCallbackHandle CPUGraphWidget::RegisterCPUUsageCallback() {
-    return m_cpuMeasure->onCPUUsage.append([this](float usage) { m_graph.addPoint(usage); });
+    return m_cpuMeasure->onCPUUsage.append(
+        [this](float usage) {
+            m_graph.addPoint(usage);
+            invalidate();
+        });
 }
 
 ConfigRefreshedCallbackHandle CPUGraphWidget::RegisterConfigRefreshedCallback() {
@@ -47,6 +51,7 @@ ConfigRefreshedCallbackHandle CPUGraphWidget::RegisterConfigRefreshedCallback() 
             if (m_graphSampleSize != newGraphSampleSize) {
                 m_graphSampleSize = newGraphSampleSize;
                 m_graph.resetPoints(m_graphSampleSize);
+                invalidate();
             }
         }
     );

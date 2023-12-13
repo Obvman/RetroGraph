@@ -156,7 +156,6 @@ void RetroGraph::setViewports(int windowWidth, int windowHeight) {
 
     for (auto i = int{ 0 }; i < static_cast<int>(WidgetPosition::NUM_POSITIONS); ++i) {
         m_widgetContainers[i]->setViewport(windowWidth, windowHeight, static_cast<WidgetPosition>(i));
-        m_widgetContainers[i]->clear();
     }
 }
 

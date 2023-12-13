@@ -12,15 +12,16 @@ namespace rg {
 
 export class ProcessCPUWidget : public Widget {
 public:
-    ProcessCPUWidget(const FontManager* fontManager, std::shared_ptr<const ProcessMeasure> processMeasure) :
-        Widget{ fontManager },
-        m_procMeasure{ processMeasure } {}
-
-    ~ProcessCPUWidget() noexcept = default;
+    ProcessCPUWidget(const FontManager* fontManager, std::shared_ptr<const ProcessMeasure> processMeasure);
+    ~ProcessCPUWidget() noexcept;
 
     void draw() const override;
+
 private:
+    PostUpdateCallbackHandle RegisterPostUpdateCallback();
+
     std::shared_ptr<const ProcessMeasure> m_procMeasure{ nullptr };
+    PostUpdateCallbackHandle m_postUpdateHandle;
 };
 
 } // namespace rg

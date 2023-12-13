@@ -12,15 +12,16 @@ namespace rg {
 
 export class HDDWidget : public Widget {
 public:
-    HDDWidget(const FontManager* fontManager, std::shared_ptr<const DriveMeasure> driveMeasure) :
-        Widget{ fontManager },
-        m_driveMeasure{ driveMeasure } { }
-
-    ~HDDWidget() noexcept = default;
+    HDDWidget(const FontManager* fontManager, std::shared_ptr<const DriveMeasure> driveMeasure);
+    ~HDDWidget() noexcept;
 
     void draw() const override;
+
 private:
+    PostUpdateCallbackHandle RegisterPostUpdateCallback();
+
     std::shared_ptr<const DriveMeasure> m_driveMeasure;
+    PostUpdateCallbackHandle m_postUpdateHandle;
 };
 
 } // namespace rg

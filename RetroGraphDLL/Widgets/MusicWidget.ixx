@@ -12,17 +12,16 @@ namespace rg {
 
 export class MusicWidget : public Widget {
 public:
-    MusicWidget(const FontManager* fontManager,
-                std::shared_ptr<const MusicMeasure> musicMeasure) :
-        Widget{ fontManager },
-        m_musicMeasure{ musicMeasure } {}
-
-    ~MusicWidget() noexcept = default;
+    MusicWidget(const FontManager* fontManager, std::shared_ptr<const MusicMeasure> musicMeasure);
+    ~MusicWidget() noexcept;
 
     void draw() const override;
 
 private:
+    PostUpdateCallbackHandle RegisterPostUpdateCallback();
+
     std::shared_ptr<const MusicMeasure> m_musicMeasure;
+    PostUpdateCallbackHandle m_postUpdateHandle;
 };
 
 } // namespace rg

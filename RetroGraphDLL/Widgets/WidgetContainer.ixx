@@ -28,7 +28,6 @@ public:
     ~WidgetContainer();
 
     void draw() const;
-    void clear() const;
     bool isVisible() const;
 
     void setViewport(int windowWidth, int windowHeight, WidgetPosition pos);
@@ -39,6 +38,7 @@ public:
     void resetType() { m_type = getFillTypeFromPosition(m_pos); }
 
 private:
+    void invalidate();
     void setChildViewports(const Viewport & vp, WidgetPosition pos);
     Viewport getMiniViewport(WidgetPosition pos) const;
     ContainerType getFillTypeFromPosition(WidgetPosition p) const;

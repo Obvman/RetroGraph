@@ -39,7 +39,11 @@ void RAMGraphWidget::draw() const {
 }
 
 RAMUsageCallbackHandle RAMGraphWidget::RegisterRAMUsageCallback() {
-    return m_ramMeasure->onRAMUsage.append([this](float usage) { m_graph.addPoint(usage); });
+    return m_ramMeasure->onRAMUsage.append(
+        [this](float usage) {
+            m_graph.addPoint(usage);
+            invalidate();
+        });
 }
 
 ConfigRefreshedCallbackHandle RAMGraphWidget::RegisterConfigRefreshedCallback() {
@@ -49,6 +53,7 @@ ConfigRefreshedCallbackHandle RAMGraphWidget::RegisterConfigRefreshedCallback() 
             if (m_graphSampleSize != newGraphSampleSize) {
                 m_graphSampleSize = newGraphSampleSize;
                 m_graph.resetPoints(m_graphSampleSize);
+                invalidate();
             }
         }
     );

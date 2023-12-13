@@ -18,6 +18,8 @@ public:
 
     void draw() const override;
 
+    bool needsRedraw() const { return true; } // draw every frame
+
 private:
     const FPSCounter* m_fpsCounter;
 };

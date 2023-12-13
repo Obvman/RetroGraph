@@ -18,9 +18,17 @@ void MusicMeasure::updateInternal() {
     // We must validate existence of window every time before we scrape
     // title information
     m_playerHandle = FindWindow(foobarWindowClassName, nullptr);
+    bool playerRunningStateChanged{ false };
+    bool playerTitleChanged{ false };
     if (!m_playerHandle) {
+        if (m_playerRunning)
+            playerRunningStateChanged = true;
+
         m_playerRunning = false;
     } else {
+        if (!m_playerRunning)
+            playerRunningStateChanged = true;
+
         m_playerRunning = true;
 
         const auto oldTitle{ m_playerWindowTitle };
@@ -29,10 +37,12 @@ void MusicMeasure::updateInternal() {
 
         if (oldTitle != m_playerWindowTitle) {
             scrapeInfoFromTitle();
-
-            postUpdate();
+            playerTitleChanged = true;
         }
     }
+
+    if (playerRunningStateChanged || playerTitleChanged)
+        postUpdate();
 }
 
 void MusicMeasure::updateTitleString() {

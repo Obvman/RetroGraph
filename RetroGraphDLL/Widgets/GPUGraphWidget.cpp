@@ -41,8 +41,10 @@ void GPUGraphWidget::draw() const {
 GPUUsageCallbackHandle GPUGraphWidget::RegisterGPUUsageCallback() {
     return m_gpuMeasure->onGPUUsage.append(
         [this](float usage) {
-            if (m_gpuMeasure->isEnabled())
+            if (m_gpuMeasure->isEnabled()) {
                 m_graph.addPoint(usage);
+                invalidate();
+            }
         });
 }
 
@@ -54,6 +56,7 @@ ConfigRefreshedCallbackHandle GPUGraphWidget::RegisterConfigRefreshedCallback() 
                 if (m_graphSampleSize != newGraphSampleSize) {
                     m_graphSampleSize = newGraphSampleSize;
                     m_graph.resetPoints(m_graphSampleSize);
+                    invalidate();
                 }
             }
         }

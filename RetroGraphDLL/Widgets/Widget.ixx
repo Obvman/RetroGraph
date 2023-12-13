@@ -25,11 +25,11 @@ public:
     /* Draws the widget. Must be overriden */
     virtual void draw() const = 0;
 
+    /* Returns whether the widget has changed and needs to be drawn again */
+    virtual bool needsRedraw() const { return m_needsRedraw; }
+
     /* Clears the widget's entire viewport */
     virtual void clear() const;
-
-    /* Mark the widget to be redrawn */
-    virtual void invalidate() { m_needsRedraw = true; }
 
     /* Sets the viewport for the entire widget. Should be overriden
        for widgets with sub-viewports */
@@ -37,12 +37,18 @@ public:
 
     const Viewport& getViewport() const { return m_viewport; }
 
+    /* Mark the widget to be redrawn */
+    void invalidate() { m_needsRedraw = true; }
+    void validate() const { m_needsRedraw = false; }
+
 protected:
     Viewport m_viewport;
     const FontManager* m_fontManager;
 
 private:
-    bool m_needsRedraw;
+    // TODO how to do this const correctly
+    // probably make WidgetContainer and RetroGraph draw() non-const
+    mutable bool m_needsRedraw;
 };
 
 } // namespace rg
