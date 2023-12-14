@@ -39,16 +39,14 @@ public:
 
     /* Mark the widget to be redrawn */
     void invalidate() { m_needsRedraw = true; }
-    void validate() const { m_needsRedraw = false; }
+    void validate() { m_needsRedraw = false; }
 
 protected:
     Viewport m_viewport;
     const FontManager* m_fontManager;
 
 private:
-    // TODO how to do this const correctly
-    // probably make WidgetContainer and RetroGraph draw() non-const
-    mutable bool m_needsRedraw;
+    bool m_needsRedraw;
 };
 
 } // namespace rg

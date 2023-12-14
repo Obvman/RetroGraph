@@ -27,7 +27,7 @@ public:
     explicit WidgetContainer(WidgetPosition p);
     ~WidgetContainer();
 
-    void draw() const;
+    void draw();
     bool isVisible() const;
 
     void setViewport(int windowWidth, int windowHeight, WidgetPosition pos);

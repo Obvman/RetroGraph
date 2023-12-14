@@ -81,7 +81,6 @@ void RetroGraph::draw() const {
 
     glClearColor(BGCOLOR_R, BGCOLOR_G, BGCOLOR_B, BGCOLOR_A);
 
-    // TODO Render the bulk of widgets at a low FPS to keep light on resources
     for (const auto& widgetContainer : m_widgetContainers)
         widgetContainer->draw();
 
@@ -175,7 +174,7 @@ std::unique_ptr<Widget> RetroGraph::createWidget(WidgetType widgetType) {
     case WidgetType::ProcessRAM:
         return std::make_unique<ProcessRAMWidget>(&m_fontManager, getMeasure<ProcessMeasure>());
     case WidgetType::Time:
-        return std::make_unique<TimeWidget>(&m_fontManager, getMeasure<CPUMeasure>(), getMeasure<NetMeasure>());
+        return std::make_unique<TimeWidget>(&m_fontManager, getMeasure<TimeMeasure>(), getMeasure<NetMeasure>());
     case WidgetType::SystemStats:
         return std::make_unique<SystemStatsWidget>(&m_fontManager, getMeasure<CPUMeasure>(), getMeasure<GPUMeasure>(), getMeasure<DisplayMeasure>(), getMeasure<SystemMeasure>());
     case WidgetType::Music:

@@ -27,16 +27,16 @@ export enum class MeasureType : size_t {
     System = 7U,
     AnimationState = 8U,
     Display = 9U,
+    Time = 10U,
 
     NumMeasures,
 };
 
 export class Measure {
 public:
-    Measure()
-        : m_lastUpdateTime{ steady_clock::now() } {
-
+    Measure() : m_lastUpdateTime{ steady_clock::now() } {
     }
+
     virtual ~Measure() = default;
 
     Measure(const Measure&)            = delete;

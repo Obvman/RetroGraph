@@ -82,9 +82,9 @@ void WidgetContainer::removeChild(Widget * child) {
     invalidate();
 }
 
-void WidgetContainer::draw() const {
+void WidgetContainer::draw() {
     if (isVisible()) {
-        for (const auto* widget : m_children) {
+        for (auto* widget : m_children) {
             if (widget->needsRedraw()) {
                 widget->clear();
 

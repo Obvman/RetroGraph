@@ -15,6 +15,7 @@ import Measures.NetMeasure;
 import Measures.ProcessMeasure;
 import Measures.RAMMeasure;
 import Measures.SystemMeasure;
+import Measures.TimeMeasure;
 
 import Rendering.FontManager;
 
@@ -73,6 +74,8 @@ private:
             return MeasureType::AnimationState;
         } else if constexpr (std::is_same_v<T, DisplayMeasure>) {
             return MeasureType::Display;
+        } else if constexpr (std::is_same_v<T, TimeMeasure>) {
+            return MeasureType::Time;
         } else {
             static_assert (always_false<T>, "Unknown measure type.");
         }

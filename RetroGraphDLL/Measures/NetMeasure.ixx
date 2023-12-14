@@ -15,6 +15,8 @@ namespace rg {
 
 export using NetUsageCallbackList = eventpp::CallbackList<void (int64_t)>;
 export using NetUsageCallbackHandle = NetUsageCallbackList::Handle;
+export using NetConnectionStatusChangedCallbackList = eventpp::CallbackList<void (bool)>;
+export using NetConnectionStatusChangedCallbackHandle = NetConnectionStatusChangedCallbackList::Handle;
 
 export class NetMeasure : public Measure {
 public:
@@ -26,10 +28,10 @@ public:
     const std::string& getAdapterMAC() const { return m_mainAdapterMAC; }
     const std::string& getAdapterIP() const { return m_mainAdapterIP; }
     bool isConnected() const;
-    void setIsConnected(bool b);
 
     mutable NetUsageCallbackList onDownBytes;
     mutable NetUsageCallbackList onUpBytes;
+    mutable NetConnectionStatusChangedCallbackList onConnectionStatusChanged;
 
 protected:
     void updateInternal() override;
@@ -39,6 +41,7 @@ protected:
 private:
     void startNetworkThread();
     void destroyNetworkThread();
+    void setIsConnected(bool b);
 
     void getDNSAndHostname();
     void getMACAndLocalIP();

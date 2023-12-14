@@ -1,7 +1,7 @@
 export module Widgets.TimeWidget;
 
-import Measures.CPUMeasure;
 import Measures.NetMeasure;
+import Measures.TimeMeasure;
 
 import Rendering.FontManager;
 
@@ -14,21 +14,24 @@ namespace rg {
 export class TimeWidget : public Widget {
 public:
     TimeWidget(const FontManager* fontManager,
-               std::shared_ptr<const CPUMeasure> cpuMeasure,
-               std::shared_ptr<const NetMeasure> netMeasure) :
-        Widget{ fontManager },
-        m_cpuMeasure{ cpuMeasure },
-        m_netMeasure{ netMeasure } { }
+               std::shared_ptr<const TimeMeasure> timeMeasure,
+               std::shared_ptr<const NetMeasure> netMeasure);
 
-    ~TimeWidget() noexcept = default;
+    ~TimeWidget() noexcept;
 
     void draw() const override;
 
-    // TODO use invalidation
-    bool needsRedraw() const { return true; } // draw every frame
 private:
-    std::shared_ptr<const CPUMeasure> m_cpuMeasure{ nullptr };
-    std::shared_ptr<const NetMeasure> m_netMeasure{ nullptr };
+    std::string getUptimeStr() const;
+
+    PostUpdateCallbackHandle RegisterTimePostUpdateCallback();
+    NetConnectionStatusChangedCallbackHandle RegisterNetConnectionStatusChangedCallback();
+
+    std::shared_ptr<const TimeMeasure> m_timeMeasure;
+    std::shared_ptr<const NetMeasure> m_netMeasure;
+
+    PostUpdateCallbackHandle m_timePostUpdateHandle;
+    NetConnectionStatusChangedCallbackHandle m_netConnectionStatusChangedHandle;
 };
 
 } // namespace rg

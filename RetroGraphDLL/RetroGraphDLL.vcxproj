@@ -204,6 +204,8 @@
     <ClCompile Include="Measures\ProcessMeasure.cpp" />
     <ClCompile Include="Measures\RAMMeasure.cpp" />
     <ClCompile Include="Measures\SystemMeasure.cpp" />
+    <ClCompile Include="Measures\TimeMeasure.cpp" />
+    <ClCompile Include="Measures\TimeMeasure.ixx" />
     <ClCompile Include="MonitorData.ixx" />
     <ClCompile Include="Monitors.cpp" />
     <ClCompile Include="Rendering\DrawUtils.cpp" />

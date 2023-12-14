@@ -169,7 +169,10 @@ bool NetMeasure::isConnected() const {
 }
 
 void NetMeasure::setIsConnected(bool b) {
-    m_isConnected.store(b);
+    if (isConnected() != b) {
+        m_isConnected.store(b);
+        onConnectionStatusChanged(b);
+    }
 }
 
 void NetMeasure::startNetworkThread() {

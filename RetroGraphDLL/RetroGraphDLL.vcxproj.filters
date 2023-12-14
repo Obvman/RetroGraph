@@ -396,6 +396,12 @@
     <ClCompile Include="Core\Math.ixx">
       <Filter>Modules\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Measures\TimeMeasure.ixx">
+      <Filter>Modules\Measures</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\TimeMeasure.cpp">
+      <Filter>Modules\Measures</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resources\resource.h">

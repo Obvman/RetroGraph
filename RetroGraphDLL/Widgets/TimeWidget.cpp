@@ -9,9 +9,20 @@ import "RGAssert.h";
 
 namespace rg {
 
-constexpr unsigned int maxTimeLen{ 9 }; // "13:10:10\0"
-constexpr unsigned int maxDateLen{ 13 }; // "30 September\0"
-constexpr unsigned int maxDayLen{ 10 }; // "Wednesday\0"
+TimeWidget::TimeWidget(const FontManager* fontManager,
+                       std::shared_ptr<const TimeMeasure> timeMeasure,
+                       std::shared_ptr<const NetMeasure> netMeasure)
+    : Widget{ fontManager }
+    , m_timeMeasure{ timeMeasure }
+    , m_netMeasure{ netMeasure }
+    , m_timePostUpdateHandle{ RegisterTimePostUpdateCallback() }
+    , m_netConnectionStatusChangedHandle{ RegisterNetConnectionStatusChangedCallback() } {
+}
+
+TimeWidget::~TimeWidget() {
+    m_netMeasure->onConnectionStatusChanged.remove(m_netConnectionStatusChangedHandle);
+    m_timeMeasure->postUpdate.remove(m_timePostUpdateHandle);
+}
 
 void TimeWidget::draw() const {
     constexpr float leftDivX{ -0.33f };
@@ -32,36 +43,29 @@ void TimeWidget::draw() const {
     } glEnd();
 
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
+
+    const auto localTime{ m_timeMeasure->getLocalTime() };
+
     // Draw the big system time and the date below
-    {
-        time_t now = _time64(nullptr);
-        tm t;
-        char timeBuff[maxTimeLen];
-        _localtime64_s(&t, &now);
-        RGVERIFY(strftime(timeBuff, sizeof(timeBuff), "%T", &t) > 0, "strftime failed");
-
-        m_fontManager->renderLine(RG_FONT_TIME, timeBuff, 0, midDivYPx, m_viewport.width, m_viewport.height - midDivYPx,
-                                  RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_CENTERED_HORIZONTAL);
-
-        // Draw the year and month and day in bottom-middle
-        char dateBuff[maxDateLen];
-        RGVERIFY(strftime(dateBuff, sizeof(dateBuff), "%d %B", &t) > 0, "strftime failed");
-        m_fontManager->renderLine(RG_FONT_STANDARD, dateBuff,
-                                  vpCoordsToPixels(leftDivX, m_viewport.width), 0, m_viewport.width/3, midDivYPx,
-                                  RG_ALIGN_BOTTOM | RG_ALIGN_CENTERED_HORIZONTAL, 10, 15);
-
-        char dayBuff[maxDayLen];
-        RGVERIFY(strftime(dayBuff, sizeof(dayBuff), "%A", &t) > 0, "strftime failed");
-        m_fontManager->renderLine(RG_FONT_STANDARD_BOLD, dayBuff,
-                                  vpCoordsToPixels(leftDivX, m_viewport.width), 0, m_viewport.width/3, midDivYPx,
-                                  RG_ALIGN_TOP | RG_ALIGN_CENTERED_HORIZONTAL, 10, 15);
-    }
+    const std::string timeString{ std::format("{:%T}", localTime) };
+    m_fontManager->renderLine(RG_FONT_TIME, timeString, 0, midDivYPx, m_viewport.width, m_viewport.height - midDivYPx,
+                              RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_CENTERED_HORIZONTAL);
 
     // Draw the uptime in bottom-left
     m_fontManager->renderLine(RG_FONT_STANDARD_BOLD, "Uptime", 0, 0,
                               m_viewport.width/3, midDivYPx, RG_ALIGN_RIGHT | RG_ALIGN_TOP, 10, 15);
-    m_fontManager->renderLine(RG_FONT_STANDARD, m_cpuMeasure->getUptimeStr().c_str(),
+    m_fontManager->renderLine(RG_FONT_STANDARD, getUptimeStr(),
                               0, 0, m_viewport.width/3, midDivYPx, RG_ALIGN_RIGHT | RG_ALIGN_BOTTOM, 10, 15);
+
+    // Draw the year and month and day in bottom-middle
+    const std::string dateString{ std::format("{:%d %B}", localTime) };
+    const std::string dayString{ std::format("{:%A}", localTime) };
+    m_fontManager->renderLine(RG_FONT_STANDARD, dateString,
+                              vpCoordsToPixels(leftDivX, m_viewport.width), 0, m_viewport.width/3, midDivYPx,
+                              RG_ALIGN_BOTTOM | RG_ALIGN_CENTERED_HORIZONTAL, 10, 15);
+    m_fontManager->renderLine(RG_FONT_STANDARD_BOLD, dayString,
+                              vpCoordsToPixels(leftDivX, m_viewport.width), 0, m_viewport.width/3, midDivYPx,
+                              RG_ALIGN_TOP | RG_ALIGN_CENTERED_HORIZONTAL, 10, 15);
 
     // Draw network connection status in bottom-right
     {
@@ -74,15 +78,35 @@ void TimeWidget::draw() const {
         m_fontManager->renderLine(RG_FONT_STANDARD_BOLD, "Network", renderX, renderY, renderWidth, renderHeight,
                                   RG_ALIGN_LEFT | RG_ALIGN_TOP, 10, 15);
 
-        if (m_netMeasure->isConnected()) {
-            m_fontManager->renderLine(RG_FONT_STANDARD, "UP", renderX, renderY, renderWidth, renderHeight,
-                                      RG_ALIGN_LEFT | RG_ALIGN_BOTTOM, 10, 15);
-        } else {
-            m_fontManager->renderLine(RG_FONT_STANDARD, "DOWN", renderX, renderY, renderWidth, renderHeight,
-                                      RG_ALIGN_LEFT | RG_ALIGN_BOTTOM, 10, 15);
-        }
+        const std::string netStatusString{ m_netMeasure->isConnected() ? "UP" : "DOWN" };
+        m_fontManager->renderLine(RG_FONT_STANDARD, netStatusString, renderX, renderY, renderWidth, renderHeight,
+                                  RG_ALIGN_LEFT | RG_ALIGN_BOTTOM, 10, 15);
     }
-
 };
+
+std::string TimeWidget::getUptimeStr() const {
+    const std::chrono::seconds uptime{ m_timeMeasure->getUptime() };
+    const auto uptimeS{ uptime % 60 };
+    const auto uptimeM{ (uptime / 60) % 60 };
+    const auto uptimeH{ (uptime / (60 * 60)) % 24 };
+    const auto uptimeD{ (uptime / (60 * 60 * 24)) };
+
+    return std::format("{:0>2}:{:0>2}:{:0>2}:{:0>2}",
+                       uptimeD.count(), uptimeH.count(), uptimeM.count(), uptimeS.count());
+}
+
+PostUpdateCallbackHandle TimeWidget::RegisterTimePostUpdateCallback() {
+    return m_timeMeasure->postUpdate.append(
+        [this]() {
+            invalidate();
+        });
+}
+
+NetConnectionStatusChangedCallbackHandle TimeWidget::RegisterNetConnectionStatusChangedCallback() {
+    return m_netMeasure->onConnectionStatusChanged.append(
+        [this](bool /*connectionStatus*/) {
+            invalidate();
+        });
+}
 
 } // namespace rg
