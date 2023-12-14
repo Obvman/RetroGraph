@@ -70,7 +70,9 @@ public:
                     int alignMarginX = 10U,
                     int alignMarginY = 10U) const;
 
-    /* Renders multiple lines. Assumes lines.size() > 1 */
+    /* Renders multiple lines. Assumes lines.size() > 1
+     * Lines that will not fit in the given space will not be rendered.
+     */
     void renderLines(RGFONTCODE fontCode,
                      const std::vector<std::string>& lines,
                      int areaX, int areaY, int areaWidth, int areaHeight,
@@ -90,6 +92,8 @@ private:
     void setFontCharacteristics(RGFONTCODE c, HDC hdc);
     int calculateStringWidth(const char* text, size_t textLen, RGFONTCODE c) const;
     int calculateStringWidth(std::string_view text, RGFONTCODE c) const;
+    std::tuple<int, int, int> calculateLinesRenderParameters(int numLines, RGFONTCODE code, int alignFlags,
+                                                             int areaHeight, int marginY) const;
     float getRasterXAlignment(int alignFlags, int strWidthPx, int areaWidth, int alignMargin) const;
 
     HWND m_hWnd{ nullptr };

@@ -1,7 +1,5 @@
 module Rendering.FontManager;
 
-import Utils;
-
 import Rendering.DrawUtils;
 
 import "GLHeaderUnit.h";
@@ -155,22 +153,12 @@ void FontManager::renderLines(RGFONTCODE fontCode,
         glViewport(vp[0] + areaX, vp[1] + areaY, areaWidth, areaHeight);
     }
 
-    // Set the Y position of the first line according to alignment rules
-    const auto renderHeight{ areaHeight - alignMarginY * 2 };
-    const auto fontHeight{ m_fontCharHeights[fontCode] };
-    const auto rasterLineDeltaY{ (renderHeight - fontHeight) / (static_cast<int>(lines.size()) - 1) };
+    auto [rasterYPx, rasterLineDeltaY, maxRenderableLines] =
+        calculateLinesRenderParameters(static_cast<int>(lines.size()), fontCode, alignFlags, areaHeight, alignMarginY);
 
     // Start at top, render downwards
-    auto rasterYPx = int{ areaHeight - alignMarginY - fontHeight };
-    if (alignFlags & RG_ALIGN_CENTERED_VERTICAL) {
-        // Default behaviour
-    } else if (alignFlags & RG_ALIGN_TOP) {
-        RGERROR("Alignment flag not supported");
-    } else if (alignFlags & RG_ALIGN_BOTTOM) {
-        RGERROR("Alignment flag not supported");
-    }
-
-    for (const auto& str : lines) {
+    for (int i{ 0 }; i < maxRenderableLines; ++i) {
+        const auto& str{ lines[i] };
         // Handle X alignment for the string
         const auto strWidthPx{ calculateStringWidth(str.c_str(), str.size(), fontCode) };
 
@@ -267,6 +255,29 @@ int FontManager::calculateStringWidth(const char* text, size_t textLen, RGFONTCO
 
 int FontManager::calculateStringWidth(std::string_view text, RGFONTCODE c) const {
     return calculateStringWidth(text.data(), text.size(), c);
+}
+
+std::tuple<int, int, int> FontManager::calculateLinesRenderParameters(int numLines, RGFONTCODE code, int alignFlags,
+                                                                      int areaHeight, int marginY) const {
+    const auto renderHeight{ areaHeight - marginY * 2 };
+    const auto fontHeight{ m_fontCharHeights[code] };
+    const auto fontAscent{ m_fontCharAscents[code] };
+    int maxRenderableLines{ std::min(numLines, renderHeight / fontHeight) };
+
+    int rasterYPx;
+    int rasterLineDeltaY{ fontHeight + marginY };
+    if (alignFlags & RG_ALIGN_CENTERED_VERTICAL) {
+        int const freeVerticalSpace{ renderHeight - (fontHeight * maxRenderableLines) };
+        int const linePadding{ std::lround(freeVerticalSpace / static_cast<float>(maxRenderableLines + 1)) };
+        rasterLineDeltaY = fontHeight + linePadding;
+        rasterYPx = areaHeight - marginY - linePadding - fontAscent;
+    } else if (alignFlags & RG_ALIGN_BOTTOM) {
+        rasterYPx = (maxRenderableLines * (fontHeight + marginY)) - fontAscent;
+    } else { // RG_ALIGN_TOP
+        rasterYPx = areaHeight - marginY - fontHeight;
+    }
+
+    return { rasterYPx, rasterLineDeltaY, maxRenderableLines };
 }
 
 float FontManager::getRasterXAlignment(int alignFlags, int strWidthPx,

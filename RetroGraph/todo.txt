@@ -27,8 +27,6 @@ Widgets: Allow free position (x, y coords), full alignment options
 
 Allow user-defined ordering of widgets in multi-widget positions
 
-fix vertical text line centering
-
 network: show how many MB have been downloaded since retrograph started
 
 Music widget:
