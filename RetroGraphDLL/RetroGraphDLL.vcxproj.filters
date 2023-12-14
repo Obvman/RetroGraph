@@ -405,6 +405,9 @@
     <ClCompile Include="Core\CallbackEvent.ixx">
       <Filter>Modules\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Profiling.ixx">
+      <Filter>Modules\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resources\resource.h">

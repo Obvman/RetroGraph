@@ -4,7 +4,6 @@ import Units;
 
 import std.core;
 
-import "CSTDHeaderUnit.h";
 import "WindowsHeaderUnit.h";
 
 namespace rg {
@@ -28,37 +27,6 @@ export {
 
     /* Subtracts the FILETIMES and returns result as 64 bit unsigned integer */
     uint64_t subtractTimes(const FILETIME& ftA, const FILETIME& ftB);
-
-    /* Prints how long the given function f took to execute */
-    void printTimeToExecuteMs(const char* funcName, std::regular_invocable auto f) {
-        const auto start{ clock() };
-        f();
-        const auto end{ clock() };
-
-        printf("%s took %f seconds\n", funcName, (static_cast<float>(end) - static_cast<float>(start)) / CLOCKS_PER_SEC);
-    }
-
-    /* Default function name overload */
-    void printTimeToExecuteMs(std::regular_invocable auto f) {
-        printTimeToExecuteMs("Function", f);
-    }
-
-    void printTimeToExecuteHighRes(const char* funcName, std::regular_invocable auto f) {
-        LARGE_INTEGER li;
-        QueryPerformanceCounter(&li);
-        const int64_t start{ li.QuadPart };
-
-        f();
-
-        QueryPerformanceCounter(&li);
-        const int64_t end{ li.QuadPart };
-
-        printf("%s took %I64d counts\n", funcName, end - start);
-    }
-
-    void printTimeToExecuteHighRes(std::regular_invocable auto f) {
-        printTimeToExecuteHighRes("Function", f);
-    }
 
     template<std::integral T>
     T strToNum(std::string_view str) {
