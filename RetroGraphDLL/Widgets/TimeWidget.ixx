@@ -1,5 +1,7 @@
 export module Widgets.TimeWidget;
 
+import Core.CallbackEvent;
+
 import Measures.NetMeasure;
 import Measures.TimeMeasure;
 
@@ -24,14 +26,14 @@ public:
 private:
     std::string getUptimeStr() const;
 
-    PostUpdateCallbackHandle RegisterTimePostUpdateCallback();
-    NetConnectionStatusChangedCallbackHandle RegisterNetConnectionStatusChangedCallback();
+    PostUpdateEvent::Handle RegisterTimePostUpdateCallback();
+    ConnectionStatusChangedEvent::Handle RegisterNetConnectionStatusChangedCallback();
 
     std::shared_ptr<const TimeMeasure> m_timeMeasure;
     std::shared_ptr<const NetMeasure> m_netMeasure;
 
-    PostUpdateCallbackHandle m_timePostUpdateHandle;
-    NetConnectionStatusChangedCallbackHandle m_netConnectionStatusChangedHandle;
+    PostUpdateEvent::Handle m_timePostUpdateHandle;
+    ConnectionStatusChangedEvent::Handle m_netConnectionStatusChangedHandle;
 };
 
 } // namespace rg

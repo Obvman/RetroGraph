@@ -13,7 +13,7 @@ ProcessRAMWidget::ProcessRAMWidget(const FontManager* fontManager, std::shared_p
 
 
 ProcessRAMWidget::~ProcessRAMWidget() {
-    m_procMeasure->postUpdate.remove(m_postUpdateHandle);
+    m_procMeasure->postUpdate.detach(m_postUpdateHandle);
 }
 
 void ProcessRAMWidget::draw() const {
@@ -46,8 +46,8 @@ void ProcessRAMWidget::draw() const {
                                15, 5);
 }
 
-PostUpdateCallbackHandle ProcessRAMWidget::RegisterPostUpdateCallback() {
-    return m_procMeasure->postUpdate.append(
+PostUpdateEvent::Handle ProcessRAMWidget::RegisterPostUpdateCallback() {
+    return m_procMeasure->postUpdate.attach(
         [this]() {
             invalidate();
         });

@@ -17,7 +17,7 @@ ProcessMeasure::ProcessMeasure()
     : m_numCPUProcessesToDisplay{ UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesCPU.NumProcessesDisplayed") }
     , m_numRAMProcessesToDisplay{ UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesRAM.NumProcessesDisplayed") }
     , m_configRefreshedHandle{
-        UserSettings::inst().configRefreshed.append(
+        UserSettings::inst().configRefreshed.attach(
             [&]() {
                 m_numCPUProcessesToDisplay = UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesCPU.NumProcessesDisplayed");
                 m_numRAMProcessesToDisplay = UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesRAM.NumProcessesDisplayed");
@@ -40,7 +40,7 @@ ProcessMeasure::ProcessMeasure()
 }
 
 ProcessMeasure::~ProcessMeasure() {
-    UserSettings::inst().configRefreshed.remove(m_configRefreshedHandle);
+    UserSettings::inst().configRefreshed.detach(m_configRefreshedHandle);
 }
 
 void ProcessMeasure::updateInternal() {
@@ -93,7 +93,7 @@ void ProcessMeasure::updateInternal() {
 
     fillCPUData();
 
-    postUpdate();
+    postUpdate.raise();
 }
 
 int ProcessMeasure::getPIDFromName(std::string_view name) const {

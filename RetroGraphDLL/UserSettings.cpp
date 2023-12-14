@@ -38,7 +38,7 @@ bool UserSettings::checkConfigChanged() const {
 
 void UserSettings::refresh() {
     readConfig();
-    configRefreshed();
+    configRefreshed.raise();
 }
 
 void UserSettings::readConfig() {

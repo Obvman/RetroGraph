@@ -15,14 +15,14 @@ WidgetContainer::WidgetContainer(WidgetPosition p)
     , m_type{ getFillTypeFromPosition(p) }
     , m_drawBackground{ UserSettings::inst().getVal<bool>("Window.WidgetBackground") }
     , m_configRefreshedHandle{
-        UserSettings::inst().configRefreshed.append(
+        UserSettings::inst().configRefreshed.attach(
             [&]() { m_drawBackground = UserSettings::inst().getVal<bool>("Window.WidgetBackground"); })
     } {
 
 }
 
 WidgetContainer::~WidgetContainer() {
-    UserSettings::inst().configRefreshed.remove(m_configRefreshedHandle);
+    UserSettings::inst().configRefreshed.detach(m_configRefreshedHandle);
 }
 
 bool WidgetContainer::isVisible() const {

@@ -21,12 +21,12 @@ public:
     void draw() const override;
 
 private:
-    CPUUsageCallbackHandle RegisterCPUUsageCallback();
-    ConfigRefreshedCallbackHandle RegisterConfigRefreshedCallback();
+    CPUUsageEvent::Handle RegisterCPUUsageCallback();
+    ConfigRefreshedEvent::Handle RegisterConfigRefreshedCallback();
 
     std::shared_ptr<const CPUMeasure> m_cpuMeasure{ nullptr };
-    CPUUsageCallbackHandle m_onCPUUsageHandle;
-    ConfigRefreshedCallbackHandle m_configRefreshedHandle;
+    CPUUsageEvent::Handle m_onCPUUsageHandle;
+    ConfigRefreshedEvent::Handle m_configRefreshedHandle;
     int m_graphSampleSize;
     SmoothLineGraph m_graph;
 };

@@ -11,8 +11,8 @@ RAMMeasure::RAMMeasure() {
 void RAMMeasure::updateInternal() {
     GlobalMemoryStatusEx(&m_memStatus);
 
-    onRAMUsage(getLoadPercentagef());
-    postUpdate();
+    onRAMUsage.raise(getLoadPercentagef());
+    postUpdate.raise();
 }
 
 float RAMMeasure::getLoadPercentagef() const {

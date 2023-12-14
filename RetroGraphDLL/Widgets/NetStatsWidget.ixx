@@ -19,11 +19,11 @@ public:
     void draw() const override;
 
 private:
-    PostUpdateCallbackHandle RegisterPostUpdateCallback();
+    PostUpdateEvent::Handle RegisterPostUpdateCallback();
 
     std::shared_ptr<const NetMeasure> m_netMeasure;
     std::vector<std::string> m_statsStrings;
-    PostUpdateCallbackHandle m_postUpdateHandle;
+    PostUpdateEvent::Handle m_postUpdateHandle;
 };
 
 } // namespace rg

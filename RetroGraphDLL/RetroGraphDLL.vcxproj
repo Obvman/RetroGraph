@@ -184,6 +184,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Colors.ixx" />
+    <ClCompile Include="Core\CallbackEvent.ixx" />
     <ClCompile Include="Core\Math.ixx" />
     <ClCompile Include="Core\Time.ixx" />
     <ClCompile Include="FPSCounter.cpp" />

@@ -15,12 +15,12 @@ public:
     __declspec(dllexport) void endFrame();
 
 private:
-    ConfigRefreshedCallbackHandle RegisterConfigRefreshedCallback();
+    ConfigRefreshedEvent::Handle RegisterConfigRefreshedCallback();
 
     std::chrono::microseconds m_frameTime;
     std::chrono::system_clock::time_point m_currentFrameStart;
     std::chrono::system_clock::time_point m_currentFrameEnd;
-    ConfigRefreshedCallbackHandle m_configRefreshedHandle;
+    ConfigRefreshedEvent::Handle m_configRefreshedHandle;
 };
 
 } // namespace rg

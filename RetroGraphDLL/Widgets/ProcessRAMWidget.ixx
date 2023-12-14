@@ -21,10 +21,10 @@ public:
     void draw() const override;
 
 private:
-    PostUpdateCallbackHandle RegisterPostUpdateCallback();
+    PostUpdateEvent::Handle RegisterPostUpdateCallback();
 
     std::shared_ptr<const ProcessMeasure> m_procMeasure{ nullptr };
-    PostUpdateCallbackHandle m_postUpdateHandle;
+    PostUpdateEvent::Handle m_postUpdateHandle;
 };
 
 } // namespace rg

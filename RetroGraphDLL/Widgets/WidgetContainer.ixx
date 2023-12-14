@@ -48,7 +48,7 @@ private:
     WidgetPosition m_pos;
     ContainerType m_type;
     bool m_drawBackground;
-    ConfigRefreshedCallbackHandle m_configRefreshedHandle;
+    ConfigRefreshedEvent::Handle m_configRefreshedHandle;
 };
 
 } // namespace rg

@@ -31,9 +31,9 @@ CPUStatsWidget::CPUStatsWidget(const FontManager* fontManager, std::shared_ptr<c
 }
 
 CPUStatsWidget::~CPUStatsWidget() {
-    UserSettings::inst().configRefreshed.remove(m_configRefreshedHandle);
-    m_cpuMeasure->onCPUCoreDataStateChanged.remove(m_onCPUCoreDataStateChangedHandle);
-    m_cpuMeasure->onCPUCoreUsage.remove(m_onCPUCoreUsageHandle);
+    UserSettings::inst().configRefreshed.detach(m_configRefreshedHandle);
+    m_cpuMeasure->onCPUCoreDataStateChanged.detach(m_onCPUCoreDataStateChangedHandle);
+    m_cpuMeasure->onCPUCoreUsage.detach(m_onCPUCoreUsageHandle);
 }
 
 void CPUStatsWidget::setViewport(const Viewport& vp) { 
@@ -112,8 +112,8 @@ void CPUStatsWidget::drawCoreGraphs() const {
     }
 }
 
-CPUCoreUsageCallbackHandle CPUStatsWidget::RegisterOnCPUCoreUsageCallback() {
-    return m_cpuMeasure->onCPUCoreUsage.append(
+CPUCoreUsageEvent::Handle CPUStatsWidget::RegisterOnCPUCoreUsageCallback() {
+    return m_cpuMeasure->onCPUCoreUsage.attach(
         [this](int coreIdx, float coreUsage) {
             RGASSERT(coreIdx < m_coreGraphs.size(), "CPU core index out of range");
 
@@ -127,8 +127,8 @@ CPUCoreUsageCallbackHandle CPUStatsWidget::RegisterOnCPUCoreUsageCallback() {
         });
 }
 
-CPUCoreDataStateChangedCallbackHandle CPUStatsWidget::RegisterOnCPUCoreDataStateChangedCallback() {
-    return m_cpuMeasure->onCPUCoreDataStateChanged.append(
+CPUCoreDataStateChangedEvent::Handle CPUStatsWidget::RegisterOnCPUCoreDataStateChangedCallback() {
+    return m_cpuMeasure->onCPUCoreDataStateChanged.attach(
         [this](bool enabled) {
             m_coreDataAvailable = enabled;
             if (m_coreDataAvailable) {
@@ -140,8 +140,8 @@ CPUCoreDataStateChangedCallbackHandle CPUStatsWidget::RegisterOnCPUCoreDataState
         });
 }
 
-ConfigRefreshedCallbackHandle CPUStatsWidget::RegisterConfigRefreshedCallback() {
-    return UserSettings::inst().configRefreshed.append(
+ConfigRefreshedEvent::Handle CPUStatsWidget::RegisterConfigRefreshedCallback() {
+    return UserSettings::inst().configRefreshed.attach(
         [this]() {
             const int newGraphSampleSize{ UserSettings::inst().getVal<int>("Widgets-CPUStats.NumUsageSamples") };
             if (m_coreGraphSampleSize != newGraphSampleSize) {

@@ -20,8 +20,8 @@ TimeWidget::TimeWidget(const FontManager* fontManager,
 }
 
 TimeWidget::~TimeWidget() {
-    m_netMeasure->onConnectionStatusChanged.remove(m_netConnectionStatusChangedHandle);
-    m_timeMeasure->postUpdate.remove(m_timePostUpdateHandle);
+    m_netMeasure->onConnectionStatusChanged.detach(m_netConnectionStatusChangedHandle);
+    m_timeMeasure->postUpdate.detach(m_timePostUpdateHandle);
 }
 
 void TimeWidget::draw() const {
@@ -95,15 +95,15 @@ std::string TimeWidget::getUptimeStr() const {
                        uptimeD.count(), uptimeH.count(), uptimeM.count(), uptimeS.count());
 }
 
-PostUpdateCallbackHandle TimeWidget::RegisterTimePostUpdateCallback() {
-    return m_timeMeasure->postUpdate.append(
+PostUpdateEvent::Handle TimeWidget::RegisterTimePostUpdateCallback() {
+    return m_timeMeasure->postUpdate.attach(
         [this]() {
             invalidate();
         });
 }
 
-NetConnectionStatusChangedCallbackHandle TimeWidget::RegisterNetConnectionStatusChangedCallback() {
-    return m_netMeasure->onConnectionStatusChanged.append(
+ConnectionStatusChangedEvent::Handle TimeWidget::RegisterNetConnectionStatusChangedCallback() {
+    return m_netMeasure->onConnectionStatusChanged.attach(
         [this](bool /*connectionStatus*/) {
             invalidate();
         });

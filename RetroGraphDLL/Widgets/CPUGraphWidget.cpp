@@ -15,8 +15,8 @@ CPUGraphWidget::CPUGraphWidget(const FontManager* fontManager, std::shared_ptr<c
 }
 
 CPUGraphWidget::~CPUGraphWidget() {
-    UserSettings::inst().configRefreshed.remove(m_configRefreshedHandle);
-    m_cpuMeasure->onCPUUsage.remove(m_onCPUUsageHandle);
+    UserSettings::inst().configRefreshed.detach(m_configRefreshedHandle);
+    m_cpuMeasure->onCPUUsage.detach(m_onCPUUsageHandle);
 }
 
 void CPUGraphWidget::draw() const {
@@ -36,16 +36,16 @@ void CPUGraphWidget::draw() const {
                              RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
 }
 
-CPUUsageCallbackHandle CPUGraphWidget::RegisterCPUUsageCallback() {
-    return m_cpuMeasure->onCPUUsage.append(
+CPUUsageEvent::Handle CPUGraphWidget::RegisterCPUUsageCallback() {
+    return m_cpuMeasure->onCPUUsage.attach(
         [this](float usage) {
             m_graph.addPoint(usage);
             invalidate();
         });
 }
 
-ConfigRefreshedCallbackHandle CPUGraphWidget::RegisterConfigRefreshedCallback() {
-    return UserSettings::inst().configRefreshed.append(
+ConfigRefreshedEvent::Handle CPUGraphWidget::RegisterConfigRefreshedCallback() {
+    return UserSettings::inst().configRefreshed.attach(
         [this]() {
             const int newGraphSampleSize{ UserSettings::inst().getVal<int>("Widgets-CPUGraph.NumUsageSamples") };
             if (m_graphSampleSize != newGraphSampleSize) {

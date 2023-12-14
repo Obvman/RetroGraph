@@ -1,18 +1,18 @@
 export module Measures.RAMMeasure;
 
+import Core.CallbackEvent;
+
 import Units;
 
 import Measures.Measure;
 
 import std.core;
 
-import "EventppHeaderUnit.h";
 import "WindowsHeaderUnit.h";
 
 namespace rg {
 
-export using RAMUsageCallbackList = eventpp::CallbackList<void (float)>;
-export using RAMUsageCallbackHandle = RAMUsageCallbackList::Handle;
+export using RAMUsageEvent = CallbackEvent<float>;
 
 /* Stores capacity totals and availability for system RAM */
 export class RAMMeasure : public Measure {
@@ -41,7 +41,7 @@ public:
     DWORDLONG getUsedPhysicalMB() const { return getTotalPhysicalMB() - getAvailablePhysicalMB(); }
     float getUsedPhysicalGB() const { return getTotalPhysicalGB() - getAvailablePhysicalGB(); }
 
-    mutable RAMUsageCallbackList onRAMUsage;
+    RAMUsageEvent onRAMUsage;
 
 protected:
     /* Updates the system memory status values */

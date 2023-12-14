@@ -19,7 +19,7 @@ FPSLimiter::FPSLimiter()
 }
 
 FPSLimiter::~FPSLimiter() {
-    UserSettings::inst().configRefreshed.remove(m_configRefreshedHandle);
+    UserSettings::inst().configRefreshed.detach(m_configRefreshedHandle);
 }
 
 void FPSLimiter::startFrame() {
@@ -40,8 +40,8 @@ void FPSLimiter::endFrame() {
     m_currentFrameEnd += m_frameTime;
 }
 
-ConfigRefreshedCallbackHandle FPSLimiter::RegisterConfigRefreshedCallback() {
-    return UserSettings::inst().configRefreshed.append(
+ConfigRefreshedEvent::Handle FPSLimiter::RegisterConfigRefreshedCallback() {
+    return UserSettings::inst().configRefreshed.attach(
         [this]() {
             m_frameTime = fpsToFrameTime(UserSettings::inst().getVal<int>("Application.FPS"));
         }

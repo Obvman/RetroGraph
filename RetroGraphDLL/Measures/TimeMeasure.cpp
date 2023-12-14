@@ -26,7 +26,7 @@ void TimeMeasure::updateInternal() {
     }
 
     if (timeChanged)
-        postUpdate();
+        postUpdate.raise();
 }
 
 local_time<seconds> TimeMeasure::getCurrentLocalTime() const {

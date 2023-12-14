@@ -7,6 +7,7 @@ import Measures.NetMeasure;
 import Rendering.FontManager;
 
 import Widgets.Widget;
+import Widgets.Graph.LineGraph;
 import Widgets.Graph.SmoothMirrorLineGraph;
 
 import std.core;
@@ -24,16 +25,18 @@ public:
     void draw() const override;
 
 private:
-    NetUsageCallbackHandle RegisterNetDownBytesCallback();
-    NetUsageCallbackHandle RegisterNetUpBytesCallback();
-    ConfigRefreshedCallbackHandle RegisterConfigRefreshedCallback();
-
     std::string getScaleLabel(int64_t bytesTransferred) const;
+    void addUsageValue(NetBytesQueue& usageQueue, LineGraph& graph,
+                       int64_t& currentMaxValue, int64_t lowerBound, int64_t usageValue);
+
+    NetUsageEvent::Handle RegisterNetDownBytesCallback();
+    NetUsageEvent::Handle RegisterNetUpBytesCallback();
+    ConfigRefreshedEvent::Handle RegisterConfigRefreshedCallback();
 
     std::shared_ptr<const NetMeasure> m_netMeasure;
-    NetUsageCallbackHandle m_onDownBytesHandle;
-    NetUsageCallbackHandle m_onUpBytesHandle;
-    ConfigRefreshedCallbackHandle m_configRefreshedHandle;
+    NetUsageEvent::Handle m_onDownBytesHandle;
+    NetUsageEvent::Handle m_onUpBytesHandle;
+    ConfigRefreshedEvent::Handle m_configRefreshedHandle;
 
     int m_graphSampleSize;
     SmoothMirrorLineGraph m_netGraph;

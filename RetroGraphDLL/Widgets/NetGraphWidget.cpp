@@ -22,9 +22,9 @@ NetGraphWidget::NetGraphWidget(const FontManager* fontManager, std::shared_ptr<c
 }
 
 NetGraphWidget::~NetGraphWidget() {
-    UserSettings::inst().configRefreshed.remove(m_configRefreshedHandle);
-    m_netMeasure->onUpBytes.remove(m_onUpBytesHandle);
-    m_netMeasure->onDownBytes.remove(m_onDownBytesHandle);
+    UserSettings::inst().configRefreshed.detach(m_configRefreshedHandle);
+    m_netMeasure->onUpBytes.detach(m_onUpBytesHandle);
+    m_netMeasure->onDownBytes.detach(m_onDownBytesHandle);
 }
 
 void NetGraphWidget::draw() const {
@@ -73,85 +73,61 @@ std::string NetGraphWidget::getScaleLabel(int64_t bytesTransferred) const {
     }
 }
 
-NetUsageCallbackHandle NetGraphWidget::RegisterNetDownBytesCallback() {
-    return m_netMeasure->onDownBytes.append(
+void NetGraphWidget::addUsageValue(NetBytesQueue& usageQueue, LineGraph& graph,
+                                   int64_t& currentMaxValue, int64_t lowerBound,
+                                   int64_t usageValue) {
+    // Remove old data and add the new to ensure queue maintains fixed size
+    usageQueue.pop_front();
+    usageQueue.push_back(usageValue);
+
+    // Calculate the maximum value in the dataset to determine the scale to use.
+    int64_t upValue{ *std::max_element(usageQueue.cbegin(), usageQueue.cend()) };
+
+    // Make sure the scale never goes lower than the lower bound set by the user.
+    upValue = std::max(upValue, lowerBound);
+
+    bool scaleChanged{ false };
+    if (currentMaxValue != upValue) {
+        currentMaxValue = upValue;
+        scaleChanged = true;
+    }
+
+    const auto maxValueMB{ currentMaxValue / static_cast<float>(MB) };
+    if (scaleChanged) {
+        std::vector<float> normalizedData;
+        normalizedData.reserve(usageQueue.size());
+        for (const auto up : usageQueue) {
+            normalizedData.push_back((up / static_cast<float>(MB)) / maxValueMB);
+        }
+        // If the scale of our data changed then we need to set all of the points again in the graph
+        // so can recalculate the whole curve
+        graph.setPoints(normalizedData);
+    } else {
+        float normalizedUpMB{ (usageQueue.back() / static_cast<float>(MB)) / maxValueMB };
+        graph.addPoint(normalizedUpMB);
+    }
+
+    invalidate();
+}
+
+NetUsageEvent::Handle NetGraphWidget::RegisterNetDownBytesCallback() {
+    return m_netMeasure->onDownBytes.attach(
         [this](int64_t downBytes) {
-
-            // Remove old data and add the new to ensure queue maintains fixed size
-            m_downBytes.pop_front();
-            m_downBytes.push_back(downBytes);
-
-            // Calculate the maximum value in the dataset to determine the scale to use.
-            int64_t downMaxVal{ *std::max_element(m_downBytes.cbegin(), m_downBytes.cend()) };
-
-            // Make sure the scale never goes lower than the lower bound set by the user.
-            downMaxVal = std::max(downMaxVal, m_downLowerBound);
-
-            bool scaleChanged{ false };
-            if (m_maxDownValue != downMaxVal) {
-                m_maxDownValue = downMaxVal;
-                scaleChanged = true;
-            }
-
-            const auto maxDownValMB{ m_maxDownValue / static_cast<float>(MB) };
-            if (scaleChanged) {
-                std::vector<float> normalizedDownData;
-                normalizedDownData.reserve(m_downBytes.size());
-                for (const auto down : m_downBytes) {
-                    normalizedDownData.push_back((down / static_cast<float>(MB)) / maxDownValMB);
-                }
-                // If the scale of our data changed then we need to set all of the points again in the graph
-                // so can recalculate the whole curve
-                m_netGraph.setTopPoints(normalizedDownData);
-            } else {
-                float normalizedDownMB{ (m_downBytes.back() / static_cast<float>(MB)) / maxDownValMB };
-                m_netGraph.addTopPoint(normalizedDownMB);
-            }
-            invalidate();
+            addUsageValue(m_downBytes, m_netGraph.topGraph(), m_maxDownValue,
+                          m_downLowerBound, downBytes);
         });
 }
 
-NetUsageCallbackHandle NetGraphWidget::RegisterNetUpBytesCallback() {
-    return m_netMeasure->onUpBytes.append(
+NetUsageEvent::Handle NetGraphWidget::RegisterNetUpBytesCallback() {
+    return m_netMeasure->onUpBytes.attach(
         [this](int64_t upBytes) {
-            // #TODO duplication with downbyte handling above.
-
-            // Remove old data and add the new to ensure queue maintains fixed size
-            m_upBytes.pop_front();
-            m_upBytes.push_back(upBytes);
-
-            // Calculate the maximum value in the dataset to determine the scale to use.
-            int64_t upMaxVal{ *std::max_element(m_upBytes.cbegin(), m_upBytes.cend()) };
-
-            // Make sure the scale never goes lower than the lower bound set by the user.
-            upMaxVal = std::max(upMaxVal, m_upLowerBound);
-
-            bool scaleChanged{ false };
-            if (m_maxUpValue != upMaxVal) {
-                m_maxUpValue = upMaxVal;
-                scaleChanged = true;
-            }
-
-            const auto maxUpValMB{ m_maxUpValue / static_cast<float>(MB) };
-            if (scaleChanged) {
-                std::vector<float> normalizedUpData;
-                normalizedUpData.reserve(m_upBytes.size());
-                for (const auto up : m_upBytes) {
-                    normalizedUpData.push_back((up / static_cast<float>(MB)) / maxUpValMB);
-                }
-                // If the scale of our data changed then we need to set all of the points again in the graph
-                // so can recalculate the whole curve
-                m_netGraph.setBottomPoints(normalizedUpData);
-            } else {
-                float normalizedUpMB{ (m_upBytes.back() / static_cast<float>(MB)) / maxUpValMB };
-                m_netGraph.addBottomPoint(normalizedUpMB);
-            }
-            invalidate();
+            addUsageValue(m_upBytes, m_netGraph.bottomGraph(), m_maxUpValue,
+                          m_upLowerBound, upBytes);
         });
 }
 
-ConfigRefreshedCallbackHandle NetGraphWidget::RegisterConfigRefreshedCallback() {
-    return UserSettings::inst().configRefreshed.append(
+ConfigRefreshedEvent::Handle NetGraphWidget::RegisterConfigRefreshedCallback() {
+    return UserSettings::inst().configRefreshed.attach(
         [this]() {
             m_downLowerBound = KB * UserSettings::inst().getVal<int, int64_t>("Widgets-NetGraph.DownloadDataScaleLowerBoundKB");
             m_upLowerBound = KB * UserSettings::inst().getVal<int, int64_t>("Widgets-NetGraph.UploadDataScaleLowerBoundKB");

@@ -42,7 +42,7 @@ void MusicMeasure::updateInternal() {
     }
 
     if (playerRunningStateChanged || playerTitleChanged)
-        postUpdate();
+        postUpdate.raise();
 }
 
 void MusicMeasure::updateTitleString() {

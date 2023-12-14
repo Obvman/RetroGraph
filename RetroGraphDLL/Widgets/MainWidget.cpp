@@ -20,11 +20,11 @@ MainWidget::MainWidget(const FontManager* fontManager, std::shared_ptr<const Ani
     , m_particleVAO{}
     , m_particleVBO{ static_cast<GLsizei>(m_animationState->getParticles().size()), GL_ARRAY_BUFFER, GL_STREAM_DRAW }
     , m_onParticleShaderRefreshHandle{
-        WidgetShaderController::inst().getParticleShader().onRefresh.append(
+        WidgetShaderController::inst().getParticleShader().onRefresh.attach(
             [this]() { updateShaderModelMatrix(WidgetShaderController::inst().getParticleShader()); })
     }
     , m_onParticleLineShaderRefreshHandle{
-        WidgetShaderController::inst().getParticleLineShader().onRefresh.append(
+        WidgetShaderController::inst().getParticleLineShader().onRefresh.attach(
             [this]() { updateShaderModelMatrix(WidgetShaderController::inst().getParticleLineShader()); })
     }
 {
@@ -37,9 +37,9 @@ MainWidget::MainWidget(const FontManager* fontManager, std::shared_ptr<const Ani
 }
 
 MainWidget::~MainWidget() {
-    WidgetShaderController::inst().getParticleLineShader().onRefresh.remove(m_onParticleLineShaderRefreshHandle);
-    WidgetShaderController::inst().getParticleShader().onRefresh.remove(m_onParticleShaderRefreshHandle);
-    m_animationState->postUpdate.remove(m_postUpdateHandle);
+    WidgetShaderController::inst().getParticleLineShader().onRefresh.detach(m_onParticleLineShaderRefreshHandle);
+    WidgetShaderController::inst().getParticleShader().onRefresh.detach(m_onParticleShaderRefreshHandle);
+    m_animationState->postUpdate.detach(m_postUpdateHandle);
 }
 
 void MainWidget::draw() const {
@@ -133,8 +133,8 @@ void MainWidget::updateShaderModelMatrix(const Shader& shader) const {
     glUniformMatrix4fv(shader.getUniformLocation("model"), 1, false, glm::value_ptr(modelMatrix));
 }
 
-PostUpdateCallbackHandle MainWidget::RegisterPostUpdateCallback() {
-    return m_animationState->postUpdate.append(
+PostUpdateEvent::Handle MainWidget::RegisterPostUpdateCallback() {
+    return m_animationState->postUpdate.attach(
         [this]() {
             updateParticleVAO();
             updateParticleLinesVAO();

@@ -1,20 +1,17 @@
 export module Measures.CPUMeasure;
 
+import Core.CallbackEvent;
+
 import Measures.CPUPlugin;
 import Measures.Measure;
 
 import std.core;
 
-import "EventppHeaderUnit.h";
-
 namespace rg {
 
-export using CPUUsageCallbackList = eventpp::CallbackList<void (float)>;
-export using CPUUsageCallbackHandle = CPUUsageCallbackList::Handle;
-export using CPUCoreUsageCallbackList = eventpp::CallbackList<void (int, float)>;
-export using CPUCoreUsageCallbackHandle = CPUCoreUsageCallbackList::Handle;
-export using CPUCoreDataStateChangedCallbackList = eventpp::CallbackList<void (bool)>;
-export using CPUCoreDataStateChangedCallbackHandle = CPUCoreDataStateChangedCallbackList::Handle;
+export using CPUUsageEvent = CallbackEvent<float>;
+export using CPUCoreUsageEvent = CallbackEvent<int, float>;
+export using CPUCoreDataStateChangedEvent = CallbackEvent<bool>;
 
 /* Measures statistics about the system CPU: Model name, total CPU load*/
 export class CPUMeasure : public Measure {
@@ -49,9 +46,9 @@ public:
 
     bool getCoreTempInfoSuccess() const { return m_coreTempPlugin.getCoreTempInfoSuccess(); }
 
-    mutable CPUUsageCallbackList onCPUUsage;
-    mutable CPUCoreUsageCallbackList onCPUCoreUsage;
-    mutable CPUCoreDataStateChangedCallbackList onCPUCoreDataStateChanged;
+    CPUUsageEvent onCPUUsage;
+    CPUCoreUsageEvent onCPUCoreUsage;
+    CPUCoreDataStateChangedEvent onCPUCoreDataStateChanged;
 
 protected:
     /* Updates the total system's CPU usage statistics */

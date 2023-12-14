@@ -57,7 +57,7 @@ private:
     unsigned int m_numRAMProcessesToDisplay{ 10U };
     std::vector<std::pair<std::string, double>> m_procCPUListData{ m_numCPUProcessesToDisplay };
     std::vector<std::pair<std::string, size_t>> m_procRAMListData{ m_numRAMProcessesToDisplay };
-    ConfigRefreshedCallbackHandle m_configRefreshedHandle;
+    ConfigRefreshedEvent::Handle m_configRefreshedHandle;
 };
 
 } // namespace rg

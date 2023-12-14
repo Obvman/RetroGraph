@@ -15,8 +15,8 @@ GPUGraphWidget::GPUGraphWidget(const FontManager* fontManager, std::shared_ptr<c
 }
 
 GPUGraphWidget::~GPUGraphWidget() {
-    m_gpuMeasure->onGPUUsage.remove(m_onGPUUsageHandle);
-    UserSettings::inst().configRefreshed.remove(m_configRefreshedHandle);
+    m_gpuMeasure->onGPUUsage.detach(m_onGPUUsageHandle);
+    UserSettings::inst().configRefreshed.detach(m_configRefreshedHandle);
 }
 
 void GPUGraphWidget::draw() const {
@@ -38,8 +38,8 @@ void GPUGraphWidget::draw() const {
                               RG_ALIGN_TOP | RG_ALIGN_LEFT, 10);
 }
 
-GPUUsageCallbackHandle GPUGraphWidget::RegisterGPUUsageCallback() {
-    return m_gpuMeasure->onGPUUsage.append(
+GPUUsageEvent::Handle GPUGraphWidget::RegisterGPUUsageCallback() {
+    return m_gpuMeasure->onGPUUsage.attach(
         [this](float usage) {
             if (m_gpuMeasure->isEnabled()) {
                 m_graph.addPoint(usage);
@@ -48,8 +48,8 @@ GPUUsageCallbackHandle GPUGraphWidget::RegisterGPUUsageCallback() {
         });
 }
 
-ConfigRefreshedCallbackHandle GPUGraphWidget::RegisterConfigRefreshedCallback() {
-    return UserSettings::inst().configRefreshed.append(
+ConfigRefreshedEvent::Handle GPUGraphWidget::RegisterConfigRefreshedCallback() {
+    return UserSettings::inst().configRefreshed.attach(
         [this]() {
             if (m_gpuMeasure->isEnabled()) {
                 const int newGraphSampleSize{ UserSettings::inst().getVal<int>("Widgets-GPUGraph.NumUsageSamples") };

@@ -30,9 +30,9 @@ private:
     void drawCoreGraphs() const;
     void drawStats() const;
     void drawNoInfoState() const;
-    CPUCoreUsageCallbackHandle RegisterOnCPUCoreUsageCallback();
-    CPUCoreDataStateChangedCallbackHandle RegisterOnCPUCoreDataStateChangedCallback();
-    ConfigRefreshedCallbackHandle RegisterConfigRefreshedCallback();
+    CPUCoreUsageEvent::Handle RegisterOnCPUCoreUsageCallback();
+    CPUCoreDataStateChangedEvent::Handle RegisterOnCPUCoreDataStateChangedCallback();
+    ConfigRefreshedEvent::Handle RegisterConfigRefreshedCallback();
 
     Viewport m_coreGraphViewport{ };
     Viewport m_statsViewport{ };
@@ -43,9 +43,9 @@ private:
     int m_coreGraphSampleSize;
     std::vector<SmoothLineGraph> m_coreGraphs;
 
-    CPUCoreUsageCallbackHandle m_onCPUCoreUsageHandle;
-    CPUCoreDataStateChangedCallbackHandle m_onCPUCoreDataStateChangedHandle;
-    ConfigRefreshedCallbackHandle m_configRefreshedHandle;
+    CPUCoreUsageEvent::Handle m_onCPUCoreUsageHandle;
+    CPUCoreDataStateChangedEvent::Handle m_onCPUCoreDataStateChangedHandle;
+    ConfigRefreshedEvent::Handle m_configRefreshedHandle;
 };
 
 } // namespace rg

@@ -23,22 +23,6 @@ SmoothMirrorLineGraph::SmoothMirrorLineGraph(size_t numGraphSamples)
     m_topGraph.setDrawDecorations(false);
 }
 
-void SmoothMirrorLineGraph::addTopPoint(float valueY) {
-    m_topGraph.addPoint(valueY);
-}
-
-void SmoothMirrorLineGraph::addBottomPoint(float valueY) {
-    m_bottomGraph.addPoint(valueY);
-}
-
-void SmoothMirrorLineGraph::setTopPoints(const std::vector<float>& values) {
-    m_topGraph.setPoints(values);
-}
-
-void SmoothMirrorLineGraph::setBottomPoints(const std::vector<float>& values) {
-    m_bottomGraph.setPoints(values);
-}
-
 void SmoothMirrorLineGraph::resetPoints(size_t numGraphSamples) {
     m_topGraph.resetPoints(numGraphSamples);
     m_bottomGraph.resetPoints(numGraphSamples);

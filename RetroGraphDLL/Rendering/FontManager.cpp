@@ -5,6 +5,7 @@ import Utils;
 import Rendering.DrawUtils;
 
 import "GLHeaderUnit.h";
+import "RGAssert.h";
 
 namespace rg {
 
@@ -164,9 +165,9 @@ void FontManager::renderLines(RGFONTCODE fontCode,
     if (alignFlags & RG_ALIGN_CENTERED_VERTICAL) {
         // Default behaviour
     } else if (alignFlags & RG_ALIGN_TOP) {
-        // TODO
+        RGERROR("Alignment flag not supported");
     } else if (alignFlags & RG_ALIGN_BOTTOM) {
-        // TODO
+        RGERROR("Alignment flag not supported");
     }
 
     for (const auto& str : lines) {

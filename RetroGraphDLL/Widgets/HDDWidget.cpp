@@ -16,7 +16,7 @@ HDDWidget::HDDWidget(const FontManager* fontManager, std::shared_ptr<const Drive
 }
 
 HDDWidget::~HDDWidget() {
-    m_driveMeasure->postUpdate.remove(m_postUpdateHandle);
+    m_driveMeasure->postUpdate.detach(m_postUpdateHandle);
 }
 
 void HDDWidget::draw() const {
@@ -46,8 +46,8 @@ void HDDWidget::draw() const {
     }
 }
 
-PostUpdateCallbackHandle HDDWidget::RegisterPostUpdateCallback() {
-    return m_driveMeasure->postUpdate.append(
+PostUpdateEvent::Handle HDDWidget::RegisterPostUpdateCallback() {
+    return m_driveMeasure->postUpdate.attach(
         [this]() {
             invalidate();
         });

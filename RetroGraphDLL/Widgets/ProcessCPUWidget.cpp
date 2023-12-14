@@ -12,7 +12,7 @@ ProcessCPUWidget::ProcessCPUWidget(const FontManager* fontManager, std::shared_p
 }
 
 ProcessCPUWidget::~ProcessCPUWidget() {
-    m_procMeasure->postUpdate.remove(m_postUpdateHandle);
+    m_procMeasure->postUpdate.detach(m_postUpdateHandle);
 }
 
 void ProcessCPUWidget::draw() const {
@@ -40,8 +40,8 @@ void ProcessCPUWidget::draw() const {
                                15, 5);
 }
 
-PostUpdateCallbackHandle ProcessCPUWidget::RegisterPostUpdateCallback() {
-    return m_procMeasure->postUpdate.append(
+PostUpdateEvent::Handle ProcessCPUWidget::RegisterPostUpdateCallback() {
+    return m_procMeasure->postUpdate.attach(
         [this]() {
             invalidate();
         });

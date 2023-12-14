@@ -21,12 +21,12 @@ public:
     void draw() const override;
 
 private:
-    RAMUsageCallbackHandle RegisterRAMUsageCallback();
-    ConfigRefreshedCallbackHandle RegisterConfigRefreshedCallback();
+    RAMUsageEvent::Handle RegisterRAMUsageCallback();
+    ConfigRefreshedEvent::Handle RegisterConfigRefreshedCallback();
 
     std::shared_ptr<const RAMMeasure> m_ramMeasure{ nullptr };
-    RAMUsageCallbackHandle m_onRAMUsageHandle;
-    ConfigRefreshedCallbackHandle m_configRefreshedHandle;
+    RAMUsageEvent::Handle m_onRAMUsageHandle;
+    ConfigRefreshedEvent::Handle m_configRefreshedHandle;
     int m_graphSampleSize;
     SmoothLineGraph m_graph;
 };

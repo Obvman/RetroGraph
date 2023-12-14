@@ -3,20 +3,19 @@ export module Measures.NetMeasure;
 import Units;
 import UserSettings;
 
+import Core.CallbackEvent;
+
 import Measures.Measure;
 
 import std.core;
 import std.threading;
 
-import "EventppHeaderUnit.h";
 import "WindowsNetworkHeaderUnit.h";
 
 namespace rg {
 
-export using NetUsageCallbackList = eventpp::CallbackList<void (int64_t)>;
-export using NetUsageCallbackHandle = NetUsageCallbackList::Handle;
-export using NetConnectionStatusChangedCallbackList = eventpp::CallbackList<void (bool)>;
-export using NetConnectionStatusChangedCallbackHandle = NetConnectionStatusChangedCallbackList::Handle;
+export using NetUsageEvent = CallbackEvent<int64_t>;
+export using ConnectionStatusChangedEvent = CallbackEvent<bool>;
 
 export class NetMeasure : public Measure {
 public:
@@ -29,9 +28,9 @@ public:
     const std::string& getAdapterIP() const { return m_mainAdapterIP; }
     bool isConnected() const;
 
-    mutable NetUsageCallbackList onDownBytes;
-    mutable NetUsageCallbackList onUpBytes;
-    mutable NetConnectionStatusChangedCallbackList onConnectionStatusChanged;
+    NetUsageEvent onDownBytes;
+    NetUsageEvent onUpBytes;
+    ConnectionStatusChangedEvent onConnectionStatusChanged;
 
 protected:
     void updateInternal() override;
@@ -63,7 +62,7 @@ private:
     std::atomic<bool> m_threadRunning{ false };
     std::thread m_netConnectionThread{ };
 
-    ConfigRefreshedCallbackHandle m_configRefreshedHandle;
+    ConfigRefreshedEvent::Handle m_configRefreshedHandle;
 };
 
 } // namespace rg

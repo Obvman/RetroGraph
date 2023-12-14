@@ -64,8 +64,8 @@ void GPUMeasure::updateInternal() {
     //getClockFrequencies(); // High CPU usage function
     //getMemInformation();
 
-    onGPUUsage(getGpuUsage());
-    postUpdate();
+    onGPUUsage.raise(getGpuUsage());
+    postUpdate.raise();
 }
 
 float GPUMeasure::getMemUsagePercent() const {

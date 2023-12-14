@@ -57,7 +57,7 @@ Window::Window(IRetroGraph* rg_, std::shared_ptr<const DisplayMeasure> displayMe
     , m_startPosY{ m_displayMeasure->getMonitors()->getY(m_currMonitor) }
     , m_hInstance{ hInstance }
     , m_configRefreshedHandle{
-        UserSettings::inst().configRefreshed.append(
+        UserSettings::inst().configRefreshed.attach(
             [&]() {
                 const auto newMonitor{ UserSettings::inst().getVal<int>("Window.Monitor") };
                 if (m_currMonitor != newMonitor)
@@ -70,7 +70,7 @@ Window::Window(IRetroGraph* rg_, std::shared_ptr<const DisplayMeasure> displayMe
 }
 
 Window::~Window() {
-    UserSettings::inst().configRefreshed.remove(m_configRefreshedHandle);
+    UserSettings::inst().configRefreshed.detach(m_configRefreshedHandle);
     wglMakeCurrent(nullptr, nullptr);
     wglDeleteContext(m_hrc);
 

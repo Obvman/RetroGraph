@@ -9,14 +9,14 @@ Shader::Shader(const std::string& vertFilename_, const std::string& fragFilename
     : m_id{ loadShader(vertFilename_, fragFilename_) }
     , m_vertFilename{ vertFilename_ }
     , m_fragFilename{ fragFilename_ }
-    , m_onRefreshRequestedHandle{ Shader::onRefreshRequested.append([this]() { reload(); }) } {
+    , m_onRefreshRequestedHandle{ Shader::onRefreshRequested.attach([this]() { reload(); }) } {
 }
 
 Shader::~Shader() {
     if (m_id > 0)
         glDeleteProgram(m_id);
 
-    Shader::onRefreshRequested.remove(m_onRefreshRequestedHandle);
+    Shader::onRefreshRequested.detach(m_onRefreshRequestedHandle);
 }
 
 void Shader::reload() {
@@ -25,7 +25,7 @@ void Shader::reload() {
 
     loadShader(m_vertFilename, m_fragFilename);
 
-    onRefresh();
+    onRefresh.raise();
 }
 
 GLuint Shader::loadShader(const std::string& vFile, const std::string& fFile) {

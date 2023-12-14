@@ -21,12 +21,12 @@ public:
     void draw() const override;
 
 private:
-    GPUUsageCallbackHandle RegisterGPUUsageCallback();
-    ConfigRefreshedCallbackHandle RegisterConfigRefreshedCallback();
+    GPUUsageEvent::Handle RegisterGPUUsageCallback();
+    ConfigRefreshedEvent::Handle RegisterConfigRefreshedCallback();
 
     std::shared_ptr<const GPUMeasure> m_gpuMeasure{ nullptr };
-    GPUUsageCallbackHandle m_onGPUUsageHandle;
-    ConfigRefreshedCallbackHandle m_configRefreshedHandle;
+    GPUUsageEvent::Handle m_onGPUUsageHandle;
+    ConfigRefreshedEvent::Handle m_configRefreshedHandle;
     int m_graphSampleSize;
     SmoothLineGraph m_graph;
 };

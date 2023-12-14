@@ -18,10 +18,10 @@ public:
     void draw() const override;
 
 private:
-    PostUpdateCallbackHandle RegisterPostUpdateCallback();
+    PostUpdateEvent::Handle RegisterPostUpdateCallback();
 
     std::shared_ptr<const MusicMeasure> m_musicMeasure;
-    PostUpdateCallbackHandle m_postUpdateHandle;
+    PostUpdateEvent::Handle m_postUpdateHandle;
 };
 
 } // namespace rg

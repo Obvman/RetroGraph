@@ -14,15 +14,15 @@ export class SmoothMirrorLineGraph {
 public:
     SmoothMirrorLineGraph(size_t numGraphSamples);
 
-    void addTopPoint(float valueY);
-    void addBottomPoint(float valueY);
-
-    void setTopPoints(const std::vector<float>& values);
-    void setBottomPoints(const std::vector<float>& values);
+    void draw() const;
 
     void resetPoints(size_t numGraphSamples);
 
-    void draw() const;
+    SmoothLineGraph& topGraph() { return m_topGraph; }
+    const SmoothLineGraph& topGraph() const { return m_topGraph; }
+
+    SmoothLineGraph& bottomGraph() { return m_bottomGraph; }
+    const SmoothLineGraph& bottomGraph() const { return m_bottomGraph; }
 
 private:
     SmoothLineGraph m_topGraph;

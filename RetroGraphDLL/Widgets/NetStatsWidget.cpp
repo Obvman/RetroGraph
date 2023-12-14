@@ -19,7 +19,7 @@ NetStatsWidget::NetStatsWidget(const FontManager* fontManager, std::shared_ptr<c
 }
 
 NetStatsWidget::~NetStatsWidget() {
-    m_netMeasure->postUpdate.remove(m_postUpdateHandle);
+    m_netMeasure->postUpdate.detach(m_postUpdateHandle);
 }
 
 void NetStatsWidget::draw() const {
@@ -28,8 +28,8 @@ void NetStatsWidget::draw() const {
                                RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL, 15, 10);
 }
 
-PostUpdateCallbackHandle NetStatsWidget::RegisterPostUpdateCallback() {
-    return m_netMeasure->postUpdate.append(
+PostUpdateEvent::Handle NetStatsWidget::RegisterPostUpdateCallback() {
+    return m_netMeasure->postUpdate.attach(
         [this]() {
             m_statsStrings.back() = std::string{ "Connection Status: " } + (m_netMeasure->isConnected() ? "Up" : "Down");
         });

@@ -20,9 +20,9 @@ void CPUMeasure::updateInternal() {
     m_coreTempPlugin.update();
 
     if (m_coreTempPlugin.coreTempWasStarted())
-        onCPUCoreDataStateChanged(true);
+        onCPUCoreDataStateChanged.raise(true);
     if (m_coreTempPlugin.coreTempWasStopped())
-        onCPUCoreDataStateChanged(false);
+        onCPUCoreDataStateChanged.raise(false);
 
     m_uptime = std::chrono::milliseconds(GetTickCount64());
 
@@ -31,12 +31,12 @@ void CPUMeasure::updateInternal() {
     if (getCoreTempInfoSuccess()) {
         for (int i{ 0 }; i < getNumCores(); ++i) {
             const auto coreUsage = float{ m_coreTempPlugin.getLoad(i) / 100.0f };
-            onCPUCoreUsage(i, coreUsage);
+            onCPUCoreUsage.raise(i, coreUsage);
         }
     }
 
-    onCPUUsage(getCPULoad());
-    postUpdate();
+    onCPUUsage.raise(getCPULoad());
+    postUpdate.raise();
 }
 
 void CPUMeasure::updateCPUName() {

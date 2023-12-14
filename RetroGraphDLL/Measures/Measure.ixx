@@ -1,10 +1,9 @@
 export module Measures.Measure;
 
+import Core.CallbackEvent;
 import Core.Time;
 
 import std.core;
-
-import "EventppHeaderUnit.h";
 
 namespace rg {
 
@@ -13,8 +12,7 @@ using namespace std::chrono;
 export using Hz = int;
 export using Seconds = int;
 
-export using PostUpdateCallbackList = eventpp::CallbackList<void()>;
-export using PostUpdateCallbackHandle = PostUpdateCallbackList::Handle;
+export using PostUpdateEvent = CallbackEvent<>;
 
 export enum class MeasureType : size_t {
     CPU = 0U,
@@ -51,7 +49,7 @@ public:
         }
     }
 
-    mutable PostUpdateCallbackList postUpdate;
+    PostUpdateEvent postUpdate;
 
 protected:
     virtual void updateInternal() = 0;

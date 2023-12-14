@@ -49,10 +49,10 @@ private:
 
     void updateShaderModelMatrix(const Shader& shader) const;
 
-    PostUpdateCallbackHandle RegisterPostUpdateCallback();
+    PostUpdateEvent::Handle RegisterPostUpdateCallback();
 
     std::shared_ptr<const AnimationState> m_animationState;
-    PostUpdateCallbackHandle m_postUpdateHandle;
+    PostUpdateEvent::Handle m_postUpdateHandle;
 
     VAO m_particleLinesVAO;
     VBO m_particleLinesVBO;
@@ -60,8 +60,8 @@ private:
     VAO m_particleVAO;
     OwningVBO<ParticleRenderData> m_particleVBO;
 
-    RefreshCallbackHandle m_onParticleShaderRefreshHandle;
-    RefreshCallbackHandle m_onParticleLineShaderRefreshHandle;
+    ShaderRefreshEvent::Handle m_onParticleShaderRefreshHandle;
+    ShaderRefreshEvent::Handle m_onParticleLineShaderRefreshHandle;
 };
 
 } // namespace rg

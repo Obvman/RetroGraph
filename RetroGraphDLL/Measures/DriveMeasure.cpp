@@ -75,7 +75,7 @@ void DriveMeasure::updateInternal() {
             di.volumeName = std::string{ volumeNameBuff };
         }
     }
-    postUpdate();
+    postUpdate.raise();
 }
 
 } // namespace rg

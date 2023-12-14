@@ -17,7 +17,7 @@ MusicWidget::MusicWidget(const FontManager* fontManager, std::shared_ptr<const M
 }
 
 MusicWidget::~MusicWidget() {
-    m_musicMeasure->postUpdate.remove(m_postUpdateHandle);
+    m_musicMeasure->postUpdate.detach(m_postUpdateHandle);
 }
 
 void MusicWidget::draw() const {
@@ -62,8 +62,8 @@ void MusicWidget::draw() const {
     }
 }
 
-PostUpdateCallbackHandle MusicWidget::RegisterPostUpdateCallback() {
-    return m_musicMeasure->postUpdate.append(
+PostUpdateEvent::Handle MusicWidget::RegisterPostUpdateCallback() {
+    return m_musicMeasure->postUpdate.attach(
         [this]() {
             invalidate();
         });

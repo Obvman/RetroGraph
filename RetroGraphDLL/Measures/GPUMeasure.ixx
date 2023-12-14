@@ -1,16 +1,16 @@
 export module Measures.GPUMeasure;
 
+import Core.CallbackEvent;
+
 import Measures.Measure;
 
 import std.core;
 
-import "EventppHeaderUnit.h";
 import "NvidiaHeaderUnit.h";
 
 namespace rg {
 
-export using GPUUsageCallbackList = eventpp::CallbackList<void (float)>;
-export using GPUUsageCallbackHandle = GPUUsageCallbackList::Handle;
+export using GPUUsageEvent = CallbackEvent<float>;
 
 export class GPUMeasure : public Measure {
 public:
@@ -34,7 +34,7 @@ public:
     const std::string& getGpuName() const { return m_gpuName; }
     const std::string& getGpuDescription() const { return m_gpuDescription; }
 
-    mutable GPUUsageCallbackList onGPUUsage;
+    GPUUsageEvent onGPUUsage;
 
 protected:
     /* Get latest GPU stats from OpenGL or nvapi and updates dynamic members */

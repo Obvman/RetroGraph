@@ -2,12 +2,13 @@ export module UserSettings;
 
 import Utils;
 
+import Core.CallbackEvent;
+
 import Widgets.WidgetPosition;
 import Widgets.WidgetType;
 
 import std.core;
 
-import "EventppHeaderUnit.h";
 import "RGAssert.h";
 import "WindowsHeaderUnit.h";
 
@@ -15,8 +16,7 @@ import <inih/INIReader.h>;
 
 namespace rg {
 
-export using ConfigRefreshedCallbackList = eventpp::CallbackList<void()>;
-export using ConfigRefreshedCallbackHandle = ConfigRefreshedCallbackList::Handle;
+export using ConfigRefreshedEvent = CallbackEvent<>;
 
 using SettingVariant = std::variant<int, bool, double, std::string>;
 
@@ -51,7 +51,7 @@ public:
     bool checkConfigChanged() const;
     void refresh();
 
-    ConfigRefreshedCallbackList configRefreshed;
+    ConfigRefreshedEvent configRefreshed;
 
 private:
     UserSettings();

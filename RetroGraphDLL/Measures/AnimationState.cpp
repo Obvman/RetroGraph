@@ -40,7 +40,7 @@ void AnimationState::updateInternal() {
 
     updateParticleLines();
 
-    postUpdate();
+    postUpdate.raise();
 }
 
 void AnimationState::updateParticleLines() {

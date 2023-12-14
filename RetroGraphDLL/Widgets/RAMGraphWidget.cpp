@@ -15,8 +15,8 @@ RAMGraphWidget::RAMGraphWidget(const FontManager* fontManager, std::shared_ptr<c
 }
 
 RAMGraphWidget::~RAMGraphWidget() {
-    UserSettings::inst().configRefreshed.remove(m_configRefreshedHandle);
-    m_ramMeasure->onRAMUsage.remove(m_onRAMUsageHandle);
+    UserSettings::inst().configRefreshed.detach(m_configRefreshedHandle);
+    m_ramMeasure->onRAMUsage.detach(m_onRAMUsageHandle);
 }
 
 void RAMGraphWidget::draw() const {
@@ -38,16 +38,16 @@ void RAMGraphWidget::draw() const {
 
 }
 
-RAMUsageCallbackHandle RAMGraphWidget::RegisterRAMUsageCallback() {
-    return m_ramMeasure->onRAMUsage.append(
+RAMUsageEvent::Handle RAMGraphWidget::RegisterRAMUsageCallback() {
+    return m_ramMeasure->onRAMUsage.attach(
         [this](float usage) {
             m_graph.addPoint(usage);
             invalidate();
         });
 }
 
-ConfigRefreshedCallbackHandle RAMGraphWidget::RegisterConfigRefreshedCallback() {
-    return UserSettings::inst().configRefreshed.append(
+ConfigRefreshedEvent::Handle RAMGraphWidget::RegisterConfigRefreshedCallback() {
+    return UserSettings::inst().configRefreshed.attach(
         [this]() {
             const int newGraphSampleSize{ UserSettings::inst().getVal<int>("Widgets-RAMGraph.NumUsageSamples") };
             if (m_graphSampleSize != newGraphSampleSize) {

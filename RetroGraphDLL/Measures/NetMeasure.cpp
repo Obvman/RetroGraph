@@ -15,7 +15,7 @@ NetMeasure::NetMeasure()
     : m_pingServer{ UserSettings::inst().getVal<std::string>("Network.PingServer") }
     , m_pingFreqSec{ UserSettings::inst().getVal<int>("Network.PingFrequency") }
     , m_configRefreshedHandle{
-        UserSettings::inst().configRefreshed.append(
+        UserSettings::inst().configRefreshed.attach(
             [&]() {
                 destroyNetworkThread();
 
@@ -53,7 +53,7 @@ NetMeasure::NetMeasure()
 
 NetMeasure::~NetMeasure() {
     destroyNetworkThread();
-    UserSettings::inst().configRefreshed.remove(m_configRefreshedHandle);
+    UserSettings::inst().configRefreshed.detach(m_configRefreshedHandle);
 }
 
 void NetMeasure::getMACAndLocalIP() {
@@ -159,9 +159,9 @@ void NetMeasure::updateInternal() {
 
     RGVERIFY(GetIfEntry2(m_adapterEntry) == NO_ERROR, "GetIfEntry2 failed");
 
-    onDownBytes(m_adapterEntry->InOctets - oldDown);
-    onUpBytes(m_adapterEntry->OutOctets - oldUp);
-    postUpdate();
+    onDownBytes.raise(m_adapterEntry->InOctets - oldDown);
+    onUpBytes.raise(m_adapterEntry->OutOctets - oldUp);
+    postUpdate.raise();
 }
 
 bool NetMeasure::isConnected() const {
@@ -171,7 +171,7 @@ bool NetMeasure::isConnected() const {
 void NetMeasure::setIsConnected(bool b) {
     if (isConnected() != b) {
         m_isConnected.store(b);
-        onConnectionStatusChanged(b);
+        onConnectionStatusChanged.raise(b);
     }
 }
 
