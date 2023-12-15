@@ -2,7 +2,7 @@
 
 import Core.Math;
 
-TEST_CASE("Linear Interpolation", "[lerp]") {
+TEST_CASE("Core::Math. Linear Interpolation", "[lerp]") {
     REQUIRE(rg::lerp(0.0f, 1.0f, 0.0f) == Approx{ 0.0f });
     REQUIRE(rg::lerp(0.0f, 1.0f, 1.0f) == Approx{ 1.0f });
     REQUIRE(rg::lerp(0.0f, 1.0f, 0.5f) == Approx{ 0.5f });

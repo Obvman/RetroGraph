@@ -13,7 +13,7 @@ namespace rg {
 // Points are stored in the GL viewport space.
 export class GraphPointBuffer {
 public:
-    explicit GraphPointBuffer(size_t numPoints_ = 0);
+    explicit GraphPointBuffer(size_t numPoints_);
 
     void setPoints(std::span<const float> values);
 
