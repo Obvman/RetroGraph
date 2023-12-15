@@ -2,6 +2,8 @@ module Measures.AnimationState;
 
 import Units;
 
+import Core.Time;
+
 import Rendering.GLListContainer;
 
 namespace rg {
@@ -22,13 +24,9 @@ auto AnimationState::createParticles() -> decltype(m_particles) {
 
 void AnimationState::updateInternal() {
     using namespace std::chrono;
-    using clock = std::chrono::high_resolution_clock;
+    using clock = high_resolution_clock;
 
-    static auto time_start = clock::now();
-
-    const auto time_end = clock::now();
-    const auto deltaTimeStep{ time_end - time_start };
-    time_start = clock::now();
+    const auto deltaTimeStep{ since<clock, clock::duration, microseconds>(m_lastUpdateTime)};
     auto dt{ duration_cast<duration<float>>(deltaTimeStep).count() };
 
     // If a lot of time has passed, set dt to a small value so we don't have one large jump

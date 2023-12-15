@@ -45,7 +45,7 @@ public:
     void update() {
         if (since(m_lastUpdateTime) > updateInterval()) {
             updateInternal();
-            m_lastUpdateTime = steady_clock::now();
+            m_lastUpdateTime = high_resolution_clock::now();
         }
     }
 
@@ -55,8 +55,7 @@ protected:
     virtual void updateInternal() = 0;
     virtual std::chrono::microseconds updateInterval() const { return std::chrono::seconds{ 2 }; }
 
-private:
-    steady_clock::time_point m_lastUpdateTime;
+    high_resolution_clock::time_point m_lastUpdateTime;
 };
 
 }
