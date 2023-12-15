@@ -8,9 +8,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{34B3C5A4-2FB5-420E-BAE4-62405C3EA53F}"
 	ProjectSection(SolutionItems) = preProject
 		build.bat = build.bat
+		RetroGraphUnitTests.runsettings = RetroGraphUnitTests.runsettings
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RetroGraphDLL", "RetroGraphDLL\RetroGraphDLL.vcxproj", "{BD619E03-8CC4-41B7-91AD-AA54B77C4299}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RetroGraphTests", "RetroGraphTests\RetroGraphTests.vcxproj", "{A8063C89-266C-4249-8AF6-53BF08509C9D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,6 +39,14 @@ Global
 		{BD619E03-8CC4-41B7-91AD-AA54B77C4299}.Release|x64.Build.0 = Release|x64
 		{BD619E03-8CC4-41B7-91AD-AA54B77C4299}.Release|x86.ActiveCfg = Release|Win32
 		{BD619E03-8CC4-41B7-91AD-AA54B77C4299}.Release|x86.Build.0 = Release|Win32
+		{A8063C89-266C-4249-8AF6-53BF08509C9D}.Debug|x64.ActiveCfg = Debug|x64
+		{A8063C89-266C-4249-8AF6-53BF08509C9D}.Debug|x64.Build.0 = Debug|x64
+		{A8063C89-266C-4249-8AF6-53BF08509C9D}.Debug|x86.ActiveCfg = Debug|Win32
+		{A8063C89-266C-4249-8AF6-53BF08509C9D}.Debug|x86.Build.0 = Debug|Win32
+		{A8063C89-266C-4249-8AF6-53BF08509C9D}.Release|x64.ActiveCfg = Release|x64
+		{A8063C89-266C-4249-8AF6-53BF08509C9D}.Release|x64.Build.0 = Release|x64
+		{A8063C89-266C-4249-8AF6-53BF08509C9D}.Release|x86.ActiveCfg = Release|Win32
+		{A8063C89-266C-4249-8AF6-53BF08509C9D}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
