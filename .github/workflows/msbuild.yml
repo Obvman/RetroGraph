@@ -36,7 +36,7 @@ jobs:
       uses: microsoft/setup-msbuild@v1.0.2
 
     - name: Install experimental modules component
-      uses: thepwrtank18/install-vs-components@v1.0.0
+      uses: seanmiddleditch/gha-setup-vsdevenv@v4
       with:
         components: Microsoft.VisualStudio.Component.VC.Modules.x86.x64
 
