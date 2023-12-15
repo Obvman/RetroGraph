@@ -52,7 +52,7 @@ void SmoothLineGraph::addPoint(float valueY) {
 
     // Overwrite the existing points in the spline's previous segment
     // that may have their shape be modified by the new point
-    int oldSegmentStartIndex{ static_cast<int>(m_pointBuffer.head()) - 2 * (m_precisionPoints - 1) };
+    int oldSegmentStartIndex{ static_cast<int>(m_pointBuffer.numPoints() - 1) - 2 * (m_precisionPoints - 1) };
     for (int i = 0; i < m_precisionPoints; ++i) {
         float const splineX{ oldSegmentStart + (i * segmentStep) };
         float const splineY{ clampToViewport(m_spline(splineX)) };
@@ -66,8 +66,8 @@ void SmoothLineGraph::addPoint(float valueY) {
                                          m_pointBuffer.numPoints() * sizeof(glm::vec2), m_pointBuffer.front());
     } else {
         // update only the final two segments which may have changed
-        m_graphVerticesVBO.bufferSubData(oldSegmentStartIndex * sizeof(glm::vec2),
-                                         (m_pointBuffer.head() - oldSegmentStartIndex + 1) * sizeof(glm::vec2),
+        m_graphVerticesVBO.bufferSubData((m_pointBuffer.tail() + oldSegmentStartIndex) * sizeof(glm::vec2),
+                                         (m_precisionPoints * 2) * sizeof(glm::vec2),
                                          &m_pointBuffer[oldSegmentStartIndex]);
     }
 }

@@ -21,8 +21,8 @@ public:
     // Returns false if the point was pushed in place
     bool pushPoint(float value);
 
-    glm::vec2& operator[](size_t index) { return m_rollingBuffer[index]; }
-    const glm::vec2& operator[](size_t index) const { return m_rollingBuffer[index]; }
+    glm::vec2& operator[](size_t index) { return m_rollingBuffer[tail() + index]; }
+    const glm::vec2& operator[](size_t index) const { return m_rollingBuffer[tail() + index]; }
 
     const glm::vec2* data() const { return m_rollingBuffer.data(); }
     const glm::vec2* back() const { return &m_rollingBuffer[m_head]; }

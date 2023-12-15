@@ -14,23 +14,23 @@ GraphPointBuffer::GraphPointBuffer(size_t numPoints_)
 }
 
 void GraphPointBuffer::setPoints(std::span<const float> values) {
-    m_head = values.size() - 1;
+    m_head = values.empty() ? 0 : values.size() - 1;
     m_tail = 0;
-    if (numPoints() != values.size()) {
-        m_rollingBuffer.resize(values.size() * 2);
-    } else {
-        m_rollingBuffer.clear();
-        initPoints();
-    }
+    m_rollingBuffer.resize(values.size() * 2);
 
-    for (size_t i = m_tail; i <= m_head; ++i) {
-        const auto x{ static_cast<float>(i) / m_head * viewportWidth };
-        // Copy the values into the first half of the buffer
-        m_rollingBuffer[i] = { x, values[i] };
+    if (values.size() == 1) {
+        m_rollingBuffer[0] = { 0.0f, values[0] };
+        m_rollingBuffer[1] = { 0.0f + 2*viewportWidth, viewportMin };
+    } else if (!values.empty()) {
+        for (size_t i = m_tail; i <= m_head; ++i) {
+            const auto x{ static_cast<float>(i) / m_head * viewportWidth };
+            // Copy the values into the first half of the buffer
+            m_rollingBuffer[i] = { x, values[i] };
 
-        // Initialize the static x values in the second half of the buffer.
-        // y values will be written as the buffer rolls forward
-        m_rollingBuffer[i + m_head + 1] = { x + viewportWidth + getHorizontalPointInterval(), viewportMin };
+            // Initialize the static x values in the second half of the buffer.
+            // y values will be written as the buffer rolls forward
+            m_rollingBuffer[i + m_head + 1] = { x + viewportWidth + getHorizontalPointInterval(), viewportMin };
+        }
     }
 }
 
