@@ -408,6 +408,9 @@
     <ClCompile Include="Core\Profiling.ixx">
       <Filter>Modules\Core</Filter>
     </ClCompile>
+    <ClCompile Include="GlutHeaderUnit.h">
+      <Filter>Header Units</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resources\resource.h">

@@ -309,6 +309,7 @@
     <ClCompile Include="CoreTempHeaderUnit.h" />
     <ClCompile Include="CSTDHeaderUnit.h" />
     <ClCompile Include="EventppHeaderUnit.h" />
+    <ClCompile Include="GlutHeaderUnit.h" />
     <ClInclude Include="Resources\resource.h" />
     <ClInclude Include="RetroGraphDLL.h" />
     <ClCompile Include="RGAssert.h" />

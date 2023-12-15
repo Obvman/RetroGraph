@@ -74,10 +74,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)bin\$(Configuration)$(Platform)\</OutDir>
     <IntDir>bin\$(Configuration)$(Platform)\</IntDir>
+    <LibraryPath>$(SolutionDir)deps\lib\Debug\;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\$(Configuration)$(Platform)\</OutDir>
     <IntDir>bin\$(Configuration)$(Platform)\</IntDir>
+    <LibraryPath>$(SolutionDir)deps\lib\Release\;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -109,32 +111,44 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <BuildStlModules>true</BuildStlModules>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalOptions>/stdIfcDir "$(VC_IFCPath)" %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>5050;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)RetroGraphDLL\bin\$(Configuration)$(Platform)\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DrawUtils.ixx.obj;GLListContainer.obj;GraphPointBuffer.obj;DrawUtils.obj;glew64.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <BuildStlModules>true</BuildStlModules>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalOptions>/stdIfcDir "$(VC_IFCPath)" %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>5050;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)RetroGraphDLL\bin\$(Configuration)$(Platform)\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DrawUtils.ixx.obj;GLListContainer.obj;GraphPointBuffer.obj;DrawUtils.obj;glew64.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -144,7 +158,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="TestMath.cpp" />
+    <ClCompile Include="Test_GraphPointBuffer.cpp" />
+    <ClCompile Include="Test_Math.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="catch2.hpp" />

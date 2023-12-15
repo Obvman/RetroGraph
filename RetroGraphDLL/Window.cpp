@@ -9,6 +9,7 @@ import Colors;
 
 import "RGAssert.h";
 import "GLHeaderUnit.h";
+import "GlutHeaderUnit.h";
 import "WindowsHeaderUnit.h";
 
 namespace rg {

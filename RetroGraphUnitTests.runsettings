@@ -2,7 +2,6 @@
 <RunSettings>
 
   <Catch2Adapter>
-    <!--<DllFilenameFilter>RetroGraphTests_</DllFilenameFilter>-->
     <FilenameFilter>Test</FilenameFilter>
   </Catch2Adapter>
 
