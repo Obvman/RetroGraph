@@ -1,6 +1,6 @@
 module Measures.MusicMeasure;
 
-import Utils;
+import Core.Strings;
 
 import "RGAssert.h";
 import "WindowsHeaderUnit.h";

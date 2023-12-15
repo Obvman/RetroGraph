@@ -158,8 +158,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Test_GraphPointBuffer.cpp" />
-    <ClCompile Include="Test_Math.cpp" />
+    <ClCompile Include="UnitTests\Test_GraphPointBuffer.cpp" />
+    <ClCompile Include="UnitTests\Test_Math.cpp" />
+    <ClCompile Include="UnitTests\Test_Strings.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="catch2.hpp" />

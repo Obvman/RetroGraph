@@ -1,4 +1,4 @@
-#include "catch2.hpp"
+#include "../catch2.hpp"
 
 import Widgets.Graph.GraphPointBuffer;
 

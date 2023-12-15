@@ -187,6 +187,8 @@
     <ClCompile Include="Core\CallbackEvent.ixx" />
     <ClCompile Include="Core\Math.ixx" />
     <ClCompile Include="Core\Profiling.ixx" />
+    <ClCompile Include="Core\Strings.cpp" />
+    <ClCompile Include="Core\Strings.ixx" />
     <ClCompile Include="Core\Time.ixx" />
     <ClCompile Include="FPSCounter.cpp" />
     <ClCompile Include="FPSLimiter.cpp" />

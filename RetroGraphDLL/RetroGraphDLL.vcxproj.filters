@@ -411,6 +411,12 @@
     <ClCompile Include="GlutHeaderUnit.h">
       <Filter>Header Units</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Strings.ixx">
+      <Filter>Modules\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Strings.cpp">
+      <Filter>Modules\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resources\resource.h">
