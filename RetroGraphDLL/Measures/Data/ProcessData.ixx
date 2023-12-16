@@ -1,4 +1,4 @@
-export module Measures.Data.ProcessData;
+export module RG.Measures.Data:ProcessData;
 
 import RG.Core;
 

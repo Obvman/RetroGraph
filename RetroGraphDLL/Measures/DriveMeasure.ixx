@@ -2,7 +2,7 @@ export module RG.Measures:DriveMeasure;
 
 import :Measure;
 
-import Measures.Data.DriveInfo;
+import RG.Measures.Data;
 
 import std.core;
 

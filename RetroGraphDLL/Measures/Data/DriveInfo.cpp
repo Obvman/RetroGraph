@@ -1,4 +1,4 @@
-module Measures.Data.DriveInfo;
+module RG.Measures.Data:DriveInfo;
 
 import RG.Core;
 

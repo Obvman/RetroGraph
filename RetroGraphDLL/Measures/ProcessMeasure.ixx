@@ -4,7 +4,7 @@ import :Measure;
 
 import UserSettings;
 
-import Measures.Data.ProcessData;
+import RG.Measures.Data;
 
 import std.core;
 

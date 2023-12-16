@@ -1,4 +1,4 @@
-export module Measures.Data.DriveInfo;
+export module RG.Measures.Data:DriveInfo;
 
 import std.core;
 

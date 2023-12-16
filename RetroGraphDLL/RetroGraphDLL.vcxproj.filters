@@ -441,6 +441,9 @@
     <ClCompile Include="Measures\DataSources\DataSources.ixx">
       <Filter>Modules\Measures\DataSources</Filter>
     </ClCompile>
+    <ClCompile Include="Measures\Data\Data.ixx">
+      <Filter>Modules\Measures\Data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resources\resource.h">

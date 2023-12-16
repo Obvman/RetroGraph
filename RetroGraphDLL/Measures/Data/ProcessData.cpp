@@ -1,4 +1,4 @@
-module Measures.Data.ProcessData;
+module RG.Measures.Data:ProcessData;
 
 import "RGAssert.h";
 
