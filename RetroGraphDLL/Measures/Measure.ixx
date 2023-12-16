@@ -44,7 +44,9 @@ public:
 
     void update() {
         if (since(m_lastUpdateTime) > updateInterval()) {
-            updateInternal();
+            if (updateInternal()) {
+                postUpdate.raise();
+            }
             m_lastUpdateTime = high_resolution_clock::now();
         }
     }
@@ -52,7 +54,8 @@ public:
     PostUpdateEvent postUpdate;
 
 protected:
-    virtual void updateInternal() = 0;
+    // The implementation of measure updates. Returns true if any data was modified, otherwise returns false.
+    virtual bool updateInternal() = 0;
     virtual std::chrono::microseconds updateInterval() const { return std::chrono::seconds{ 2 }; }
 
     high_resolution_clock::time_point m_lastUpdateTime;

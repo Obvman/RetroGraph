@@ -43,7 +43,7 @@ ProcessMeasure::~ProcessMeasure() {
     UserSettings::inst().configRefreshed.detach(m_configRefreshedHandle);
 }
 
-void ProcessMeasure::updateInternal() {
+bool ProcessMeasure::updateInternal() {
     // Update the process list vector every 10 seconds
     static Timer newProcessUpdateTimer{ std::chrono::seconds{ 10 } };
     if (newProcessUpdateTimer.hasElapsed()) {
@@ -93,7 +93,7 @@ void ProcessMeasure::updateInternal() {
 
     fillCPUData();
 
-    postUpdate.raise();
+    return true;
 }
 
 int ProcessMeasure::getPIDFromName(std::string_view name) const {

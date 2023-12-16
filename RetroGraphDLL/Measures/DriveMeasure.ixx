@@ -23,7 +23,7 @@ public:
 
 protected:
     /* Updates each drive with new values */
-    void updateInternal() override;
+    bool updateInternal() override;
     std::chrono::microseconds updateInterval() const override { return std::chrono::seconds{ 30 }; }
 
 private:

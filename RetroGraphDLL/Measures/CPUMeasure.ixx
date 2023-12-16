@@ -52,7 +52,7 @@ public:
 
 protected:
     /* Updates the total system's CPU usage statistics */
-    void updateInternal() override;
+    bool updateInternal() override;
 
     std::chrono::microseconds updateInterval() const override { return std::chrono::seconds{ 1 }; }
 

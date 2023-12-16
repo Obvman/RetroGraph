@@ -45,7 +45,7 @@ public:
 
 protected:
     /* Updates the system memory status values */
-    void updateInternal() override;
+    bool updateInternal() override;
 
     std::chrono::microseconds updateInterval() const override { return std::chrono::seconds{ 1 }; }
 

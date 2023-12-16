@@ -31,7 +31,7 @@ protected:
      * to find it. If the class name is set, then searches windows with the
      * class name as a key to determine if the window is still open or not
      */
-    void updateInternal() override;
+    bool updateInternal() override;
     std::chrono::microseconds updateInterval() const override { return std::chrono::seconds{ 1 }; }
 
 private:

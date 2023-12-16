@@ -4,17 +4,41 @@
     <Filter Include="UnitTests">
       <UniqueIdentifier>{eabeb040-be34-410d-be83-c7eaabbb09e2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UnitTests\Measures">
+      <UniqueIdentifier>{109f9b3c-5352-48a9-9fdf-b0c05c116db9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HeaderUnits">
+      <UniqueIdentifier>{5175d308-dbb1-4585-8309-a4d3ceb09284}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UnitTests\Core">
+      <UniqueIdentifier>{c5381cdd-998a-418a-8acb-d40a571e4e27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UnitTests\Widgets">
+      <UniqueIdentifier>{20d746a9-014b-46b7-a269-2c856915cf97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UnitTests\Widgets\Graph">
+      <UniqueIdentifier>{7ca33138-7dbf-46c5-8ee5-ab2f4e94a12b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="UnitTests\Test_Strings.cpp">
-      <Filter>UnitTests</Filter>
+    <ClCompile Include="UnitTests\Measures\Test_Measure.ixx">
+      <Filter>UnitTests\Measures</Filter>
     </ClCompile>
-    <ClCompile Include="UnitTests\Test_Math.cpp">
-      <Filter>UnitTests</Filter>
+    <ClCompile Include="UnitTests\Core\Test_Math.ixx">
+      <Filter>UnitTests\Core</Filter>
     </ClCompile>
-    <ClCompile Include="UnitTests\Test_GraphPointBuffer.cpp">
-      <Filter>UnitTests</Filter>
+    <ClCompile Include="UnitTests\Core\Test_Strings.ixx">
+      <Filter>UnitTests\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitTests\Core\Test_CallbackEvent.ixx">
+      <Filter>UnitTests\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Catch2HeaderUnit.h">
+      <Filter>HeaderUnits</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitTests\Widgets\Graph\Test_GraphPointBuffer.ixx">
+      <Filter>UnitTests\Widgets\Graph</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

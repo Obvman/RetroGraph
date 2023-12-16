@@ -30,7 +30,7 @@ public:
 protected:
     /* Updates the currently tracked processes and their CPU usage.
        Stops tracking any processes that have exited */
-    void updateInternal() override;
+    bool updateInternal() override;
 
 private:
     /* Sets the debug privileges of the programs to allow reading of system processes */

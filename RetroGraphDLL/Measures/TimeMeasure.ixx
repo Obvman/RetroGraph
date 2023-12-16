@@ -18,7 +18,7 @@ public:
 
 protected:
     /* Updates each drive with new values */
-    void updateInternal() override;
+    bool updateInternal() override;
     microseconds updateInterval() const override { return milliseconds{ 100 }; }
 
 private:

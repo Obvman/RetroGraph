@@ -22,7 +22,7 @@ auto AnimationState::createParticles() -> decltype(m_particles) {
     return decltype(m_particles)( numParticles );
 }
 
-void AnimationState::updateInternal() {
+bool AnimationState::updateInternal() {
     using namespace std::chrono;
     using clock = high_resolution_clock;
 
@@ -38,7 +38,7 @@ void AnimationState::updateInternal() {
 
     updateParticleLines();
 
-    postUpdate.raise();
+    return true;
 }
 
 void AnimationState::updateParticleLines() {

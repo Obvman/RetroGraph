@@ -28,7 +28,7 @@ public:
     std::string_view getComputerName() const { return m_computerName; }
 
 protected:
-    void updateInternal() override {}
+    bool updateInternal() override { return false; }
 
 private:
     /* Sets the contents of m_osInfoStr. Only needs to be called once */

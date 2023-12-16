@@ -38,7 +38,7 @@ public:
 
 protected:
     /* Get latest GPU stats from OpenGL or nvapi and updates dynamic members */
-    void updateInternal() override;
+    bool updateInternal() override;
 
     std::chrono::microseconds updateInterval() const override { return std::chrono::seconds{ 1 }; }
 

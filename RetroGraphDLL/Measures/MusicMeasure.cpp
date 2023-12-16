@@ -13,7 +13,7 @@ MusicMeasure::MusicMeasure() {
     updateInternal();
 }
 
-void MusicMeasure::updateInternal() {
+bool MusicMeasure::updateInternal() {
     // Check if the player window is currently open by matching the class name
     // We must validate existence of window every time before we scrape
     // title information
@@ -41,8 +41,7 @@ void MusicMeasure::updateInternal() {
         }
     }
 
-    if (playerRunningStateChanged || playerTitleChanged)
-        postUpdate.raise();
+    return (playerRunningStateChanged || playerTitleChanged);
 }
 
 void MusicMeasure::updateTitleString() {

@@ -1,6 +1,8 @@
-#include "../catch2.hpp"
+export module UnitTests.Test_GraphPointBuffer;
 
 import Widgets.Graph.GraphPointBuffer;
+
+import "Catch2HeaderUnit.h";
 
 TEST_CASE("Widgets::Graph::GraphPointBuffer. Empty", "[graph_point_buffer]") {
     rg::GraphPointBuffer pb{ 0 };

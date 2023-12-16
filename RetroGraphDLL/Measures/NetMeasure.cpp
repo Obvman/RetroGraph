@@ -136,7 +136,7 @@ void NetMeasure::getDNSAndHostname() {
     free(pFixedInfo);
 }
 
-void NetMeasure::updateInternal() {
+bool NetMeasure::updateInternal() {
     // Check if the best network interface has changed and update to the new
     // one if so.
     static Timer updateBestInterfaceTime{ std::chrono::seconds{ 30 } };
@@ -144,7 +144,7 @@ void NetMeasure::updateInternal() {
         DWORD bestIfaceIndex;
         if (GetBestInterface(INADDR_ANY, &bestIfaceIndex) != NO_ERROR) {
             RGERROR("Failed to get best interface");
-            return;
+            return false;
         }
 
         if (bestIfaceIndex != m_adapterEntry->InterfaceIndex) {
@@ -161,7 +161,7 @@ void NetMeasure::updateInternal() {
 
     onDownBytes.raise(m_adapterEntry->InOctets - oldDown);
     onUpBytes.raise(m_adapterEntry->OutOctets - oldUp);
-    postUpdate.raise();
+    return true;
 }
 
 bool NetMeasure::isConnected() const {

@@ -14,7 +14,7 @@ public:
     const Monitors* getMonitors() const { return &m_monitors; }
 
 protected:
-    void updateInternal() override { /* Do nothing */ }
+    bool updateInternal() override { return false; }
 
 private:
     Monitors m_monitors;

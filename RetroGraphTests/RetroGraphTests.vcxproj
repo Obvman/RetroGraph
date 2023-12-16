@@ -120,12 +120,14 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalOptions>/stdIfcDir "$(VC_IFCPath)" %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>5050;</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
+      <EnableModules>true</EnableModules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)RetroGraphDLL\bin\$(Configuration)$(Platform)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>DrawUtils.ixx.obj;GLListContainer.obj;GraphPointBuffer.obj;DrawUtils.obj;glew64.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Strings.obj;DrawUtils.ixx.obj;GLListContainer.obj;GraphPointBuffer.obj;DrawUtils.obj;glew64.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -141,6 +143,8 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalOptions>/stdIfcDir "$(VC_IFCPath)" %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>5050;</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
+      <EnableModules>true</EnableModules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -148,7 +152,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)RetroGraphDLL\bin\$(Configuration)$(Platform)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>DrawUtils.ixx.obj;GLListContainer.obj;GraphPointBuffer.obj;DrawUtils.obj;glew64.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Strings.obj;DrawUtils.ixx.obj;GLListContainer.obj;GraphPointBuffer.obj;DrawUtils.obj;glew64.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -158,12 +162,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="UnitTests\Test_GraphPointBuffer.cpp" />
-    <ClCompile Include="UnitTests\Test_Math.cpp" />
-    <ClCompile Include="UnitTests\Test_Strings.cpp" />
+    <ClCompile Include="UnitTests\Core\Test_CallbackEvent.ixx" />
+    <ClCompile Include="UnitTests\Core\Test_Math.ixx" />
+    <ClCompile Include="UnitTests\Core\Test_Strings.ixx" />
+    <ClCompile Include="UnitTests\Measures\Test_Measure.ixx" />
+    <ClCompile Include="UnitTests\Widgets\Graph\Test_GraphPointBuffer.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="catch2.hpp" />
+    <ClCompile Include="Catch2HeaderUnit.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

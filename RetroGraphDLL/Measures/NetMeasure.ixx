@@ -33,7 +33,7 @@ public:
     ConnectionStatusChangedEvent onConnectionStatusChanged;
 
 protected:
-    void updateInternal() override;
+    bool updateInternal() override;
 
     std::chrono::microseconds updateInterval() const override { return std::chrono::seconds{ 1 }; }
 

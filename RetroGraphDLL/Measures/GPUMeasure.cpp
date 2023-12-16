@@ -59,13 +59,13 @@ GPUMeasure::~GPUMeasure() {
     NvAPI_Unload();
 }
 
-void GPUMeasure::updateInternal() {
+bool GPUMeasure::updateInternal() {
     //updateGpuTemp(); // High CPU usage function
     //getClockFrequencies(); // High CPU usage function
     //getMemInformation();
 
     onGPUUsage.raise(getGpuUsage());
-    postUpdate.raise();
+    return true;
 }
 
 float GPUMeasure::getMemUsagePercent() const {

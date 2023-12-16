@@ -10,7 +10,7 @@ TimeMeasure::TimeMeasure()
 
 }
 
-void TimeMeasure::updateInternal() {
+bool TimeMeasure::updateInternal() {
     bool timeChanged{ false };
 
     auto newSystemTime{ getCurrentLocalTime() };
@@ -25,8 +25,7 @@ void TimeMeasure::updateInternal() {
         timeChanged = true;
     }
 
-    if (timeChanged)
-        postUpdate.raise();
+    return timeChanged;
 }
 
 local_time<seconds> TimeMeasure::getCurrentLocalTime() const {
