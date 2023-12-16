@@ -17,6 +17,7 @@ import Measures.ProcessMeasure;
 import Measures.RAMMeasure;
 import Measures.SystemMeasure;
 import Measures.TimeMeasure;
+import Measures.DataSources.FoobarMusicDataSource;
 
 import Rendering.FontManager;
 
@@ -79,12 +80,22 @@ private:
         }
     }
 
+    // TODO measure and data source factories
+    template<std::derived_from<Measure> T>
+    std::shared_ptr<T> buildMeasure() const {
+        if constexpr (std::is_same_v<T, MusicMeasure>) {
+            return std::make_shared<T>(std::make_unique<FoobarMusicDataSource>());
+        } else {
+            return std::make_shared<T>();
+        }
+    }
+
     template<std::derived_from<Measure> T>
     std::shared_ptr<const T> getMeasure() {
         MeasureType measureType{ getMeasureType<T>() };
         auto& measure{ m_measures[static_cast<int>(measureType)] };
         if (!measure)
-            measure = std::make_shared<T>();
+            measure = buildMeasure<T>();
         return dynamic_pointer_cast<const T> (measure);
     }
 

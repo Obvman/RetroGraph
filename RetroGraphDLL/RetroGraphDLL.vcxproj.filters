@@ -37,6 +37,9 @@
     <Filter Include="Modules\Widgets\Graph">
       <UniqueIdentifier>{a0504038-f37c-4a0c-891a-7fd38ef29e45}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Modules\Measures\DataSources">
+      <UniqueIdentifier>{088cdfe9-69b4-40f4-ada0-d949ff0c39ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RetroGraphDLL.cpp">
@@ -416,6 +419,15 @@
     </ClCompile>
     <ClCompile Include="Core\Strings.cpp">
       <Filter>Modules\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\IMusicDataSource.ixx">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\FoobarMusicDataSource.ixx">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\FoobarMusicDataSource.cpp">
+      <Filter>Modules\Measures\DataSources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

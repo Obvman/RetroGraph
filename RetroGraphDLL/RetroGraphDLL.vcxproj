@@ -196,6 +196,9 @@
     <ClCompile Include="Measures\AnimationState.cpp" />
     <ClCompile Include="Measures\CPUMeasure.cpp" />
     <ClCompile Include="Measures\CPUPlugin.cpp" />
+    <ClCompile Include="Measures\DataSources\FoobarMusicDataSource.cpp" />
+    <ClCompile Include="Measures\DataSources\FoobarMusicDataSource.ixx" />
+    <ClCompile Include="Measures\DataSources\IMusicDataSource.ixx" />
     <ClCompile Include="Measures\Data\DriveInfo.cpp" />
     <ClCompile Include="Measures\Data\ProcessData.cpp" />
     <ClCompile Include="Measures\DisplayMeasure.cpp" />

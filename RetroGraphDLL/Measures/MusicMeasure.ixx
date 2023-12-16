@@ -1,10 +1,9 @@
 export module Measures.MusicMeasure;
 
 import Measures.Measure;
+import Measures.DataSources.IMusicDataSource;
 
 import std.core;
-
-import "WindowsHeaderUnit.h";
 
 namespace rg {
 
@@ -13,18 +12,17 @@ namespace rg {
  */
 export class MusicMeasure : public Measure {
 public:
-    MusicMeasure();
+    MusicMeasure(std::unique_ptr<const IMusicDataSource> musicDataSource);
     ~MusicMeasure() noexcept = default;
 
-    /* Returns true if the music player window is currently running */
-    bool isPlayerRunning() const { return m_playerRunning; }
+    bool isPlayerRunning() const { return m_musicData.isMusicPlayerRunning; }
 
-    bool isMusicPlaying() const { return m_isPlaying; }
-    std::string_view getTrackName() const { return m_trackName; }
-    std::string_view getArtist() const { return m_artist; }
-    std::string_view getAlbum() const { return m_album; }
-    int getElapsedTime() const { return m_elapsedTime; }
-    int getTotalTime() const { return m_totalTime; }
+    bool isMusicPlaying() const { return m_musicData.isMusicPlaying; }
+    std::string_view getTrackName() const { return m_musicData.trackName; }
+    std::string_view getArtist() const { return m_musicData.artist; }
+    std::string_view getAlbum() const { return m_musicData.album; }
+    int getElapsedTime() const { return m_musicData.elapsedTime; }
+    int getTotalTime() const { return m_musicData.totalTime; }
 
 protected:
     /* If the player class name isn't yet set, enumerates all running windows
@@ -35,23 +33,9 @@ protected:
     std::chrono::microseconds updateInterval() const override { return std::chrono::seconds{ 1 }; }
 
 private:
-    void updateTitleString();
+    std::unique_ptr<const IMusicDataSource> m_musicDataSource;
 
-    void scrapeInfoFromTitle();
-
-    bool m_playerRunning{ false };
-    HWND m_playerHandle{ nullptr };
-    std::string m_playerWindowTitle{ "" };
-
-    // Current music status
-    std::vector<std::string> m_titleTokens;
-
-    bool m_isPlaying{ false };
-    std::string_view m_trackName{ "" };
-    std::string_view m_artist{ "" };
-    std::string_view m_album{ "" };
-    int m_elapsedTime{ 0U };
-    int m_totalTime{ 0U };
+    MusicData m_musicData;
 };
 
 } // namespace rg

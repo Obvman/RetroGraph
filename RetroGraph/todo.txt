@@ -1,6 +1,6 @@
-unit tests
-
 Enforce position restrictions on FPS/Graph/Main/CPUStats widgets
+
+Use data source structure for all measures
 
 Color scheme definition in usersettings
 
@@ -32,7 +32,7 @@ network: show how many MB have been downloaded since retrograph started
 Music widget:
     Play/paused indication
     make song name 2 lines if it's too long
-	Interact with foobar: https://hydrogenaud.io/index.php?topic=84336.0
+    Interact with foobar: https://hydrogenaud.io/index.php?topic=84336.0
 
 retrograph debug performance stats (clocks per frame, RAM, etc)
 
