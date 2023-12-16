@@ -1,6 +1,6 @@
 export module Widgets.WidgetShaderController;
 
-import Rendering.Shader;
+import RG.Rendering;
 
 namespace rg {
 

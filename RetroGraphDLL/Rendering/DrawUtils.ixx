@@ -1,8 +1,8 @@
-export module Rendering.DrawUtils;
+export module RG.Rendering:DrawUtils;
+
+import :Viewport;
 
 import Colors;
-
-import Rendering.Viewport;
 
 import std.core;
 
@@ -15,8 +15,10 @@ export constexpr auto viewportMax = float{ 1.0f };
 export constexpr auto viewportWidth = float{ 2.0f };
 
 /* Minimum distance from the edge of the screen to draw each object (in pixels) */
-export constexpr auto marginX = int{ 16 };
-export constexpr auto marginY = int{ 10 };
+export constexpr auto screenMarginX = int{ 16 };
+export constexpr auto screenMarginY = int{ 10 };
+
+export constexpr GLuint invalidGLID{ UINT_MAX };
 
 export void scissorClear(GLint x, GLint y, GLint w, GLint h);
 export void drawWidgetBackground();

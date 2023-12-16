@@ -432,6 +432,9 @@
     <ClCompile Include="Core\Core.ixx">
       <Filter>Modules\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Rendering\Rendering.ixx">
+      <Filter>Modules\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resources\resource.h">

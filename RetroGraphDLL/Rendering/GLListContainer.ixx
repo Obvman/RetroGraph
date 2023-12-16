@@ -1,4 +1,4 @@
-export module Rendering.GLListContainer;
+export module RG.Rendering:GLListContainer;
 
 import std.core;
 

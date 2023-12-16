@@ -4,7 +4,7 @@ import UserSettings;
 
 import Measures.RAMMeasure;
 
-import Rendering.FontManager;
+import RG.Rendering;
 
 import Widgets.Widget;
 import Widgets.Graph.SmoothLineGraph;

@@ -1,6 +1,6 @@
-module Rendering.DrawUtils;
+module RG.Rendering:DrawUtils;
 
-import Rendering.GLListContainer;
+import :GLListContainer;
 
 import "GLHeaderUnit.h";
 

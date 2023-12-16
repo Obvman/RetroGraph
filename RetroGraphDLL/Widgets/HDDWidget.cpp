@@ -2,7 +2,7 @@ module Widgets.HDDWidget;
 
 import Colors;
 
-import Rendering.DrawUtils;
+import RG.Rendering;
 
 import "GLHeaderUnit.h";
 

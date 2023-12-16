@@ -2,7 +2,7 @@ export module Widgets.WidgetContainer;
 
 import UserSettings;
 
-import Rendering.Viewport;
+import RG.Rendering;
 
 import Widgets.Widget;
 import Widgets.WidgetPosition;

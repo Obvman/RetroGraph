@@ -223,6 +223,7 @@
     <ClCompile Include="Rendering\FontManager.ixx" />
     <ClCompile Include="Rendering\GLListContainer.cpp" />
     <ClCompile Include="Rendering\GLListContainer.ixx" />
+    <ClCompile Include="Rendering\Rendering.ixx" />
     <ClCompile Include="Rendering\Shader.cpp" />
     <ClCompile Include="Rendering\Shader.ixx" />
     <ClCompile Include="Rendering\VAO.ixx" />

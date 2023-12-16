@@ -2,7 +2,7 @@ export module Widgets.NetStatsWidget;
 
 import Measures.NetMeasure;
 
-import Rendering.FontManager;
+import RG.Rendering;
 
 import Widgets.Widget;
 

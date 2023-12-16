@@ -2,7 +2,7 @@ export module Widgets.HDDWidget;
 
 import Measures.DriveMeasure;
 
-import Rendering.FontManager;
+import RG.Rendering;
 
 import Widgets.Widget;
 

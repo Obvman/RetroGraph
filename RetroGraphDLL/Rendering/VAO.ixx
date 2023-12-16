@@ -1,12 +1,12 @@
-export module Rendering.VAO;
+export module RG.Rendering:VAO;
+
+import :DrawUtils;
 
 import std.core;
 
 import "GLHeaderUnit.h";
 
 namespace rg {
-
-constexpr GLuint invalidID{ UINT_MAX };
 
 export class [[nodiscard]] VAOBindScope {
 public:
@@ -29,7 +29,7 @@ public:
     }
 
     ~VAO() {
-        if (id != invalidID) {
+        if (id != invalidGLID) {
             glDeleteVertexArrays(1, &id);
         }
     }
@@ -44,7 +44,7 @@ public:
     VAO& operator=(VAO&& other) {
         if (this != &other) {
             id = other.id;
-            other.id = invalidID;
+            other.id = invalidGLID;
         }
 
         return *this;

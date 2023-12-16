@@ -1,4 +1,4 @@
-module Rendering.Shader;
+module RG.Rendering:Shader;
 
 import "GLHeaderUnit.h";
 import "RGAssert.h";

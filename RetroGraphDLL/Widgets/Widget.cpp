@@ -1,6 +1,6 @@
 module Widgets.Widget;
 
-import Rendering.DrawUtils;
+import RG.Rendering;
 
 namespace rg {
 

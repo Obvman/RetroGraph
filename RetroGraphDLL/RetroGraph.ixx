@@ -19,7 +19,7 @@ import Measures.SystemMeasure;
 import Measures.TimeMeasure;
 import Measures.DataSources.FoobarMusicDataSource;
 
-import Rendering.FontManager;
+import RG.Rendering;
 
 import Widgets.Widget;
 import Widgets.WidgetContainer;

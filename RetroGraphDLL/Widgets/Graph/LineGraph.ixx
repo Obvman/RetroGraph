@@ -1,7 +1,6 @@
 export module Widgets.Graph.LineGraph;
 
-import Rendering.VAO;
-import Rendering.VBO;
+import RG.Rendering;
 
 import Widgets.Graph.GraphPointBuffer;
 

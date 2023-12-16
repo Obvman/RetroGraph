@@ -1,4 +1,4 @@
-module Rendering.VBO;
+module RG.Rendering:VBO;
 
 import "GLHeaderUnit.h";
 import "RGAssert.h";
@@ -6,7 +6,7 @@ import "RGAssert.h";
 namespace rg {
 
 VBO::VBO(GLenum target_, GLenum usage_) noexcept
-    : id{ invalidID }
+    : id{ invalidGLID }
     , target{ target_ }
     , usage{ usage_ } {
 
@@ -14,7 +14,7 @@ VBO::VBO(GLenum target_, GLenum usage_) noexcept
 }
 
 VBO::~VBO() {
-    if (id != invalidID) {
+    if (id != invalidGLID) {
         glDeleteBuffers(1, &id);
     }
 }
@@ -26,7 +26,7 @@ VBO::VBO(VBO&& other) {
 VBO& VBO::operator=(VBO&& other) {
     if (this != &other) {
         id = other.id;
-        other.id = invalidID;
+        other.id = invalidGLID;
 
         target = other.target;
         usage = other.usage;

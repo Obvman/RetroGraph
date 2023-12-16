@@ -1,6 +1,6 @@
 module Widgets.Graph.SmoothLineGraph;
 
-import Rendering.DrawUtils;
+import RG.Rendering;
 
 import "RGAssert.h";
 

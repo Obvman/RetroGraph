@@ -4,10 +4,7 @@ import Measures.AnimationState;
 import Measures.ParticleLine;
 import Measures.Particle;
 
-import Rendering.FontManager;
-import Rendering.Shader;
-import Rendering.VAO;
-import Rendering.VBO;
+import RG.Rendering;
 
 import Widgets.Widget;
 

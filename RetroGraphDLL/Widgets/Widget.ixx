@@ -2,8 +2,7 @@ export module Widgets.Widget;
 
 import Utils;
 
-import Rendering.FontManager;
-import Rendering.Viewport;
+import RG.Rendering;
 
 import std.memory;
 

@@ -1,7 +1,6 @@
 module Widgets.WidgetContainer;
 
-import Rendering.DrawUtils;
-import Rendering.GLListContainer;
+import RG.Rendering;
 
 import "GLHeaderUnit.h";
 import "RGAssert.h";
@@ -39,31 +38,31 @@ void rg::WidgetContainer::setViewport(int windowWidth, int windowHeight, WidgetP
     Viewport vp{};
     switch (pos) {
         case WidgetPosition::BOT_LEFT:
-            vp = { marginX, marginY, widgetW, widgetH };
+            vp = { screenMarginX, screenMarginY, widgetW, widgetH };
             break;
         case WidgetPosition::BOT_MID:
-            vp = { marginX + windowWidth/2 - widgetW, marginY, widgetW * 2, widgetH };
+            vp = { screenMarginX + windowWidth/2 - widgetW, screenMarginY, widgetW * 2, widgetH };
             break;
         case WidgetPosition::BOT_RIGHT:
-            vp = { windowWidth - widgetW - marginX, marginY, widgetW, widgetH };
+            vp = { windowWidth - widgetW - screenMarginX, screenMarginY, widgetW, widgetH };
             break;
         case WidgetPosition::MID_LEFT:
-            vp = { marginX, windowHeight/2 - windowHeight/4, widgetW, sideWidgetH };
+            vp = { screenMarginX, windowHeight/2 - windowHeight/4, widgetW, sideWidgetH };
             break;
         case WidgetPosition::MID_MID:
-            vp = { marginX + windowWidth/2 - widgetW, windowHeight/2 - windowHeight/4, 2 * widgetW, sideWidgetH };
+            vp = { screenMarginX + windowWidth/2 - widgetW, windowHeight/2 - windowHeight/4, 2 * widgetW, sideWidgetH };
             break;
         case WidgetPosition::MID_RIGHT:
-            vp = { windowWidth - widgetW - marginX, windowHeight/2 - windowHeight/4, widgetW, sideWidgetH };
+            vp = { windowWidth - widgetW - screenMarginX, windowHeight/2 - windowHeight/4, widgetW, sideWidgetH };
             break;
         case WidgetPosition::TOP_LEFT:
-            vp = {  marginX, windowHeight - marginY - widgetH, widgetW, widgetH };
+            vp = {  screenMarginX, windowHeight - screenMarginY - widgetH, widgetW, widgetH };
             break;
         case WidgetPosition::TOP_MID:
-            vp = { marginX + windowWidth/2 - widgetW, windowHeight - marginY - widgetH, widgetW * 2, widgetH };
+            vp = { screenMarginX + windowWidth/2 - widgetW, windowHeight - screenMarginY - widgetH, widgetW * 2, widgetH };
             break;
         case WidgetPosition::TOP_RIGHT:
-            vp = { windowWidth - widgetW - marginX, windowHeight - marginY - widgetH, widgetW, widgetH }; 
+            vp = { windowWidth - widgetW - screenMarginX, windowHeight - screenMarginY - widgetH, widgetW, widgetH }; 
             break;
         default:
             break;

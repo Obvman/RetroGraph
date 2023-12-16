@@ -5,7 +5,7 @@ import RG.Core;
 import Measures.NetMeasure;
 import Measures.TimeMeasure;
 
-import Rendering.FontManager;
+import RG.Rendering;
 
 import Widgets.Widget;
 

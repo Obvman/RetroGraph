@@ -2,7 +2,7 @@ module Widgets.Graph.GraphGrid;
 
 import Colors;
 
-import Rendering.DrawUtils;
+import RG.Rendering;
 
 import "GLHeaderUnit.h";
 

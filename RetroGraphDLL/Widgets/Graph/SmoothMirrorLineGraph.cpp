@@ -2,8 +2,7 @@ module Widgets.Graph.SmoothMirrorLineGraph;
 
 import Colors;
 
-import Rendering.DrawUtils;
-import Rendering.GLListContainer;
+import RG.Rendering;
 
 import Widgets.Graph.GraphGrid;
 import Widgets.Graph.Spline;

@@ -5,7 +5,7 @@ import Measures.DisplayMeasure;
 import Measures.GPUMeasure;
 import Measures.SystemMeasure;
 
-import Rendering.FontManager;
+import RG.Rendering;
 
 import Widgets.Widget;
 

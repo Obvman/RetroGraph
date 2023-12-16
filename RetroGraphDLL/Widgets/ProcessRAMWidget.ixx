@@ -2,7 +2,7 @@ export module Widgets.ProcessRAMWidget;
 
 import Measures.ProcessMeasure;
 
-import Rendering.FontManager;
+import RG.Rendering;
 
 import Widgets.Widget;
 

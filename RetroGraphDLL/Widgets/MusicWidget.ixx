@@ -2,7 +2,7 @@ export module Widgets.MusicWidget;
 
 import Measures.MusicMeasure;
 
-import Rendering.FontManager;
+import RG.Rendering;
 
 import Widgets.Widget;
 

@@ -2,7 +2,7 @@ module Widgets.MainWidget;
 
 import Colors;
 
-import Rendering.DrawUtils;
+import RG.Rendering;
 
 import Widgets.WidgetShaderController;
 

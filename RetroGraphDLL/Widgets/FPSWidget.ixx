@@ -2,7 +2,7 @@ export module Widgets.FPSWidget;
 
 import FPSCounter;
 
-import Rendering.FontManager;
+import RG.Rendering;
 
 import Widgets.Widget;
 

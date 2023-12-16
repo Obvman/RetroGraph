@@ -2,8 +2,7 @@ module Widgets.Graph.LineGraph;
 
 import Colors;
 
-import Rendering.DrawUtils;
-import Rendering.GLListContainer;
+import RG.Rendering;
 
 import Widgets.WidgetShaderController;
 import Widgets.Graph.GraphGrid;

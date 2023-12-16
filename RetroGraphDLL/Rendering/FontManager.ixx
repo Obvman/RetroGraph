@@ -1,4 +1,4 @@
-export module Rendering.FontManager;
+export module RG.Rendering:FontManager;
 
 import std.core;
 

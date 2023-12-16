@@ -1,4 +1,6 @@
-export module Rendering.VBO;
+export module RG.Rendering:VBO;
+
+import :DrawUtils;
 
 import std.core;
 
@@ -6,8 +8,6 @@ import "GLHeaderUnit.h";
 import "RGAssert.h";
 
 namespace rg {
-
-constexpr GLuint invalidID{ UINT_MAX };
 
 export class [[nodiscard]] VBOBindScope {
 public:
@@ -28,7 +28,7 @@ export class VBO {
 public:
     // Default constructed that does not allocate any buffer
     VBO() noexcept
-        : id{ invalidID }
+        : id{ invalidGLID }
         , target{ GL_ARRAY_BUFFER }
         , usage{ GL_STATIC_DRAW } {
     }

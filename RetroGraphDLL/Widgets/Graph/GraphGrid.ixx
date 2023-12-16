@@ -1,6 +1,6 @@
 export module Widgets.Graph.GraphGrid;
 
-import Rendering.VBO;
+import RG.Rendering;
 
 import "GLHeaderUnit.h";
 

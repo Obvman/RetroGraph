@@ -1,6 +1,6 @@
-module Rendering.FontManager;
+module RG.Rendering:FontManager;
 
-import Rendering.DrawUtils;
+import :DrawUtils;
 
 import "GLHeaderUnit.h";
 import "RGAssert.h";

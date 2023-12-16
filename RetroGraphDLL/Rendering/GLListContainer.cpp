@@ -1,4 +1,4 @@
-module Rendering.GLListContainer;
+module RG.Rendering:GLListContainer;
 
 import Colors;
 

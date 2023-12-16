@@ -4,8 +4,7 @@ import Colors;
 import UserSettings;
 
 import RG.Core;
-
-import Rendering.Shader;
+import RG.Rendering;
 
 import Widgets.CPUGraphWidget;
 import Widgets.CPUStatsWidget;

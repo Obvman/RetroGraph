@@ -1,6 +1,6 @@
 export module Widgets.Graph.SmoothMirrorLineGraph;
 
-import Rendering.VBO;
+import RG.Rendering;
 
 import Widgets.Graph.SmoothLineGraph;
 

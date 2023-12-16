@@ -2,7 +2,7 @@ module Widgets.CPUStatsWidget;
 
 import Colors;
 
-import Rendering.DrawUtils;
+import RG.Rendering;
 
 import "GLHeaderUnit.h";
 import "RGAssert.h";

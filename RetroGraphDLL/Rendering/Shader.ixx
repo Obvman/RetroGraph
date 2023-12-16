@@ -1,4 +1,4 @@
-export module Rendering.Shader;
+export module RG.Rendering:Shader;
 
 import Utils;
 

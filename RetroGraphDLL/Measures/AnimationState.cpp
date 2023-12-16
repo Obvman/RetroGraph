@@ -2,7 +2,7 @@ module Measures.AnimationState;
 
 import RG.Core;
 
-import Rendering.GLListContainer;
+import RG.Rendering;
 
 namespace rg {
 

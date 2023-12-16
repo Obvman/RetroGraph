@@ -4,7 +4,7 @@ import UserSettings;
 
 import Measures.NetMeasure;
 
-import Rendering.FontManager;
+import RG.Rendering;
 
 import Widgets.Widget;
 import Widgets.Graph.LineGraph;

@@ -1,6 +1,6 @@
 export module Widgets.Graph.GraphPointBuffer;
 
-import Rendering.DrawUtils;
+import RG.Rendering;
 
 import std.core;
 

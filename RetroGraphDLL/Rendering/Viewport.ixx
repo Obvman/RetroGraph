@@ -1,4 +1,4 @@
-export module Rendering.Viewport;
+export module RG.Rendering:Viewport;
 
 import "GLHeaderUnit.h";
 
