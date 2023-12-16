@@ -1,7 +1,6 @@
 export module Measures.Measure;
 
-import Core.CallbackEvent;
-import Core.Time;
+import RG.Core;
 
 import std.core;
 

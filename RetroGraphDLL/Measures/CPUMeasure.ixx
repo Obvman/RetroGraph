@@ -1,6 +1,6 @@
 export module Measures.CPUMeasure;
 
-import Core.CallbackEvent;
+import RG.Core;
 
 import Measures.CPUPlugin;
 import Measures.Measure;

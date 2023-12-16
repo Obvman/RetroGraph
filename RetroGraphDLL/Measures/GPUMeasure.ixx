@@ -1,6 +1,6 @@
 export module Measures.GPUMeasure;
 
-import Core.CallbackEvent;
+import RG.Core;
 
 import Measures.Measure;
 

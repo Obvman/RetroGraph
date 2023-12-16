@@ -1,4 +1,4 @@
-export module Core.Time;
+export module RG.Core:Time;
 
 import std.core;
 

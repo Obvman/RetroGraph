@@ -1,6 +1,6 @@
 export module UnitTests.Test_Math;
 
-import Core.Math;
+import RG.Core;
 
 import "Catch2HeaderUnit.h";
 

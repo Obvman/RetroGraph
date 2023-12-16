@@ -2,7 +2,7 @@ module Measures.ProcessMeasure;
 
 import Utils;
 
-import Core.Time;
+import RG.Core;
 
 import Measures.NtDefs;
 

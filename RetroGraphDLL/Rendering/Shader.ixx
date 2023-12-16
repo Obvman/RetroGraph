@@ -2,7 +2,7 @@ export module Rendering.Shader;
 
 import Utils;
 
-import Core.CallbackEvent;
+import RG.Core;
 
 import std.core;
 

@@ -2,7 +2,7 @@ export module Measures.NetMeasure;
 
 import UserSettings;
 
-import Core.CallbackEvent;
+import RG.Core;
 
 import Measures.Measure;
 

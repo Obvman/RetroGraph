@@ -1,6 +1,6 @@
 export module UnitTests.Test_CallbackEvent;
 
-import Core.CallbackEvent;
+import RG.Core;
 
 import "Catch2HeaderUnit.h";
 

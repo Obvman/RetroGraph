@@ -1,6 +1,6 @@
 export module Widgets.TimeWidget;
 
-import Core.CallbackEvent;
+import RG.Core;
 
 import Measures.NetMeasure;
 import Measures.TimeMeasure;

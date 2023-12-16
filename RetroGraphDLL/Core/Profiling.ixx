@@ -1,4 +1,4 @@
-export module Core.Profiling;
+export module RG.Core:Profiling;
 
 import std.core;
 

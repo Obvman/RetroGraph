@@ -1,4 +1,4 @@
-export module Core.CallbackEvent;
+export module RG.Core:CallbackEvent;
 
 import "EventppHeaderUnit.h";
 

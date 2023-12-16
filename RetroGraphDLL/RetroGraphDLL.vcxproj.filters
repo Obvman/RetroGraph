@@ -429,6 +429,9 @@
     <ClCompile Include="Core\Units.ixx">
       <Filter>Modules\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Core.ixx">
+      <Filter>Modules\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resources\resource.h">

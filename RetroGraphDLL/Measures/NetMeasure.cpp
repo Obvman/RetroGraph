@@ -1,6 +1,6 @@
 module Measures.NetMeasure;
 
-import Core.Time;
+import RG.Core;
 
 import "RGAssert.h";
 import "WindowsNetworkHeaderUnit.h";

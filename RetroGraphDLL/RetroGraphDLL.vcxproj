@@ -185,6 +185,7 @@
   <ItemGroup>
     <ClCompile Include="Colors.ixx" />
     <ClCompile Include="Core\CallbackEvent.ixx" />
+    <ClCompile Include="Core\Core.ixx" />
     <ClCompile Include="Core\Math.ixx" />
     <ClCompile Include="Core\Profiling.ixx" />
     <ClCompile Include="Core\Strings.cpp" />

@@ -3,7 +3,7 @@ module RetroGraph;
 import Colors;
 import UserSettings;
 
-import Core.Time;
+import RG.Core;
 
 import Rendering.Shader;
 

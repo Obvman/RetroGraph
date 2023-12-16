@@ -2,7 +2,7 @@ module Widgets.NetGraphWidget;
 
 import Colors;
 
-import Core.Units;
+import RG.Core;
 
 namespace rg {
 

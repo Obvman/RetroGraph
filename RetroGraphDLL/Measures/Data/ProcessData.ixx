@@ -1,6 +1,6 @@
 export module Measures.Data.ProcessData;
 
-import Core.Units;
+import RG.Core;
 
 import std.core;
 
@@ -49,8 +49,7 @@ public:
     const FILETIME& getLastSystemUserTime() const { return m_lastSystemUserTime; }
 
     /* Returns the current memory usage of the process */
-    SIZE_T getWorkingSetSizeMB() const { return m_memCounters.WorkingSetSize / MB;
-    }
+    SIZE_T getWorkingSetSizeMB() const { return m_memCounters.WorkingSetSize / MB; }
 
     /* Returns the CPU usage as a percentage of this processes over the
        period between the previous and latest update of this object */

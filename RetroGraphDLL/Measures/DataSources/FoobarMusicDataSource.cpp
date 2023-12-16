@@ -1,6 +1,6 @@
 module Measures.DataSources.FoobarMusicDataSource;
 
-import Core.Strings;
+import RG.Core;
 
 import Measures.DataSources.IMusicDataSource;
 

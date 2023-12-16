@@ -1,6 +1,6 @@
 module FPSLimiter;
 
-import Core.Time;
+import RG.Core;
 
 namespace rg {
 

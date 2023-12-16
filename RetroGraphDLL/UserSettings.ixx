@@ -2,7 +2,7 @@ export module UserSettings;
 
 import Utils;
 
-import Core.CallbackEvent;
+import RG.Core;
 
 import Widgets.WidgetPosition;
 import Widgets.WidgetType;

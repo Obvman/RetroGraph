@@ -1,6 +1,6 @@
 module Measures.SystemMeasure;
 
-import Core.Units;
+import RG.Core;
 
 import "RGAssert.h";
 import "WindowsHeaderUnit.h";

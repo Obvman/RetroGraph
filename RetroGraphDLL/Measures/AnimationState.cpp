@@ -1,6 +1,6 @@
 module Measures.AnimationState;
 
-import Core.Time;
+import RG.Core;
 
 import Rendering.GLListContainer;
 

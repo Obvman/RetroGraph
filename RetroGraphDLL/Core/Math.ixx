@@ -1,4 +1,4 @@
-export module Core.Math;
+export module RG.Core:Math;
 
 namespace rg {
 

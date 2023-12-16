@@ -1,4 +1,4 @@
-export module Core.Units;
+export module RG.Core:Units;
 
 import std.core;
 

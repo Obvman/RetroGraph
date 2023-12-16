@@ -1,4 +1,4 @@
-module Core.Strings;
+module RG.Core:Strings;
 
 // TODO does std have wide string conversions?
 import "WindowsHeaderUnit.h";

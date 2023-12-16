@@ -1,4 +1,4 @@
-export module Core.Strings;
+export module RG.Core:Strings;
 
 import std.core;
 
