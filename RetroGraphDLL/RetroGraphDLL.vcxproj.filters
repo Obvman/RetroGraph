@@ -141,9 +141,6 @@
     <ClCompile Include="RetroGraph.ixx">
       <Filter>Modules</Filter>
     </ClCompile>
-    <ClCompile Include="Units.ixx">
-      <Filter>Modules</Filter>
-    </ClCompile>
     <ClCompile Include="UserSettings.ixx">
       <Filter>Modules</Filter>
     </ClCompile>
@@ -428,6 +425,9 @@
     </ClCompile>
     <ClCompile Include="Measures\DataSources\FoobarMusicDataSource.cpp">
       <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Units.ixx">
+      <Filter>Modules\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

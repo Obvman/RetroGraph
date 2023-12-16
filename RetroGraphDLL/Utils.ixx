@@ -1,7 +1,5 @@
 export module Utils;
 
-import Units;
-
 import std.core;
 
 import "WindowsHeaderUnit.h";

@@ -1,7 +1,6 @@
 module Widgets.MainWidget;
 
 import Colors;
-import Units;
 
 import Rendering.DrawUtils;
 

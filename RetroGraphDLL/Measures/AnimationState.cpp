@@ -1,7 +1,5 @@
 module Measures.AnimationState;
 
-import Units;
-
 import Core.Time;
 
 import Rendering.GLListContainer;

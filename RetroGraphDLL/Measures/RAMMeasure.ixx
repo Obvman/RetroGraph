@@ -1,8 +1,7 @@
 export module Measures.RAMMeasure;
 
 import Core.CallbackEvent;
-
-import Units;
+import Core.Units;
 
 import Measures.Measure;
 

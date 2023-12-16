@@ -1,7 +1,8 @@
 module Widgets.NetGraphWidget;
 
 import Colors;
-import Units;
+
+import Core.Units;
 
 namespace rg {
 

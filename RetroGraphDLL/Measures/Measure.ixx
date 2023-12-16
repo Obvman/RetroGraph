@@ -9,15 +9,11 @@ namespace rg {
 
 using namespace std::chrono;
 
-export using Hz = int;
-export using Seconds = int;
-
 export using PostUpdateEvent = CallbackEvent<>;
 
 export class Measure {
 public:
-    Measure() : m_lastUpdateTime{ steady_clock::now() } {
-    }
+    Measure() : m_lastUpdateTime{ steady_clock::now() } { }
 
     virtual ~Measure() = default;
 

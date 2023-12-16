@@ -1,7 +1,5 @@
 module Rendering.DrawUtils;
 
-import Units;
-
 import Rendering.GLListContainer;
 
 import "GLHeaderUnit.h";

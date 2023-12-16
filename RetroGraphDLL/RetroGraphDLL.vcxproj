@@ -190,6 +190,7 @@
     <ClCompile Include="Core\Strings.cpp" />
     <ClCompile Include="Core\Strings.ixx" />
     <ClCompile Include="Core\Time.ixx" />
+    <ClCompile Include="Core\Units.ixx" />
     <ClCompile Include="FPSCounter.cpp" />
     <ClCompile Include="FPSLimiter.cpp" />
     <ClCompile Include="FPSLimiter.ixx" />
@@ -250,7 +251,6 @@
     <ClCompile Include="Monitors.ixx" />
     <ClCompile Include="RetroGraph.ixx" />
     <ClCompile Include="RGAssert.cpp" />
-    <ClCompile Include="Units.ixx" />
     <ClCompile Include="UserSettings.cpp" />
     <ClCompile Include="UserSettings.ixx" />
     <ClCompile Include="Utils.cpp" />
