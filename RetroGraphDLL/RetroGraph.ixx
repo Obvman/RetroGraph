@@ -5,9 +5,8 @@ import FPSLimiter;
 import IRetroGraph;
 import Window;
 
-import Measures.DataSources.FoobarMusicDataSource;
-
 import RG.Measures;
+import RG.Measures.DataSources;
 import RG.Rendering;
 
 import Widgets.Widget;

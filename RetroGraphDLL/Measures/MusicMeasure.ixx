@@ -2,7 +2,7 @@ export module RG.Measures:MusicMeasure;
 
 import :Measure;
 
-import Measures.DataSources.IMusicDataSource;
+import RG.Measures.DataSources;
 
 import std.core;
 

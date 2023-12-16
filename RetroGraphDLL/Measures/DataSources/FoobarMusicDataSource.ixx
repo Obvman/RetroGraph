@@ -1,6 +1,6 @@
-export module Measures.DataSources.FoobarMusicDataSource;
+export module RG.Measures.DataSources:FoobarMusicDataSource;
 
-import Measures.DataSources.IMusicDataSource;
+import :IMusicDataSource;
 
 import std.core;
 

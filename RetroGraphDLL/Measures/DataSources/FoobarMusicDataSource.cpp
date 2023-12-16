@@ -1,8 +1,6 @@
-module Measures.DataSources.FoobarMusicDataSource;
+module RG.Measures.DataSources:FoobarMusicDataSource;
 
 import RG.Core;
-
-import Measures.DataSources.IMusicDataSource;
 
 import "RGAssert.h";
 import "WindowsHeaderUnit.h";

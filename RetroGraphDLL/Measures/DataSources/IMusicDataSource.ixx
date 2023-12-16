@@ -1,4 +1,4 @@
-export module Measures.DataSources.IMusicDataSource;
+export module RG.Measures.DataSources:IMusicDataSource;
 
 import std.core;
 
