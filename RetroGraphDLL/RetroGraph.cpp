@@ -23,6 +23,7 @@ import Widgets.SystemStatsWidget;
 import Widgets.TimeWidget;
 
 import "RGAssert.h";
+import "WindowsHeaderUnit.h";
 
 namespace rg {
 
@@ -62,6 +63,30 @@ RetroGraph::RetroGraph(HINSTANCE hInstance)
 }
 
 RetroGraph::~RetroGraph() {
+}
+
+void RetroGraph::run() {
+    FPSLimiter fpsLimiter;
+
+    // Enter main update/draw loop
+    while (isRunning()) {
+        // Handle Windows messages
+        MSG msg{};
+        if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+
+        update();
+        draw();
+
+        // Lay off the CPU a little
+        fpsLimiter.endFrame();
+
+        m_fpsCounter.endFrame();
+        m_fpsCounter.startFrame();
+        fpsLimiter.startFrame();
+    }
 }
 
 void RetroGraph::update() {

@@ -1,6 +1,7 @@
 export module RetroGraph;
 
 import FPSCounter;
+import FPSLimiter;
 import IRetroGraph;
 import Window;
 
@@ -41,15 +42,12 @@ public:
     RetroGraph(RetroGraph&&) = delete;
     RetroGraph& operator=(RetroGraph&&) = delete;
 
-    void update() override;
-    void draw() const override;
+    __declspec(dllexport) void run() override;
     void reloadResources() override;
 
     void updateWindowSize(int width, int height) override;
     void toggleWidget(WidgetType w) override;
-    bool isRunning() const override { return m_window.isRunning(); }
     void shutdown() override;
-    FPSCounter& getFPSCounter() override { return m_fpsCounter; }
 
 private:
     template<std::derived_from<Measure> T>
@@ -89,6 +87,10 @@ private:
             measure = std::make_shared<T>();
         return dynamic_pointer_cast<const T> (measure);
     }
+
+    void update();
+    void draw() const;
+    bool isRunning() const { return m_window.isRunning(); }
 
     void tryRefreshConfig();
     void refreshConfig();
