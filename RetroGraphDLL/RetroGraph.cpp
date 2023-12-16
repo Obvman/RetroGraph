@@ -27,6 +27,30 @@ import "WindowsHeaderUnit.h";
 
 namespace rg {
 
+// TODO measure and data source factories
+template<std::derived_from<Measure> T>
+std::shared_ptr<T> createMeasure() {
+    if constexpr (std::is_same_v<T, MusicMeasure>) {
+        return std::make_shared<T>(std::make_unique<FoobarMusicDataSource>());
+    } else {
+        return std::make_shared<T>();
+    }
+}
+
+template<std::derived_from<Measure> T>
+std::shared_ptr<const T> getOrCreate(std::shared_ptr<T>& measure) {
+    if (!measure)
+        measure = createMeasure<T>();
+    return dynamic_pointer_cast<const T> (measure);
+}
+
+template<std::derived_from<Measure> T>
+void resetIfOnlyOwner(std::shared_ptr<T>& measure) {
+    if (measure && measure.use_count() == 1) {
+        measure.reset();
+    }
+}
+
 auto RetroGraph::createWidgetContainers() const {
     decltype(m_widgetContainers) widgetContainerList;
     for (auto i = int{ 0 }; i < static_cast<int>(WidgetPosition::NUM_POSITIONS); ++i)
@@ -49,8 +73,7 @@ auto RetroGraph::createWidgets() {
 }
 
 RetroGraph::RetroGraph(HINSTANCE hInstance)
-    : m_measures( static_cast<int>(MeasureType::NumMeasures) )
-    , m_window{ this, getMeasure<DisplayMeasure>(), hInstance, UserSettings::inst().getVal<int>("Window.Monitor") }
+    : m_window{ this, getOrCreate(m_displayMeasure), hInstance, UserSettings::inst().getVal<int>("Window.Monitor") }
     , m_fontManager{ m_window.getHwnd(), m_window.getHeight() }
     , m_fpsCounter{}
     , m_widgets{ createWidgets() }
@@ -92,12 +115,17 @@ void RetroGraph::run() {
 void RetroGraph::update() {
     tryRefreshConfig();
 
-    for (auto i = size_t{ 0U }; i < static_cast<int>(MeasureType::NumMeasures); ++i) {
-        const auto& measurePtr{ m_measures[i] };
-        if (measurePtr) {
-            measurePtr->update();
-        }
-    }
+    if (m_cpuMeasure) m_cpuMeasure->update();
+    if (m_gpuMeasure) m_gpuMeasure->update();
+    if (m_ramMeasure) m_ramMeasure->update();
+    if (m_netMeasure) m_netMeasure->update();
+    if (m_processMeasure) m_processMeasure->update();
+    if (m_driveMeasure) m_driveMeasure->update();
+    if (m_musicMeasure) m_musicMeasure->update();
+    if (m_systemMeasure) m_systemMeasure->update();
+    if (m_animationState) m_animationState->update();
+    if (m_displayMeasure) m_displayMeasure->update();
+    if (m_timeMeasure) m_timeMeasure->update();
 }
 
 void RetroGraph::draw() const {
@@ -184,44 +212,49 @@ void RetroGraph::setViewports(int windowWidth, int windowHeight) {
 }
 
 void RetroGraph::cleanupUnusedMeasures() {
-    for (auto i = int{ 0 }; i < static_cast<int>(MeasureType::NumMeasures); ++i) {
-        auto& measurePtr{ m_measures[i] };
-        if (measurePtr && measurePtr.use_count() == 1) {
-            measurePtr.reset();
-        }
-    }
+    resetIfOnlyOwner(m_cpuMeasure);
+    resetIfOnlyOwner(m_gpuMeasure);
+    resetIfOnlyOwner(m_ramMeasure);
+    resetIfOnlyOwner(m_netMeasure);
+    resetIfOnlyOwner(m_processMeasure);
+    resetIfOnlyOwner(m_driveMeasure);
+    resetIfOnlyOwner(m_musicMeasure);
+    resetIfOnlyOwner(m_systemMeasure);
+    resetIfOnlyOwner(m_animationState);
+    resetIfOnlyOwner(m_displayMeasure);
+    resetIfOnlyOwner(m_timeMeasure);
 }
 
 std::unique_ptr<Widget> RetroGraph::createWidget(WidgetType widgetType) {
     switch (widgetType) {
     case WidgetType::ProcessCPU:
-        return std::make_unique<ProcessCPUWidget>(&m_fontManager, getMeasure<ProcessMeasure>());
+        return std::make_unique<ProcessCPUWidget>(&m_fontManager, getOrCreate(m_processMeasure));
     case WidgetType::ProcessRAM:
-        return std::make_unique<ProcessRAMWidget>(&m_fontManager, getMeasure<ProcessMeasure>());
+        return std::make_unique<ProcessRAMWidget>(&m_fontManager, getOrCreate(m_processMeasure));
     case WidgetType::Time:
-        return std::make_unique<TimeWidget>(&m_fontManager, getMeasure<TimeMeasure>(), getMeasure<NetMeasure>());
+        return std::make_unique<TimeWidget>(&m_fontManager, getOrCreate(m_timeMeasure), getOrCreate(m_netMeasure));
     case WidgetType::SystemStats:
-        return std::make_unique<SystemStatsWidget>(&m_fontManager, getMeasure<CPUMeasure>(), getMeasure<GPUMeasure>(), getMeasure<DisplayMeasure>(), getMeasure<SystemMeasure>());
+        return std::make_unique<SystemStatsWidget>(&m_fontManager, getOrCreate(m_cpuMeasure), getOrCreate(m_gpuMeasure), getOrCreate(m_displayMeasure), getOrCreate(m_systemMeasure));
     case WidgetType::Music:
-        return std::make_unique<MusicWidget>(&m_fontManager, getMeasure<MusicMeasure>());
+        return std::make_unique<MusicWidget>(&m_fontManager, getOrCreate(m_musicMeasure));
     case WidgetType::CPUStats:
-        return std::make_unique<CPUStatsWidget>(&m_fontManager, getMeasure<CPUMeasure>());
+        return std::make_unique<CPUStatsWidget>(&m_fontManager, getOrCreate(m_cpuMeasure));
     case WidgetType::HDD:
-        return std::make_unique<HDDWidget>(&m_fontManager, getMeasure<DriveMeasure>());
+        return std::make_unique<HDDWidget>(&m_fontManager, getOrCreate(m_driveMeasure));
     case WidgetType::Main:
-        return std::make_unique<MainWidget>(&m_fontManager, getMeasure<AnimationState>());
+        return std::make_unique<MainWidget>(&m_fontManager, getOrCreate(m_animationState));
     case WidgetType::FPS:
         return std::make_unique<FPSWidget>(&m_fontManager, m_fpsCounter);
     case WidgetType::NetStats:
-        return std::make_unique<NetStatsWidget>(&m_fontManager, getMeasure<NetMeasure>());
+        return std::make_unique<NetStatsWidget>(&m_fontManager, getOrCreate(m_netMeasure));
     case WidgetType::CPUGraph:
-        return std::make_unique<CPUGraphWidget>(&m_fontManager, getMeasure<CPUMeasure>());
+        return std::make_unique<CPUGraphWidget>(&m_fontManager, getOrCreate(m_cpuMeasure));
     case WidgetType::RAMGraph:
-        return std::make_unique<RAMGraphWidget>(&m_fontManager, getMeasure<RAMMeasure>());
+        return std::make_unique<RAMGraphWidget>(&m_fontManager, getOrCreate(m_ramMeasure));
     case WidgetType::NetGraph:
-        return std::make_unique<NetGraphWidget>(&m_fontManager, getMeasure<NetMeasure>());
+        return std::make_unique<NetGraphWidget>(&m_fontManager, getOrCreate(m_netMeasure));
     case WidgetType::GPUGraph:
-        return std::make_unique<GPUGraphWidget>(&m_fontManager, getMeasure<GPUMeasure>());
+        return std::make_unique<GPUGraphWidget>(&m_fontManager, getOrCreate(m_gpuMeasure));
     default:
         RGERROR("Unknown widget type.");
         break;

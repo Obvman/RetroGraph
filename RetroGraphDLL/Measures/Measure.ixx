@@ -14,22 +14,6 @@ export using Seconds = int;
 
 export using PostUpdateEvent = CallbackEvent<>;
 
-export enum class MeasureType : size_t {
-    CPU = 0U,
-    GPU = 1U,
-    RAM = 2U,
-    Net = 3U,
-    Process = 4U,
-    Drive = 5U,
-    Music = 6U,
-    System = 7U,
-    AnimationState = 8U,
-    Display = 9U,
-    Time = 10U,
-
-    NumMeasures,
-};
-
 export class Measure {
 public:
     Measure() : m_lastUpdateTime{ steady_clock::now() } {

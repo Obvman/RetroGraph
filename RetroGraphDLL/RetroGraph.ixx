@@ -51,54 +51,6 @@ public:
     void shutdown() override;
 
 private:
-    template<std::derived_from<Measure> T>
-    MeasureType getMeasureType() const {
-        if constexpr (std::is_same_v<T, CPUMeasure>) {
-            return MeasureType::CPU;
-        } else if constexpr (std::is_same_v<T, GPUMeasure>) {
-            return MeasureType::GPU;
-        } else if constexpr (std::is_same_v<T, RAMMeasure>) {
-            return MeasureType::RAM;
-        } else if constexpr (std::is_same_v<T, NetMeasure>) {
-            return MeasureType::Net;
-        } else if constexpr (std::is_same_v<T, ProcessMeasure>) {
-            return MeasureType::Process;
-        } else if constexpr (std::is_same_v<T, DriveMeasure>) {
-            return MeasureType::Drive;
-        } else if constexpr (std::is_same_v<T, MusicMeasure>) {
-            return MeasureType::Music;
-        } else if constexpr (std::is_same_v<T, SystemMeasure>) {
-            return MeasureType::System;
-        } else if constexpr (std::is_same_v<T, AnimationState>) {
-            return MeasureType::AnimationState;
-        } else if constexpr (std::is_same_v<T, DisplayMeasure>) {
-            return MeasureType::Display;
-        } else if constexpr (std::is_same_v<T, TimeMeasure>) {
-            return MeasureType::Time;
-        } else {
-            static_assert (always_false<T>, "Unknown measure type.");
-        }
-    }
-
-    // TODO measure and data source factories
-    template<std::derived_from<Measure> T>
-    std::shared_ptr<T> buildMeasure() const {
-        if constexpr (std::is_same_v<T, MusicMeasure>) {
-            return std::make_shared<T>(std::make_unique<FoobarMusicDataSource>());
-        } else {
-            return std::make_shared<T>();
-        }
-    }
-
-    template<std::derived_from<Measure> T>
-    std::shared_ptr<const T> getMeasure() {
-        MeasureType measureType{ getMeasureType<T>() };
-        auto& measure{ m_measures[static_cast<int>(measureType)] };
-        if (!measure)
-            measure = buildMeasure<T>();
-        return dynamic_pointer_cast<const T> (measure);
-    }
-
     void update();
     void draw() const;
     bool isRunning() const { return m_window.isRunning(); }
@@ -111,11 +63,17 @@ private:
     auto createWidgetContainers() const;
     void cleanupUnusedMeasures();
 
-    /* Measure data acquisition/updating is managed by the lifetime of the
-     * object, so wrapping them in smart pointers lets us disable/enable
-     * measures by destroying/creating the objects
-     */
-    std::vector<std::shared_ptr<Measure>> m_measures;
+    std::shared_ptr<CPUMeasure> m_cpuMeasure;
+    std::shared_ptr<GPUMeasure> m_gpuMeasure;
+    std::shared_ptr<RAMMeasure> m_ramMeasure;
+    std::shared_ptr<NetMeasure> m_netMeasure;
+    std::shared_ptr<ProcessMeasure> m_processMeasure;
+    std::shared_ptr<DriveMeasure> m_driveMeasure;
+    std::shared_ptr<MusicMeasure> m_musicMeasure;
+    std::shared_ptr<SystemMeasure> m_systemMeasure;
+    std::shared_ptr<AnimationState> m_animationState;
+    std::shared_ptr<DisplayMeasure> m_displayMeasure;
+    std::shared_ptr<TimeMeasure> m_timeMeasure;
 
     Window m_window;
     FontManager m_fontManager;
