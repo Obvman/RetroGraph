@@ -1,8 +1,8 @@
-export module Measures.RAMMeasure;
+export module RG.Measures:RAMMeasure;
+
+import :Measure;
 
 import RG.Core;
-
-import Measures.Measure;
 
 import std.core;
 

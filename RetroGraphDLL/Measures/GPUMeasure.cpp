@@ -4,7 +4,7 @@ module;
 #include <pdhmsg.h>
 #include <strsafe.h>
 
-module Measures.GPUMeasure;
+module RG.Measures:GPUMeasure;
 
 import "NvidiaHeaderUnit.h";
 import "RGAssert.h";

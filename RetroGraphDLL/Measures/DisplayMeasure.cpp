@@ -1,4 +1,4 @@
-module Measures.DisplayMeasure;
+module RG.Measures:DisplayMeasure;
 
 namespace rg {
 

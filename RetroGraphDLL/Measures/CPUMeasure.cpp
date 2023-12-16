@@ -1,4 +1,4 @@
-module Measures.CPUMeasure;
+module RG.Measures:CPUMeasure;
 
 import "RGAssert.h";
 

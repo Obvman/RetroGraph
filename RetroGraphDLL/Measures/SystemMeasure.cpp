@@ -1,4 +1,4 @@
-module Measures.SystemMeasure;
+module RG.Measures:SystemMeasure;
 
 import RG.Core;
 

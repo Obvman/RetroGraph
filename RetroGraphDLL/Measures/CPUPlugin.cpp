@@ -1,4 +1,4 @@
-module Measures.CPUPlugin;
+module RG.Measures:CPUPlugin;
 
 import "CoreTempHeaderUnit.h";
 import "RGAssert.h";
@@ -8,6 +8,7 @@ namespace rg {
 using getCoreTempInfoFn = bool (WINAPI*)(CORE_TEMP_SHARED_DATA* pData);
 getCoreTempInfoFn GetCoreTempInfo;
 
+// TODO This class should become a data source
 CPUPlugin::CPUPlugin() : m_libHandle{ LoadLibrary("GetCoreTempInfo.dll") } {
 
     if (m_libHandle) {

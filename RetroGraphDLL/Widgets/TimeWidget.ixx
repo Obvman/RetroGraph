@@ -2,9 +2,7 @@ export module Widgets.TimeWidget;
 
 import RG.Core;
 
-import Measures.NetMeasure;
-import Measures.TimeMeasure;
-
+import RG.Measures;
 import RG.Rendering;
 
 import Widgets.Widget;

@@ -1,4 +1,4 @@
-module Measures.NetMeasure;
+module RG.Measures:NetMeasure;
 
 import RG.Core;
 

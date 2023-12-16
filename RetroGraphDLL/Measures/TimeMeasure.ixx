@@ -1,6 +1,6 @@
-export module Measures.TimeMeasure;
+export module RG.Measures:TimeMeasure;
 
-import Measures.Measure;
+import :Measure;
 
 import std.core;
 

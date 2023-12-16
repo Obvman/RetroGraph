@@ -1,4 +1,4 @@
-module Measures.TimeMeasure;
+module RG.Measures:TimeMeasure;
 
 import "WindowsHeaderUnit.h";
 

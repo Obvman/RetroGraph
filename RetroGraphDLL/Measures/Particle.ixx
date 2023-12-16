@@ -1,4 +1,4 @@
-export module Measures.Particle;
+export module RG.Measures:Particle;
 
 import std.core;
 

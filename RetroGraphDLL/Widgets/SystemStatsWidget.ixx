@@ -1,10 +1,6 @@
 export module Widgets.SystemStatsWidget;
 
-import Measures.CPUMeasure;
-import Measures.DisplayMeasure;
-import Measures.GPUMeasure;
-import Measures.SystemMeasure;
-
+import RG.Measures;
 import RG.Rendering;
 
 import Widgets.Widget;

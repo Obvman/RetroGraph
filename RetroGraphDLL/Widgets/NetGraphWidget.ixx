@@ -2,8 +2,7 @@ export module Widgets.NetGraphWidget;
 
 import UserSettings;
 
-import Measures.NetMeasure;
-
+import RG.Measures;
 import RG.Rendering;
 
 import Widgets.Widget;

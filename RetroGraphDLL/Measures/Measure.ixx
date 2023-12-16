@@ -1,4 +1,4 @@
-export module Measures.Measure;
+export module RG.Measures:Measure;
 
 import RG.Core;
 

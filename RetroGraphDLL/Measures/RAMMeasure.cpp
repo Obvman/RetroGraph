@@ -1,4 +1,4 @@
-module Measures.RAMMeasure;
+module RG.Measures:RAMMeasure;
 
 namespace rg {
 

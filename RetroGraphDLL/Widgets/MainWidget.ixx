@@ -1,9 +1,6 @@
 export module Widgets.MainWidget;
 
-import Measures.AnimationState;
-import Measures.ParticleLine;
-import Measures.Particle;
-
+import RG.Measures;
 import RG.Rendering;
 
 import Widgets.Widget;

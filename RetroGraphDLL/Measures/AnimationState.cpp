@@ -1,7 +1,6 @@
-module Measures.AnimationState;
+module RG.Measures:AnimationState;
 
 import RG.Core;
-
 import RG.Rendering;
 
 namespace rg {

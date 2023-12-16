@@ -5,20 +5,9 @@ import FPSLimiter;
 import IRetroGraph;
 import Window;
 
-import Measures.AnimationState;
-import Measures.CPUMeasure;
-import Measures.DisplayMeasure;
-import Measures.DriveMeasure;
-import Measures.GPUMeasure;
-import Measures.Measure;
-import Measures.MusicMeasure;
-import Measures.NetMeasure;
-import Measures.ProcessMeasure;
-import Measures.RAMMeasure;
-import Measures.SystemMeasure;
-import Measures.TimeMeasure;
 import Measures.DataSources.FoobarMusicDataSource;
 
+import RG.Measures;
 import RG.Rendering;
 
 import Widgets.Widget;

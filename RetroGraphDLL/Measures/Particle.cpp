@@ -1,4 +1,4 @@
-module Measures.Particle;
+module RG.Measures:Particle;
 
 import "CSTDHeaderUnit.h";
 

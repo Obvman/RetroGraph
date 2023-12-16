@@ -1,8 +1,8 @@
-export module Measures.GPUMeasure;
+export module RG.Measures:GPUMeasure;
+
+import :Measure;
 
 import RG.Core;
-
-import Measures.Measure;
 
 import std.core;
 

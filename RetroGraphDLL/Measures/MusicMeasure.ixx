@@ -1,6 +1,7 @@
-export module Measures.MusicMeasure;
+export module RG.Measures:MusicMeasure;
 
-import Measures.Measure;
+import :Measure;
+
 import Measures.DataSources.IMusicDataSource;
 
 import std.core;

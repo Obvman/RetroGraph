@@ -1,6 +1,6 @@
 export module UnitTests.Test_Measure;
 
-import Measures.Measure;
+import RG.Measures;
 
 import "Catch2HeaderUnit.h";
 

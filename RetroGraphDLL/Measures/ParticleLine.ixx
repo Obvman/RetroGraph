@@ -1,4 +1,4 @@
-export module Measures.ParticleLine;
+export module RG.Measures:ParticleLine;
 
 import std.core;
 

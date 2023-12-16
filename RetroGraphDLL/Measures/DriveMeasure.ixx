@@ -1,6 +1,7 @@
-export module Measures.DriveMeasure;
+export module RG.Measures:DriveMeasure;
 
-import Measures.Measure;
+import :Measure;
+
 import Measures.Data.DriveInfo;
 
 import std.core;

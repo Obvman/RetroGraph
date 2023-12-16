@@ -1,9 +1,9 @@
-export module Measures.CPUMeasure;
+export module RG.Measures:CPUMeasure;
+
+import :CPUPlugin;
+import :Measure;
 
 import RG.Core;
-
-import Measures.CPUPlugin;
-import Measures.Measure;
 
 import std.core;
 

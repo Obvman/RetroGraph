@@ -2,8 +2,7 @@ export module Widgets.RAMGraphWidget;
 
 import UserSettings;
 
-import Measures.RAMMeasure;
-
+import RG.Measures;
 import RG.Rendering;
 
 import Widgets.Widget;

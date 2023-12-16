@@ -4,7 +4,7 @@ import IRetroGraph; // Reverse Dependency
 import Monitors;
 import UserSettings;
 
-import Measures.DisplayMeasure;
+import RG.Measures;
 
 import std.core;
 

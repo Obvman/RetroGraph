@@ -1,7 +1,6 @@
 export module Widgets.NetStatsWidget;
 
-import Measures.NetMeasure;
-
+import RG.Measures;
 import RG.Rendering;
 
 import Widgets.Widget;

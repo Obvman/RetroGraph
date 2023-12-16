@@ -206,6 +206,7 @@
     <ClCompile Include="Measures\DisplayMeasure.cpp" />
     <ClCompile Include="Measures\DriveMeasure.cpp" />
     <ClCompile Include="Measures\GPUMeasure.cpp" />
+    <ClCompile Include="Measures\Measures.ixx" />
     <ClCompile Include="Measures\MusicMeasure.cpp" />
     <ClCompile Include="Measures\NetMeasure.cpp" />
     <ClCompile Include="Measures\Particle.cpp" />

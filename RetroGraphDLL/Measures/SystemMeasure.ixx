@@ -1,6 +1,6 @@
-export module Measures.SystemMeasure;
+export module RG.Measures:SystemMeasure;
 
-import Measures.Measure;
+import :Measure;
 
 import std.core;
 

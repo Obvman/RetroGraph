@@ -2,8 +2,7 @@ export module Widgets.GPUGraphWidget;
 
 import UserSettings;
 
-import Measures.GPUMeasure;
-
+import RG.Measures;
 import RG.Rendering;
 
 import Widgets.Widget;

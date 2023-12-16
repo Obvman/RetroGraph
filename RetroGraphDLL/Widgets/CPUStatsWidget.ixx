@@ -2,8 +2,7 @@ export module Widgets.CPUStatsWidget;
 
 import UserSettings;
 
-import Measures.CPUMeasure;
-
+import RG.Measures;
 import RG.Rendering;
 
 import Widgets.Widget;

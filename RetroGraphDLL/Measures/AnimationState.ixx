@@ -1,8 +1,8 @@
-export module Measures.AnimationState;
+export module RG.Measures:AnimationState;
 
-import Measures.Measure;
-import Measures.Particle;
-import Measures.ParticleLine;
+import :Measure;
+import :Particle;
+import :ParticleLine;
 
 import std.core;
 

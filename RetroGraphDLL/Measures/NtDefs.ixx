@@ -1,4 +1,4 @@
-export module Measures.NtDefs;
+export module RG.Measures:NtDefs;
 
 import "WindowsHeaderUnit.h";
 

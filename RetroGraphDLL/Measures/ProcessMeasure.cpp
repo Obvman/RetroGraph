@@ -1,10 +1,10 @@
-module Measures.ProcessMeasure;
+module RG.Measures:ProcessMeasure;
+
+import :NtDefs;
 
 import Utils;
 
 import RG.Core;
-
-import Measures.NtDefs;
 
 import "RGAssert.h";
 import "WindowsHeaderUnit.h";

@@ -1,8 +1,9 @@
-export module Measures.ProcessMeasure;
+export module RG.Measures:ProcessMeasure;
+
+import :Measure;
 
 import UserSettings;
 
-import Measures.Measure;
 import Measures.Data.ProcessData;
 
 import std.core;

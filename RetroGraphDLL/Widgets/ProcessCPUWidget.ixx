@@ -1,7 +1,6 @@
 export module Widgets.ProcessCPUWidget;
 
-import Measures.ProcessMeasure;
-
+import RG.Measures;
 import RG.Rendering;
 
 import Widgets.Widget;

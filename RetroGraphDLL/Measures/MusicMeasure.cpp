@@ -1,4 +1,4 @@
-module Measures.MusicMeasure;
+module RG.Measures:MusicMeasure;
 
 namespace rg {
 

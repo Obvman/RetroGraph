@@ -1,4 +1,4 @@
-export module Measures.CPUPlugin;
+export module RG.Measures:CPUPlugin;
 
 import std.core;
 

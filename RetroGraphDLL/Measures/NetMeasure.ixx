@@ -1,10 +1,10 @@
-export module Measures.NetMeasure;
+export module RG.Measures:NetMeasure;
+
+import :Measure;
 
 import UserSettings;
 
 import RG.Core;
-
-import Measures.Measure;
 
 import std.core;
 import std.threading;

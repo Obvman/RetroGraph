@@ -1,7 +1,6 @@
 export module Widgets.MusicWidget;
 
-import Measures.MusicMeasure;
-
+import RG.Measures;
 import RG.Rendering;
 
 import Widgets.Widget;

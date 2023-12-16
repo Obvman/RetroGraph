@@ -1,4 +1,4 @@
-module Measures.DriveMeasure;
+module RG.Measures:DriveMeasure;
 
 import "WindowsHeaderUnit.h";
 
