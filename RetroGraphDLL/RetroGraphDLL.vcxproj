@@ -184,6 +184,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Colors.ixx" />
+    <ClCompile Include="ConfigRefreshedEvent.ixx" />
     <ClCompile Include="Core\CallbackEvent.ixx" />
     <ClCompile Include="Core\Core.ixx" />
     <ClCompile Include="Core\Math.ixx" />
@@ -304,6 +305,7 @@
     <ClCompile Include="Widgets\WidgetContainer.cpp" />
     <ClCompile Include="Widgets\WidgetContainer.ixx" />
     <ClCompile Include="Widgets\WidgetPosition.ixx" />
+    <ClCompile Include="Widgets\Widgets.ixx" />
     <ClCompile Include="Widgets\WidgetShaderController.ixx" />
     <ClCompile Include="Widgets\WidgetType.ixx" />
     <ClCompile Include="Window.cpp" />

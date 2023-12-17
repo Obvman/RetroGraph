@@ -6,6 +6,7 @@ module;
 module Window;
 
 import Colors;
+import UserSettings;
 
 import "RGAssert.h";
 import "GLHeaderUnit.h";

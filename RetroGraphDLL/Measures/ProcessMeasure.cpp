@@ -2,6 +2,7 @@ module RG.Measures:ProcessMeasure;
 
 import :NtDefs;
 
+import UserSettings;
 import Utils;
 
 import RG.Core;

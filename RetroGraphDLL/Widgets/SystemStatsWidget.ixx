@@ -1,12 +1,11 @@
-export module Widgets.SystemStatsWidget;
+export module RG.Widgets:SystemStatsWidget;
+
+import :Widget;
 
 import RG.Measures;
 import RG.Rendering;
 
-import Widgets.Widget;
-
 import std.core;
-import std.memory;
 
 namespace rg {
 

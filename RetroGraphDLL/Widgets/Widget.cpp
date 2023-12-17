@@ -1,4 +1,4 @@
-module Widgets.Widget;
+module RG.Widgets:Widget;
 
 import RG.Rendering;
 

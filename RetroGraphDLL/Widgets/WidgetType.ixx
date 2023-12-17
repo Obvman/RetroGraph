@@ -1,4 +1,4 @@
-export module Widgets.WidgetType;
+export module RG.Widgets:WidgetType;
 
 namespace rg {
 

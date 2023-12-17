@@ -1,6 +1,7 @@
-module Widgets.CPUGraphWidget;
+module RG.Widgets:CPUGraphWidget;
 
 import Colors;
+import UserSettings;
 
 namespace rg {
 

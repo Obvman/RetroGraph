@@ -1,4 +1,4 @@
-export module Widgets.Widget;
+export module RG.Widgets:Widget;
 
 import Utils;
 

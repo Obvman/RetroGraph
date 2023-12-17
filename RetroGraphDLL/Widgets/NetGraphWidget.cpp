@@ -1,6 +1,7 @@
-module Widgets.NetGraphWidget;
+module RG.Widgets:NetGraphWidget;
 
 import Colors;
+import UserSettings;
 
 import RG.Core;
 

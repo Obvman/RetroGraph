@@ -1,13 +1,11 @@
-export module Widgets.TimeWidget;
+export module RG.Widgets:TimeWidget;
+
+import :Widget;
 
 import RG.Core;
 
 import RG.Measures;
 import RG.Rendering;
-
-import Widgets.Widget;
-
-import std.memory;
 
 namespace rg {
 

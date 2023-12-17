@@ -1,5 +1,7 @@
 module FPSLimiter;
 
+import UserSettings;
+
 import RG.Core;
 
 namespace rg {

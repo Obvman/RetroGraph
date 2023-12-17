@@ -1,4 +1,4 @@
-module Widgets.ProcessRAMWidget;
+module RG.Widgets:ProcessRAMWidget;
 
 import Colors;
 

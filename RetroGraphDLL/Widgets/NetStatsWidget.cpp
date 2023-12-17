@@ -1,4 +1,4 @@
-module Widgets.NetStatsWidget;
+module RG.Widgets:NetStatsWidget;
 
 import Colors;
 

@@ -1,12 +1,12 @@
-export module Widgets.NetStatsWidget;
+export module RG.Widgets:NetStatsWidget;
+
+import :Widget;
 
 import RG.Measures;
 import RG.Rendering;
 
-import Widgets.Widget;
 
 import std.core;
-import std.memory;
 
 namespace rg {
 

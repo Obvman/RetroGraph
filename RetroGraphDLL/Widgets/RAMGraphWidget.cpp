@@ -1,6 +1,7 @@
-module Widgets.RAMGraphWidget;
+module RG.Widgets:RAMGraphWidget;
 
 import Colors;
+import UserSettings;
 
 namespace rg {
 

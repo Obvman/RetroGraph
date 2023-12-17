@@ -1,4 +1,4 @@
-module Widgets.ProcessCPUWidget;
+module RG.Widgets:ProcessCPUWidget;
 
 import Colors;
 

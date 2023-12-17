@@ -444,6 +444,12 @@
     <ClCompile Include="Measures\Data\Data.ixx">
       <Filter>Modules\Measures\Data</Filter>
     </ClCompile>
+    <ClCompile Include="Widgets\Widgets.ixx">
+      <Filter>Modules\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfigRefreshedEvent.ixx">
+      <Filter>Modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resources\resource.h">

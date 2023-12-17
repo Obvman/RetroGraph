@@ -1,4 +1,6 @@
-module Widgets.WidgetContainer;
+module RG.Widgets:WidgetContainer;
+
+import UserSettings;
 
 import RG.Rendering;
 

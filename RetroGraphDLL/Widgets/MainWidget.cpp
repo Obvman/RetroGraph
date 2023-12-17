@@ -1,10 +1,11 @@
-module Widgets.MainWidget;
+module RG.Widgets:MainWidget;
+
+import :WidgetShaderController;
 
 import Colors;
+import UserSettings;
 
 import RG.Rendering;
-
-import Widgets.WidgetShaderController;
 
 import "GLHeaderUnit.h";
 

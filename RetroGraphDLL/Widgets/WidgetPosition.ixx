@@ -1,4 +1,4 @@
-export module Widgets.WidgetPosition;
+export module RG.Widgets:WidgetPosition;
 
 namespace rg {
 

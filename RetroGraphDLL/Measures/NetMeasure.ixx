@@ -2,7 +2,7 @@ export module RG.Measures:NetMeasure;
 
 import :Measure;
 
-import UserSettings;
+import ConfigRefreshedEvent;
 
 import RG.Core;
 

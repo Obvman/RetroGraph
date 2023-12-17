@@ -1,4 +1,4 @@
-module Widgets.SystemStatsWidget;
+module RG.Widgets:SystemStatsWidget;
 
 import Colors;
 

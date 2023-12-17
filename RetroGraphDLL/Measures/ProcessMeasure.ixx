@@ -2,7 +2,7 @@ export module RG.Measures:ProcessMeasure;
 
 import :Measure;
 
-import UserSettings;
+import ConfigRefreshedEvent;
 
 import RG.Measures.Data;
 

@@ -1,9 +1,9 @@
-export module Widgets.ProcessCPUWidget;
+export module RG.Widgets:ProcessCPUWidget;
+
+import :Widget;
 
 import RG.Measures;
 import RG.Rendering;
-
-import Widgets.Widget;
 
 import std.memory;
 

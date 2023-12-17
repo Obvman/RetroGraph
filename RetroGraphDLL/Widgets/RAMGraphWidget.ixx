@@ -1,11 +1,12 @@
-export module Widgets.RAMGraphWidget;
+export module RG.Widgets:RAMGraphWidget;
 
-import UserSettings;
+import :Widget;
+
+import ConfigRefreshedEvent;
 
 import RG.Measures;
 import RG.Rendering;
 
-import Widgets.Widget;
 import Widgets.Graph.SmoothLineGraph;
 
 import std.memory;

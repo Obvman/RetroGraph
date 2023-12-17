@@ -1,16 +1,16 @@
-export module Widgets.NetGraphWidget;
+export module RG.Widgets:NetGraphWidget;
 
-import UserSettings;
+import :Widget;
+
+import ConfigRefreshedEvent;
 
 import RG.Measures;
 import RG.Rendering;
 
-import Widgets.Widget;
 import Widgets.Graph.LineGraph;
 import Widgets.Graph.SmoothMirrorLineGraph;
 
 import std.core;
-import std.memory;
 
 namespace rg {
 

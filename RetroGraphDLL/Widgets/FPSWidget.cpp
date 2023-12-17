@@ -1,4 +1,4 @@
-module Widgets.FPSWidget;
+module RG.Widgets:FPSWidget;
 
 import Colors;
 

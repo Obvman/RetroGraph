@@ -1,11 +1,12 @@
-export module Widgets.CPUStatsWidget;
+export module RG.Widgets:CPUStatsWidget;
 
-import UserSettings;
+import :Widget;
+
+import ConfigRefreshedEvent;
 
 import RG.Measures;
 import RG.Rendering;
 
-import Widgets.Widget;
 import Widgets.Graph.SmoothLineGraph;
 
 import std.core;

@@ -1,5 +1,7 @@
 module RG.Measures:NetMeasure;
 
+import UserSettings;
+
 import RG.Core;
 
 import "RGAssert.h";

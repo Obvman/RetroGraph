@@ -1,8 +1,8 @@
 export module Window;
 
+import ConfigRefreshedEvent;
 import IRetroGraph; // Reverse Dependency
 import Monitors;
-import UserSettings;
 
 import RG.Measures;
 

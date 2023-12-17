@@ -1,10 +1,10 @@
-export module Widgets.FPSWidget;
+export module RG.Widgets:FPSWidget;
+
+import :Widget;
 
 import FPSCounter;
 
 import RG.Rendering;
-
-import Widgets.Widget;
 
 namespace rg {
 

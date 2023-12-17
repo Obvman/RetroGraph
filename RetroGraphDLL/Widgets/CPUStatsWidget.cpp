@@ -1,6 +1,7 @@
-module Widgets.CPUStatsWidget;
+module RG.Widgets:CPUStatsWidget;
 
 import Colors;
+import UserSettings;
 
 import RG.Rendering;
 

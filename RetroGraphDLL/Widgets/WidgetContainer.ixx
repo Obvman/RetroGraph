@@ -1,11 +1,11 @@
-export module Widgets.WidgetContainer;
+export module RG.Widgets:WidgetContainer;
 
-import UserSettings;
+import :Widget;
+import :WidgetPosition;
+
+import ConfigRefreshedEvent;
 
 import RG.Rendering;
-
-import Widgets.Widget;
-import Widgets.WidgetPosition;
 
 import std.core;
 

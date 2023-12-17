@@ -8,11 +8,7 @@ import Window;
 import RG.Measures;
 import RG.Measures.DataSources;
 import RG.Rendering;
-
-import Widgets.Widget;
-import Widgets.WidgetContainer;
-import Widgets.WidgetPosition;
-import Widgets.WidgetType;
+import RG.Widgets;
 
 import std.core;
 

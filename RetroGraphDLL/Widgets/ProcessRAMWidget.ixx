@@ -1,9 +1,9 @@
-export module Widgets.ProcessRAMWidget;
+export module RG.Widgets:ProcessRAMWidget;
+
+import :Widget;
 
 import RG.Measures;
 import RG.Rendering;
-
-import Widgets.Widget;
 
 import std.memory;
 

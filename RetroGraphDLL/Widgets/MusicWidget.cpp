@@ -1,4 +1,4 @@
-module Widgets.MusicWidget;
+module RG.Widgets:MusicWidget;
 
 import Colors;
 

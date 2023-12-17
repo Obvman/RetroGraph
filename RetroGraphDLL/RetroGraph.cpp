@@ -6,21 +6,6 @@ import UserSettings;
 import RG.Core;
 import RG.Rendering;
 
-import Widgets.CPUGraphWidget;
-import Widgets.CPUStatsWidget;
-import Widgets.FPSWidget;
-import Widgets.GPUGraphWidget;
-import Widgets.HDDWidget;
-import Widgets.MainWidget;
-import Widgets.MusicWidget;
-import Widgets.NetGraphWidget;
-import Widgets.NetStatsWidget;
-import Widgets.ProcessCPUWidget;
-import Widgets.ProcessRAMWidget;
-import Widgets.RAMGraphWidget;
-import Widgets.SystemStatsWidget;
-import Widgets.TimeWidget;
-
 import "RGAssert.h";
 import "WindowsHeaderUnit.h";
 

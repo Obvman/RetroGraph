@@ -1,9 +1,9 @@
-export module Widgets.MainWidget;
+export module RG.Widgets:MainWidget;
+
+import :Widget;
 
 import RG.Measures;
 import RG.Rendering;
-
-import Widgets.Widget;
 
 import std.memory;
 

@@ -1,4 +1,4 @@
-module Widgets.TimeWidget;
+module RG.Widgets:TimeWidget;
 
 import Colors;
 

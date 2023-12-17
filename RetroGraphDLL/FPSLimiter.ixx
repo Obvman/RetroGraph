@@ -1,6 +1,6 @@
 export module FPSLimiter;
 
-import UserSettings;
+import ConfigRefreshedEvent;
 
 import std.core;
 

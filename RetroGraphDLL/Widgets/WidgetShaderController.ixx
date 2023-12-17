@@ -1,4 +1,4 @@
-export module Widgets.WidgetShaderController;
+export module RG.Widgets:WidgetShaderController;
 
 import RG.Rendering;
 

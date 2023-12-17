@@ -1,9 +1,9 @@
-export module Widgets.HDDWidget;
+export module RG.Widgets:HDDWidget;
+
+import :Widget;
 
 import RG.Measures;
 import RG.Rendering;
-
-import Widgets.Widget;
 
 import std.core;
 

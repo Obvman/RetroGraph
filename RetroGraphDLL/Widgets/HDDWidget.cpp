@@ -1,4 +1,4 @@
-module Widgets.HDDWidget;
+module RG.Widgets:HDDWidget;
 
 import Colors;
 

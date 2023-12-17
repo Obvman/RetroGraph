@@ -1,6 +1,6 @@
 export module IRetroGraph;
 
-import Widgets.WidgetType;
+import RG.Widgets;
 
 import std.core;
 

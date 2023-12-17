@@ -1,11 +1,10 @@
 export module UserSettings;
 
 import Utils;
+import ConfigRefreshedEvent;
 
 import RG.Core;
-
-import Widgets.WidgetPosition;
-import Widgets.WidgetType;
+import RG.Widgets;
 
 import std.core;
 
@@ -15,8 +14,6 @@ import "WindowsHeaderUnit.h";
 import <inih/INIReader.h>;
 
 namespace rg {
-
-export using ConfigRefreshedEvent = CallbackEvent<>;
 
 using SettingVariant = std::variant<int, bool, double, std::string>;
 
