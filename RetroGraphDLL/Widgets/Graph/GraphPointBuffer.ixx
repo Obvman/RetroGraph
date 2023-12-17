@@ -1,4 +1,4 @@
-export module Widgets.Graph.GraphPointBuffer;
+export module RG.Widgets.Graph:GraphPointBuffer;
 
 import RG.Rendering;
 

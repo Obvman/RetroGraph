@@ -6,8 +6,7 @@ import ConfigRefreshedEvent;
 
 import RG.Measures;
 import RG.Rendering;
-
-import Widgets.Graph.SmoothLineGraph;
+import RG.Widgets.Graph;
 
 import std.memory;
 

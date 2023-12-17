@@ -6,9 +6,7 @@ import ConfigRefreshedEvent;
 
 import RG.Measures;
 import RG.Rendering;
-
-import Widgets.Graph.LineGraph;
-import Widgets.Graph.SmoothMirrorLineGraph;
+import RG.Widgets.Graph;
 
 import std.core;
 

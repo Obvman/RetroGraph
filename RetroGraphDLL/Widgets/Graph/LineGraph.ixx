@@ -1,8 +1,8 @@
-export module Widgets.Graph.LineGraph;
+export module RG.Widgets.Graph:LineGraph;
+
+import :GraphPointBuffer;
 
 import RG.Rendering;
-
-import Widgets.Graph.GraphPointBuffer;
 
 import std.core;
 

@@ -1,4 +1,4 @@
-module Widgets.Graph.SmoothLineGraph;
+module RG.Widgets.Graph:SmoothLineGraph;
 
 import RG.Rendering;
 

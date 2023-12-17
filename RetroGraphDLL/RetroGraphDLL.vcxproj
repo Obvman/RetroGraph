@@ -269,6 +269,7 @@
     <ClCompile Include="Widgets\FPSWidget.ixx" />
     <ClCompile Include="Widgets\GPUGraphWidget.cpp" />
     <ClCompile Include="Widgets\GPUGraphWidget.ixx" />
+    <ClCompile Include="Widgets\Graph\Graph.ixx" />
     <ClCompile Include="Widgets\Graph\GraphGrid.cpp" />
     <ClCompile Include="Widgets\Graph\GraphGrid.ixx" />
     <ClCompile Include="Widgets\Graph\GraphPointBuffer.cpp" />

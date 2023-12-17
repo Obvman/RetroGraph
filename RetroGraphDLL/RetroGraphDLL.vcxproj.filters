@@ -450,6 +450,9 @@
     <ClCompile Include="ConfigRefreshedEvent.ixx">
       <Filter>Modules</Filter>
     </ClCompile>
+    <ClCompile Include="Widgets\Graph\Graph.ixx">
+      <Filter>Modules\Widgets\Graph</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resources\resource.h">

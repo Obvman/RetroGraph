@@ -1,4 +1,4 @@
-export module Widgets.Graph.GraphGrid;
+export module RG.Widgets.Graph:GraphGrid;
 
 import RG.Rendering;
 

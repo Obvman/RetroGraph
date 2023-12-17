@@ -1,7 +1,7 @@
-export module Widgets.Graph.SmoothLineGraph;
+export module RG.Widgets.Graph:SmoothLineGraph;
 
-import Widgets.Graph.LineGraph;
-import Widgets.Graph.Spline;
+import :LineGraph;
+import :Spline;
 
 import std.core;
 

@@ -1,11 +1,11 @@
-module Widgets.Graph.LineGraph;
+module RG.Widgets.Graph:LineGraph;
+
+import :GraphGrid;
 
 import Colors;
 
 import RG.Rendering;
-
-import Widgets.WidgetShaderController;
-import Widgets.Graph.GraphGrid;
+import RG.Widgets;
 
 import "GLHeaderUnit.h";
 import "RGAssert.h";

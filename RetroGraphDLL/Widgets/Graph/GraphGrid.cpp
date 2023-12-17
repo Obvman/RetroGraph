@@ -1,4 +1,4 @@
-module Widgets.Graph.GraphGrid;
+module RG.Widgets.Graph:GraphGrid;
 
 import Colors;
 

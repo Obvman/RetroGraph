@@ -1,11 +1,11 @@
-module Widgets.Graph.SmoothMirrorLineGraph;
+module RG.Widgets.Graph:SmoothMirrorLineGraph;
+
+import :GraphGrid;
+import :Spline;
 
 import Colors;
 
 import RG.Rendering;
-
-import Widgets.Graph.GraphGrid;
-import Widgets.Graph.Spline;
 
 import "GLHeaderUnit.h";
 import "RGAssert.h";

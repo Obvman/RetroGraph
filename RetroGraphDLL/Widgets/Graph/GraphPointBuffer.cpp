@@ -1,4 +1,4 @@
-module Widgets.Graph.GraphPointBuffer;
+module RG.Widgets.Graph:GraphPointBuffer;
 
 namespace rg {
 

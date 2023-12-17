@@ -1,8 +1,8 @@
-export module Widgets.Graph.SmoothMirrorLineGraph;
+export module RG.Widgets.Graph:SmoothMirrorLineGraph;
+
+import :SmoothLineGraph;
 
 import RG.Rendering;
-
-import Widgets.Graph.SmoothLineGraph;
 
 import std.core;
 
