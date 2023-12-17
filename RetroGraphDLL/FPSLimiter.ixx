@@ -1,6 +1,6 @@
 export module FPSLimiter;
 
-import ConfigRefreshedEvent;
+import RG.Application;
 
 import std.core;
 

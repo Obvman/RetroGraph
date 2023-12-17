@@ -1,10 +1,10 @@
-export module UserSettings;
+export module RG.Application:UserSettings;
+
+import :ConfigRefreshedEvent;
 
 import Utils;
-import ConfigRefreshedEvent;
 
 import RG.Core;
-import RG.Widgets;
 
 import std.core;
 
@@ -40,11 +40,6 @@ public:
         }
     }
 
-    bool isVisible(WidgetType w) const { return m_widgetVisibilities[static_cast<int>(w)]; }
-    WidgetPosition getWidgetPosition(WidgetType w) const { return m_widgetPositions[static_cast<int>(w)]; }
-
-    void toggleWidgetBackgroundVisible();
-
     bool checkConfigChanged() const;
     void refresh();
 
@@ -62,21 +57,6 @@ private:
     std::string m_fallbackIniPath{ getExePath() + R"(\..\..\RetroGraph\Resources\default_config.ini)" };
 
     std::map<std::string_view, SettingVariant> m_settings;
-
-    std::vector<bool> m_widgetVisibilities;
-    std::vector<WidgetPosition> m_widgetPositions;
-
-    const std::map<std::string_view, WidgetPosition> m_posMap = {
-        {"top-left",      WidgetPosition::TOP_LEFT},
-        {"top-middle",    WidgetPosition::TOP_MID},
-        {"top-right",     WidgetPosition::TOP_RIGHT},
-        {"middle-left",   WidgetPosition::MID_LEFT},
-        {"middle-middle", WidgetPosition::MID_MID},
-        {"middle-right",  WidgetPosition::MID_RIGHT},
-        {"bottom-left",   WidgetPosition::BOT_LEFT},
-        {"bottom-middle", WidgetPosition::BOT_MID},
-        {"bottom-right",  WidgetPosition::BOT_RIGHT},
-    };
 };
 
 } // namespace rg

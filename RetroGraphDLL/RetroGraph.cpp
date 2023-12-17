@@ -1,8 +1,8 @@
 module RetroGraph;
 
 import Colors;
-import UserSettings;
 
+import RG.Application;
 import RG.Core;
 import RG.Rendering;
 
@@ -38,7 +38,7 @@ void resetIfOnlyOwner(std::shared_ptr<T>& measure) {
 auto RetroGraph::createWidgetContainers() const {
     decltype(m_widgetContainers) widgetContainerList;
     for (auto i = int{ 0 }; i < static_cast<int>(WidgetPosition::NUM_POSITIONS); ++i)
-        widgetContainerList.emplace_back(std::make_unique<WidgetContainer>(static_cast<WidgetPosition>(i)));
+        widgetContainerList.emplace_back(std::make_unique<WidgetContainer>(static_cast<WidgetPosition>(i), m_drawWidgetBackgrounds));
 
     return widgetContainerList;
 }
@@ -47,8 +47,9 @@ auto RetroGraph::createWidgets() {
     decltype(m_widgets) widgetList( static_cast<int>(WidgetType::NumWidgets) );
 
     for (auto i = int{ 0 }; i < static_cast<int>(WidgetType::NumWidgets); ++i) {
-        if (UserSettings::inst().isVisible(static_cast<WidgetType> (i)))
-            widgetList[i] = createWidget(static_cast<WidgetType> (i));
+        WidgetType widgetType{ static_cast<WidgetType> (i) };
+        if (isWidgetVisible(widgetType))
+            widgetList[i] = createWidget(widgetType);
         else
             widgetList[i] = nullptr;
     }
@@ -56,10 +57,69 @@ auto RetroGraph::createWidgets() {
     return widgetList;
 }
 
+auto RetroGraph::createWidgetVisibilities() const {
+    decltype(m_widgetVisibilities) widgetVisibilities( static_cast<int>(WidgetType::NumWidgets) );
+
+    UserSettings& settings{ UserSettings::inst() };
+    widgetVisibilities[static_cast<int>(WidgetType::Time)]        = settings.getVal<bool>("Widgets-Time.Visible");
+    widgetVisibilities[static_cast<int>(WidgetType::CPUStats)]    = settings.getVal<bool>("Widgets-CPUStats.Visible");
+    widgetVisibilities[static_cast<int>(WidgetType::SystemStats)] = settings.getVal<bool>("Widgets-SystemStats.Visible");
+    widgetVisibilities[static_cast<int>(WidgetType::ProcessCPU)]  = settings.getVal<bool>("Widgets-ProcessesCPU.Visible");
+    widgetVisibilities[static_cast<int>(WidgetType::ProcessRAM)]  = settings.getVal<bool>("Widgets-ProcessesRAM.Visible");
+    widgetVisibilities[static_cast<int>(WidgetType::Music)]       = settings.getVal<bool>("Widgets-Music.Visible");
+    widgetVisibilities[static_cast<int>(WidgetType::Main)]        = settings.getVal<bool>("Widgets-Main.Visible");
+    widgetVisibilities[static_cast<int>(WidgetType::HDD)]         = settings.getVal<bool>("Widgets-Drives.Visible");
+    widgetVisibilities[static_cast<int>(WidgetType::FPS)]         = settings.getVal<bool>("Widgets-FPS.Visible");
+    widgetVisibilities[static_cast<int>(WidgetType::NetStats)]    = settings.getVal<bool>("Widgets-NetStats.Visible");
+    widgetVisibilities[static_cast<int>(WidgetType::CPUGraph)]    = settings.getVal<bool>("Widgets-CPUGraph.Visible");
+    widgetVisibilities[static_cast<int>(WidgetType::RAMGraph)]    = settings.getVal<bool>("Widgets-RAMGraph.Visible");
+    widgetVisibilities[static_cast<int>(WidgetType::NetGraph)]    = settings.getVal<bool>("Widgets-NetGraph.Visible");
+    widgetVisibilities[static_cast<int>(WidgetType::GPUGraph)]    = settings.getVal<bool>("Widgets-GPUGraph.Visible");
+
+    return widgetVisibilities;
+}
+
+auto RetroGraph::createWidgetPositions() const {
+    decltype(m_widgetPositions) widgetPositions( static_cast<int>(WidgetType::NumWidgets) );
+
+    static const std::map<std::string_view, WidgetPosition> m_posMap = {
+        {"top-left",      WidgetPosition::TOP_LEFT},
+        {"top-middle",    WidgetPosition::TOP_MID},
+        {"top-right",     WidgetPosition::TOP_RIGHT},
+        {"middle-left",   WidgetPosition::MID_LEFT},
+        {"middle-middle", WidgetPosition::MID_MID},
+        {"middle-right",  WidgetPosition::MID_RIGHT},
+        {"bottom-left",   WidgetPosition::BOT_LEFT},
+        {"bottom-middle", WidgetPosition::BOT_MID},
+        {"bottom-right",  WidgetPosition::BOT_RIGHT},
+    };
+
+    UserSettings& settings{ UserSettings::inst() };
+    widgetPositions[static_cast<int>(WidgetType::ProcessCPU)]  = m_posMap.at(settings.getVal<std::string>("Widgets-ProcessesCPU.Position"));
+    widgetPositions[static_cast<int>(WidgetType::ProcessRAM)]  = m_posMap.at(settings.getVal<std::string>("Widgets-ProcessesRAM.Position"));
+    widgetPositions[static_cast<int>(WidgetType::Time)]        = m_posMap.at(settings.getVal<std::string>("Widgets-Time.Position"));
+    widgetPositions[static_cast<int>(WidgetType::SystemStats)] = m_posMap.at(settings.getVal<std::string>("Widgets-SystemStats.Position"));
+    widgetPositions[static_cast<int>(WidgetType::Music)]       = m_posMap.at(settings.getVal<std::string>("Widgets-Music.Position"));
+    widgetPositions[static_cast<int>(WidgetType::CPUStats)]    = m_posMap.at(settings.getVal<std::string>("Widgets-CPUStats.Position"));
+    widgetPositions[static_cast<int>(WidgetType::HDD)]         = m_posMap.at(settings.getVal<std::string>("Widgets-Drives.Position"));
+    widgetPositions[static_cast<int>(WidgetType::Main)]        = m_posMap.at(settings.getVal<std::string>("Widgets-Main.Position"));
+    widgetPositions[static_cast<int>(WidgetType::FPS)]         = m_posMap.at(settings.getVal<std::string>("Widgets-FPS.Position"));
+    widgetPositions[static_cast<int>(WidgetType::NetStats)]    = m_posMap.at(settings.getVal<std::string>("Widgets-NetStats.Position"));
+    widgetPositions[static_cast<int>(WidgetType::CPUGraph)]    = m_posMap.at(settings.getVal<std::string>("Widgets-CPUGraph.Position"));
+    widgetPositions[static_cast<int>(WidgetType::RAMGraph)]    = m_posMap.at(settings.getVal<std::string>("Widgets-RAMGraph.Position"));
+    widgetPositions[static_cast<int>(WidgetType::NetGraph)]    = m_posMap.at(settings.getVal<std::string>("Widgets-NetGraph.Position"));
+    widgetPositions[static_cast<int>(WidgetType::GPUGraph)]    = m_posMap.at(settings.getVal<std::string>("Widgets-GPUGraph.Position"));
+
+    return widgetPositions;
+}
+
 RetroGraph::RetroGraph(HINSTANCE hInstance)
     : m_window{ this, getOrCreate(m_displayMeasure), hInstance, UserSettings::inst().getVal<int>("Window.Monitor") }
     , m_fontManager{ m_window.getHwnd(), m_window.getHeight() }
     , m_fpsCounter{}
+    , m_widgetVisibilities(createWidgetVisibilities())
+    , m_widgetPositions(createWidgetPositions())
+    , m_drawWidgetBackgrounds{ UserSettings::inst().getVal<bool>("Window.WidgetBackground") }
     , m_widgets{ createWidgets() }
     , m_widgetContainers{ createWidgetContainers() } {
 
@@ -148,6 +208,13 @@ void RetroGraph::reloadResources() {
     refreshConfig();
 }
 
+void RetroGraph::toggleWidgetBackgroundVisible() {
+    m_drawWidgetBackgrounds = !m_drawWidgetBackgrounds;
+    for (const auto& widgetContainer : m_widgetContainers) {
+        widgetContainer->setDrawBackground(m_drawWidgetBackgrounds);
+    }
+}
+
 void RetroGraph::shutdown() {
 }
 
@@ -160,15 +227,32 @@ void RetroGraph::tryRefreshConfig() {
 }
 
 void RetroGraph::refreshConfig() {
-    if (UserSettings::inst().checkConfigChanged()) {
-        UserSettings::inst().refresh();
+    UserSettings& settings{ UserSettings::inst() };
+    if (settings.checkConfigChanged()) {
+        settings.refresh();
 
+        getWidgetPropertiesFromSettings();
+
+        // Update widget visibilities
         for (auto i = size_t{ 0U }; i < static_cast<int>(WidgetType::NumWidgets); ++i) {
-            if (static_cast<bool> (m_widgets[i]) != UserSettings::inst().isVisible(static_cast<WidgetType>(i))) {
+            if (static_cast<bool> (m_widgets[i]) != isWidgetVisible(static_cast<WidgetType>(i))) {
                 toggleWidget(static_cast<WidgetType>(i));
             }
         }
+
+        // Update widget background
+        for (const auto& widgetContainer : m_widgetContainers) {
+            widgetContainer->setDrawBackground(m_drawWidgetBackgrounds);
+        }
+
+        setViewports(m_window.getWidth(), m_window.getHeight());
     }
+}
+
+void RetroGraph::getWidgetPropertiesFromSettings() {
+    m_widgetVisibilities = createWidgetVisibilities();
+    m_widgetPositions = createWidgetPositions();
+    m_drawWidgetBackgrounds = UserSettings::inst().getVal<bool>("Window.WidgetBackground");
 }
 
 void RetroGraph::setViewports(int windowWidth, int windowHeight) {
@@ -177,7 +261,7 @@ void RetroGraph::setViewports(int windowWidth, int windowHeight) {
 
     for (auto i = int{ 0 }; i < static_cast<int>(WidgetType::NumWidgets); ++i) {
         const auto widgetType{ static_cast<WidgetType>(i) };
-        const auto widgetPos{ UserSettings::inst().getWidgetPosition(widgetType) };
+        const auto widgetPos{ getWidgetPosition(widgetType) };
         auto* widget{ m_widgets[static_cast<int>(widgetType)].get() };
         auto& container{ *m_widgetContainers[static_cast<int>(widgetPos)] };
 

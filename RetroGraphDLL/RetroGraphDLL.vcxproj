@@ -183,8 +183,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Application\Application.ixx" />
+    <ClCompile Include="Application\ConfigRefreshedEvent.ixx" />
+    <ClCompile Include="Application\UserSettings.cpp" />
+    <ClCompile Include="Application\UserSettings.ixx" />
     <ClCompile Include="Colors.ixx" />
-    <ClCompile Include="ConfigRefreshedEvent.ixx" />
     <ClCompile Include="Core\CallbackEvent.ixx" />
     <ClCompile Include="Core\Core.ixx" />
     <ClCompile Include="Core\Math.ixx" />
@@ -257,8 +260,6 @@
     <ClCompile Include="Monitors.ixx" />
     <ClCompile Include="RetroGraph.ixx" />
     <ClCompile Include="RGAssert.cpp" />
-    <ClCompile Include="UserSettings.cpp" />
-    <ClCompile Include="UserSettings.ixx" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Utils.ixx" />
     <ClCompile Include="Widgets\CPUGraphWidget.cpp" />

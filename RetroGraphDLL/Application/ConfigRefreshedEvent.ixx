@@ -1,4 +1,4 @@
-export module ConfigRefreshedEvent;
+export module RG.Application:ConfigRefreshedEvent;
 
 import RG.Core;
 

@@ -2,8 +2,7 @@ export module RG.Measures:ProcessMeasure;
 
 import :Measure;
 
-import ConfigRefreshedEvent;
-
+import RG.Application;
 import RG.Measures.Data;
 
 import std.core;

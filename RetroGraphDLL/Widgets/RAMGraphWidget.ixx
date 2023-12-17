@@ -2,8 +2,7 @@ export module RG.Widgets:RAMGraphWidget;
 
 import :Widget;
 
-import ConfigRefreshedEvent;
-
+import RG.Application;
 import RG.Measures;
 import RG.Rendering;
 import RG.Widgets.Graph;

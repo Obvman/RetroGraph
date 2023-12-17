@@ -1,9 +1,9 @@
 export module Window;
 
-import ConfigRefreshedEvent;
 import IRetroGraph; // Reverse Dependency
 import Monitors;
 
+import RG.Application;
 import RG.Measures;
 
 import std.core;

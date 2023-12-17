@@ -3,7 +3,6 @@ module RG.Widgets:MainWidget;
 import :WidgetShaderController;
 
 import Colors;
-import UserSettings;
 
 import RG.Rendering;
 

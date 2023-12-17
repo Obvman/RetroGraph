@@ -1,7 +1,6 @@
 module RG.Widgets:GPUGraphWidget;
 
 import Colors;
-import UserSettings;
 
 namespace rg {
 

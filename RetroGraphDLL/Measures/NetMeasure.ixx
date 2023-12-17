@@ -2,8 +2,7 @@ export module RG.Measures:NetMeasure;
 
 import :Measure;
 
-import ConfigRefreshedEvent;
-
+import RG.Application;
 import RG.Core;
 
 import std.core;

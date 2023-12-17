@@ -40,6 +40,9 @@
     <Filter Include="Modules\Measures\DataSources">
       <UniqueIdentifier>{088cdfe9-69b4-40f4-ada0-d949ff0c39ed}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Modules\Application">
+      <UniqueIdentifier>{c56702e5-132f-45fe-b75e-a250b8691697}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RetroGraphDLL.cpp">
@@ -139,9 +142,6 @@
       <Filter>Modules\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="RetroGraph.ixx">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="UserSettings.ixx">
       <Filter>Modules</Filter>
     </ClCompile>
     <ClCompile Include="Utils.ixx">
@@ -297,9 +297,6 @@
     <ClCompile Include="RetroGraph.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
-    <ClCompile Include="UserSettings.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
     <ClCompile Include="Utils.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
@@ -447,11 +444,20 @@
     <ClCompile Include="Widgets\Widgets.ixx">
       <Filter>Modules\Widgets</Filter>
     </ClCompile>
-    <ClCompile Include="ConfigRefreshedEvent.ixx">
-      <Filter>Modules</Filter>
-    </ClCompile>
     <ClCompile Include="Widgets\Graph\Graph.ixx">
       <Filter>Modules\Widgets\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Application.ixx">
+      <Filter>Modules\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\ConfigRefreshedEvent.ixx">
+      <Filter>Modules\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\UserSettings.cpp">
+      <Filter>Modules\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\UserSettings.ixx">
+      <Filter>Modules\Application</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -32,6 +32,7 @@ public:
 
     void updateWindowSize(int width, int height) override;
     void toggleWidget(WidgetType w) override;
+    void toggleWidgetBackgroundVisible() override;
     void shutdown() override;
 
 private:
@@ -41,11 +42,18 @@ private:
 
     void tryRefreshConfig();
     void refreshConfig();
+
+    void getWidgetPropertiesFromSettings();
     void setViewports(int windowWidth, int windowHeight);
     std::unique_ptr<Widget> createWidget(WidgetType widgetType);
     auto createWidgets();
     auto createWidgetContainers() const;
+    auto createWidgetVisibilities() const;
+    auto createWidgetPositions() const;
     void cleanupUnusedMeasures();
+
+    bool isWidgetVisible(WidgetType w) const { return m_widgetVisibilities[static_cast<int>(w)]; }
+    WidgetPosition getWidgetPosition(WidgetType w) const { return m_widgetPositions[static_cast<int>(w)]; }
 
     std::shared_ptr<CPUMeasure> m_cpuMeasure;
     std::shared_ptr<GPUMeasure> m_gpuMeasure;
@@ -62,6 +70,10 @@ private:
     Window m_window;
     FontManager m_fontManager;
     FPSCounter m_fpsCounter;
+
+    std::vector<bool> m_widgetVisibilities;
+    std::vector<WidgetPosition> m_widgetPositions;
+    bool m_drawWidgetBackgrounds;
     std::vector<std::unique_ptr<Widget>> m_widgets;
     std::vector<std::unique_ptr<WidgetContainer>> m_widgetContainers;
 };

@@ -1,6 +1,6 @@
 export module UnitTests.Test_GraphPointBuffer;
 
-import Widgets.Graph.GraphPointBuffer;
+import RG.Widgets.Graph;
 
 import "Catch2HeaderUnit.h";
 

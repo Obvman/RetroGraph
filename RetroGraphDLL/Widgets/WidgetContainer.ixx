@@ -3,8 +3,7 @@ export module RG.Widgets:WidgetContainer;
 import :Widget;
 import :WidgetPosition;
 
-import ConfigRefreshedEvent;
-
+import RG.Application;
 import RG.Rendering;
 
 import std.core;
@@ -24,7 +23,7 @@ export enum class ContainerType {
  */
 export class WidgetContainer {
 public:
-    explicit WidgetContainer(WidgetPosition p);
+    explicit WidgetContainer(WidgetPosition p, bool drawBackground);
     ~WidgetContainer();
 
     void draw();
@@ -36,6 +35,7 @@ public:
     void clearChildren() { m_children.clear(); }
     void setType(ContainerType t) { m_type = t; }
     void resetType() { m_type = getFillTypeFromPosition(m_pos); }
+    void setDrawBackground(bool drawBackground) { m_drawBackground = drawBackground; }
 
 private:
     void invalidate();

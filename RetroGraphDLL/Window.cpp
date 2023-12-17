@@ -6,7 +6,8 @@ module;
 module Window;
 
 import Colors;
-import UserSettings;
+
+import RG.Application;
 
 import "RGAssert.h";
 import "GLHeaderUnit.h";
@@ -111,7 +112,7 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPa
                     break;
                 }
                 case ID_SET_WIDGET_BG:
-                    UserSettings::inst().toggleWidgetBackgroundVisible();
+                    m_retroGraph->toggleWidgetBackgroundVisible();
                     break;
                 default:
                     // Default case handles monitor selection list
@@ -238,7 +239,7 @@ void Window::createRClickMenu(HWND hWnd) {
             sendToBack();
             break;
         case ID_SET_WIDGET_BG:
-            UserSettings::inst().toggleWidgetBackgroundVisible();
+            m_retroGraph->toggleWidgetBackgroundVisible();
             break;
         case ID_TEST:
             runTest();

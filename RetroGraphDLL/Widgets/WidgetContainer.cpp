@@ -1,7 +1,5 @@
 module RG.Widgets:WidgetContainer;
 
-import UserSettings;
-
 import RG.Rendering;
 
 import "GLHeaderUnit.h";
@@ -9,21 +7,19 @@ import "RGAssert.h";
 
 namespace rg {
 
-WidgetContainer::WidgetContainer(WidgetPosition p)
+WidgetContainer::WidgetContainer(WidgetPosition p, bool drawBackground)
     : m_children{}
     , m_viewport{}
     , m_pos{ p }
     , m_type{ getFillTypeFromPosition(p) }
-    , m_drawBackground{ UserSettings::inst().getVal<bool>("Window.WidgetBackground") }
-    , m_configRefreshedHandle{
-        UserSettings::inst().configRefreshed.attach(
-            [&]() { m_drawBackground = UserSettings::inst().getVal<bool>("Window.WidgetBackground"); })
-    } {
+    , m_drawBackground{ drawBackground } {
 
 }
 
 WidgetContainer::~WidgetContainer() {
-    UserSettings::inst().configRefreshed.detach(m_configRefreshedHandle);
+    for (auto* widget : m_children) {
+        widget->clear();
+    }
 }
 
 bool WidgetContainer::isVisible() const {
