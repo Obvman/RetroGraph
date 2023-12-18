@@ -3,7 +3,7 @@ module;
 #include "Resources/resource.h"
 #include "RetroGraphDLL.h"
 
-module Window;
+module RG.Application:Window;
 
 import Colors;
 

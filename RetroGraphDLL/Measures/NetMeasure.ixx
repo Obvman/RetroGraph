@@ -2,8 +2,8 @@ export module RG.Measures:NetMeasure;
 
 import :Measure;
 
-import RG.Application;
 import RG.Core;
+import RG.UserSettings;
 
 import std.core;
 import std.threading;

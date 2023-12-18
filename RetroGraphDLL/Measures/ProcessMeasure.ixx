@@ -2,8 +2,8 @@ export module RG.Measures:ProcessMeasure;
 
 import :Measure;
 
-import RG.Application;
 import RG.Measures.Data;
+import RG.UserSettings;
 
 import std.core;
 

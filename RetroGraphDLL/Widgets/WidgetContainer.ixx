@@ -3,8 +3,8 @@ export module RG.Widgets:WidgetContainer;
 import :Widget;
 import :WidgetPosition;
 
-import RG.Application;
 import RG.Rendering;
+import RG.UserSettings;
 
 import std.core;
 

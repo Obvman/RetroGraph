@@ -6,6 +6,8 @@ Color scheme definition in usersettings
 
 GPU measure hits a block and starts reporting garbage data until a restart
 
+configurable measure update intervals
+
 More draw call improvements:
     FontManager needs to be reworked for less CPU intensive rendering of text.
 

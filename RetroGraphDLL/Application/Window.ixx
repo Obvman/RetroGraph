@@ -1,10 +1,11 @@
-export module Window;
+export module RG.Application:Window;
 
-import IRetroGraph; // Reverse Dependency
+import :IRetroGraph;
+
 import Monitors;
 
-import RG.Application;
 import RG.Measures;
+import RG.UserSettings;
 
 import std.core;
 

@@ -1,9 +1,10 @@
-export module RetroGraph;
+export module RG.Application:RetroGraph;
+
+import :IRetroGraph;
+import :Window;
 
 import FPSCounter;
 import FPSLimiter;
-import IRetroGraph;
-import Window;
 
 import RG.Measures;
 import RG.Measures.DataSources;

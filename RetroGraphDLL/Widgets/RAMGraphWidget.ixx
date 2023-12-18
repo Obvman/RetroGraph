@@ -2,12 +2,12 @@ export module RG.Widgets:RAMGraphWidget;
 
 import :Widget;
 
-import RG.Application;
 import RG.Measures;
 import RG.Rendering;
+import RG.UserSettings;
 import RG.Widgets.Graph;
 
-import std.memory;
+import std.core;
 
 namespace rg {
 

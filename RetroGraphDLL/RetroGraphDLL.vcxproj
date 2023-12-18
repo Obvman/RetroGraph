@@ -184,9 +184,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application\Application.ixx" />
-    <ClCompile Include="Application\ConfigRefreshedEvent.ixx" />
-    <ClCompile Include="Application\UserSettings.cpp" />
-    <ClCompile Include="Application\UserSettings.ixx" />
+    <ClCompile Include="Application\IRetroGraph.ixx" />
+    <ClCompile Include="Application\RetroGraph.cpp" />
+    <ClCompile Include="Application\RetroGraph.ixx" />
+    <ClCompile Include="Application\Window.cpp" />
+    <ClCompile Include="Application\Window.ixx" />
     <ClCompile Include="Colors.ixx" />
     <ClCompile Include="Core\CallbackEvent.ixx" />
     <ClCompile Include="Core\Core.ixx" />
@@ -237,10 +239,8 @@
     <ClCompile Include="Rendering\VBO.cpp" />
     <ClCompile Include="Rendering\VBO.ixx" />
     <ClCompile Include="Rendering\Viewport.ixx" />
-    <ClCompile Include="RetroGraph.cpp" />
     <ClCompile Include="RetroGraphDLL.cpp" />
     <ClCompile Include="FPSCounter.ixx" />
-    <ClCompile Include="IRetroGraph.ixx" />
     <ClCompile Include="Measures\AnimationState.ixx" />
     <ClCompile Include="Measures\CPUMeasure.ixx" />
     <ClCompile Include="Measures\CPUPlugin.ixx" />
@@ -258,8 +258,10 @@
     <ClCompile Include="Measures\RAMMeasure.ixx" />
     <ClCompile Include="Measures\SystemMeasure.ixx" />
     <ClCompile Include="Monitors.ixx" />
-    <ClCompile Include="RetroGraph.ixx" />
     <ClCompile Include="RGAssert.cpp" />
+    <ClCompile Include="UserSettings\ConfigRefreshedEvent.ixx" />
+    <ClCompile Include="UserSettings\UserSettings.cpp" />
+    <ClCompile Include="UserSettings\UserSettings.ixx" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Utils.ixx" />
     <ClCompile Include="Widgets\CPUGraphWidget.cpp" />
@@ -310,8 +312,6 @@
     <ClCompile Include="Widgets\Widgets.ixx" />
     <ClCompile Include="Widgets\WidgetShaderController.ixx" />
     <ClCompile Include="Widgets\WidgetType.ixx" />
-    <ClCompile Include="Window.cpp" />
-    <ClCompile Include="Window.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GLHeaderUnit.h" />

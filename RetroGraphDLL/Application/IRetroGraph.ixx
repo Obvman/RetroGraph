@@ -1,4 +1,4 @@
-export module IRetroGraph;
+export module RG.Application:IRetroGraph;
 
 import RG.Widgets;
 

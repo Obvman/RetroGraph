@@ -43,6 +43,9 @@
     <Filter Include="Modules\Application">
       <UniqueIdentifier>{c56702e5-132f-45fe-b75e-a250b8691697}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Modules\UserSettings">
+      <UniqueIdentifier>{33459028-dabb-409f-a145-3c3792ed011d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RetroGraphDLL.cpp">
@@ -141,9 +144,6 @@
     <ClCompile Include="Widgets\HDDWidget.ixx">
       <Filter>Modules\Widgets</Filter>
     </ClCompile>
-    <ClCompile Include="RetroGraph.ixx">
-      <Filter>Modules</Filter>
-    </ClCompile>
     <ClCompile Include="Utils.ixx">
       <Filter>Modules</Filter>
     </ClCompile>
@@ -153,13 +153,7 @@
     <ClCompile Include="FPSCounter.ixx">
       <Filter>Modules</Filter>
     </ClCompile>
-    <ClCompile Include="IRetroGraph.ixx">
-      <Filter>Modules</Filter>
-    </ClCompile>
     <ClCompile Include="Monitors.ixx">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="Window.ixx">
       <Filter>Modules</Filter>
     </ClCompile>
     <ClCompile Include="RGAssert.cpp">
@@ -294,17 +288,11 @@
     <ClCompile Include="FPSCounter.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
-    <ClCompile Include="RetroGraph.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
     <ClCompile Include="Utils.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
     <ClCompile Include="CSTDHeaderUnit.h">
       <Filter>Header Units</Filter>
-    </ClCompile>
-    <ClCompile Include="Window.cpp">
-      <Filter>Modules</Filter>
     </ClCompile>
     <ClCompile Include="Widgets\WidgetContainer.ixx">
       <Filter>Modules\Widgets</Filter>
@@ -450,14 +438,29 @@
     <ClCompile Include="Application\Application.ixx">
       <Filter>Modules\Application</Filter>
     </ClCompile>
-    <ClCompile Include="Application\ConfigRefreshedEvent.ixx">
+    <ClCompile Include="Application\IRetroGraph.ixx">
       <Filter>Modules\Application</Filter>
     </ClCompile>
-    <ClCompile Include="Application\UserSettings.cpp">
+    <ClCompile Include="Application\RetroGraph.ixx">
       <Filter>Modules\Application</Filter>
     </ClCompile>
-    <ClCompile Include="Application\UserSettings.ixx">
+    <ClCompile Include="Application\RetroGraph.cpp">
       <Filter>Modules\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Window.cpp">
+      <Filter>Modules\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Window.ixx">
+      <Filter>Modules\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="UserSettings\UserSettings.ixx">
+      <Filter>Modules\UserSettings</Filter>
+    </ClCompile>
+    <ClCompile Include="UserSettings\UserSettings.cpp">
+      <Filter>Modules\UserSettings</Filter>
+    </ClCompile>
+    <ClCompile Include="UserSettings\ConfigRefreshedEvent.ixx">
+      <Filter>Modules\UserSettings</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

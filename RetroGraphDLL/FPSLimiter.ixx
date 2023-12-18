@@ -1,6 +1,6 @@
 export module FPSLimiter;
 
-import RG.Application;
+import RG.UserSettings;
 
 import std.core;
 

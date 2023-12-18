@@ -1,10 +1,10 @@
-module RetroGraph;
+module RG.Application:RetroGraph;
 
 import Colors;
 
-import RG.Application;
 import RG.Core;
 import RG.Rendering;
+import RG.UserSettings;
 
 import "RGAssert.h";
 import "WindowsHeaderUnit.h";

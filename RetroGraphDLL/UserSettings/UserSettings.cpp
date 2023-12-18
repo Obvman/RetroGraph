@@ -1,4 +1,4 @@
-module RG.Application:UserSettings;
+module RG.UserSettings;
 
 import std.filesystem;
 

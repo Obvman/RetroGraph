@@ -1,6 +1,6 @@
-export module RG.Application:UserSettings;
+export module RG.UserSettings;
 
-import :ConfigRefreshedEvent;
+export import :ConfigRefreshedEvent;
 
 import Utils;
 

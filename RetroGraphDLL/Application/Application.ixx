@@ -1,4 +1,4 @@
 export module RG.Application;
 
-export import :ConfigRefreshedEvent;
-export import :UserSettings;
+export import :IRetroGraph;
+export import :RetroGraph;
