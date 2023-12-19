@@ -6,7 +6,8 @@ import RG.Rendering;
 namespace rg {
 
 AnimationState::AnimationState()
-    : m_particles( createParticles() )
+    : Measure{ milliseconds{ 0 } }
+    , m_particles( createParticles() )
     , m_particleLines{}
     , m_numLines{ 0 } {
 

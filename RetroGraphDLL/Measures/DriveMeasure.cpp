@@ -4,7 +4,9 @@ import "WindowsHeaderUnit.h";
 
 namespace rg {
 
-DriveMeasure::DriveMeasure() { 
+DriveMeasure::DriveMeasure()
+    : Measure{std::chrono::seconds{ 30 }} {
+
     // Enumerate all available logical drives and store the drive paths
     const auto driveMask{ GetLogicalDrives() };
     for (int8_t i{ 0U }; i < 26; ++i) {

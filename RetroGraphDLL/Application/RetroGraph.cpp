@@ -46,9 +46,10 @@ auto RetroGraph::createWidgetContainers() const {
 auto RetroGraph::createWidgets() {
     decltype(m_widgets) widgetList( static_cast<int>(WidgetType::NumWidgets) );
 
+    const auto widgetVisibilities{createWidgetVisibilities()};
     for (auto i = int{ 0 }; i < static_cast<int>(WidgetType::NumWidgets); ++i) {
         WidgetType widgetType{ static_cast<WidgetType> (i) };
-        if (isWidgetVisible(widgetType))
+        if (widgetVisibilities[i])
             widgetList[i] = createWidget(widgetType);
         else
             widgetList[i] = nullptr;
@@ -57,8 +58,8 @@ auto RetroGraph::createWidgets() {
     return widgetList;
 }
 
-auto RetroGraph::createWidgetVisibilities() const {
-    decltype(m_widgetVisibilities) widgetVisibilities( static_cast<int>(WidgetType::NumWidgets) );
+std::vector<bool> RetroGraph::createWidgetVisibilities() const {
+    std::vector<bool> widgetVisibilities( static_cast<int>(WidgetType::NumWidgets) );
 
     UserSettings& settings{ UserSettings::inst() };
     widgetVisibilities[static_cast<int>(WidgetType::Time)]        = settings.getVal<bool>("Widgets-Time.Visible");
@@ -117,7 +118,6 @@ RetroGraph::RetroGraph(HINSTANCE hInstance)
     : m_window{ this, getOrCreate(m_displayMeasure), hInstance, UserSettings::inst().getVal<int>("Window.Monitor") }
     , m_fontManager{ m_window.getHwnd(), m_window.getHeight() }
     , m_fpsCounter{}
-    , m_widgetVisibilities(createWidgetVisibilities())
     , m_widgetPositions(createWidgetPositions())
     , m_drawWidgetBackgrounds{ UserSettings::inst().getVal<bool>("Window.WidgetBackground") }
     , m_widgets{ createWidgets() }
@@ -231,11 +231,13 @@ void RetroGraph::refreshConfig() {
     if (settings.checkConfigChanged()) {
         settings.refresh();
 
+        const auto widgetVisibilities{createWidgetVisibilities()};
+
         getWidgetPropertiesFromSettings();
 
         // Update widget visibilities
         for (auto i = size_t{ 0U }; i < static_cast<int>(WidgetType::NumWidgets); ++i) {
-            if (static_cast<bool> (m_widgets[i]) != isWidgetVisible(static_cast<WidgetType>(i))) {
+            if (widgetVisibilities[i] != isWidgetVisible(static_cast<WidgetType>(i))) {
                 toggleWidget(static_cast<WidgetType>(i));
             }
         }
@@ -250,7 +252,6 @@ void RetroGraph::refreshConfig() {
 }
 
 void RetroGraph::getWidgetPropertiesFromSettings() {
-    m_widgetVisibilities = createWidgetVisibilities();
     m_widgetPositions = createWidgetPositions();
     m_drawWidgetBackgrounds = UserSettings::inst().getVal<bool>("Window.WidgetBackground");
 }

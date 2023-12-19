@@ -12,7 +12,10 @@ export using PostUpdateEvent = CallbackEvent<>;
 
 export class Measure {
 public:
-    Measure() : m_lastUpdateTime{ steady_clock::now() } { }
+    Measure(std::optional<microseconds> updateInterval)
+        : m_lastUpdateTime{ steady_clock::now() }
+        , m_updateInterval{ updateInterval }
+    { }
 
     virtual ~Measure() = default;
 
@@ -22,12 +25,19 @@ public:
     Measure& operator=(Measure&&)      = delete;
 
     void update() {
-        if (since(m_lastUpdateTime) > updateInterval()) {
-            if (updateInternal()) {
-                postUpdate.raise();
+        if (m_updateInterval) {
+            if (since(m_lastUpdateTime) > *m_updateInterval) {
+                if (updateInternal()) {
+                    postUpdate.raise();
+                }
+                m_lastUpdateTime = high_resolution_clock::now();
             }
-            m_lastUpdateTime = high_resolution_clock::now();
         }
+    }
+
+    void setUpdateInterval(std::optional<microseconds> updateInterval) {
+        m_updateInterval = updateInterval;
+        m_lastUpdateTime = high_resolution_clock::now();
     }
 
     PostUpdateEvent postUpdate;
@@ -35,9 +45,9 @@ public:
 protected:
     // The implementation of measure updates. Returns true if any data was modified, otherwise returns false.
     virtual bool updateInternal() = 0;
-    virtual std::chrono::microseconds updateInterval() const { return std::chrono::seconds{ 2 }; }
 
     high_resolution_clock::time_point m_lastUpdateTime;
+    std::optional<microseconds> m_updateInterval;
 };
 
 }

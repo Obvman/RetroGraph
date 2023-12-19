@@ -9,7 +9,9 @@ unsigned long long fileTimeToInt64(const FILETIME & ft) {
         | (static_cast<unsigned long long> (ft.dwLowDateTime));
 }
 
-CPUMeasure::CPUMeasure() {
+CPUMeasure::CPUMeasure()
+    : Measure{ seconds{ 1 } } {
+
     updateCPUName();
 }
 

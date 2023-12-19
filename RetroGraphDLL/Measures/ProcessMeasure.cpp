@@ -14,7 +14,8 @@ import "WindowsHeaderUnit.h";
 namespace rg {
 
 ProcessMeasure::ProcessMeasure()
-    : m_numCPUProcessesToDisplay{ UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesCPU.NumProcessesDisplayed") }
+    : Measure{ seconds{ 2 } }
+    , m_numCPUProcessesToDisplay{ UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesCPU.NumProcessesDisplayed") }
     , m_numRAMProcessesToDisplay{ UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesRAM.NumProcessesDisplayed") }
     , m_configRefreshedHandle{
         UserSettings::inst().configRefreshed.attach(

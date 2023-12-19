@@ -3,7 +3,8 @@ module RG.Measures:MusicMeasure;
 namespace rg {
 
 MusicMeasure::MusicMeasure(std::unique_ptr<const IMusicDataSource> musicDataSource)
-    : m_musicDataSource{ std::move(musicDataSource) } {
+    : Measure{ seconds{ 1 } }
+    , m_musicDataSource{ std::move(musicDataSource) } {
 
     updateInternal();
 }

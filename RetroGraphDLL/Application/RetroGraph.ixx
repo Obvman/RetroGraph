@@ -49,11 +49,11 @@ private:
     std::unique_ptr<Widget> createWidget(WidgetType widgetType);
     auto createWidgets();
     auto createWidgetContainers() const;
-    auto createWidgetVisibilities() const;
+    std::vector<bool> createWidgetVisibilities() const;
     auto createWidgetPositions() const;
     void cleanupUnusedMeasures();
 
-    bool isWidgetVisible(WidgetType w) const { return m_widgetVisibilities[static_cast<int>(w)]; }
+    bool isWidgetVisible(WidgetType w) const { return m_widgets[static_cast<int>(w)] != nullptr; }
     WidgetPosition getWidgetPosition(WidgetType w) const { return m_widgetPositions[static_cast<int>(w)]; }
 
     std::shared_ptr<CPUMeasure> m_cpuMeasure;
@@ -72,7 +72,6 @@ private:
     FontManager m_fontManager;
     FPSCounter m_fpsCounter;
 
-    std::vector<bool> m_widgetVisibilities;
     std::vector<WidgetPosition> m_widgetPositions;
     bool m_drawWidgetBackgrounds;
     std::vector<std::unique_ptr<Widget>> m_widgets;

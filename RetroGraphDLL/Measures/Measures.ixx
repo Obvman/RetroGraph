@@ -9,7 +9,6 @@ export import :GPUMeasure;
 export import :Measure;
 export import :MusicMeasure;
 export import :NetMeasure;
-//export import :NtDefs;
 export import :Particle;
 export import :ParticleLine;
 export import :ProcessMeasure;

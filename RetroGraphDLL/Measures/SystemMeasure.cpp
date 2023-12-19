@@ -9,7 +9,9 @@ import "WindowsHeaderUnit.h";
 
 namespace rg {
 
-SystemMeasure::SystemMeasure() {
+SystemMeasure::SystemMeasure()
+    : Measure{ std::nullopt } {
+
     getOSVersionInfo();
     getCPUInfo();
     getRAMInfo();

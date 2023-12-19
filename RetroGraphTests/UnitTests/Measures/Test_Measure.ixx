@@ -10,14 +10,15 @@ constexpr milliseconds testMeasureUpdateInterval{ 10 };
 
 class TestMeasure : public rg::Measure {
 public:
+    TestMeasure() : Measure{ testMeasureUpdateInterval } {}
 
 protected:
     bool updateInternal() override { return true; }
-    microseconds updateInterval() const { return testMeasureUpdateInterval; }
 };
 
-class StaticTestMeasure : public TestMeasure {
+class StaticTestMeasure : public rg::Measure {
 public:
+    StaticTestMeasure() : Measure{ std::nullopt } {}
 
 protected:
     bool updateInternal() override { return false; }

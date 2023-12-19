@@ -5,7 +5,8 @@ import "WindowsHeaderUnit.h";
 namespace rg {
 
 TimeMeasure::TimeMeasure() 
-    : m_systemTime{ getCurrentLocalTime() }
+    : Measure{ milliseconds{ 100 } }
+    , m_systemTime{ getCurrentLocalTime() }
     , m_uptime{ getCurrentUptime() } {
 
 }

@@ -19,7 +19,6 @@ public:
 protected:
     /* Updates each drive with new values */
     bool updateInternal() override;
-    microseconds updateInterval() const override { return milliseconds{ 100 }; }
 
 private:
     local_time<seconds> getCurrentLocalTime() const;

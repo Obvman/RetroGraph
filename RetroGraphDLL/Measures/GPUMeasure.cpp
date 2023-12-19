@@ -16,7 +16,9 @@ namespace rg {
 
 constexpr int NVAPI_GPU_UTILIZATION_DOMAIN_GPU{ 0U };
 
-GPUMeasure::GPUMeasure() {
+GPUMeasure::GPUMeasure()
+    : Measure{ std::chrono::seconds{ 1 } } {
+
     if (NvAPI_Initialize() != NVAPI_OK) {
         m_isEnabled = false;
         return;

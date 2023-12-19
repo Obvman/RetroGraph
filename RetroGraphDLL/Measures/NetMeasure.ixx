@@ -33,8 +33,6 @@ public:
 protected:
     bool updateInternal() override;
 
-    std::chrono::microseconds updateInterval() const override { return std::chrono::seconds{ 1 }; }
-
 private:
     void startNetworkThread();
     void destroyNetworkThread();

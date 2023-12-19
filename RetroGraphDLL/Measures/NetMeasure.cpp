@@ -12,7 +12,8 @@ import "WindowsNetworkHeaderUnit.h";
 namespace rg {
 
 NetMeasure::NetMeasure()
-    : m_pingServer{ UserSettings::inst().getVal<std::string>("Network.PingServer") }
+    : Measure{ seconds{ 1 } }
+    , m_pingServer{ UserSettings::inst().getVal<std::string>("Network.PingServer") }
     , m_pingFreqSec{ UserSettings::inst().getVal<int>("Network.PingFrequency") }
     , m_configRefreshedHandle{
         UserSettings::inst().configRefreshed.attach(

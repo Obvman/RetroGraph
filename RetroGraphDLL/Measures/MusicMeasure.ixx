@@ -31,7 +31,6 @@ protected:
      * class name as a key to determine if the window is still open or not
      */
     bool updateInternal() override;
-    std::chrono::microseconds updateInterval() const override { return std::chrono::seconds{ 1 }; }
 
 private:
     std::unique_ptr<const IMusicDataSource> m_musicDataSource;

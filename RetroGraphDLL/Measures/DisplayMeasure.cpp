@@ -3,7 +3,8 @@ module RG.Measures:DisplayMeasure;
 namespace rg {
 
 DisplayMeasure::DisplayMeasure()
-    : m_monitors{} {
+    : Measure{ std::nullopt }
+    , m_monitors{} {
 
     updateInternal();
 }

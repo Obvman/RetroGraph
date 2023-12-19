@@ -54,8 +54,6 @@ protected:
     /* Updates the total system's CPU usage statistics */
     bool updateInternal() override;
 
-    std::chrono::microseconds updateInterval() const override { return std::chrono::seconds{ 1 }; }
-
 private:
     /* Fill CPU name if CoreTemp interfacing was successful */
     void updateCPUName();

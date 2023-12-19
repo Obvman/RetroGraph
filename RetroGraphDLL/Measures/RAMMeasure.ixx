@@ -45,8 +45,6 @@ protected:
     /* Updates the system memory status values */
     bool updateInternal() override;
 
-    std::chrono::microseconds updateInterval() const override { return std::chrono::seconds{ 1 }; }
-
 private:
     /* Returns more accurate load percentage as a float from 0.0 - 1.0 */
     float getLoadPercentagef() const;

@@ -2,7 +2,9 @@ module RG.Measures:RAMMeasure;
 
 namespace rg {
 
-RAMMeasure::RAMMeasure() {
+RAMMeasure::RAMMeasure()
+    : Measure{ seconds{ 1 } } {
+
     // Fill the memory stat struct with system information
     m_memStatus.dwLength = sizeof(m_memStatus);
     GlobalMemoryStatusEx(&m_memStatus);

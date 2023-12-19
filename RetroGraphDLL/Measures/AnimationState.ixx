@@ -25,7 +25,6 @@ protected:
 
     /* Updates the positions of all particles */
     bool updateInternal() override;
-    std::chrono::microseconds updateInterval() const override { return std::chrono::microseconds{ 0 }; }
 
 private:
     void updateParticleLines();

@@ -40,8 +40,6 @@ protected:
     /* Get latest GPU stats from OpenGL or nvapi and updates dynamic members */
     bool updateInternal() override;
 
-    std::chrono::microseconds updateInterval() const override { return std::chrono::seconds{ 1 }; }
-
 private:
     NvPhysicalGpuHandle getGpuHandle() const;
     void updateGpuTemp();
