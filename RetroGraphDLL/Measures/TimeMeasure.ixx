@@ -25,7 +25,6 @@ protected:
 
 private:
     std::unique_ptr<const ITimeDataSource> m_timeDataSource;
-
     TimeData m_timeData;
 };
 

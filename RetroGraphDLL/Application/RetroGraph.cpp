@@ -24,6 +24,8 @@ std::shared_ptr<T> createMeasure() {
     } else if constexpr (std::is_same_v<T, TimeMeasure>) {
         return std::make_shared<T>(milliseconds{ settings.getVal<int>("Measures-Time.UpdateInterval") },
                                    std::make_unique<ChronoTimeDataSource>());
+    } else if constexpr (std::is_same_v<T, SystemMeasure>) {
+        return std::make_shared<T>(std::make_unique<Win32RAMDataSource>());
     } else {
         return std::make_shared<T>();
     }

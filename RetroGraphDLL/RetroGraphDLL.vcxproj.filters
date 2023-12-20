@@ -471,6 +471,15 @@
     <ClCompile Include="Measures\DataSources\ChronoTimeDataSource.cpp">
       <Filter>Modules\Measures\DataSources</Filter>
     </ClCompile>
+    <ClCompile Include="Measures\DataSources\IRAMDataSource.ixx">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\Win32RAMDataSource.ixx">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\Win32RAMDataSource.cpp">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resources\resource.h">

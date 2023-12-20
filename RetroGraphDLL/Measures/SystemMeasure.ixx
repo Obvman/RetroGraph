@@ -2,6 +2,8 @@ export module RG.Measures:SystemMeasure;
 
 import :Measure;
 
+import RG.Measures.DataSources;
+
 import std.core;
 
 namespace rg {
@@ -9,7 +11,7 @@ namespace rg {
 /* Contains static information about the computer so no need to update */
 export class SystemMeasure : public Measure {
 public:
-    SystemMeasure();
+    SystemMeasure(std::unique_ptr<const IRAMDataSource> ramDataSource);
     ~SystemMeasure() noexcept = default;
 
     /* Returns string of current operating system version/build number */
@@ -35,8 +37,10 @@ private:
     void getOSVersionInfo();
     /* Sets the contents of m_cpuDescription. Only needs to be called once */
     void getCPUInfo();
-    /* Sets the contents of m_ramDescription. Only needs to be called once */
-    void getRAMInfo();
+
+    std::string getRAMInfo(const IRAMDataSource& ramDataSource) const;
+
+    std::unique_ptr<const IRAMDataSource> m_ramDataSource;
 
     std::string m_osInfoStr{ "" };
     std::string m_cpuDescription{ "" };

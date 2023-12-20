@@ -9,12 +9,13 @@ import "WindowsHeaderUnit.h";
 
 namespace rg {
 
-SystemMeasure::SystemMeasure()
-    : Measure{ std::nullopt } {
+SystemMeasure::SystemMeasure(std::unique_ptr<const IRAMDataSource> ramDataSource)
+    : Measure{ std::nullopt }
+    , m_ramDataSource{ std::move(ramDataSource) }
+    , m_ramDescription{ getRAMInfo(*m_ramDataSource) } {
 
     getOSVersionInfo();
     getCPUInfo();
-    getRAMInfo();
 
     // Get the current computer name
     char uNameBuf[MAX_COMPUTERNAME_LENGTH+1];
@@ -77,15 +78,10 @@ void SystemMeasure::getCPUInfo() {
     m_cpuDescription = "CPU: " + std::string{ CPUBrandString };
 }
 
-void SystemMeasure::getRAMInfo() {
-    MEMORYSTATUSEX memStatus;
-    memStatus.dwLength = sizeof(MEMORYSTATUSEX);
-    GlobalMemoryStatusEx(&memStatus);
-
-    char buff[12];
-    snprintf(buff, sizeof(buff), "RAM: %2.1fGB",
-             memStatus.ullTotalPhys/static_cast<float>(GB));
-    m_ramDescription = buff;
+std::string SystemMeasure::getRAMInfo(const IRAMDataSource& ramDataSource) const {
+    char buff[64];
+    snprintf(buff, sizeof(buff), "RAM: %2.1fGB", ramDataSource.getRAMCapacity() / static_cast<float>(GB));
+    return buff;
 }
 
 } // namespace rg
