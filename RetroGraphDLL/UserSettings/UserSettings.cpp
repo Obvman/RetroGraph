@@ -53,15 +53,16 @@ void UserSettings::readConfig() {
 }
 
 void UserSettings::readMembers(const INIReader& reader) {
+    // #TODO typesafe keys
     m_settings["Application.AutoReadConfig"]                     = reader.GetBoolean("Application",          "AutoReadConfig", true);
     m_settings["Application.FPS"]                                = reader.GetInteger("Application",          "FPS", 30);
     m_settings["Window.Monitor"]                                 = reader.GetInteger("Window",               "Monitor", 0);
     m_settings["Window.WidgetBackground"]                        = reader.GetBoolean("Window",               "WidgetBackground", true);
 
-    // TODO put in the measures category
-    m_settings["Network.PingServer"]                             = reader.Get       ("Network",              "PingServer", "http://www.google.com/");
-    m_settings["Network.PingFrequency"]                          = reader.GetInteger("Network",              "PingFrequency", 10);
-    m_settings["Measures-Music.UpdateInterval"]                  = reader.GetInteger("Measures-Music",       "UpdateInterval", 1000);
+    m_settings["Measures-Music.UpdateInterval"] = reader.GetInteger("Measures-Music","UpdateInterval", 1000);
+    m_settings["Measures-Net.PingServer"]       = reader.Get       ("Measures-Net",  "PingServer", "http://www.google.com/");
+    m_settings["Measures-Net.PingFrequency"]    = reader.GetInteger("Measures-Net",  "PingFrequency", 10);
+    m_settings["Measures-Time.UpdateInterval"]  = reader.GetInteger("Measures-Time", "UpdateInterval", 100);
 
     m_settings["Widgets-ProcessesCPU.NumProcessesDisplayed"]     = reader.GetInteger("Widgets-ProcessesCPU", "NumProcessesDisplayed", 10);
     m_settings["Widgets-ProcessesCPU.HighCPUUsageThreshold"]     = reader.GetReal   ("Widgets-ProcessesCPU", "HighCPUUsageThreshold", 0.2);

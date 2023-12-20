@@ -2,6 +2,8 @@ export module RG.Measures:TimeMeasure;
 
 import :Measure;
 
+import RG.Measures.DataSources;
+
 import std.core;
 
 namespace rg {
@@ -10,22 +12,21 @@ using namespace std::chrono;
 
 export class TimeMeasure : public Measure {
 public:
-    TimeMeasure();
+    TimeMeasure(std::chrono::milliseconds updateInterval,
+                std::unique_ptr<const ITimeDataSource> timeDataSource);
     ~TimeMeasure() noexcept = default;
 
-    local_time<seconds> getLocalTime() const { return m_systemTime; }
-    seconds getUptime() const { return m_uptime; }
+    local_time<seconds> getLocalTime() const { return m_timeData.localTime; }
+    seconds getUptime() const { return m_timeData.uptime; }
 
 protected:
     /* Updates each drive with new values */
     bool updateInternal() override;
 
 private:
-    local_time<seconds> getCurrentLocalTime() const;
-    seconds getCurrentUptime() const;
+    std::unique_ptr<const ITimeDataSource> m_timeDataSource;
 
-    local_time<seconds> m_systemTime;
-    seconds m_uptime;
+    TimeData m_timeData;
 };
 
 } // namespace rg

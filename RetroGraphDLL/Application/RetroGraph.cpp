@@ -21,6 +21,9 @@ std::shared_ptr<T> createMeasure() {
     if constexpr (std::is_same_v<T, MusicMeasure>) {
         return std::make_shared<T>(milliseconds{ settings.getVal<int>("Measures-Music.UpdateInterval") },
                                    std::make_unique<FoobarMusicDataSource>());
+    } else if constexpr (std::is_same_v<T, TimeMeasure>) {
+        return std::make_shared<T>(milliseconds{ settings.getVal<int>("Measures-Time.UpdateInterval") },
+                                   std::make_unique<ChronoTimeDataSource>());
     } else {
         return std::make_shared<T>();
     }
@@ -337,7 +340,7 @@ ConfigRefreshedEvent::Handle RetroGraph::RegisterConfigRefreshedCallback() {
             //if (m_systemMeasure) m_systemMeasure->update();
             //if (m_animationState) m_animationState->update();
             //if (m_displayMeasure) m_displayMeasure->update();
-            //if (m_timeMeasure) m_timeMeasure->update();
+            if (m_timeMeasure) m_timeMeasure->setUpdateInterval(milliseconds{ settings.getVal<int>("Measures-Time.UpdateInterval") });
 
             const auto widgetVisibilities{createWidgetVisibilities()};
 

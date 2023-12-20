@@ -462,6 +462,15 @@
     <ClCompile Include="UserSettings\ConfigRefreshedEvent.ixx">
       <Filter>Modules\UserSettings</Filter>
     </ClCompile>
+    <ClCompile Include="Measures\DataSources\ITimeDataSource.ixx">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\ChronoTimeDataSource.ixx">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\ChronoTimeDataSource.cpp">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resources\resource.h">
