@@ -56,6 +56,8 @@ private:
     bool isWidgetVisible(WidgetType w) const { return m_widgets[static_cast<int>(w)] != nullptr; }
     WidgetPosition getWidgetPosition(WidgetType w) const { return m_widgetPositions[static_cast<int>(w)]; }
 
+    ConfigRefreshedEvent::Handle RegisterConfigRefreshedCallback();
+
     std::shared_ptr<CPUMeasure> m_cpuMeasure;
     std::shared_ptr<GPUMeasure> m_gpuMeasure;
     std::shared_ptr<RAMMeasure> m_ramMeasure;
@@ -76,6 +78,8 @@ private:
     bool m_drawWidgetBackgrounds;
     std::vector<std::unique_ptr<Widget>> m_widgets;
     std::vector<std::unique_ptr<WidgetContainer>> m_widgetContainers;
+
+    ConfigRefreshedEvent::Handle m_configRefreshedHandle;
 };
 
 } // namespace rg

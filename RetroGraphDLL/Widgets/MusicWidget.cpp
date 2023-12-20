@@ -45,8 +45,8 @@ void MusicWidget::draw() const {
 
         char elapsedBuff[21];
         char totalBuff[10];
-        createFormattedTimeStr(elapsedBuff, sizeof(elapsedBuff), elapsed);
-        createFormattedTimeStr(totalBuff, sizeof(totalBuff), total);
+        createFormattedTimeStr(elapsedBuff, sizeof(elapsedBuff), static_cast<int>(elapsed.count()));
+        createFormattedTimeStr(totalBuff, sizeof(totalBuff), static_cast<int>(total.count()));
         strcat_s(elapsedBuff, sizeof(elapsedBuff), "/");
         strcat_s(elapsedBuff, sizeof(elapsedBuff), totalBuff);
 
@@ -54,7 +54,7 @@ void MusicWidget::draw() const {
         m_fontManager->renderLine(-0.9f, 0.5f, RG_FONT_STANDARD, elapsedBuff, 
                                   static_cast<int>(strlen(elapsedBuff)));
         drawHorizontalProgressBar(0.3f, -0.9f, 0.9f,
-                                  static_cast<float>(elapsed), static_cast<float>(total));
+                                  static_cast<float>(elapsed.count()), static_cast<float>(total.count()));
     } else {
         m_fontManager->renderLine(RG_FONT_TIME, "No Media", 0, 0, 0, 0,
                                   RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_CENTERED_HORIZONTAL,

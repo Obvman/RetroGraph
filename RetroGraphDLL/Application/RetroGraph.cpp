@@ -14,8 +14,13 @@ namespace rg {
 // TODO measure and data source factories
 template<std::derived_from<Measure> T>
 std::shared_ptr<T> createMeasure() {
+    using namespace std::chrono;
+
+    auto& settings{ UserSettings::inst() };
+
     if constexpr (std::is_same_v<T, MusicMeasure>) {
-        return std::make_shared<T>(std::make_unique<FoobarMusicDataSource>());
+        return std::make_shared<T>(milliseconds{ settings.getVal<int>("Measures-Music.UpdateInterval") },
+                                   std::make_unique<FoobarMusicDataSource>());
     } else {
         return std::make_shared<T>();
     }
@@ -121,7 +126,8 @@ RetroGraph::RetroGraph(HINSTANCE hInstance)
     , m_widgetPositions(createWidgetPositions())
     , m_drawWidgetBackgrounds{ UserSettings::inst().getVal<bool>("Window.WidgetBackground") }
     , m_widgets{ createWidgets() }
-    , m_widgetContainers{ createWidgetContainers() } {
+    , m_widgetContainers{ createWidgetContainers() }
+    , m_configRefreshedHandle{ RegisterConfigRefreshedCallback() } {
 
     setViewports(m_window.getWidth(), m_window.getHeight());
 
@@ -230,24 +236,6 @@ void RetroGraph::refreshConfig() {
     UserSettings& settings{ UserSettings::inst() };
     if (settings.checkConfigChanged()) {
         settings.refresh();
-
-        const auto widgetVisibilities{createWidgetVisibilities()};
-
-        getWidgetPropertiesFromSettings();
-
-        // Update widget visibilities
-        for (auto i = size_t{ 0U }; i < static_cast<int>(WidgetType::NumWidgets); ++i) {
-            if (widgetVisibilities[i] != isWidgetVisible(static_cast<WidgetType>(i))) {
-                toggleWidget(static_cast<WidgetType>(i));
-            }
-        }
-
-        // Update widget background
-        for (const auto& widgetContainer : m_widgetContainers) {
-            widgetContainer->setDrawBackground(m_drawWidgetBackgrounds);
-        }
-
-        setViewports(m_window.getWidth(), m_window.getHeight());
     }
 }
 
@@ -330,6 +318,46 @@ std::unique_ptr<Widget> RetroGraph::createWidget(WidgetType widgetType) {
     }
 
     return nullptr;
+}
+
+ConfigRefreshedEvent::Handle RetroGraph::RegisterConfigRefreshedCallback() {
+    return UserSettings::inst().configRefreshed.attach(
+        [this]() {
+            using namespace std::chrono;
+
+            auto& settings{ UserSettings::inst() };
+
+            //if (m_cpuMeasure) m_cpuMeasure->update();
+            //if (m_gpuMeasure) m_gpuMeasure->update();
+            //if (m_ramMeasure) m_ramMeasure->update();
+            //if (m_netMeasure) m_netMeasure->update();
+            //if (m_processMeasure) m_processMeasure->update();
+            //if (m_driveMeasure) m_driveMeasure->update();
+            if (m_musicMeasure) m_musicMeasure->setUpdateInterval(milliseconds{ settings.getVal<int>("Measures-Music.UpdateInterval") });
+            //if (m_systemMeasure) m_systemMeasure->update();
+            //if (m_animationState) m_animationState->update();
+            //if (m_displayMeasure) m_displayMeasure->update();
+            //if (m_timeMeasure) m_timeMeasure->update();
+
+            const auto widgetVisibilities{createWidgetVisibilities()};
+
+            getWidgetPropertiesFromSettings();
+
+            // Update widget visibilities
+            for (auto i = size_t{ 0U }; i < static_cast<int>(WidgetType::NumWidgets); ++i) {
+                if (widgetVisibilities[i] != isWidgetVisible(static_cast<WidgetType>(i))) {
+                    toggleWidget(static_cast<WidgetType>(i));
+                }
+            }
+
+            // Update widget background
+            for (const auto& widgetContainer : m_widgetContainers) {
+                widgetContainer->setDrawBackground(m_drawWidgetBackgrounds);
+            }
+
+            setViewports(m_window.getWidth(), m_window.getHeight());
+        }
+    );
 }
 
 } // namespace rg

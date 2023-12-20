@@ -40,6 +40,9 @@
     <ClCompile Include="UnitTests\Widgets\Graph\Test_GraphPointBuffer.ixx">
       <Filter>UnitTests\Widgets\Graph</Filter>
     </ClCompile>
+    <ClCompile Include="UnitTests\Measures\Test_MusicMeasure.ixx">
+      <Filter>UnitTests\Measures</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="catch2.hpp" />

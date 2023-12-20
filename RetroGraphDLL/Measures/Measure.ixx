@@ -12,7 +12,7 @@ export using PostUpdateEvent = CallbackEvent<>;
 
 export class Measure {
 public:
-    Measure(std::optional<microseconds> updateInterval)
+    Measure(std::optional<milliseconds> updateInterval)
         : m_lastUpdateTime{ steady_clock::now() }
         , m_updateInterval{ updateInterval }
     { }
@@ -35,7 +35,7 @@ public:
         }
     }
 
-    void setUpdateInterval(std::optional<microseconds> updateInterval) {
+    void setUpdateInterval(std::optional<milliseconds> updateInterval) {
         m_updateInterval = updateInterval;
         m_lastUpdateTime = high_resolution_clock::now();
     }
@@ -47,7 +47,7 @@ protected:
     virtual bool updateInternal() = 0;
 
     high_resolution_clock::time_point m_lastUpdateTime;
-    std::optional<microseconds> m_updateInterval;
+    std::optional<milliseconds> m_updateInterval;
 };
 
 }

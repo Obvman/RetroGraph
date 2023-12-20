@@ -106,8 +106,8 @@ void FoobarMusicDataSource::populateDataFromTitle(const std::string& playerWindo
     auto& timeProgress{ titleTokens[4] };
     std::string_view elapsed = strtok_s(&timeProgress[0], ",", &nextToken);
     std::string_view total = strtok_s(nullptr, ", ", &nextToken);
-    musicData.elapsedTime = strToNum<decltype(musicData.elapsedTime)>(elapsed);
-    musicData.totalTime = strToNum<decltype(musicData.totalTime)>(total);
+    musicData.elapsedTime = std::chrono::seconds{ strToNum<int>(elapsed) };
+    musicData.totalTime = std::chrono::seconds{ strToNum<int>(total) };
 }
 
 }

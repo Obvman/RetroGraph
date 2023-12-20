@@ -27,7 +27,7 @@ protected:
 TEST_CASE("Measures::Measure. Update", "[measure]") {
     TestMeasure measure;
     bool updateEventTriggered{ false };
-    auto handle{ measure.postUpdate.attach([&]() {updateEventTriggered = true; }) };
+    auto handle{ measure.postUpdate.attach([&]() { updateEventTriggered = true; }) };
 
     SECTION("Instant update does not trigger event") {
         measure.update();

@@ -10,8 +10,8 @@ export struct MusicData {
     std::string trackName;
     std::string artist;
     std::string album;
-    int elapsedTime{ 0 };
-    int totalTime{ 0 };
+    std::chrono::seconds elapsedTime{ 0 };
+    std::chrono::seconds totalTime{ 0 };
 
     auto operator<=>(const MusicData&) const = default;
 };

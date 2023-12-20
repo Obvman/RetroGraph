@@ -57,8 +57,12 @@ void UserSettings::readMembers(const INIReader& reader) {
     m_settings["Application.FPS"]                                = reader.GetInteger("Application",          "FPS", 30);
     m_settings["Window.Monitor"]                                 = reader.GetInteger("Window",               "Monitor", 0);
     m_settings["Window.WidgetBackground"]                        = reader.GetBoolean("Window",               "WidgetBackground", true);
+
+    // TODO put in the measures category
     m_settings["Network.PingServer"]                             = reader.Get       ("Network",              "PingServer", "http://www.google.com/");
     m_settings["Network.PingFrequency"]                          = reader.GetInteger("Network",              "PingFrequency", 10);
+    m_settings["Measures-Music.UpdateInterval"]                  = reader.GetInteger("Measures-Music",       "UpdateInterval", 1000);
+
     m_settings["Widgets-ProcessesCPU.NumProcessesDisplayed"]     = reader.GetInteger("Widgets-ProcessesCPU", "NumProcessesDisplayed", 10);
     m_settings["Widgets-ProcessesCPU.HighCPUUsageThreshold"]     = reader.GetReal   ("Widgets-ProcessesCPU", "HighCPUUsageThreshold", 0.2);
     m_settings["Widgets-ProcessesRAM.NumProcessesDisplayed"]     = reader.GetInteger("Widgets-ProcessesRAM", "NumProcessesDisplayed", 10);

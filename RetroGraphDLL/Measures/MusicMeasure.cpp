@@ -2,11 +2,10 @@ module RG.Measures:MusicMeasure;
 
 namespace rg {
 
-MusicMeasure::MusicMeasure(std::unique_ptr<const IMusicDataSource> musicDataSource)
-    : Measure{ seconds{ 1 } }
+MusicMeasure::MusicMeasure(std::chrono::milliseconds updateInterval,
+                           std::unique_ptr<const IMusicDataSource> musicDataSource)
+    : Measure{ updateInterval }
     , m_musicDataSource{ std::move(musicDataSource) } {
-
-    updateInternal();
 }
 
 bool MusicMeasure::updateInternal() {

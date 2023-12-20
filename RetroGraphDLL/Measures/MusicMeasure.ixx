@@ -13,7 +13,8 @@ namespace rg {
  */
 export class MusicMeasure : public Measure {
 public:
-    MusicMeasure(std::unique_ptr<const IMusicDataSource> musicDataSource);
+    MusicMeasure(std::chrono::milliseconds updateInterval,
+                 std::unique_ptr<const IMusicDataSource> musicDataSource);
     ~MusicMeasure() noexcept = default;
 
     bool isPlayerRunning() const { return m_musicData.isMusicPlayerRunning; }
@@ -22,8 +23,8 @@ public:
     std::string_view getTrackName() const { return m_musicData.trackName; }
     std::string_view getArtist() const { return m_musicData.artist; }
     std::string_view getAlbum() const { return m_musicData.album; }
-    int getElapsedTime() const { return m_musicData.elapsedTime; }
-    int getTotalTime() const { return m_musicData.totalTime; }
+    std::chrono::seconds getElapsedTime() const { return m_musicData.elapsedTime; }
+    std::chrono::seconds getTotalTime() const { return m_musicData.totalTime; }
 
 protected:
     /* If the player class name isn't yet set, enumerates all running windows
