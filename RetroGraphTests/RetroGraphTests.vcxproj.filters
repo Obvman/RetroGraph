@@ -46,6 +46,9 @@
     <ClCompile Include="UnitTests\Measures\Test_TimeMeasure.ixx">
       <Filter>UnitTests\Measures</Filter>
     </ClCompile>
+    <ClCompile Include="UnitTests\Measures\Test_RAMMeasure.ixx">
+      <Filter>UnitTests\Measures</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="catch2.hpp" />

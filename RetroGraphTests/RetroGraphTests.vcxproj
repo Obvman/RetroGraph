@@ -127,7 +127,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)RetroGraphDLL\bin\$(Configuration)$(Platform)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>TimeMeasure.obj;MusicMeasure.obj;Strings.obj;DrawUtils.ixx.obj;GLListContainer.obj;GraphPointBuffer.obj;DrawUtils.obj;glew64.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>RAMMeasure.obj;TimeMeasure.obj;MusicMeasure.obj;Strings.obj;DrawUtils.ixx.obj;GLListContainer.obj;GraphPointBuffer.obj;DrawUtils.obj;glew64.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -152,7 +152,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)RetroGraphDLL\bin\$(Configuration)$(Platform)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>TimeMeasure.obj;MusicMeasure.obj;Strings.obj;DrawUtils.ixx.obj;GLListContainer.obj;GraphPointBuffer.obj;DrawUtils.obj;glew64.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>RAMMeasure.obj;TimeMeasure.obj;MusicMeasure.obj;Strings.obj;DrawUtils.ixx.obj;GLListContainer.obj;GraphPointBuffer.obj;DrawUtils.obj;glew64.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -167,6 +167,7 @@
     <ClCompile Include="UnitTests\Core\Test_Strings.ixx" />
     <ClCompile Include="UnitTests\Measures\Test_Measure.ixx" />
     <ClCompile Include="UnitTests\Measures\Test_MusicMeasure.ixx" />
+    <ClCompile Include="UnitTests\Measures\Test_RAMMeasure.ixx" />
     <ClCompile Include="UnitTests\Measures\Test_TimeMeasure.ixx" />
     <ClCompile Include="UnitTests\Widgets\Graph\Test_GraphPointBuffer.ixx" />
   </ItemGroup>

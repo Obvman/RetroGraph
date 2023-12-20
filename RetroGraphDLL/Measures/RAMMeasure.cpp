@@ -2,23 +2,15 @@ module RG.Measures:RAMMeasure;
 
 namespace rg {
 
-RAMMeasure::RAMMeasure()
-    : Measure{ seconds{ 1 } } {
-
-    // Fill the memory stat struct with system information
-    m_memStatus.dwLength = sizeof(m_memStatus);
-    GlobalMemoryStatusEx(&m_memStatus);
+RAMMeasure::RAMMeasure(std::chrono::milliseconds updateInterval,
+                       std::unique_ptr<const IRAMDataSource> ramDataSource)
+    : Measure{ updateInterval }
+    , m_ramDataSource{ std::move(ramDataSource) } {
 }
 
 bool RAMMeasure::updateInternal() {
-    GlobalMemoryStatusEx(&m_memStatus);
-
-    onRAMUsage.raise(getLoadPercentagef());
+    onRAMUsage.raise(m_ramDataSource->getRAMUsage());
     return true;
-}
-
-float RAMMeasure::getLoadPercentagef() const {
-    return (static_cast<float>(getUsedPhysicalB()) / static_cast<float>(getTotalPhysicalB()));
 }
 
 } // namespace rg

@@ -21,11 +21,14 @@ std::shared_ptr<T> createMeasure() {
     if constexpr (std::is_same_v<T, MusicMeasure>) {
         return std::make_shared<T>(milliseconds{ settings.getVal<int>("Measures-Music.UpdateInterval") },
                                    std::make_unique<FoobarMusicDataSource>());
+    } else if constexpr (std::is_same_v<T, RAMMeasure>) {
+        return std::make_shared<T>(milliseconds{ settings.getVal<int>("Measures-RAM.UpdateInterval") },
+                                   std::make_unique<Win32RAMDataSource>());
+    } else if constexpr (std::is_same_v<T, SystemMeasure>) {
+        return std::make_shared<T>(std::make_unique<Win32RAMDataSource>());
     } else if constexpr (std::is_same_v<T, TimeMeasure>) {
         return std::make_shared<T>(milliseconds{ settings.getVal<int>("Measures-Time.UpdateInterval") },
                                    std::make_unique<ChronoTimeDataSource>());
-    } else if constexpr (std::is_same_v<T, SystemMeasure>) {
-        return std::make_shared<T>(std::make_unique<Win32RAMDataSource>());
     } else {
         return std::make_shared<T>();
     }
@@ -334,7 +337,6 @@ ConfigRefreshedEvent::Handle RetroGraph::RegisterConfigRefreshedCallback() {
 
             //if (m_cpuMeasure) m_cpuMeasure->update();
             //if (m_gpuMeasure) m_gpuMeasure->update();
-            //if (m_ramMeasure) m_ramMeasure->update();
             //if (m_netMeasure) m_netMeasure->update();
             //if (m_processMeasure) m_processMeasure->update();
             //if (m_driveMeasure) m_driveMeasure->update();
@@ -342,6 +344,7 @@ ConfigRefreshedEvent::Handle RetroGraph::RegisterConfigRefreshedCallback() {
             //if (m_systemMeasure) m_systemMeasure->update();
             //if (m_animationState) m_animationState->update();
             //if (m_displayMeasure) m_displayMeasure->update();
+            if (m_ramMeasure) m_ramMeasure->setUpdateInterval(milliseconds{ settings.getVal<int>("Measures-RAM.UpdateInterval") });
             if (m_timeMeasure) m_timeMeasure->setUpdateInterval(milliseconds{ settings.getVal<int>("Measures-Time.UpdateInterval") });
 
             const auto widgetVisibilities{createWidgetVisibilities()};
