@@ -12,7 +12,7 @@ import "WindowsHeaderUnit.h";
 namespace rg {
 
 // TODO measure and data source factories
-template<std::derived_from<Measure> T>
+template <std::derived_from<Measure> T>
 std::shared_ptr<T> createMeasure() {
     using namespace std::chrono;
 
