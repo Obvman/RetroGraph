@@ -9,4 +9,8 @@ jobs:
     steps:
     - name: clang-format Check
       uses: jidicula/clang-format-action@v4.11.0
-            
+      with:
+        clang-format-version: 16
+        check-path: .
+        include-regex: ^.*\.((((c|C)(c|pp|xx|\+\+)?$)|(ixx)|((h|H)h?(pp|xx|\+\+)?$))|(ino|pde|proto|cu))$
+        exclude-regex: ^.*((deps)|(packages))\/
