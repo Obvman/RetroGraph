@@ -1,0 +1,12 @@
+name: clang-format verification
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: clang-format Check
+      uses: jidicula/clang-format-action@v4.11.0
+            
