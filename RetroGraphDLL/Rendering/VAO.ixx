@@ -10,12 +10,8 @@ namespace rg {
 
 export class [[nodiscard]] VAOBindScope {
 public:
-    VAOBindScope(GLuint id) {
-        glBindVertexArray(id);
-    }
-    ~VAOBindScope() {
-        glBindVertexArray(0);
-    }
+    VAOBindScope(GLuint id) { glBindVertexArray(id); }
+    ~VAOBindScope() { glBindVertexArray(0); }
     VAOBindScope(const VAOBindScope&) = delete;
     VAOBindScope& operator=(const VAOBindScope&) = delete;
     VAOBindScope(VAOBindScope&&) = delete;
@@ -24,9 +20,7 @@ public:
 
 export class VAO {
 public:
-    VAO() noexcept {
-        glGenVertexArrays(1, &id);
-    }
+    VAO() noexcept { glGenVertexArrays(1, &id); }
 
     ~VAO() {
         if (id != invalidGLID) {
@@ -37,9 +31,7 @@ public:
     VAO(const VAO&) = delete;
     VAO& operator=(const VAO&) = delete;
 
-    VAO(VAO&& other) {
-        *this = std::move(other);
-    }
+    VAO(VAO&& other) { *this = std::move(other); }
 
     VAO& operator=(VAO&& other) {
         if (this != &other) {
@@ -56,4 +48,4 @@ private:
     GLuint id;
 };
 
-}
+} // namespace rg

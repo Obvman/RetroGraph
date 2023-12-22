@@ -12,9 +12,7 @@ WidgetContainer::WidgetContainer(WidgetPosition p, bool drawBackground)
     , m_viewport{}
     , m_pos{ p }
     , m_type{ getFillTypeFromPosition(p) }
-    , m_drawBackground{ drawBackground } {
-
-}
+    , m_drawBackground{ drawBackground } {}
 
 WidgetContainer::~WidgetContainer() {
     for (auto* widget : m_children) {
@@ -39,28 +37,30 @@ void rg::WidgetContainer::setViewport(int windowWidth, int windowHeight, WidgetP
             vp = { screenMarginX, screenMarginY, widgetW, widgetH };
             break;
         case WidgetPosition::BOT_MID:
-            vp = { screenMarginX + windowWidth/2 - widgetW, screenMarginY, widgetW * 2, widgetH };
+            vp = { screenMarginX + windowWidth / 2 - widgetW, screenMarginY, widgetW * 2, widgetH };
             break;
         case WidgetPosition::BOT_RIGHT:
             vp = { windowWidth - widgetW - screenMarginX, screenMarginY, widgetW, widgetH };
             break;
         case WidgetPosition::MID_LEFT:
-            vp = { screenMarginX, windowHeight/2 - windowHeight/4, widgetW, sideWidgetH };
+            vp = { screenMarginX, windowHeight / 2 - windowHeight / 4, widgetW, sideWidgetH };
             break;
         case WidgetPosition::MID_MID:
-            vp = { screenMarginX + windowWidth/2 - widgetW, windowHeight/2 - windowHeight/4, 2 * widgetW, sideWidgetH };
+            vp = { screenMarginX + windowWidth / 2 - widgetW, windowHeight / 2 - windowHeight / 4, 2 * widgetW,
+                   sideWidgetH };
             break;
         case WidgetPosition::MID_RIGHT:
-            vp = { windowWidth - widgetW - screenMarginX, windowHeight/2 - windowHeight/4, widgetW, sideWidgetH };
+            vp = { windowWidth - widgetW - screenMarginX, windowHeight / 2 - windowHeight / 4, widgetW, sideWidgetH };
             break;
         case WidgetPosition::TOP_LEFT:
-            vp = {  screenMarginX, windowHeight - screenMarginY - widgetH, widgetW, widgetH };
+            vp = { screenMarginX, windowHeight - screenMarginY - widgetH, widgetW, widgetH };
             break;
         case WidgetPosition::TOP_MID:
-            vp = { screenMarginX + windowWidth/2 - widgetW, windowHeight - screenMarginY - widgetH, widgetW * 2, widgetH };
+            vp = { screenMarginX + windowWidth / 2 - widgetW, windowHeight - screenMarginY - widgetH, widgetW * 2,
+                   widgetH };
             break;
         case WidgetPosition::TOP_RIGHT:
-            vp = { windowWidth - widgetW - screenMarginX, windowHeight - screenMarginY - widgetH, widgetW, widgetH }; 
+            vp = { windowWidth - widgetW - screenMarginX, windowHeight - screenMarginY - widgetH, widgetW, widgetH };
             break;
         default:
             break;
@@ -69,12 +69,12 @@ void rg::WidgetContainer::setViewport(int windowWidth, int windowHeight, WidgetP
     invalidate();
 }
 
-void WidgetContainer::addChild(Widget * child) {
+void WidgetContainer::addChild(Widget* child) {
     m_children.push_back(child);
     invalidate();
 }
 
-void WidgetContainer::removeChild(Widget * child) {
+void WidgetContainer::removeChild(Widget* child) {
     m_children.erase(std::remove(m_children.begin(), m_children.end(), child), m_children.end());
     invalidate();
 }
@@ -105,7 +105,7 @@ void WidgetContainer::invalidate() {
     }
 }
 
-void WidgetContainer::setChildViewports(const Viewport & vp, WidgetPosition pos) {
+void WidgetContainer::setChildViewports(const Viewport& vp, WidgetPosition pos) {
     m_viewport = vp;
 
     const auto numWidgets{ static_cast<GLint>(m_children.size()) };
@@ -144,25 +144,16 @@ Viewport WidgetContainer::getMiniViewport(WidgetPosition pos) const {
 
     switch (pos) {
         case WidgetPosition::BOT_LEFT:
-            return { m_viewport.x,
-                     m_viewport.y,
-                     miniWidgetWidth,
-                     miniWidgetHeight };
+            return { m_viewport.x, m_viewport.y, miniWidgetWidth, miniWidgetHeight };
         case WidgetPosition::BOT_RIGHT:
-            return { m_viewport.x + m_viewport.width - miniWidgetWidth,
-                     m_viewport.y,
-                     miniWidgetWidth,
+            return { m_viewport.x + m_viewport.width - miniWidgetWidth, m_viewport.y, miniWidgetWidth,
                      miniWidgetHeight };
         case WidgetPosition::TOP_LEFT:
-            return { m_viewport.x,
-                     m_viewport.y + m_viewport.height - miniWidgetHeight,
-                     miniWidgetWidth,
+            return { m_viewport.x, m_viewport.y + m_viewport.height - miniWidgetHeight, miniWidgetWidth,
                      miniWidgetHeight };
         case WidgetPosition::TOP_RIGHT:
             return { m_viewport.x + m_viewport.width - miniWidgetWidth,
-                     m_viewport.y + m_viewport.height - miniWidgetHeight,
-                     miniWidgetWidth,
-                     miniWidgetHeight };
+                     m_viewport.y + m_viewport.height - miniWidgetHeight, miniWidgetWidth, miniWidgetHeight };
         default:
             RGERROR("Invalid mini viewport position");
     }
@@ -174,7 +165,7 @@ ContainerType WidgetContainer::getFillTypeFromPosition(WidgetPosition p) const {
         return ContainerType::HFill;
     else if (p == WidgetPosition::MID_LEFT || p == WidgetPosition::MID_RIGHT)
         return ContainerType::VFill;
-    else 
+    else
         return ContainerType::Single;
 }
 

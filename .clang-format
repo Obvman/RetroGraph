@@ -1,0 +1,57 @@
+---
+BasedOnStyle: Chromium
+IndentWidth: 4
+---
+Language: Cpp
+
+AccessModifierOffset: -4
+
+AlignAfterOpenBracket: Align
+AlignArrayOfStructures: Left
+AlignEscapedNewlines: Left
+AlignTrailingComments: Never
+
+AllowShortBlocksOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: Never
+
+BinPackArguments: true
+BinPackParameters: true
+
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializers: BeforeComma
+
+ColumnLimit: 120
+
+Cpp11BracedListStyle: false
+
+EmptyLineBeforeAccessModifier: LogicalBlock
+
+FixNamespaceComments: true
+
+IndentAccessModifiers: false
+IndentCaseBlocks: false
+IndentCaseLabels: true
+IndentPPDirectives: None
+IndentRequiresClause: true
+
+InsertNewlineAtEOF: true
+
+LambdaBodyIndentation: Signature
+
+LineEnding: CRLF
+
+NamespaceIndentation: None
+
+PackConstructorInitializers: Never
+
+PointerAlignment: Left
+QualifierAlignment: Left
+ReferenceAlignment: Left
+
+ReflowComments: true
+
+SortIncludes: false
+
+SpaceAfterTemplateKeyword: false
+SpacesBeforeTrailingComments: 1

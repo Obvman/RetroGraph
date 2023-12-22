@@ -12,9 +12,7 @@ void FPSWidget::draw() const {
         m_fontManager->renderLine(RG_FONT_STANDARD_BOLD, fpsStr, 0, 0, 0, 0,
                                   RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_CENTERED_VERTICAL);
     } else {
-        m_fontManager->renderLine(RG_FONT_STANDARD_BOLD, 
-                                  std::to_string(static_cast<int>(fps)).c_str(),
-                                  0, 0, 0, 0,
+        m_fontManager->renderLine(RG_FONT_STANDARD_BOLD, std::to_string(static_cast<int>(fps)).c_str(), 0, 0, 0, 0,
                                   RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_CENTERED_VERTICAL);
     }
 }

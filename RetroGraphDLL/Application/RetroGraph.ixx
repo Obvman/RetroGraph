@@ -17,7 +17,8 @@ import "WindowsHeaderUnit.h";
 
 namespace rg {
 
-template <class...> constexpr std::false_type always_false{};
+template<class...>
+constexpr std::false_type always_false{};
 
 export class RetroGraph : public IRetroGraph {
 public:

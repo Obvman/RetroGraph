@@ -30,59 +30,56 @@ import std.core;
 
 import "RGAssert.h";
 
-namespace tk
-{
+namespace tk {
 
 // spline interpolation
-export class spline
-{
+export class spline {
 public:
     // spline types
     enum spline_type {
-        linear = 10,            // linear interpolation
-        cspline = 30,           // cubic splines (classical C^2)
-        cspline_hermite = 31    // cubic hermite splines (local, only C^1)
+        linear = 10, // linear interpolation
+        cspline = 30, // cubic splines (classical C^2)
+        cspline_hermite = 31 // cubic hermite splines (local, only C^1)
     };
 
     // boundary condition type for the spline end-points
-    enum bd_type {
-        first_deriv = 1,
-        second_deriv = 2
-    };
+    enum bd_type { first_deriv = 1, second_deriv = 2 };
 
 protected:
-    std::vector<float> m_x, m_y;            // x,y coordinates of points
+    std::vector<float> m_x, m_y; // x,y coordinates of points
     // interpolation parameters
     // f(x) = a_i + b_i*(x-x_i) + c_i*(x-x_i)^2 + d_i*(x-x_i)^3
     // where a_i = y_i, or else it won't go through grid points
-    std::vector<float> m_b, m_c, m_d;        // spline coefficients
-    float m_c0;                            // for left extrapolation
+    std::vector<float> m_b, m_c, m_d; // spline coefficients
+    float m_c0; // for left extrapolation
     spline_type m_type;
     bd_type m_left, m_right;
-    float  m_left_value, m_right_value;
+    float m_left_value, m_right_value;
     bool m_made_monotonic;
-    void set_coeffs_from_b();               // calculate c_i, d_i from b_i
-    size_t find_closest(float x) const;    // closest idx so that m_x[idx]<=x
+    void set_coeffs_from_b(); // calculate c_i, d_i from b_i
+    size_t find_closest(float x) const; // closest idx so that m_x[idx]<=x
 
 public:
     // default constructor: set boundary condition to be zero curvature
     // at both ends, i.e. natural splines
-    spline() : m_type(cspline),
-        m_left(second_deriv), m_right(second_deriv),
-        m_left_value(0.0), m_right_value(0.0), m_made_monotonic(false)
-    {
+    spline()
+        : m_type(cspline)
+        , m_left(second_deriv)
+        , m_right(second_deriv)
+        , m_left_value(0.0)
+        , m_right_value(0.0)
+        , m_made_monotonic(false) {
         ;
     }
-    spline(const std::vector<float>& X, const std::vector<float>& Y,
-           spline_type type = cspline,
-           bool make_monotonic = false,
-           bd_type left = second_deriv, float left_value = 0.0,
-           bd_type right = second_deriv, float right_value = 0.0
-    ) :
-        m_type(type),
-        m_left(left), m_right(right),
-        m_left_value(left_value), m_right_value(right_value),
-        m_made_monotonic(false) // false correct here: make_monotonic() sets it
+    spline(const std::vector<float>& X, const std::vector<float>& Y, spline_type type = cspline,
+           bool make_monotonic = false, bd_type left = second_deriv, float left_value = 0.0,
+           bd_type right = second_deriv, float right_value = 0.0)
+        : m_type(type)
+        , m_left(left)
+        , m_right(right)
+        , m_left_value(left_value)
+        , m_right_value(right_value)
+        , m_made_monotonic(false) // false correct here: make_monotonic() sets it
     {
         this->set_points(X, Y, m_type);
         if (make_monotonic) {
@@ -90,15 +87,11 @@ public:
         }
     }
 
-
     // modify boundary conditions: if called it must be before set_points()
-    void set_boundary(bd_type left, float left_value,
-                      bd_type right, float right_value);
+    void set_boundary(bd_type left, float left_value, bd_type right, float right_value);
 
     // set all data points (cubic_spline=false means linear interpolation)
-    void set_points(const std::vector<float>& x,
-                    const std::vector<float>& y,
-                    spline_type type = cspline);
+    void set_points(const std::vector<float>& x, const std::vector<float>& y, spline_type type = cspline);
 
     // adjust coefficients so that the spline becomes piecewise monotonic
     // where possible
@@ -110,57 +103,48 @@ public:
     bool make_monotonic();
 
     // evaluates the spline at point x
-    float operator() (float x) const;
+    float operator()(float x) const;
     float deriv(int order, float x) const;
     // returns the input data points
     std::vector<float> get_x() const { return m_x; }
     std::vector<float> get_y() const { return m_y; }
-    float get_x_min() const { RGASSERT(!m_x.empty(), "Spline"); return m_x.front(); }
-    float get_x_max() const { RGASSERT(!m_x.empty(), "Spline"); return m_x.back(); }
+    float get_x_min() const {
+        RGASSERT(!m_x.empty(), "Spline");
+        return m_x.front();
+    }
+    float get_x_max() const {
+        RGASSERT(!m_x.empty(), "Spline");
+        return m_x.back();
+    }
 
     // spline info string, i.e. spline type, boundary conditions etc.
     std::string info() const;
-
 };
 
-
-
 // band matrix solver
-class band_matrix
-{
+class band_matrix {
 private:
-    std::vector< std::vector<float> > m_upper;  // upper band
-    std::vector< std::vector<float> > m_lower;  // lower band
+    std::vector<std::vector<float> > m_upper; // upper band
+    std::vector<std::vector<float> > m_lower; // lower band
 public:
-    band_matrix() {};                             // constructor
-    band_matrix(int dim, int n_u, int n_l);       // constructor
-    ~band_matrix() {};                            // destructor
-    void resize(int dim, int n_u, int n_l);      // init with dim,n_u,n_l
-    int dim() const;                             // matrix dimension
-    int num_upper() const
-    {
-        return (int)m_upper.size() - 1;
-    }
-    int num_lower() const
-    {
-        return (int)m_lower.size() - 1;
-    }
+    band_matrix(){}; // constructor
+    band_matrix(int dim, int n_u, int n_l); // constructor
+    ~band_matrix(){}; // destructor
+    void resize(int dim, int n_u, int n_l); // init with dim,n_u,n_l
+    int dim() const; // matrix dimension
+    int num_upper() const { return (int)m_upper.size() - 1; }
+    int num_lower() const { return (int)m_lower.size() - 1; }
     // access operator
-    float& operator () (int i, int j);            // write
-    float   operator () (int i, int j) const;      // read
+    float& operator()(int i, int j); // write
+    float operator()(int i, int j) const; // read
     // we can store an additional diagonal (in m_lower)
     float& saved_diag(int i);
-    float  saved_diag(int i) const;
+    float saved_diag(int i) const;
     void lu_decompose();
     std::vector<float> r_solve(const std::vector<float>& b) const;
     std::vector<float> l_solve(const std::vector<float>& b) const;
-    std::vector<float> lu_solve(const std::vector<float>& b,
-                                 bool is_lu_decomposed = false);
-
+    std::vector<float> lu_solve(const std::vector<float>& b, bool is_lu_decomposed = false);
 };
-
-
-
 
 // ---------------------------------------------------------------------
 // implementation part, which could be separated into a cpp file
@@ -169,19 +153,15 @@ public:
 // spline implementation
 // -----------------------
 
-void spline::set_boundary(spline::bd_type left, float left_value,
-                          spline::bd_type right, float right_value)
-{
-    RGASSERT(m_x.size() == 0, "Spline");          // set_points() must not have happened yet
+void spline::set_boundary(spline::bd_type left, float left_value, spline::bd_type right, float right_value) {
+    RGASSERT(m_x.size() == 0, "Spline"); // set_points() must not have happened yet
     m_left = left;
     m_right = right;
     m_left_value = left_value;
     m_right_value = right_value;
 }
 
-
-void spline::set_coeffs_from_b()
-{
+void spline::set_coeffs_from_b() {
     RGASSERT(m_x.size() == m_y.size(), "Spline");
     RGASSERT(m_x.size() == m_b.size(), "Spline");
     RGASSERT(m_x.size() > 2, "Spline");
@@ -203,10 +183,7 @@ void spline::set_coeffs_from_b()
     m_c0 = (m_left == first_deriv) ? 0.0f : m_c[0];
 }
 
-void spline::set_points(const std::vector<float>& x,
-                        const std::vector<float>& y,
-                        spline_type type)
-{
+void spline::set_points(const std::vector<float>& x, const std::vector<float>& y, spline_type type) {
     RGASSERT(x.size() == y.size(), "Spline");
     RGASSERT(x.size() > 2, "Spline");
     m_type = type;
@@ -218,7 +195,6 @@ void spline::set_points(const std::vector<float>& x,
     for (int i = 0; i < n - 1; i++) {
         RGASSERT(m_x[i] < m_x[i + 1], "Spline");
     }
-
 
     if (type == linear) {
         // linear interpolation
@@ -241,7 +217,7 @@ void spline::set_points(const std::vector<float>& x,
         // setting up the matrix and right hand side of the equation system
         // for the parameters b[]
         band_matrix A(n, 1, 1);
-        std::vector<float>  rhs(n);
+        std::vector<float> rhs(n);
         for (int i = 1; i < n - 1; i++) {
             A(i, i - 1) = 1.0f / 3.0f * (x[i] - x[i - 1]);
             A(i, i) = 2.0f / 3.0f * (x[i + 1] - x[i - 1]);
@@ -287,17 +263,17 @@ void spline::set_points(const std::vector<float>& x,
         m_b.resize(n);
         for (int i = 0; i < n - 1; i++) {
             m_d[i] = 1.0f / 3.0f * (m_c[i + 1] - m_c[i]) / (x[i + 1] - x[i]);
-            m_b[i] = (y[i + 1] - y[i]) / (x[i + 1] - x[i])
-                - 1.0f / 3.0f * (2.0f * m_c[i] + m_c[i + 1]) * (x[i + 1] - x[i]);
+            m_b[i] =
+                (y[i + 1] - y[i]) / (x[i + 1] - x[i]) - 1.0f / 3.0f * (2.0f * m_c[i] + m_c[i + 1]) * (x[i + 1] - x[i]);
         }
         // for the right extrapolation coefficients (zero cubic term)
         // f_{n-1}(x) = y_{n-1} + b*(x-x_{n-1}) + c*(x-x_{n-1})^2
         float h = x[n - 1] - x[n - 2];
         // m_c[n-1] is determined by the boundary condition
         m_d[n - 1] = 0.0;
-        m_b[n - 1] = 3.0f * m_d[n - 2] * h * h + 2.0f * m_c[n - 2] * h + m_b[n - 2];   // = f'_{n-2}(x_{n-1})
+        m_b[n - 1] = 3.0f * m_d[n - 2] * h * h + 2.0f * m_c[n - 2] * h + m_b[n - 2]; // = f'_{n-2}(x_{n-1})
         if (m_right == first_deriv)
-            m_c[n - 1] = 0.0;   // force linear extrapolation
+            m_c[n - 1] = 0.0; // force linear extrapolation
 
     } else if (type == cspline_hermite) {
         // hermite cubic splines which are C^1 (cont. differentiable)
@@ -310,8 +286,8 @@ void spline::set_points(const std::vector<float>& x,
         for (int i = 1; i < n - 1; i++) {
             const float h = m_x[i + 1] - m_x[i];
             const float hl = m_x[i] - m_x[i - 1];
-            m_b[i] = -h / (hl * (hl + h)) * m_y[i - 1] + (h - hl) / (hl * h) * m_y[i]
-                + hl / (h * (hl + h)) * m_y[i + 1];
+            m_b[i] =
+                -h / (hl * (hl + h)) * m_y[i - 1] + (h - hl) / (hl * h) * m_y[i] + hl / (h * (hl + h)) * m_y[i + 1];
         }
         // boundary conditions determine b[0] and b[n-1]
         if (m_left == first_deriv) {
@@ -345,8 +321,7 @@ void spline::set_points(const std::vector<float>& x,
     m_c0 = (m_left == first_deriv) ? 0.0f : m_c[0];
 }
 
-bool spline::make_monotonic()
-{
+bool spline::make_monotonic() {
     RGASSERT(m_x.size() == m_y.size(), "Spline");
     RGASSERT(m_x.size() == m_b.size(), "Spline");
     RGASSERT(m_x.size() > 2, "Spline");
@@ -396,16 +371,14 @@ bool spline::make_monotonic()
 }
 
 // return the closest idx so that m_x[idx] <= x (return 0 if x<m_x[0])
-size_t spline::find_closest(float x) const
-{
+size_t spline::find_closest(float x) const {
     std::vector<float>::const_iterator it;
-    it = std::upper_bound(m_x.begin(), m_x.end(), x);       // *it > x
-    size_t idx = std::max(int(it - m_x.begin()) - 1, 0);   // m_x[idx] <= x
+    it = std::upper_bound(m_x.begin(), m_x.end(), x); // *it > x
+    size_t idx = std::max(int(it - m_x.begin()) - 1, 0); // m_x[idx] <= x
     return idx;
 }
 
-float spline::operator() (float x) const
-{
+float spline::operator()(float x) const {
     // polynomial evaluation using Horner's scheme
     // consider more numerically accurate algorithms, e.g.:
     //   - Clenshaw
@@ -429,8 +402,7 @@ float spline::operator() (float x) const
     return interpol;
 }
 
-float spline::deriv(int order, float x) const
-{
+float spline::deriv(int order, float x) const {
     RGASSERT(order > 0, "Spline");
     size_t n = m_x.size();
     size_t idx = find_closest(x);
@@ -440,51 +412,50 @@ float spline::deriv(int order, float x) const
     if (x < m_x[0]) {
         // extrapolation to the left
         switch (order) {
-        case 1:
-            interpol = 2.0f * m_c0 * h + m_b[0];
-            break;
-        case 2:
-            interpol = 2.0f * m_c0;
-            break;
-        default:
-            interpol = 0.0;
-            break;
+            case 1:
+                interpol = 2.0f * m_c0 * h + m_b[0];
+                break;
+            case 2:
+                interpol = 2.0f * m_c0;
+                break;
+            default:
+                interpol = 0.0;
+                break;
         }
     } else if (x > m_x[n - 1]) {
         // extrapolation to the right
         switch (order) {
-        case 1:
-            interpol = 2.0f * m_c[n - 1] * h + m_b[n - 1];
-            break;
-        case 2:
-            interpol = 2.0f * m_c[n - 1];
-            break;
-        default:
-            interpol = 0.0;
-            break;
+            case 1:
+                interpol = 2.0f * m_c[n - 1] * h + m_b[n - 1];
+                break;
+            case 2:
+                interpol = 2.0f * m_c[n - 1];
+                break;
+            default:
+                interpol = 0.0;
+                break;
         }
     } else {
         // interpolation
         switch (order) {
-        case 1:
-            interpol = (3.0f * m_d[idx] * h + 2.0f * m_c[idx]) * h + m_b[idx];
-            break;
-        case 2:
-            interpol = 6.0f * m_d[idx] * h + 2.0f * m_c[idx];
-            break;
-        case 3:
-            interpol = 6.0f * m_d[idx];
-            break;
-        default:
-            interpol = 0.0;
-            break;
+            case 1:
+                interpol = (3.0f * m_d[idx] * h + 2.0f * m_c[idx]) * h + m_b[idx];
+                break;
+            case 2:
+                interpol = 6.0f * m_d[idx] * h + 2.0f * m_c[idx];
+                break;
+            case 3:
+                interpol = 6.0f * m_d[idx];
+                break;
+            default:
+                interpol = 0.0;
+                break;
         }
     }
     return interpol;
 }
 
-std::string spline::info() const
-{
+std::string spline::info() const {
     std::stringstream ss;
     ss << "type " << m_type << ", left boundary deriv " << m_left << " = ";
     ss << m_left_value << ", right boundary deriv " << m_right << " = ";
@@ -495,16 +466,13 @@ std::string spline::info() const
     return ss.str();
 }
 
-
 // band_matrix implementation
 // -------------------------
 
-band_matrix::band_matrix(int dim, int n_u, int n_l)
-{
+band_matrix::band_matrix(int dim, int n_u, int n_l) {
     resize(dim, n_u, n_l);
 }
-void band_matrix::resize(int dim, int n_u, int n_l)
-{
+void band_matrix::resize(int dim, int n_u, int n_l) {
     RGASSERT(dim > 0, "Spline");
     RGASSERT(n_u >= 0, "Spline");
     RGASSERT(n_l >= 0, "Spline");
@@ -517,8 +485,7 @@ void band_matrix::resize(int dim, int n_u, int n_l)
         m_lower[i].resize(dim);
     }
 }
-int band_matrix::dim() const
-{
+int band_matrix::dim() const {
     if (m_upper.size() > 0) {
         return static_cast<int>(m_upper[0].size());
     } else {
@@ -526,44 +493,42 @@ int band_matrix::dim() const
     }
 }
 
-
 // defines the new operator (), so that we can access the elements
 // by A(i,j), index going from i=0,...,dim()-1
-float& band_matrix::operator () (int i, int j)
-{
-    int k = j - i;       // what band is the entry
+float& band_matrix::operator()(int i, int j) {
+    int k = j - i; // what band is the entry
     RGASSERT((i >= 0) && (i < dim()) && (j >= 0) && (j < dim()), "Spline");
     RGASSERT((-num_lower() <= k) && (k <= num_upper()), "Spline");
     // k=0 -> diagonal, k<0 lower left part, k>0 upper right part
-    if (k >= 0)    return m_upper[k][i];
-    else        return m_lower[-k][i];
+    if (k >= 0)
+        return m_upper[k][i];
+    else
+        return m_lower[-k][i];
 }
-float band_matrix::operator () (int i, int j) const
-{
-    int k = j - i;       // what band is the entry
+float band_matrix::operator()(int i, int j) const {
+    int k = j - i; // what band is the entry
     RGASSERT((i >= 0) && (i < dim()) && (j >= 0) && (j < dim()), "Spline");
     RGASSERT((-num_lower() <= k) && (k <= num_upper()), "Spline");
     // k=0 -> diagonal, k<0 lower left part, k>0 upper right part
-    if (k >= 0)    return m_upper[k][i];
-    else        return m_lower[-k][i];
+    if (k >= 0)
+        return m_upper[k][i];
+    else
+        return m_lower[-k][i];
 }
 // second diag (used in LU decomposition), saved in m_lower
-float band_matrix::saved_diag(int i) const
-{
+float band_matrix::saved_diag(int i) const {
     RGASSERT((i >= 0) && (i < dim()), "Spline");
     return m_lower[0][i];
 }
-float& band_matrix::saved_diag(int i)
-{
+float& band_matrix::saved_diag(int i) {
     RGASSERT((i >= 0) && (i < dim()), "Spline");
     return m_lower[0][i];
 }
 
 // LR-Decomposition of a band matrix
-void band_matrix::lu_decompose()
-{
-    int  i_max, j_max;
-    int  j_min;
+void band_matrix::lu_decompose() {
+    int i_max, j_max;
+    int j_min;
     float x;
 
     // preconditioning
@@ -576,16 +541,16 @@ void band_matrix::lu_decompose()
         for (int j = j_min; j <= j_max; j++) {
             this->operator()(i, j) *= this->saved_diag(i);
         }
-        this->operator()(i, i) = 1.0;          // prevents rounding errors
+        this->operator()(i, i) = 1.0; // prevents rounding errors
     }
 
     // Gauss LR-Decomposition
     for (int k = 0; k < this->dim(); k++) {
-        i_max = std::min(this->dim() - 1, k + this->num_lower());  // num_lower not a mistake!
+        i_max = std::min(this->dim() - 1, k + this->num_lower()); // num_lower not a mistake!
         for (int i = k + 1; i <= i_max; i++) {
             RGASSERT(this->operator()(k, k) != 0.0, "Spline");
             x = -this->operator()(i, k) / this->operator()(k, k);
-            this->operator()(i, k) = -x;                         // assembly part of L
+            this->operator()(i, k) = -x; // assembly part of L
             j_max = std::min(this->dim() - 1, k + this->num_upper());
             for (int j = k + 1; j <= j_max; j++) {
                 // assembly part of R
@@ -595,8 +560,7 @@ void band_matrix::lu_decompose()
     }
 }
 // solves Ly=b
-std::vector<float> band_matrix::l_solve(const std::vector<float>& b) const
-{
+std::vector<float> band_matrix::l_solve(const std::vector<float>& b) const {
     RGASSERT(this->dim() == (int)b.size(), "Spline");
     std::vector<float> x(this->dim());
     int j_start;
@@ -604,14 +568,14 @@ std::vector<float> band_matrix::l_solve(const std::vector<float>& b) const
     for (int i = 0; i < this->dim(); i++) {
         sum = 0;
         j_start = std::max(0, i - this->num_lower());
-        for (int j = j_start; j < i; j++) sum += this->operator()(i, j) * x[j];
+        for (int j = j_start; j < i; j++)
+            sum += this->operator()(i, j) * x[j];
         x[i] = (b[i] * this->saved_diag(i)) - sum;
     }
     return x;
 }
 // solves Rx=y
-std::vector<float> band_matrix::r_solve(const std::vector<float>& b) const
-{
+std::vector<float> band_matrix::r_solve(const std::vector<float>& b) const {
     RGASSERT(this->dim() == (int)b.size(), "Spline");
     std::vector<float> x(this->dim());
     int j_stop;
@@ -619,17 +583,16 @@ std::vector<float> band_matrix::r_solve(const std::vector<float>& b) const
     for (int i = this->dim() - 1; i >= 0; i--) {
         sum = 0;
         j_stop = std::min(this->dim() - 1, i + this->num_upper());
-        for (int j = i + 1; j <= j_stop; j++) sum += this->operator()(i, j) * x[j];
+        for (int j = i + 1; j <= j_stop; j++)
+            sum += this->operator()(i, j) * x[j];
         x[i] = (b[i] - sum) / this->operator()(i, i);
     }
     return x;
 }
 
-std::vector<float> band_matrix::lu_solve(const std::vector<float>& b,
-                                          bool is_lu_decomposed)
-{
+std::vector<float> band_matrix::lu_solve(const std::vector<float>& b, bool is_lu_decomposed) {
     RGASSERT(this->dim() == (int)b.size(), "Spline");
-    std::vector<float>  x, y;
+    std::vector<float> x, y;
     if (is_lu_decomposed == false) {
         this->lu_decompose();
     }
@@ -637,6 +600,5 @@ std::vector<float> band_matrix::lu_solve(const std::vector<float>& b,
     x = this->r_solve(y);
     return x;
 }
-
 
 } // namespace tk

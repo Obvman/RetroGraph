@@ -9,8 +9,7 @@ Shader::Shader(const std::string& vertFilename_, const std::string& fragFilename
     : m_id{ loadShader(vertFilename_, fragFilename_) }
     , m_vertFilename{ vertFilename_ }
     , m_fragFilename{ fragFilename_ }
-    , m_onRefreshRequestedHandle{ Shader::onRefreshRequested.attach([this]() { reload(); }) } {
-}
+    , m_onRefreshRequestedHandle{ Shader::onRefreshRequested.attach([this]() { reload(); }) } {}
 
 Shader::~Shader() {
     if (m_id > 0)

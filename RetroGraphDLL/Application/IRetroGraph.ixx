@@ -18,4 +18,4 @@ public:
     virtual void shutdown() = 0;
 };
 
-}
+} // namespace rg

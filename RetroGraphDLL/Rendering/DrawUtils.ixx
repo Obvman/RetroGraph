@@ -24,13 +24,11 @@ export void scissorClear(GLint x, GLint y, GLint w, GLint h);
 export void drawWidgetBackground();
 
 /* Draws a vertical bar that is centerred horizontally in the current viewport */
-export void drawVerticalProgressBar(float barWidth, float startY, float endY,
-                                    float currValue, float totalValue,
+export void drawVerticalProgressBar(float barWidth, float startY, float endY, float currValue, float totalValue,
                                     bool warningColor = true);
 
 /* Draws a horizontal bar that is centerred vertically in the current viewport */
-export void drawHorizontalProgressBar(float barWidth, float startX, float endX,
-                                      float currValue, float totalValue);
+export void drawHorizontalProgressBar(float barWidth, float startX, float endX, float currValue, float totalValue);
 
 // Primitive drawing
 export void drawSerifLine(GLfloat x1, GLfloat x2, GLfloat y);
@@ -62,4 +60,4 @@ export constexpr inline int vpCoordsToPixels(float vpCoord, int vpWidthPx) {
     return static_cast<int>(((vpCoord + 1.0f) / viewportWidth) * vpWidthPx);
 }
 
-}
+} // namespace rg

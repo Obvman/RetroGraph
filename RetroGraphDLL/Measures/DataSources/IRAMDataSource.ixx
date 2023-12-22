@@ -15,4 +15,4 @@ public:
     virtual uint64_t getRAMCapacity() const = 0;
 };
 
-}
+} // namespace rg

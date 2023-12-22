@@ -6,16 +6,16 @@ import "WindowsHeaderUnit.h";
 
 namespace rg {
 
-ProcessData::ProcessData(HANDLE pHandle, DWORD pID, const char* name) :
-    m_pHandle{ pHandle },
-    m_processID{ pID },
-    m_procName{ name } {
-
+ProcessData::ProcessData(HANDLE pHandle, DWORD pID, const char* name)
+    : m_pHandle{ pHandle }
+    , m_processID{ pID }
+    , m_procName{ name } {
     // Remove the ".exe" extension from the process name
     const auto p{ m_procName.find(".exe") };
     if (p != std::string::npos) {
         m_procName.erase(p, 4);
     }
+
     // If the name is too long, truncate and add ellipses
     constexpr size_t cutoffLen{ 26U };
     if (m_procName.length() >= cutoffLen) {
@@ -32,15 +32,13 @@ ProcessData::ProcessData(HANDLE pHandle, DWORD pID, const char* name) :
     // Get CPU time information for the process
     RGVERIFY(GetProcessTimes(m_pHandle, &m_creationTime, &m_exitTime, &m_kernelTime, &m_userTime),
              "Failed to get process times.");
-
 }
 
 ProcessData::~ProcessData() {
     CloseHandle(m_pHandle);
 }
 
-void ProcessData::setTimes(const FILETIME& cTime, const FILETIME& eTime,
-                           const FILETIME& kTime, const FILETIME& uTime) {
+void ProcessData::setTimes(const FILETIME& cTime, const FILETIME& eTime, const FILETIME& kTime, const FILETIME& uTime) {
     m_creationTime = cTime;
     m_exitTime = eTime;
     m_kernelTime = kTime;

@@ -12,8 +12,7 @@ using namespace std::chrono;
 
 export class TimeMeasure : public Measure {
 public:
-    TimeMeasure(std::chrono::milliseconds updateInterval,
-                std::unique_ptr<const ITimeDataSource> timeDataSource);
+    TimeMeasure(std::chrono::milliseconds updateInterval, std::unique_ptr<const ITimeDataSource> timeDataSource);
     ~TimeMeasure() noexcept = default;
 
     local_time<seconds> getLocalTime() const { return m_timeData.localTime; }

@@ -7,7 +7,6 @@ import "WindowsHeaderUnit.h";
 namespace rg {
 
 export {
-
     /* Gets the directory of the executable file of this program */
     const std::string getExePath();
 

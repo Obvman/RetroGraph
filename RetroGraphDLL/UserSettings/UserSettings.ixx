@@ -19,18 +19,21 @@ using SettingVariant = std::variant<int, bool, double, std::string>;
 
 export class UserSettings {
 public:
-    static UserSettings& inst() { static UserSettings i; return i; }
+    static UserSettings& inst() {
+        static UserSettings i;
+        return i;
+    }
 
     ~UserSettings() noexcept = default;
-    UserSettings(const UserSettings&)            = delete;
+    UserSettings(const UserSettings&) = delete;
     UserSettings& operator=(const UserSettings&) = delete;
-    UserSettings(UserSettings&&)                 = delete;
-    UserSettings& operator=(UserSettings&&)      = delete;
+    UserSettings(UserSettings&&) = delete;
+    UserSettings& operator=(UserSettings&&) = delete;
 
     template<typename T, typename CastT = T>
-    requires std::convertible_to<T, CastT>
+        requires std::convertible_to<T, CastT>
     auto getVal(std::string_view settingName) {
-        RGASSERT (m_settings.count(settingName) != 0, std::format("Failed to find setting {}", settingName).c_str());
+        RGASSERT(m_settings.count(settingName) != 0, std::format("Failed to find setting {}", settingName).c_str());
 
         // If CastT specified, do a static cast
         if constexpr (!std::is_same_v<T, CastT>) {

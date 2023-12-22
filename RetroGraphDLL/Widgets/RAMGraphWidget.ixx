@@ -29,4 +29,4 @@ private:
     SmoothLineGraph m_graph;
 };
 
-}
+} // namespace rg

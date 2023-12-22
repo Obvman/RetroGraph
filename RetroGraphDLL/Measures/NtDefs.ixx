@@ -6,16 +6,16 @@ namespace rg {
 
 export {
     typedef struct _SYSTEM_PROCESS_INFO {
-        ULONG                   NextEntryOffset;
-        ULONG                   NumberOfThreads;
-        LARGE_INTEGER           Reserved[3];
-        LARGE_INTEGER           CreateTime;
-        LARGE_INTEGER           UserTime;
-        LARGE_INTEGER           KernelTime;
-        UNICODE_STRING          ImageName;
-        ULONG                   BasePriority;
-        HANDLE                  ProcessId;
-        HANDLE                  InheritedFromProcessId;
+        ULONG NextEntryOffset;
+        ULONG NumberOfThreads;
+        LARGE_INTEGER Reserved[3];
+        LARGE_INTEGER CreateTime;
+        LARGE_INTEGER UserTime;
+        LARGE_INTEGER KernelTime;
+        UNICODE_STRING ImageName;
+        ULONG BasePriority;
+        HANDLE ProcessId;
+        HANDLE InheritedFromProcessId;
     } SYSTEM_PROCESS_INFO, *PSYSTEM_PROCESS_INFO;
 
     struct SYSTEM_PERFORMANCE_INFORMATION {
@@ -98,7 +98,6 @@ export {
         LONGLONG ResidentAvailablePages; // since THRESHOLD
         ULONGLONG SharedCommittedPages; // since THRESHOLD
     }; // *PSYSTEM_PERFORMANCE_INFORMATION;
-
 }
 
 } // namespace rg

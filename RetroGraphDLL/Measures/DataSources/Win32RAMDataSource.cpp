@@ -21,4 +21,4 @@ MEMORYSTATUSEX Win32RAMDataSource::getMemoryStatus() const {
     return memStatus;
 }
 
-}
+} // namespace rg

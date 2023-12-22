@@ -18,7 +18,6 @@ constexpr int NVAPI_GPU_UTILIZATION_DOMAIN_GPU{ 0U };
 
 GPUMeasure::GPUMeasure()
     : Measure{ std::chrono::seconds{ 1 } } {
-
     if (NvAPI_Initialize() != NVAPI_OK) {
         m_isEnabled = false;
         return;
@@ -32,7 +31,7 @@ GPUMeasure::GPUMeasure()
     // Insert a period after 3rd digit since NVIDIA drivers are formatted as xxx.xx
     m_driverVersion.insert(3, ".");
 
-    // Just handle the first GPU in the system, I don't expect to be using 
+    // Just handle the first GPU in the system, I don't expect to be using
     // multiple any time soon
     m_gpuHandle = getGpuHandle();
 
@@ -62,9 +61,9 @@ GPUMeasure::~GPUMeasure() {
 }
 
 bool GPUMeasure::updateInternal() {
-    //updateGpuTemp(); // High CPU usage function
-    //getClockFrequencies(); // High CPU usage function
-    //getMemInformation();
+    // updateGpuTemp(); // High CPU usage function
+    // getClockFrequencies(); // High CPU usage function
+    // getMemInformation();
 
     onGPUUsage.raise(getGpuUsage());
     return true;
@@ -76,7 +75,8 @@ float GPUMeasure::getMemUsagePercent() const {
 
 void GPUMeasure::updateGpuTemp() {
     const auto result{ NvAPI_GPU_GetThermalSettings(m_gpuHandle, NVAPI_THERMAL_TARGET_NONE, &m_thermalSettings) };
-    RGASSERT(result == NVAPI_OK, std::format("Failed to get thermal information from NVAPI: {}", static_cast<int>(result)).c_str());
+    RGASSERT(result == NVAPI_OK,
+             std::format("Failed to get thermal information from NVAPI: {}", static_cast<int>(result)).c_str());
     m_currentTemp = m_thermalSettings.sensor[0].currentTemp;
 }
 
@@ -92,7 +92,8 @@ NvPhysicalGpuHandle GPUMeasure::getGpuHandle() const {
 
 void GPUMeasure::getClockFrequencies() {
     const auto result{ NvAPI_GPU_GetAllClockFrequencies(m_gpuHandle, &m_clockFreqs) };
-    RGASSERT(result == NVAPI_OK, std::format("Failed to get GPU clock frequencies %d\n", static_cast<int>(result)).c_str());
+    RGASSERT(result == NVAPI_OK,
+             std::format("Failed to get GPU clock frequencies %d\n", static_cast<int>(result)).c_str());
 
     m_graphicsClock = m_clockFreqs.domain[NVAPI_GPU_PUBLIC_CLOCK_GRAPHICS].frequency;
     m_memoryClock = m_clockFreqs.domain[NVAPI_GPU_PUBLIC_CLOCK_MEMORY].frequency;
@@ -127,9 +128,8 @@ int64_t GPUMeasure::GetGpuRunningTimeTotal() const {
     DWORD counterListSize{ 0 };
     DWORD instanceListSize{ 0 };
     const auto COUNTER_OBJECT{ "GPU Engine" };
-    PDH_STATUS status = PdhEnumObjectItemsA(nullptr, nullptr, COUNTER_OBJECT, nullptr,
-                                            &counterListSize, nullptr, &instanceListSize,
-                                            PERF_DETAIL_WIZARD, 0);
+    PDH_STATUS status = PdhEnumObjectItemsA(nullptr, nullptr, COUNTER_OBJECT, nullptr, &counterListSize, nullptr,
+                                            &instanceListSize, PERF_DETAIL_WIZARD, 0);
     if (status != PDH_MORE_DATA) {
         RGERROR("failed PdhEnumObjectItems()");
         return 0;

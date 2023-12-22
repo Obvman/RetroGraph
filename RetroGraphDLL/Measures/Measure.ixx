@@ -14,15 +14,14 @@ export class Measure {
 public:
     Measure(std::optional<milliseconds> updateInterval)
         : m_lastUpdateTime{ steady_clock::now() }
-        , m_updateInterval{ updateInterval }
-    { }
+        , m_updateInterval{ updateInterval } {}
 
     virtual ~Measure() = default;
 
-    Measure(const Measure&)            = delete;
+    Measure(const Measure&) = delete;
     Measure& operator=(const Measure&) = delete;
-    Measure(Measure&&)                 = delete;
-    Measure& operator=(Measure&&)      = delete;
+    Measure(Measure&&) = delete;
+    Measure& operator=(Measure&&) = delete;
 
     void update() {
         if (m_updateInterval) {
@@ -50,4 +49,4 @@ protected:
     std::optional<milliseconds> m_updateInterval;
 };
 
-}
+} // namespace rg

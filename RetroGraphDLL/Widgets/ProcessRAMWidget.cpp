@@ -7,10 +7,7 @@ namespace rg {
 ProcessRAMWidget::ProcessRAMWidget(const FontManager* fontManager, std::shared_ptr<const ProcessMeasure> processMeasure)
     : Widget{ fontManager }
     , m_procMeasure{ processMeasure }
-    , m_postUpdateHandle{ RegisterPostUpdateCallback() } {
-
-}
-
+    , m_postUpdateHandle{ RegisterPostUpdateCallback() } {}
 
 ProcessRAMWidget::~ProcessRAMWidget() {
     m_procMeasure->postUpdate.detach(m_postUpdateHandle);
@@ -38,19 +35,14 @@ void ProcessRAMWidget::draw() const {
         procRamUsages.emplace_back(buff);
     }
 
-    m_fontManager->renderLines(RG_FONT_STANDARD, procNames, 0, 0, 0, 0,
-                               RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL,
-                               15, 5);
-    m_fontManager->renderLines(RG_FONT_STANDARD, procRamUsages, 0, 0, 0, 0,
-                               RG_ALIGN_RIGHT | RG_ALIGN_CENTERED_VERTICAL,
+    m_fontManager->renderLines(RG_FONT_STANDARD, procNames, 0, 0, 0, 0, RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL, 15,
+                               5);
+    m_fontManager->renderLines(RG_FONT_STANDARD, procRamUsages, 0, 0, 0, 0, RG_ALIGN_RIGHT | RG_ALIGN_CENTERED_VERTICAL,
                                15, 5);
 }
 
 PostUpdateEvent::Handle ProcessRAMWidget::RegisterPostUpdateCallback() {
-    return m_procMeasure->postUpdate.attach(
-        [this]() {
-            invalidate();
-        });
+    return m_procMeasure->postUpdate.attach([this]() { invalidate(); });
 }
 
 } // namespace rg

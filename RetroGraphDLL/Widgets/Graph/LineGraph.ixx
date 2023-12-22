@@ -37,5 +37,4 @@ private:
     glm::mat4 m_modelView;
 };
 
-}
-
+} // namespace rg

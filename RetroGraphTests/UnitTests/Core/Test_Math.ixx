@@ -6,7 +6,7 @@ import "Catch2HeaderUnit.h";
 
 // #TODO more unit tests:
 // viewport utilities
-// Measures - 
+// Measures -
 //   Format of data (usage measures return float 0.0f -> 1.0f, time strings)
 
 TEST_CASE("Core::Math. Linear Interpolation", "[lerp]") {

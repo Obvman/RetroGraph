@@ -7,7 +7,7 @@ import "WindowsHeaderUnit.h";
 
 namespace rg {
 
-constexpr const char * foobarWindowClassName{ "{97E27FAA-C0B3-4b8e-A693-ED7881E99FC1}" };
+constexpr const char* foobarWindowClassName{ "{97E27FAA-C0B3-4b8e-A693-ED7881E99FC1}" };
 
 MusicData FoobarMusicDataSource::getMusicData() const {
     // Check if the player window is currently open by matching the class name
@@ -44,8 +44,7 @@ std::string FoobarMusicDataSource::getFoobarWindowTitle(HWND playerHandle) const
     return playerWindowTitle;
 }
 
-void FoobarMusicDataSource::populateDataFromTitle(const std::string& playerWindowTitle,
-                                                  MusicData& musicData) const {
+void FoobarMusicDataSource::populateDataFromTitle(const std::string& playerWindowTitle, MusicData& musicData) const {
     std::vector<std::string> titleTokens;
 
     char title[256];
@@ -110,4 +109,4 @@ void FoobarMusicDataSource::populateDataFromTitle(const std::string& playerWindo
     musicData.totalTime = std::chrono::seconds{ strToNum<int>(total) };
 }
 
-}
+} // namespace rg

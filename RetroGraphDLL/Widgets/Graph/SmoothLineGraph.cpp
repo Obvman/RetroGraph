@@ -17,7 +17,6 @@ SmoothLineGraph::SmoothLineGraph(size_t numGraphSamples)
     , m_numSamples{ numGraphSamples }
     , m_precisionPoints{ defaultPrecisionPoints }
     , m_spline{} {
-
     RGASSERT(m_numSamples > splinePointCacheSize, "Not enough sample points for a smooth graph");
     resetPoints(m_numSamples);
 }
@@ -45,7 +44,7 @@ void SmoothLineGraph::addPoint(float valueY) {
     // Start at 1, since 0 would be the last point of the previous segment we already calculated.
     for (int i = 1; i < m_precisionPoints; ++i) {
         float splineX{ newSegmentStart + (i * segmentStep) };
-        float const splineY{ clampToViewport(m_spline(splineX)) };
+        const float splineY{ clampToViewport(m_spline(splineX)) };
         if (m_pointBuffer.pushPoint(splineY))
             didBufferReallocate = true;
     }
@@ -54,8 +53,8 @@ void SmoothLineGraph::addPoint(float valueY) {
     // that may have their shape be modified by the new point
     int oldSegmentStartIndex{ static_cast<int>(m_pointBuffer.numPoints() - 1) - 2 * (m_precisionPoints - 1) };
     for (int i = 0; i < m_precisionPoints; ++i) {
-        float const splineX{ oldSegmentStart + (i * segmentStep) };
-        float const splineY{ clampToViewport(m_spline(splineX)) };
+        const float splineX{ oldSegmentStart + (i * segmentStep) };
+        const float splineY{ clampToViewport(m_spline(splineX)) };
         m_pointBuffer[oldSegmentStartIndex + i].y = splineY;
     }
 
@@ -108,8 +107,8 @@ void SmoothLineGraph::setPoints(const std::vector<float>& values) {
 
     m_pointBuffer = GraphPointBuffer{ getNumberOfCurvePoints(values.size()) };
     for (int i{ 0 }; i < m_pointBuffer.numPoints(); ++i) {
-        float const splineX{ percentageToVP(static_cast<float>(i) / (m_pointBuffer.numPoints() - 1)) };
-        float const splineY{ clampToViewport(m_spline(splineX)) };
+        const float splineX{ percentageToVP(static_cast<float>(i) / (m_pointBuffer.numPoints() - 1)) };
+        const float splineY{ clampToViewport(m_spline(splineX)) };
         m_pointBuffer.pushPoint(splineY);
     }
 
@@ -123,4 +122,4 @@ void SmoothLineGraph::setPoints(const std::vector<float>& values) {
     m_spline.set_points(splineEndPointsX, splineEndPointsY, tk::spline::cspline_hermite);
 }
 
-}
+} // namespace rg

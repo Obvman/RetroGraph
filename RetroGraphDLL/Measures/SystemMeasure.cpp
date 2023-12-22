@@ -7,7 +7,6 @@ namespace rg {
 SystemMeasure::SystemMeasure(std::unique_ptr<const IOperatingSystemDataSource> operatingSystemDataSource)
     : Measure{ std::nullopt }
     , m_operatingSystemDataSource{ std::move(operatingSystemDataSource) } {
-
     const auto osData{ m_operatingSystemDataSource->getOperatingSystemData() };
     getCPUInfo();
 
@@ -18,10 +17,9 @@ SystemMeasure::SystemMeasure(std::unique_ptr<const IOperatingSystemDataSource> o
 }
 
 void SystemMeasure::getCPUInfo() {
-
     // Credit to bsruth -
     // http://stackoverflow.com/questions/850774/how-to-determine-the-hardware-cpu-and-ram-on-a-machine
-    int CPUInfo[4] = {-1};
+    int CPUInfo[4] = { -1 };
     // Get the information associated with each extended ID.
     __cpuid(CPUInfo, 0x80000000);
     const auto nExIds{ CPUInfo[0] };
@@ -29,11 +27,11 @@ void SystemMeasure::getCPUInfo() {
     for (int i = 0x80000000; i <= nExIds; ++i) {
         __cpuid(CPUInfo, i);
         // Interpret CPU brand string
-        if  (i == 0x80000002)
+        if (i == 0x80000002)
             memcpy(CPUBrandString, CPUInfo, sizeof(CPUInfo));
-        else if  (i == 0x80000003)
+        else if (i == 0x80000003)
             memcpy(CPUBrandString + 16, CPUInfo, sizeof(CPUInfo));
-        else if  (i == 0x80000004)
+        else if (i == 0x80000004)
             memcpy(CPUBrandString + 32, CPUInfo, sizeof(CPUInfo));
     }
 

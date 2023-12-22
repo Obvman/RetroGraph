@@ -18,7 +18,6 @@ LineGraph::LineGraph(size_t numPoints)
     , m_pointBuffer{ numPoints }
     , m_drawDecorations{ true }
     , m_modelView{} {
-
     initPointsVBO();
 }
 
@@ -42,8 +41,8 @@ void LineGraph::addPoint(float valueY) {
                                          m_pointBuffer.numPoints() * sizeof(glm::vec2), m_pointBuffer.front());
     } else {
         // Only one point has changed here
-        m_graphVerticesVBO.bufferSubData(m_pointBuffer.head() * sizeof(glm::vec2),
-                                         sizeof(glm::vec2), m_pointBuffer.back());
+        m_graphVerticesVBO.bufferSubData(m_pointBuffer.head() * sizeof(glm::vec2), sizeof(glm::vec2),
+                                         m_pointBuffer.back());
     }
 }
 
@@ -82,7 +81,7 @@ void LineGraph::initPointsVBO() {
 void LineGraph::drawPoints() const {
     const auto& shader{ WidgetShaderController::inst().getLineGraphShader() };
     auto shaderScope{ shader.bind() };
-    float const xOffset{ (m_pointBuffer.tail() * -m_pointBuffer.getHorizontalPointInterval()) - 1.0f };
+    const float xOffset{ (m_pointBuffer.tail() * -m_pointBuffer.getHorizontalPointInterval()) - 1.0f };
 
     glUniform1f(shader.getUniformLocation("xOffset"), xOffset);
     glUniform4f(shader.getUniformLocation("color"), GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, GRAPHLINE_A);
@@ -92,4 +91,4 @@ void LineGraph::drawPoints() const {
     glDrawArrays(GL_LINE_STRIP, static_cast<GLint>(m_pointBuffer.tail()), m_pointBuffer.numPoints());
 }
 
-}
+} // namespace rg

@@ -13,8 +13,7 @@ namespace rg {
  */
 export class MusicMeasure : public Measure {
 public:
-    MusicMeasure(std::chrono::milliseconds updateInterval,
-                 std::unique_ptr<const IMusicDataSource> musicDataSource);
+    MusicMeasure(std::chrono::milliseconds updateInterval, std::unique_ptr<const IMusicDataSource> musicDataSource);
     ~MusicMeasure() noexcept = default;
 
     bool isPlayerRunning() const { return m_musicData.isMusicPlayerRunning; }

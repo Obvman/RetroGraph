@@ -11,7 +11,6 @@ GLListContainer::GLListContainer()
     , m_borderList{ glGenLists(1) }
     , m_widgetBGList{ glGenLists(1) }
     , m_serifList{ glGenLists(1) } {
-
     initViewportBorderList();
     initBorderList();
     initSerifList();
@@ -26,7 +25,8 @@ GLListContainer::~GLListContainer() {
 }
 
 void GLListContainer::initViewportBorderList() const {
-    glNewList(m_vpBorderList, GL_COMPILE); {
+    glNewList(m_vpBorderList, GL_COMPILE);
+    {
         float color[4];
         glGetFloatv(GL_CURRENT_COLOR, color);
 
@@ -38,51 +38,60 @@ void GLListContainer::initViewportBorderList() const {
 
         glLineWidth(5.0f);
 
-        glBegin(GL_LINES); {
+        glBegin(GL_LINES);
+        {
             glVertex2f(-1.0f, -1.0f);
-            glVertex2f(-1.0f,  1.0f);
+            glVertex2f(-1.0f, 1.0f);
 
-            glVertex2f(-1.0f,  1.0f);
-            glVertex2f( 1.0f,  1.0f);
+            glVertex2f(-1.0f, 1.0f);
+            glVertex2f(1.0f, 1.0f);
 
-            glVertex2f( 1.0f,  1.0f);
-            glVertex2f( 1.0f, -1.0f);
+            glVertex2f(1.0f, 1.0f);
+            glVertex2f(1.0f, -1.0f);
 
-            glVertex2f( 1.0f, -1.0f);
+            glVertex2f(1.0f, -1.0f);
             glVertex2f(-1.0f, -1.0f);
-        } glEnd();
+        }
+        glEnd();
 
         glColor4f(color[0], color[1], color[2], color[3]);
         glLineWidth(lineWidth);
-    } glEndList();
+    }
+    glEndList();
 }
 
 void GLListContainer::initBorderList() const {
-    glNewList(m_borderList, GL_COMPILE); {
+    glNewList(m_borderList, GL_COMPILE);
+    {
         glColor4f(BORDER_R, BORDER_G, BORDER_B, BORDER_A);
         glLineWidth(0.5f);
-        glBegin(GL_LINE_STRIP); {
+        glBegin(GL_LINE_STRIP);
+        {
             glVertex2f(-1.0f, 1.0f);
             glVertex2f(1.0f, 1.0f);
             glVertex2f(1.0f, -1.0f);
             glVertex2f(-1.0f, -1.0f);
             glVertex2f(-1.0f, 1.0f);
-        } glEnd();
-    } glEndList();
+        }
+        glEnd();
+    }
+    glEndList();
 }
 
 void GLListContainer::initSerifList() const {
-    glNewList(m_serifList, GL_COMPILE); {
+    glNewList(m_serifList, GL_COMPILE);
+    {
         glColor4f(DIVIDER_R, DIVIDER_G, DIVIDER_B, DIVIDER_A);
         glLineWidth(0.5f);
-        glBegin(GL_LINES); {
+        glBegin(GL_LINES);
+        {
             glVertex2f(-1.0f, 1.0f);
             glVertex2f(1.0f, 1.0f);
 
-            glVertex2f(-1.0f, 1.0f-serifLen);
+            glVertex2f(-1.0f, 1.0f - serifLen);
             glVertex2f(-1.0f, 1.0f);
 
-            glVertex2f(1.0f, 1.0f-serifLen);
+            glVertex2f(1.0f, 1.0f - serifLen);
             glVertex2f(1.0f, 1.0f);
 
             // Bottom
@@ -94,20 +103,26 @@ void GLListContainer::initSerifList() const {
 
             glVertex2f(1.0f, -1.0f);
             glVertex2f(1.0f, -1.0f + serifLen);
-        } glEnd();
-    } glEndList();
+        }
+        glEnd();
+    }
+    glEndList();
 }
 
 void GLListContainer::initWidgetBGList() const {
-    glNewList(m_widgetBGList, GL_COMPILE); {
+    glNewList(m_widgetBGList, GL_COMPILE);
+    {
         glColor4f(WBG_R, WBG_G, WBG_B, WBG_A);
-        glBegin(GL_QUADS); {
-            glVertex2f(-1.0f,  1.0f);
-            glVertex2f( 1.0f,  1.0f);
-            glVertex2f( 1.0f, -1.0f);
+        glBegin(GL_QUADS);
+        {
+            glVertex2f(-1.0f, 1.0f);
+            glVertex2f(1.0f, 1.0f);
+            glVertex2f(1.0f, -1.0f);
             glVertex2f(-1.0f, -1.0f);
-        } glEnd();
-    } glEndList();
+        }
+        glEnd();
+    }
+    glEndList();
 }
 
 } // namespace rg

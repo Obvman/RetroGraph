@@ -20,8 +20,7 @@ export struct ParticleLine {
         : v1{ x1, y1 }
         , distance1{ distance(x1, y1, x2, y2) }
         , v2{ x2, y2 }
-        , distance2{ distance1 }
-    { }
+        , distance2{ distance1 } {}
 
     glm::vec2 v1;
     float distance1;

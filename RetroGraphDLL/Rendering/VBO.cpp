@@ -9,7 +9,6 @@ VBO::VBO(GLenum target_, GLenum usage_) noexcept
     : id{ invalidGLID }
     , target{ target_ }
     , usage{ usage_ } {
-
     glGenBuffers(1, &id);
 }
 
@@ -35,4 +34,4 @@ VBO& VBO::operator=(VBO&& other) {
     return *this;
 }
 
-}
+} // namespace rg

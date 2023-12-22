@@ -7,24 +7,23 @@ namespace rg {
 
 AnimationState::AnimationState()
     : Measure{ milliseconds{ 0 } }
-    , m_particles( createParticles() )
+    , m_particles(createParticles())
     , m_particleLines{}
     , m_numLines{ 0 } {
-
     for (const auto& p : m_particles)
         m_cells[p.cellX][p.cellY].push_back(&p);
 }
 
 auto AnimationState::createParticles() -> decltype(m_particles) {
     std::srand(static_cast<unsigned int>(_time64(nullptr)));
-    return decltype(m_particles)( numParticles );
+    return decltype(m_particles)(numParticles);
 }
 
 bool AnimationState::updateInternal() {
     using namespace std::chrono;
     using clock = high_resolution_clock;
 
-    const auto deltaTimeStep{ since<clock, clock::duration, microseconds>(m_lastUpdateTime)};
+    const auto deltaTimeStep{ since<clock, clock::duration, microseconds>(m_lastUpdateTime) };
     auto dt{ duration_cast<duration<float>>(deltaTimeStep).count() };
 
     // If a lot of time has passed, set dt to a small value so we don't have one large jump
@@ -45,8 +44,8 @@ void AnimationState::updateParticleLines() {
     // draw lines to particles in neighbouring cells (but not the current cell)
     for (const auto& p : m_particles) {
         auto nextX = int{ p.cellX + 1 };
-        auto nextY = int{ p.cellY + 1};
-        auto prevY = int{ static_cast<int>(p.cellY) - 1}; // can be negative
+        auto nextY = int{ p.cellY + 1 };
+        auto prevY = int{ static_cast<int>(p.cellY) - 1 }; // can be negative
         if (nextX >= numCellsPerSide)
             nextX = 0;
         if (nextY >= numCellsPerSide)
@@ -54,7 +53,7 @@ void AnimationState::updateParticleLines() {
         if (prevY < 0)
             prevY = numCellsPerSide - 1;
 
-        // We check four neighbouring cells since some collisions may 
+        // We check four neighbouring cells since some collisions may
         // occur across cell boundaries
         const std::array<const CellParticleList*, 4> neighbouringCells = {
             &(m_cells[p.cellX][nextY]),
@@ -84,7 +83,8 @@ void AnimationState::updateParticleLines() {
 }
 
 void AnimationState::addLine(const Particle* const p1, const Particle* const p2) {
-    if (p1 == p2) return;
+    if (p1 == p2)
+        return;
 
     constexpr auto radiusSq{ particleConnectionDistance * particleConnectionDistance };
     const auto dx{ fabs(p1->x - p2->x) };

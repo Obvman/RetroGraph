@@ -16,8 +16,7 @@ export using RAMUsageEvent = CallbackEvent<float>;
 /* Stores capacity totals and availability for system RAM */
 export class RAMMeasure : public Measure {
 public:
-    RAMMeasure(std::chrono::milliseconds updateInterval,
-               std::unique_ptr<const IRAMDataSource> ramDataSource);
+    RAMMeasure(std::chrono::milliseconds updateInterval, std::unique_ptr<const IRAMDataSource> ramDataSource);
     ~RAMMeasure() noexcept = default;
 
     uint64_t getRAMCapacity() const { return m_ramDataSource->getRAMCapacity(); }

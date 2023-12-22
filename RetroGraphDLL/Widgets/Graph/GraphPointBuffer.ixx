@@ -42,4 +42,4 @@ private:
     size_t m_tail;
 };
 
-}
+} // namespace rg

@@ -25,14 +25,12 @@ TEST_CASE("Measures::DriveMeasure. Update", "[measure]") {
     constexpr seconds initialElapsedTime{ 10 };
     const rg::DriveData defaultDriveData{};
     rg::DriveData testDriveData{
-        .drives{
-            { 'C', 2 * rg::GB, 10 * rg::GB, "Test drive one" },
-            { 'D', 40 * rg::GB, 100 * rg::GB, "Test drive two" }
-        }
+        .drives{{ 'C', 2 * rg::GB, 10 * rg::GB, "Test drive one" },
+                { 'D', 40 * rg::GB, 100 * rg::GB, "Test drive two" }}
     };
 
     auto driveDataSource{ std::make_unique<TestDriveDataSource>() };
-    auto* driveDataSourceRaw{ driveDataSource.get()};
+    auto* driveDataSourceRaw{ driveDataSource.get() };
     rg::DriveMeasure measure{ testMeasureUpdateInterval, std::move(driveDataSource) };
 
     driveDataSourceRaw->setDriveData(testDriveData);
@@ -79,7 +77,7 @@ TEST_CASE("Measures::DriveMeasure. Update", "[measure]") {
             testDriveData.drives[0].totalFreeBytes = 1 * rg::GB;
             driveDataSourceRaw->setDriveData(testDriveData);
             measure.update();
- 
+
             REQUIRE(measure.getNumDrives() == 2);
             REQUIRE(measure.getDrives()[0].driveLetter == 'C');
             REQUIRE(measure.getDrives()[0].totalFreeBytes == 1 * rg::GB);

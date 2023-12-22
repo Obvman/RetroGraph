@@ -16,4 +16,4 @@ seconds ChronoTimeDataSource::getCurrentUptime() const {
     return duration_cast<seconds>(milliseconds(GetTickCount64()));
 }
 
-}
+} // namespace rg

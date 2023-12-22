@@ -24,22 +24,16 @@ DriveData Win32DriveDataSource::getDriveData() const {
         ULARGE_INTEGER freeBytesAvailable;
         ULARGE_INTEGER totalBytes;
         ULARGE_INTEGER totalFreeBytes;
-        GetDiskFreeSpaceEx(drivePath.c_str(), &freeBytesAvailable,
-                           &totalBytes, &totalFreeBytes);
+        GetDiskFreeSpaceEx(drivePath.c_str(), &freeBytesAvailable, &totalBytes, &totalFreeBytes);
 
         char volumeNameBuff[maxVolumeNameSize];
-        GetVolumeInformation(drivePath.c_str(), volumeNameBuff, maxVolumeNameSize,
-                             nullptr, nullptr, nullptr, nullptr, 0);
+        GetVolumeInformation(drivePath.c_str(), volumeNameBuff, maxVolumeNameSize, nullptr, nullptr, nullptr, nullptr,
+                             0);
 
-        driveData.drives.emplace_back(
-            drivePath[0],
-            totalFreeBytes.QuadPart,
-            totalBytes.QuadPart,
-            volumeNameBuff
-        );
+        driveData.drives.emplace_back(drivePath[0], totalFreeBytes.QuadPart, totalBytes.QuadPart, volumeNameBuff);
     }
 
     return driveData;
 }
 
-}
+} // namespace rg

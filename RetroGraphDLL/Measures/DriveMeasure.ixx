@@ -12,8 +12,7 @@ namespace rg {
 /* Stores paths and statistics about all the system's fixed drives */
 export class DriveMeasure : public Measure {
 public:
-    DriveMeasure(std::chrono::milliseconds updateInterval,
-                 std::unique_ptr<const IDriveDataSource> driveDataSource);
+    DriveMeasure(std::chrono::milliseconds updateInterval, std::unique_ptr<const IDriveDataSource> driveDataSource);
     ~DriveMeasure() noexcept = default;
 
     /* Returns the number of fixed drives active in the system */

@@ -13,8 +13,7 @@ void createFormattedTimeStr(char* buffer, size_t buffSize, int seconds);
 MusicWidget::MusicWidget(const FontManager* fontManager, std::shared_ptr<const MusicMeasure> musicMeasure)
     : Widget{ fontManager }
     , m_musicMeasure{ musicMeasure }
-    , m_postUpdateHandle{ RegisterPostUpdateCallback() } {
-}
+    , m_postUpdateHandle{ RegisterPostUpdateCallback() } {}
 
 MusicWidget::~MusicWidget() {
     m_musicMeasure->postUpdate.detach(m_postUpdateHandle);
@@ -22,23 +21,17 @@ MusicWidget::~MusicWidget() {
 
 void MusicWidget::draw() const {
     if (m_musicMeasure->isPlayerRunning()) {
-        glViewport(m_viewport.x, m_viewport.y + m_viewport.height/4,
-                   m_viewport.width, 3*m_viewport.height/4);
+        glViewport(m_viewport.x, m_viewport.y + m_viewport.height / 4, m_viewport.width, 3 * m_viewport.height / 4);
         glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
-        m_fontManager->renderLine(RG_FONT_MUSIC_LARGE,
-                                  m_musicMeasure->getTrackName(), 0, 0, 0, 0,
-                                  RG_ALIGN_TOP | RG_ALIGN_CENTERED_HORIZONTAL,
-                                  10, 30);
+        m_fontManager->renderLine(RG_FONT_MUSIC_LARGE, m_musicMeasure->getTrackName(), 0, 0, 0, 0,
+                                  RG_ALIGN_TOP | RG_ALIGN_CENTERED_HORIZONTAL, 10, 30);
 
-        m_fontManager->renderLine(RG_FONT_STANDARD,
-                                  m_musicMeasure->getArtist(), 0, 0, 0, 0,
+        m_fontManager->renderLine(RG_FONT_STANDARD, m_musicMeasure->getArtist(), 0, 0, 0, 0,
                                   RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_CENTERED_HORIZONTAL);
 
-        m_fontManager->renderLine(RG_FONT_STANDARD_BOLD,
-                                  m_musicMeasure->getAlbum(), 0, 0, 0, 0,
-                                  RG_ALIGN_BOTTOM | RG_ALIGN_CENTERED_HORIZONTAL,
-                                  10, 30);
+        m_fontManager->renderLine(RG_FONT_STANDARD_BOLD, m_musicMeasure->getAlbum(), 0, 0, 0, 0,
+                                  RG_ALIGN_BOTTOM | RG_ALIGN_CENTERED_HORIZONTAL, 10, 30);
 
         const auto elapsed{ m_musicMeasure->getElapsedTime() };
         const auto total{ m_musicMeasure->getTotalTime() };
@@ -50,23 +43,18 @@ void MusicWidget::draw() const {
         strcat_s(elapsedBuff, sizeof(elapsedBuff), "/");
         strcat_s(elapsedBuff, sizeof(elapsedBuff), totalBuff);
 
-        glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height/4);
-        m_fontManager->renderLine(-0.9f, 0.5f, RG_FONT_STANDARD, elapsedBuff, 
-                                  static_cast<int>(strlen(elapsedBuff)));
-        drawHorizontalProgressBar(0.3f, -0.9f, 0.9f,
-                                  static_cast<float>(elapsed.count()), static_cast<float>(total.count()));
+        glViewport(m_viewport.x, m_viewport.y, m_viewport.width, m_viewport.height / 4);
+        m_fontManager->renderLine(-0.9f, 0.5f, RG_FONT_STANDARD, elapsedBuff, static_cast<int>(strlen(elapsedBuff)));
+        drawHorizontalProgressBar(0.3f, -0.9f, 0.9f, static_cast<float>(elapsed.count()),
+                                  static_cast<float>(total.count()));
     } else {
         m_fontManager->renderLine(RG_FONT_TIME, "No Media", 0, 0, 0, 0,
-                                  RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_CENTERED_HORIZONTAL,
-                                  10, 10);
+                                  RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_CENTERED_HORIZONTAL, 10, 10);
     }
 }
 
 PostUpdateEvent::Handle MusicWidget::RegisterPostUpdateCallback() {
-    return m_musicMeasure->postUpdate.attach(
-        [this]() {
-            invalidate();
-        });
+    return m_musicMeasure->postUpdate.attach([this]() { invalidate(); });
 }
 
 void createFormattedTimeStr(char* buffer, size_t buffSize, int seconds) {

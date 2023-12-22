@@ -11,8 +11,7 @@ namespace rg {
 
 export class HDDWidget : public Widget {
 public:
-    HDDWidget(const FontManager* fontManager,
-              std::shared_ptr<const DriveMeasure> driveMeasure);
+    HDDWidget(const FontManager* fontManager, std::shared_ptr<const DriveMeasure> driveMeasure);
     ~HDDWidget() noexcept;
 
     void draw() const override;

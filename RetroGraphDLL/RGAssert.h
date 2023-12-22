@@ -12,7 +12,9 @@ inline constexpr auto debugMode = bool{ true };
 
 inline constexpr auto debugMode = bool{ false };
 
-#define RGASSERT(expr, str) ((void)(expr)); ((void)(str))
+#define RGASSERT(expr, str) \
+    ((void)(expr));         \
+    ((void)(str))
 #define RGERROR(str) ((void)(str))
 
 #endif
@@ -33,4 +35,4 @@ __declspec(dllexport) void rgError(const char* str);
 
 __declspec(dllexport) void rgVerify([[maybe_unused]] bool expr, [[maybe_unused]] const char* str);
 
-}
+} // namespace rg

@@ -34,7 +34,7 @@ TEST_CASE("Measures::MusicMeasure. Update", "[measure]") {
     };
 
     auto musicDataSource{ std::make_unique<TestMusicDataSource>() };
-    auto* musicDataSourceRaw{ musicDataSource.get()};
+    auto* musicDataSourceRaw{ musicDataSource.get() };
     rg::MusicMeasure measure{ testMeasureUpdateInterval, std::move(musicDataSource) };
 
     musicDataSourceRaw->setMusicData(testMusicData);
@@ -53,9 +53,9 @@ TEST_CASE("Measures::MusicMeasure. Update", "[measure]") {
         std::this_thread::sleep_for(testMeasureUpdateInterval * 2);
         measure.update();
         REQUIRE(measure.isMusicPlaying() == true);
-        REQUIRE(measure.getTrackName() == "My favorite song" );
-        REQUIRE(measure.getArtist() == "My favorite artist" );
-        REQUIRE(measure.getAlbum() == "My favorite album" );
+        REQUIRE(measure.getTrackName() == "My favorite song");
+        REQUIRE(measure.getArtist() == "My favorite artist");
+        REQUIRE(measure.getAlbum() == "My favorite album");
         REQUIRE(measure.getElapsedTime() == initialElapsedTime);
         REQUIRE(measure.getTotalTime() == 50s);
     }
@@ -68,9 +68,9 @@ TEST_CASE("Measures::MusicMeasure. Update", "[measure]") {
             std::this_thread::sleep_for(testMeasureUpdateInterval * 2);
             measure.update();
             REQUIRE(measure.isMusicPlaying() == true);
-            REQUIRE(measure.getTrackName() == "My favorite song" );
-            REQUIRE(measure.getArtist() == "My favorite artist" );
-            REQUIRE(measure.getAlbum() == "My favorite album" );
+            REQUIRE(measure.getTrackName() == "My favorite song");
+            REQUIRE(measure.getArtist() == "My favorite artist");
+            REQUIRE(measure.getAlbum() == "My favorite album");
             REQUIRE(measure.getElapsedTime() == initialElapsedTime);
             REQUIRE(measure.getTotalTime() == 50s);
         }
@@ -83,7 +83,7 @@ TEST_CASE("Measures::MusicMeasure. Update", "[measure]") {
             musicDataSourceRaw->setMusicData(testMusicData);
             measure.update();
             REQUIRE(measure.getElapsedTime() == seconds{ initialElapsedTime + 1s });
-            REQUIRE(measure.getArtist() ==  "my least favorite artist");
+            REQUIRE(measure.getArtist() == "my least favorite artist");
         }
     }
 }

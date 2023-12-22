@@ -13,14 +13,14 @@ NetGraphWidget::NetGraphWidget(const FontManager* fontManager, std::shared_ptr<c
     , m_onUpBytesHandle{ RegisterNetUpBytesCallback() }
     , m_configRefreshedHandle{ RegisterConfigRefreshedCallback() }
     , m_graphSampleSize{ UserSettings::inst().getVal<int>("Widgets-NetGraph.NumUsageSamples") }
-    , m_netGraph{ static_cast<size_t> (m_graphSampleSize) }
-    , m_downLowerBound{ KB * UserSettings::inst().getVal<int, int64_t>("Widgets-NetGraph.DownloadDataScaleLowerBoundKB") }
+    , m_netGraph{ static_cast<size_t>(m_graphSampleSize) }
+    , m_downLowerBound{ KB *
+                        UserSettings::inst().getVal<int, int64_t>("Widgets-NetGraph.DownloadDataScaleLowerBoundKB") }
     , m_upLowerBound{ KB * UserSettings::inst().getVal<int, int64_t>("Widgets-NetGraph.UploadDataScaleLowerBoundKB") }
     , m_maxDownValue{ m_downLowerBound }
     , m_maxUpValue{ m_upLowerBound }
-    , m_downBytes( static_cast<size_t> (m_graphSampleSize), 0 )
-    , m_upBytes( static_cast<size_t> (m_graphSampleSize), 0 ) {
-}
+    , m_downBytes(static_cast<size_t>(m_graphSampleSize), 0)
+    , m_upBytes(static_cast<size_t>(m_graphSampleSize), 0) {}
 
 NetGraphWidget::~NetGraphWidget() {
     UserSettings::inst().configRefreshed.detach(m_configRefreshedHandle);
@@ -29,23 +29,22 @@ NetGraphWidget::~NetGraphWidget() {
 }
 
 void NetGraphWidget::draw() const {
-
-    {// Draw the line graphs
+    { // Draw the line graphs
         glViewport(m_viewport.x, m_viewport.y, (m_viewport.width * 4) / 5, m_viewport.height);
         m_netGraph.draw();
     }
 
-    {// Text
+    { // Text
         glViewport(m_viewport.x + (4 * m_viewport.width) / 5, m_viewport.y, m_viewport.width / 5, m_viewport.height);
         glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
 
-        m_fontManager->renderLine(RG_FONT_SMALL, getScaleLabel(m_maxDownValue), 0, 0, m_viewport.width / 5, m_viewport.height,
-                                  RG_ALIGN_TOP | RG_ALIGN_LEFT);
+        m_fontManager->renderLine(RG_FONT_SMALL, getScaleLabel(m_maxDownValue), 0, 0, m_viewport.width / 5,
+                                  m_viewport.height, RG_ALIGN_TOP | RG_ALIGN_LEFT);
 
         m_fontManager->renderLine(RG_FONT_SMALL, "Down / Up", 0, 0, m_viewport.width / 5, m_viewport.height,
                                   RG_ALIGN_CENTERED_VERTICAL | RG_ALIGN_LEFT);
-        m_fontManager->renderLine(RG_FONT_SMALL, getScaleLabel(m_maxUpValue), 0, 0, m_viewport.width / 5, m_viewport.height,
-                                  RG_ALIGN_BOTTOM | RG_ALIGN_LEFT);
+        m_fontManager->renderLine(RG_FONT_SMALL, getScaleLabel(m_maxUpValue), 0, 0, m_viewport.width / 5,
+                                  m_viewport.height, RG_ALIGN_BOTTOM | RG_ALIGN_LEFT);
     }
 }
 
@@ -74,9 +73,8 @@ std::string NetGraphWidget::getScaleLabel(int64_t bytesTransferred) const {
     }
 }
 
-void NetGraphWidget::addUsageValue(NetBytesQueue& usageQueue, LineGraph& graph,
-                                   int64_t& currentMaxValue, int64_t lowerBound,
-                                   int64_t usageValue) {
+void NetGraphWidget::addUsageValue(NetBytesQueue& usageQueue, LineGraph& graph, int64_t& currentMaxValue,
+                                   int64_t lowerBound, int64_t usageValue) {
     // Remove old data and add the new to ensure queue maintains fixed size
     usageQueue.pop_front();
     usageQueue.push_back(usageValue);
@@ -112,39 +110,34 @@ void NetGraphWidget::addUsageValue(NetBytesQueue& usageQueue, LineGraph& graph,
 }
 
 NetUsageEvent::Handle NetGraphWidget::RegisterNetDownBytesCallback() {
-    return m_netMeasure->onDownBytes.attach(
-        [this](int64_t downBytes) {
-            addUsageValue(m_downBytes, m_netGraph.topGraph(), m_maxDownValue,
-                          m_downLowerBound, downBytes);
-        });
+    return m_netMeasure->onDownBytes.attach([this](int64_t downBytes) {
+        addUsageValue(m_downBytes, m_netGraph.topGraph(), m_maxDownValue, m_downLowerBound, downBytes);
+    });
 }
 
 NetUsageEvent::Handle NetGraphWidget::RegisterNetUpBytesCallback() {
-    return m_netMeasure->onUpBytes.attach(
-        [this](int64_t upBytes) {
-            addUsageValue(m_upBytes, m_netGraph.bottomGraph(), m_maxUpValue,
-                          m_upLowerBound, upBytes);
-        });
+    return m_netMeasure->onUpBytes.attach([this](int64_t upBytes) {
+        addUsageValue(m_upBytes, m_netGraph.bottomGraph(), m_maxUpValue, m_upLowerBound, upBytes);
+    });
 }
 
 ConfigRefreshedEvent::Handle NetGraphWidget::RegisterConfigRefreshedCallback() {
-    return UserSettings::inst().configRefreshed.attach(
-        [this]() {
-            m_downLowerBound = KB * UserSettings::inst().getVal<int, int64_t>("Widgets-NetGraph.DownloadDataScaleLowerBoundKB");
-            m_upLowerBound = KB * UserSettings::inst().getVal<int, int64_t>("Widgets-NetGraph.UploadDataScaleLowerBoundKB");
+    return UserSettings::inst().configRefreshed.attach([this]() {
+        m_downLowerBound =
+            KB * UserSettings::inst().getVal<int, int64_t>("Widgets-NetGraph.DownloadDataScaleLowerBoundKB");
+        m_upLowerBound = KB * UserSettings::inst().getVal<int, int64_t>("Widgets-NetGraph.UploadDataScaleLowerBoundKB");
 
-            const int newGraphSampleSize{ UserSettings::inst().getVal<int>("Widgets-NetGraph.NumUsageSamples") };
-            if (m_graphSampleSize != newGraphSampleSize) {
-                m_graphSampleSize = newGraphSampleSize;
-                m_netGraph.resetPoints(m_graphSampleSize);
-                m_maxDownValue = m_downLowerBound;
-                m_maxUpValue = m_upLowerBound;
-                m_downBytes = NetBytesQueue(static_cast<size_t>(m_graphSampleSize), 0);
-                m_upBytes = NetBytesQueue(static_cast<size_t>(m_graphSampleSize), 0);
-            }
-            invalidate();
+        const int newGraphSampleSize{ UserSettings::inst().getVal<int>("Widgets-NetGraph.NumUsageSamples") };
+        if (m_graphSampleSize != newGraphSampleSize) {
+            m_graphSampleSize = newGraphSampleSize;
+            m_netGraph.resetPoints(m_graphSampleSize);
+            m_maxDownValue = m_downLowerBound;
+            m_maxUpValue = m_upLowerBound;
+            m_downBytes = NetBytesQueue(static_cast<size_t>(m_graphSampleSize), 0);
+            m_upBytes = NetBytesQueue(static_cast<size_t>(m_graphSampleSize), 0);
         }
-    );
+        invalidate();
+    });
 }
 
 } // namespace rg

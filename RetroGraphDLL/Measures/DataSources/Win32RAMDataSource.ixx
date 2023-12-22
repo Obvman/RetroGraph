@@ -16,4 +16,4 @@ private:
     MEMORYSTATUSEX getMemoryStatus() const;
 };
 
-}
+} // namespace rg

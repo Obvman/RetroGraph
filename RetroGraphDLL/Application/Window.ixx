@@ -16,12 +16,13 @@ namespace rg {
 
 export class Window {
 public:
-    Window(IRetroGraph* rg_, std::shared_ptr<const DisplayMeasure> displayMeasure, HINSTANCE hInstance, int startupMonitor);
+    Window(IRetroGraph* rg_, std::shared_ptr<const DisplayMeasure> displayMeasure, HINSTANCE hInstance,
+           int startupMonitor);
     ~Window() noexcept;
-    Window(const Window&)            = delete;
+    Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
-    Window(Window&&)                 = delete;
-    Window& operator=(Window&&)      = delete;
+    Window(Window&&) = delete;
+    Window& operator=(Window&&) = delete;
 
     /* Just runs some experimental code */
     void runTest();
@@ -38,6 +39,7 @@ public:
     HGLRC getHGLRC() const { return m_hrc; }
 
     bool isRunning() const { return m_running; }
+
 private:
     /* Creates the window and the OpenGL context */
     void createWindow();
@@ -56,7 +58,7 @@ private:
     void initOpenGL();
 
     /* Creates a dummy window to test if multisampling is supported. If so,
-     * the dummy is destroyed and a new anti-aliased window is created 
+     * the dummy is destroyed and a new anti-aliased window is created
      */
     bool createHGLRC();
 
@@ -85,8 +87,7 @@ private:
     void sendToBack() const;
 
     // Passes Window this pointer via userParam
-    static void GLAPIENTRY GLMessageCallback(GLenum source, GLenum type, GLuint id,
-                                             GLenum severity, GLsizei length,
+    static void GLAPIENTRY GLMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length,
                                              const GLchar* message, const void* userParam);
 
     bool m_running{ true };
@@ -94,10 +95,10 @@ private:
     IRetroGraph* m_retroGraph;
 
     HWND m_hWndMain{ nullptr };
-    HDC m_hdc{ };
-    HGLRC m_hrc{ };
+    HDC m_hdc{};
+    HGLRC m_hrc{};
 
-    NOTIFYICONDATA m_tray{ };
+    NOTIFYICONDATA m_tray{};
     bool m_dragging{ false };
     int m_currMonitor{ 0 };
     int m_width{ 0 };

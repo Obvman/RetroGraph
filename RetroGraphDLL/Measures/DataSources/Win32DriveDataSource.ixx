@@ -12,4 +12,4 @@ public:
     DriveData getDriveData() const override;
 };
 
-}
+} // namespace rg

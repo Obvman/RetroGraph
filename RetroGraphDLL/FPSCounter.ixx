@@ -20,9 +20,10 @@ public:
     __declspec(dllexport) void endFrame();
 
     float getFPS() const { return m_fps; }
+
 private:
-    /* Calculates the framerate using multiple previous frame times to smooth 
-     * the value 
+    /* Calculates the framerate using multiple previous frame times to smooth
+     * the value
      */
     void calculateFPS();
 

@@ -13,8 +13,7 @@ public:
     Widget(const FontManager* fm)
         : m_viewport{}
         , m_fontManager{ fm }
-        , m_needsRedraw{ true } {
-    }
+        , m_needsRedraw{ true } {}
     virtual ~Widget();
     Widget(const Widget&) = delete;
     Widget& operator=(const Widget&) = delete;

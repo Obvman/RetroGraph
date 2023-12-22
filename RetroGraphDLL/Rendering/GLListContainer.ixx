@@ -10,7 +10,10 @@ export constexpr auto serifLen = float{ 0.05f };
 
 export class GLListContainer {
 public:
-    static GLListContainer& inst() { static GLListContainer i; return i; }
+    static GLListContainer& inst() {
+        static GLListContainer i;
+        return i;
+    }
 
     ~GLListContainer();
 

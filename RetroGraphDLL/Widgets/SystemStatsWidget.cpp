@@ -6,14 +6,12 @@ import RG.Core;
 
 namespace rg {
 
-SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
-                                     std::shared_ptr<const CPUMeasure> cpuMeasure,
+SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager, std::shared_ptr<const CPUMeasure> cpuMeasure,
                                      std::shared_ptr<const GPUMeasure> gpuMeasure,
                                      std::shared_ptr<const RAMMeasure> ramMeasure,
                                      std::shared_ptr<const DisplayMeasure> displayMeasure,
                                      std::shared_ptr<const SystemMeasure> systemMeasure)
     : Widget{ fontManager } {
-
     // Just create stats string here since we expect it not to change during
     // the lifetime of the program
     m_statsStrings.emplace_back("User Name: " + systemMeasure->getUserName() + "@" + systemMeasure->getComputerName());
@@ -24,8 +22,7 @@ SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
         const auto cpuName = cpuMeasure->getCPUName();
         if (!cpuName.empty())
             m_statsStrings.emplace_back(cpuName);
-    }
-    else
+    } else
         m_statsStrings.emplace_back(systemMeasure->getCPUDescription());
 
     m_statsStrings.emplace_back(gpuMeasure->getGpuDescription());
@@ -39,8 +36,8 @@ SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
             const auto& monitorData{ monitors->getMonitorData()[i] };
 
             std::ostringstream iss;
-            iss << "Display " << i << ": " << monitorData.realWidth << "x" << monitorData.realHeight
-                << "@" << monitorData.refreshRate << "Hz";
+            iss << "Display " << i << ": " << monitorData.realWidth << "x" << monitorData.realHeight << "@"
+                << monitorData.refreshRate << "Hz";
 
             m_statsStrings.emplace_back(iss.str());
         }
@@ -48,18 +45,15 @@ SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
         std::ostringstream iss;
         iss << "Display: ";
         const auto& monitorData{ monitors->getMonitorData()[0] };
-        iss << monitorData.realWidth << "x" << monitorData.realHeight
-            << "@" << monitorData.refreshRate << "Hz";
+        iss << monitorData.realWidth << "x" << monitorData.realHeight << "@" << monitorData.refreshRate << "Hz";
         m_statsStrings.emplace_back(iss.str());
     }
 }
 
 void SystemStatsWidget::draw() const {
     glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-    m_fontManager->renderLines(RG_FONT_STANDARD, m_statsStrings, 0, 0,
-                               m_viewport.width, m_viewport.height,
-                               RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL,
-                               15, 10);
+    m_fontManager->renderLines(RG_FONT_STANDARD, m_statsStrings, 0, 0, m_viewport.width, m_viewport.height,
+                               RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL, 15, 10);
 }
 
 } // namespace rg

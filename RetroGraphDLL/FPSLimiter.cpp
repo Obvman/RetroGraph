@@ -14,9 +14,7 @@ FPSLimiter::FPSLimiter()
     : m_frameTime{ fpsToFrameTime(UserSettings::inst().getVal<int>("Application.FPS")) }
     , m_currentFrameStart{ system_clock::now() }
     , m_currentFrameEnd{ m_currentFrameStart + m_frameTime }
-    , m_configRefreshedHandle{ RegisterConfigRefreshedCallback() } {
-
-}
+    , m_configRefreshedHandle{ RegisterConfigRefreshedCallback() } {}
 
 FPSLimiter::~FPSLimiter() {
     UserSettings::inst().configRefreshed.detach(m_configRefreshedHandle);
@@ -24,7 +22,7 @@ FPSLimiter::~FPSLimiter() {
 
 void FPSLimiter::startFrame() {
     const auto now = system_clock::now();
-    //std::cerr << "This frame: " << round<milliseconds>(now - m_currentFrameStart) << '\n';
+    // std::cerr << "This frame: " << round<milliseconds>(now - m_currentFrameStart) << '\n';
     m_currentFrameStart = now;
 }
 
@@ -42,10 +40,7 @@ void FPSLimiter::endFrame() {
 
 ConfigRefreshedEvent::Handle FPSLimiter::RegisterConfigRefreshedCallback() {
     return UserSettings::inst().configRefreshed.attach(
-        [this]() {
-            m_frameTime = fpsToFrameTime(UserSettings::inst().getVal<int>("Application.FPS"));
-        }
-    );
+        [this]() { m_frameTime = fpsToFrameTime(UserSettings::inst().getVal<int>("Application.FPS")); });
 }
 
 } // namespace rg

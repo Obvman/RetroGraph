@@ -24,13 +24,13 @@ public:
     int getHeight(size_t i) const { return m_monitors[i].height; }
     int getX(size_t i) const { return m_monitors[i].x; }
     int getY(size_t i) const { return m_monitors[i].y; }
+
 private:
     void fillMonitorData();
 
-    static BOOL CALLBACK MonitorCallback2(HMONITOR hMonitor,
-                                          HDC, LPRECT, LPARAM dwData);
+    static BOOL CALLBACK MonitorCallback2(HMONITOR hMonitor, HDC, LPRECT, LPARAM dwData);
 
-    std::vector<MonitorData> m_monitors{ };
+    std::vector<MonitorData> m_monitors{};
 };
 
 } // namespace rg

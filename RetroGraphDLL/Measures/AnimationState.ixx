@@ -12,7 +12,6 @@ constexpr size_t numParticles{ 100U };
 export constexpr size_t maxLines{ numParticles * numParticles };
 
 export class AnimationState : public Measure {
-
 public:
     AnimationState();
     ~AnimationState() = default;
@@ -22,7 +21,6 @@ public:
     int getNumLines() const { return m_numLines; }
 
 protected:
-
     /* Updates the positions of all particles */
     bool updateInternal() override;
 
@@ -30,10 +28,10 @@ private:
     void updateParticleLines();
     void addLine(const Particle* const p1, const Particle* const p2);
 
-    std::vector<Particle> m_particles{ };
+    std::vector<Particle> m_particles{};
     auto createParticles() -> decltype(m_particles);
 
-    // Static buffer set to the maximum possible number of lines existing in worst case 
+    // Static buffer set to the maximum possible number of lines existing in worst case
     // scenario (all particles are in neighbouring cells)
     std::array<ParticleLine, maxLines> m_particleLines;
     int m_numLines; // Tracks actual number of lines

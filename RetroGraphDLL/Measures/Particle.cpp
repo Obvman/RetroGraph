@@ -5,15 +5,20 @@ import "CSTDHeaderUnit.h";
 namespace rg {
 
 Particle::Particle()
-    : x{ particleMinPos + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos))) }
-    , y{ particleMinPos + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos))) }
-    , dirX{ particleMinPos + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos))) }
-    , dirY{ particleMinPos + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(particleMaxPos-particleMinPos))) }
-    , size{ particleMinSize + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(particleMaxSize-particleMinSize))) }
-    , speed{ particleMinSpeed + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(particleMaxSpeed-particleMinSpeed))) }
+    : x{ particleMinPos +
+         static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (particleMaxPos - particleMinPos))) }
+    , y{ particleMinPos +
+         static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (particleMaxPos - particleMinPos))) }
+    , dirX{ particleMinPos +
+            static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (particleMaxPos - particleMinPos))) }
+    , dirY{ particleMinPos +
+            static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (particleMaxPos - particleMinPos))) }
+    , size{ particleMinSize +
+            static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (particleMaxSize - particleMinSize))) }
+    , speed{ particleMinSpeed +
+             static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (particleMaxSpeed - particleMinSpeed))) }
     , cellX{ static_cast<int>((x + 1.0f) / cellSize) }
-    , cellY{ static_cast<int>((y + 1.0f) / cellSize) } {
-}
+    , cellY{ static_cast<int>((y + 1.0f) / cellSize) } {}
 
 void Particle::update(Cells& cells, float dt) {
     x += speed * dirX * dt;
@@ -29,7 +34,7 @@ void Particle::update(Cells& cells, float dt) {
         x = particleMinPos;
         y = std::clamp(-y, particleMinPos, particleMaxPos);
         teleported = true;
-    } 
+    }
 
     // Check the need to wrap in the y direction ONLY if we didn't wrap in the x direction,
     // otherwise we'll just put the particle back in the same spot and it will be stuck forever

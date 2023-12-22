@@ -55,8 +55,7 @@ public:
        period between the previous and latest update of this object */
     double getCpuUsage() const { return m_cpuUsage; }
 
-    void setTimes(const FILETIME& cTime, const FILETIME& eTime,
-                  const FILETIME& kTime, const FILETIME& uTime);
+    void setTimes(const FILETIME& cTime, const FILETIME& eTime, const FILETIME& kTime, const FILETIME& uTime);
 
     void setCpuUsage(double u) { m_cpuUsage = u; }
 
@@ -67,16 +66,16 @@ private:
     HANDLE m_pHandle{ nullptr };
     DWORD m_processID{ 0 };
     std::string m_procName{ "" };
-    PROCESS_MEMORY_COUNTERS m_memCounters{ };
+    PROCESS_MEMORY_COUNTERS m_memCounters{};
 
-    FILETIME m_creationTime{ };
-    FILETIME m_exitTime{ };
-    FILETIME m_kernelTime{ };
-    FILETIME m_userTime{ };
-    FILETIME m_lastSystemKernelTime{ };
-    FILETIME m_lastSystemUserTime{ };
+    FILETIME m_creationTime{};
+    FILETIME m_exitTime{};
+    FILETIME m_kernelTime{};
+    FILETIME m_userTime{};
+    FILETIME m_lastSystemKernelTime{};
+    FILETIME m_lastSystemUserTime{};
 
     double m_cpuUsage{ 0.0 };
 };
 
-}
+} // namespace rg

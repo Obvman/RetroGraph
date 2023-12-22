@@ -23,4 +23,4 @@ private:
     tk::spline m_spline;
 };
 
-}
+} // namespace rg

@@ -15,18 +15,14 @@ NetMeasure::NetMeasure()
     : Measure{ seconds{ 1 } }
     , m_pingServer{ UserSettings::inst().getVal<std::string>("Measures-Net.PingServer") }
     , m_pingFreqSec{ UserSettings::inst().getVal<int>("Measures-Net.PingFrequency") }
-    , m_configRefreshedHandle{
-        UserSettings::inst().configRefreshed.attach(
-            [&]() {
-                destroyNetworkThread();
+    , m_configRefreshedHandle{ UserSettings::inst().configRefreshed.attach([&]() {
+        destroyNetworkThread();
 
-                m_pingServer = UserSettings::inst().getVal<std::string>("Measures-Net.PingServer");
-                m_pingFreqSec = UserSettings::inst().getVal<int>("Measures-Net.PingFrequency");
+        m_pingServer = UserSettings::inst().getVal<std::string>("Measures-Net.PingServer");
+        m_pingFreqSec = UserSettings::inst().getVal<int>("Measures-Net.PingFrequency");
 
-                startNetworkThread();
-            })
-    } {
-
+        startNetworkThread();
+    }) } {
     RGVERIFY(GetIfTable2(&m_table) == NO_ERROR, "GetIfTable failed");
 
     /* Find and keep track of the entry for the most appropriate local network
@@ -72,35 +68,25 @@ void NetMeasure::getMACAndLocalIP() {
 
     // Get the MAC address and LAN IP address of the main adapter
     if (GetAdaptersInfo(pAdapterInfo, &ulOutBufLen) == NO_ERROR) {
-        for (auto currAdapter{ pAdapterInfo };
-             currAdapter;
-             currAdapter = currAdapter->Next) {
-
+        for (auto currAdapter{ pAdapterInfo }; currAdapter; currAdapter = currAdapter->Next) {
             // Convert adapter description from wchar_t for string comparison
             size_t dummy;
             char adapterDesc[128];
-            wcstombs_s(&dummy, adapterDesc, sizeof(adapterDesc),
-                       m_adapterEntry->Description, sizeof(adapterDesc) - 1);
+            wcstombs_s(&dummy, adapterDesc, sizeof(adapterDesc), m_adapterEntry->Description, sizeof(adapterDesc) - 1);
             if (strcmp(currAdapter->Description, adapterDesc) == 0) {
-
                 // Convert the MAC address into a string
                 std::stringstream macStream;
                 macStream << std::hex << std::uppercase << std::setfill('0');
                 for (auto i = size_t{ 0U }; i < currAdapter->AddressLength; i++) {
                     if (i == (currAdapter->AddressLength - 1)) {
-                        macStream << std::setw(2)
-                            << static_cast<int>(currAdapter->Address[i]);
+                        macStream << std::setw(2) << static_cast<int>(currAdapter->Address[i]);
                     } else {
-                        macStream << std::setw(2)
-                            << static_cast<int>(currAdapter->Address[i])
-                            << '-';
+                        macStream << std::setw(2) << static_cast<int>(currAdapter->Address[i]) << '-';
                     }
                 }
 
                 m_mainAdapterMAC = macStream.str();
-                m_mainAdapterIP = std::string{
-                    currAdapter->IpAddressList.IpAddress.String
-                };
+                m_mainAdapterIP = std::string{ currAdapter->IpAddressList.IpAddress.String };
                 break;
             }
         }
@@ -112,7 +98,7 @@ void NetMeasure::getMACAndLocalIP() {
 
 void NetMeasure::getDNSAndHostname() {
     // Get DNS and Hostname
-    auto * pFixedInfo{ static_cast<FIXED_INFO*>(malloc(sizeof(FIXED_INFO))) };
+    auto* pFixedInfo{ static_cast<FIXED_INFO*>(malloc(sizeof(FIXED_INFO))) };
     RGASSERT(pFixedInfo, "Error allocating memory needed to call GetNetworkParams\n");
 
     auto ulOutBufLen = ULONG{ sizeof(FIXED_INFO) };
@@ -129,9 +115,9 @@ void NetMeasure::getDNSAndHostname() {
 
     m_DNSIP = std::string{ pFixedInfo->DnsServerList.IpAddress.String };
     if (pFixedInfo->DnsServerList.Next) {
-        m_DNSIP += ", " + std::string{pFixedInfo->DnsServerList.Next->IpAddress.String};
+        m_DNSIP += ", " + std::string{ pFixedInfo->DnsServerList.Next->IpAddress.String };
     }
-    
+
     m_hostname = std::string{ pFixedInfo->HostName };
 
     free(pFixedInfo);
@@ -184,14 +170,12 @@ void NetMeasure::startNetworkThread() {
     m_netConnectionThread = std::thread{ [this]() {
         while (m_threadRunning.load()) {
             std::unique_lock<std::mutex> lg{ m_netConnectionMutex };
-            setIsConnected(static_cast<bool>(
-                InternetCheckConnectionA(m_pingServer.c_str(), FLAG_ICC_FORCE_CONNECTION, 0)
-            ));
+            setIsConnected(
+                static_cast<bool>(InternetCheckConnectionA(m_pingServer.c_str(), FLAG_ICC_FORCE_CONNECTION, 0)));
 
             m_netConnectionCV.wait_for(lg, 1000ms * m_pingFreqSec, [&]() { return !m_threadRunning.load(); });
         }
-    }};
-
+    } };
 }
 
 void NetMeasure::destroyNetworkThread() {

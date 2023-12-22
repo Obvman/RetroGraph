@@ -12,4 +12,4 @@ private:
     std::string getOSVersion() const;
 };
 
-}
+} // namespace rg

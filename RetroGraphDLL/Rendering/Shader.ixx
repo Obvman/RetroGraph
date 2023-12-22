@@ -18,12 +18,8 @@ const std::string shaderPath{ getExePath() + R"(\..\..\RetroGraph\Resources\shad
 
 export class [[nodiscard]] GLShaderBindScope {
 public:
-    GLShaderBindScope(GLuint id) {
-        glUseProgram(id);
-    }
-    ~GLShaderBindScope() {
-        glUseProgram(0);
-    }
+    GLShaderBindScope(GLuint id) { glUseProgram(id); }
+    ~GLShaderBindScope() { glUseProgram(0); }
     GLShaderBindScope(const GLShaderBindScope&) = delete;
     GLShaderBindScope& operator=(const GLShaderBindScope&) = delete;
     GLShaderBindScope(GLShaderBindScope&&) = delete;
@@ -37,7 +33,7 @@ export class Shader {
 public:
     Shader(const std::string& vertFilename_, const std::string& fragFilename_);
     Shader(const std::string& baseName)
-        : Shader{ baseName + ".vert", baseName + ".frag" } { }
+        : Shader{ baseName + ".vert", baseName + ".frag" } {}
     ~Shader();
 
     Shader(const Shader&) = delete;

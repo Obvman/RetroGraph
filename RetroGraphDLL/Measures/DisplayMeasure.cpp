@@ -5,7 +5,6 @@ namespace rg {
 DisplayMeasure::DisplayMeasure()
     : Measure{ std::nullopt }
     , m_monitors{} {
-
     updateInternal();
 }
 

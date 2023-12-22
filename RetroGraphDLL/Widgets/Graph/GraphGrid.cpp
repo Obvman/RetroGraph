@@ -14,8 +14,7 @@ constexpr auto numGridVerts = size_t{ 2 * (numGridVertLines + numGridHorizLines)
 
 GraphGrid::GraphGrid()
     : m_graphGridVerts{ static_cast<GLsizei>(numGridVerts), GL_ARRAY_BUFFER, GL_STATIC_DRAW }
-    , m_graphGridIndices{ static_cast<GLsizei>(numGridVerts), GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW }
-{
+    , m_graphGridIndices{ static_cast<GLsizei>(numGridVerts), GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW } {
     initVBO();
 }
 
@@ -34,13 +33,13 @@ void GraphGrid::draw() const {
 }
 
 void GraphGrid::initVBO() {
-    auto& verts{ m_graphGridVerts.data()};
-    auto& indices{ m_graphGridIndices.data()};
+    auto& verts{ m_graphGridVerts.data() };
+    auto& indices{ m_graphGridIndices.data() };
 
     // Fill the vertex and index arrays with data for drawing grid as VBO
     for (unsigned int i = 0U; i < numGridVertLines; ++i) {
         const float x{ percentageToVP(i / static_cast<float>(numGridVertLines - 1)) };
-        verts[2 * i]     = { x, viewportMax }; // Vertical line top vert
+        verts[2 * i] = { x, viewportMax }; // Vertical line top vert
         verts[2 * i + 1] = { x, viewportMin }; // Vertical line bottom vert
 
         indices[2 * i] = 2 * i;
@@ -50,7 +49,7 @@ void GraphGrid::initVBO() {
     const auto vertLineIndexCount{ numGridVertLines * 2 };
     for (unsigned int i = 0U; i < numGridHorizLines; ++i) {
         const float y{ percentageToVP(static_cast<float>(i) / (numGridHorizLines - 1)) };
-        verts[2 * (i + numGridVertLines)]     = { viewportMin, y }; // Horizontal line left vert
+        verts[2 * (i + numGridVertLines)] = { viewportMin, y }; // Horizontal line left vert
         verts[2 * (i + numGridVertLines) + 1] = { viewportMax, y }; // Horizontal line right vert
 
         indices[2 * (i + numGridVertLines)] = vertLineIndexCount + 2 * i;
@@ -66,4 +65,4 @@ void GraphGrid::initVBO() {
     m_graphGridIndices.bufferData();
 }
 
-}
+} // namespace rg

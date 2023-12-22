@@ -20,4 +20,4 @@ public:
     virtual TimeData getTimeData() const = 0;
 };
 
-}
+} // namespace rg

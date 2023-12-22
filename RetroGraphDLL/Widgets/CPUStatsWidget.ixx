@@ -32,8 +32,8 @@ private:
     CPUCoreDataStateChangedEvent::Handle RegisterOnCPUCoreDataStateChangedCallback();
     ConfigRefreshedEvent::Handle RegisterConfigRefreshedCallback();
 
-    Viewport m_coreGraphViewport{ };
-    Viewport m_statsViewport{ };
+    Viewport m_coreGraphViewport{};
+    Viewport m_statsViewport{};
 
     std::shared_ptr<const CPUMeasure> m_cpuMeasure{ nullptr };
 

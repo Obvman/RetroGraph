@@ -11,8 +11,7 @@ namespace rg {
 
 export class TimeWidget : public Widget {
 public:
-    TimeWidget(const FontManager* fontManager,
-               std::shared_ptr<const TimeMeasure> timeMeasure,
+    TimeWidget(const FontManager* fontManager, std::shared_ptr<const TimeMeasure> timeMeasure,
                std::shared_ptr<const NetMeasure> netMeasure);
 
     ~TimeWidget() noexcept;

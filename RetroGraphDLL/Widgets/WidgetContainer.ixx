@@ -14,10 +14,10 @@ export enum class ContainerType {
     VFill, // Widgets fill up space top to bottom
     HFill, // Widgets fill up space left to right
     Single, // Only one widget can exist in this container
-    Mini,  // Mini-sized container. Only one widget can exist in this container
+    Mini, // Mini-sized container. Only one widget can exist in this container
 };
 
-/* Represents a distinct region of the window in which Widgets can be placed 
+/* Represents a distinct region of the window in which Widgets can be placed
  * Can contain multiple widgets, and is responsible for positioning each widget
  * withing the container, and drawing them
  */
@@ -39,7 +39,7 @@ public:
 
 private:
     void invalidate();
-    void setChildViewports(const Viewport & vp, WidgetPosition pos);
+    void setChildViewports(const Viewport& vp, WidgetPosition pos);
     Viewport getMiniViewport(WidgetPosition pos) const;
     ContainerType getFillTypeFromPosition(WidgetPosition p) const;
 

@@ -30,7 +30,7 @@ TEST_CASE("Measures::TimeMeasure. Update", "[measure]") {
     };
 
     auto timeDataSource{ std::make_unique<TestTimeDataSource>() };
-    auto* timeDataSourceRaw{ timeDataSource.get()};
+    auto* timeDataSourceRaw{ timeDataSource.get() };
     rg::TimeMeasure measure{ testMeasureUpdateInterval, std::move(timeDataSource) };
 
     timeDataSourceRaw->setTimeData(testTimeData);
@@ -66,7 +66,7 @@ TEST_CASE("Measures::TimeMeasure. Update", "[measure]") {
             testTimeData.uptime += 10s;
             timeDataSourceRaw->setTimeData(testTimeData);
             measure.update();
-            REQUIRE(measure.getLocalTime() == initialLocalTime + 1s );
+            REQUIRE(measure.getLocalTime() == initialLocalTime + 1s);
             REQUIRE(measure.getUptime() == initialUptime + 10s);
         }
     }

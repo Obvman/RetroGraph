@@ -47,8 +47,8 @@ public:
 
     /* Draws the given text in the font specified by fontCode at the raster
        coordinates relative to the current viewport */
-    void renderLine(GLfloat rasterX, GLfloat rasterY, RGFONTCODE fontCode, const char* text) const ;
-    void renderLine(GLfloat rasterX, GLfloat rasterY, RGFONTCODE fontCode, const char* text, int textLen) const ;
+    void renderLine(GLfloat rasterX, GLfloat rasterY, RGFONTCODE fontCode, const char* text) const;
+    void renderLine(GLfloat rasterX, GLfloat rasterY, RGFONTCODE fontCode, const char* text, int textLen) const;
 
     /* Renders a line within the given area.
      *     fontCode specifies the font to draw the line in
@@ -63,22 +63,16 @@ public:
      *     marginX and marginY are optional values that specify how far from
      *         the edges of the area to draw.
      */
-    void renderLine(RGFONTCODE fontCode,
-                    std::string_view text,
-                    int areaX, int areaY, int areaWidth, int areaHeight,
-                    int alignFlags = RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_CENTERED_VERTICAL,
-                    int alignMarginX = 10U,
+    void renderLine(RGFONTCODE fontCode, std::string_view text, int areaX, int areaY, int areaWidth, int areaHeight,
+                    int alignFlags = RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_CENTERED_VERTICAL, int alignMarginX = 10U,
                     int alignMarginY = 10U) const;
 
     /* Renders multiple lines. Assumes lines.size() > 1
      * Lines that will not fit in the given space will not be rendered.
      */
-    void renderLines(RGFONTCODE fontCode,
-                     const std::vector<std::string>& lines,
-                     int areaX, int areaY, int areaWidth, int areaHeight,
-                     int alignFlags = RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_CENTERED_VERTICAL,
-                     int alignMarginX = 10U,
-                     int alignMarginY = 10U) const;
+    void renderLines(RGFONTCODE fontCode, const std::vector<std::string>& lines, int areaX, int areaY, int areaWidth,
+                     int areaHeight, int alignFlags = RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_CENTERED_VERTICAL,
+                     int alignMarginX = 10U, int alignMarginY = 10U) const;
 
 private:
     void initFonts(int windowHeight);
@@ -97,12 +91,12 @@ private:
     float getRasterXAlignment(int alignFlags, int strWidthPx, int areaWidth, int alignMargin) const;
 
     HWND m_hWnd{ nullptr };
-    std::array<GLuint, RG_NUM_FONTS> m_fontBases{ };
-    std::array<std::array<int, RG_NUM_CHARS_IN_FONT>, RG_NUM_FONTS> m_fontCharWidths{ };
-    std::array<int, RG_NUM_FONTS> m_fontCharHeights{ };
-    std::array<int, RG_NUM_FONTS> m_fontCharAscents{ };
-    std::array<int, RG_NUM_FONTS> m_fontCharDescents{ };
-    std::array<int, RG_NUM_FONTS> m_fontCharInternalLeadings{ };
+    std::array<GLuint, RG_NUM_FONTS> m_fontBases{};
+    std::array<std::array<int, RG_NUM_CHARS_IN_FONT>, RG_NUM_FONTS> m_fontCharWidths{};
+    std::array<int, RG_NUM_FONTS> m_fontCharHeights{};
+    std::array<int, RG_NUM_FONTS> m_fontCharAscents{};
+    std::array<int, RG_NUM_FONTS> m_fontCharDescents{};
+    std::array<int, RG_NUM_FONTS> m_fontCharInternalLeadings{};
 };
 
 } // namespace rg

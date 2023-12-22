@@ -17,11 +17,13 @@ private:
 
     // TODO can we use foobar SDK instead?
     // Populates music data using specifically formatted foobar window titles:
-    // %title% | [%album artist%] | [%album%[ CD%discnumber%][ #%tracknumber%]] | $if(%ispaused%,Paused,Playing) | [%_time_elapsed_seconds%, %_time_total_seconds%] | 
+    // clang-format off
+    // %title% | [%album artist%] | [%album%[ CD%discnumber%][ #%tracknumber%]] | $if(%ispaused%,Paused,Playing) | [%_time_elapsed_seconds%, %_time_total_seconds%] |
+    // clang-format on
     void populateDataFromTitle(const std::string& playerWindowTitle, MusicData& musicData) const;
 
     mutable std::string m_playerWindowTitleCache;
     mutable MusicData m_musicDataCache;
 };
 
-}
+} // namespace rg

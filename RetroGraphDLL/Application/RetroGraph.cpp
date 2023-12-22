@@ -41,7 +41,7 @@ template<std::derived_from<Measure> T>
 std::shared_ptr<const T> getOrCreate(std::shared_ptr<T>& measure) {
     if (!measure)
         measure = createMeasure<T>();
-    return dynamic_pointer_cast<const T> (measure);
+    return dynamic_pointer_cast<const T>(measure);
 }
 
 template<std::derived_from<Measure> T>
@@ -53,18 +53,20 @@ void resetIfOnlyOwner(std::shared_ptr<T>& measure) {
 
 auto RetroGraph::createWidgetContainers() const {
     decltype(m_widgetContainers) widgetContainerList;
-    for (auto i = int{ 0 }; i < static_cast<int>(WidgetPosition::NUM_POSITIONS); ++i)
-        widgetContainerList.emplace_back(std::make_unique<WidgetContainer>(static_cast<WidgetPosition>(i), m_drawWidgetBackgrounds));
+    for (auto i = int{ 0 }; i < static_cast<int>(WidgetPosition::NUM_POSITIONS); ++i) {
+        widgetContainerList.emplace_back(
+            std::make_unique<WidgetContainer>(static_cast<WidgetPosition>(i), m_drawWidgetBackgrounds));
+    }
 
     return widgetContainerList;
 }
 
 auto RetroGraph::createWidgets() {
-    decltype(m_widgets) widgetList( static_cast<int>(WidgetType::NumWidgets) );
+    decltype(m_widgets) widgetList(static_cast<int>(WidgetType::NumWidgets));
 
-    const auto widgetVisibilities{createWidgetVisibilities()};
+    const auto widgetVisibilities{ createWidgetVisibilities() };
     for (auto i = int{ 0 }; i < static_cast<int>(WidgetType::NumWidgets); ++i) {
-        WidgetType widgetType{ static_cast<WidgetType> (i) };
+        WidgetType widgetType{ static_cast<WidgetType>(i) };
         if (widgetVisibilities[i])
             widgetList[i] = createWidget(widgetType);
         else
@@ -75,57 +77,74 @@ auto RetroGraph::createWidgets() {
 }
 
 std::vector<bool> RetroGraph::createWidgetVisibilities() const {
-    std::vector<bool> widgetVisibilities( static_cast<int>(WidgetType::NumWidgets) );
+    std::vector<bool> widgetVisibilities(static_cast<int>(WidgetType::NumWidgets));
 
     UserSettings& settings{ UserSettings::inst() };
-    widgetVisibilities[static_cast<int>(WidgetType::Time)]        = settings.getVal<bool>("Widgets-Time.Visible");
-    widgetVisibilities[static_cast<int>(WidgetType::CPUStats)]    = settings.getVal<bool>("Widgets-CPUStats.Visible");
-    widgetVisibilities[static_cast<int>(WidgetType::SystemStats)] = settings.getVal<bool>("Widgets-SystemStats.Visible");
-    widgetVisibilities[static_cast<int>(WidgetType::ProcessCPU)]  = settings.getVal<bool>("Widgets-ProcessesCPU.Visible");
-    widgetVisibilities[static_cast<int>(WidgetType::ProcessRAM)]  = settings.getVal<bool>("Widgets-ProcessesRAM.Visible");
-    widgetVisibilities[static_cast<int>(WidgetType::Music)]       = settings.getVal<bool>("Widgets-Music.Visible");
-    widgetVisibilities[static_cast<int>(WidgetType::Main)]        = settings.getVal<bool>("Widgets-Main.Visible");
-    widgetVisibilities[static_cast<int>(WidgetType::HDD)]         = settings.getVal<bool>("Widgets-Drives.Visible");
-    widgetVisibilities[static_cast<int>(WidgetType::FPS)]         = settings.getVal<bool>("Widgets-FPS.Visible");
-    widgetVisibilities[static_cast<int>(WidgetType::NetStats)]    = settings.getVal<bool>("Widgets-NetStats.Visible");
-    widgetVisibilities[static_cast<int>(WidgetType::CPUGraph)]    = settings.getVal<bool>("Widgets-CPUGraph.Visible");
-    widgetVisibilities[static_cast<int>(WidgetType::RAMGraph)]    = settings.getVal<bool>("Widgets-RAMGraph.Visible");
-    widgetVisibilities[static_cast<int>(WidgetType::NetGraph)]    = settings.getVal<bool>("Widgets-NetGraph.Visible");
-    widgetVisibilities[static_cast<int>(WidgetType::GPUGraph)]    = settings.getVal<bool>("Widgets-GPUGraph.Visible");
+    widgetVisibilities[static_cast<int>(WidgetType::Time)] = settings.getVal<bool>("Widgets-Time.Visible");
+    widgetVisibilities[static_cast<int>(WidgetType::CPUStats)] = settings.getVal<bool>("Widgets-CPUStats.Visible");
+    widgetVisibilities[static_cast<int>(WidgetType::SystemStats)] =
+        settings.getVal<bool>("Widgets-SystemStats.Visible");
+    widgetVisibilities[static_cast<int>(WidgetType::ProcessCPU)] =
+        settings.getVal<bool>("Widgets-ProcessesCPU.Visible");
+    widgetVisibilities[static_cast<int>(WidgetType::ProcessRAM)] =
+        settings.getVal<bool>("Widgets-ProcessesRAM.Visible");
+    widgetVisibilities[static_cast<int>(WidgetType::Music)] = settings.getVal<bool>("Widgets-Music.Visible");
+    widgetVisibilities[static_cast<int>(WidgetType::Main)] = settings.getVal<bool>("Widgets-Main.Visible");
+    widgetVisibilities[static_cast<int>(WidgetType::HDD)] = settings.getVal<bool>("Widgets-Drives.Visible");
+    widgetVisibilities[static_cast<int>(WidgetType::FPS)] = settings.getVal<bool>("Widgets-FPS.Visible");
+    widgetVisibilities[static_cast<int>(WidgetType::NetStats)] = settings.getVal<bool>("Widgets-NetStats.Visible");
+    widgetVisibilities[static_cast<int>(WidgetType::CPUGraph)] = settings.getVal<bool>("Widgets-CPUGraph.Visible");
+    widgetVisibilities[static_cast<int>(WidgetType::RAMGraph)] = settings.getVal<bool>("Widgets-RAMGraph.Visible");
+    widgetVisibilities[static_cast<int>(WidgetType::NetGraph)] = settings.getVal<bool>("Widgets-NetGraph.Visible");
+    widgetVisibilities[static_cast<int>(WidgetType::GPUGraph)] = settings.getVal<bool>("Widgets-GPUGraph.Visible");
 
     return widgetVisibilities;
 }
 
 auto RetroGraph::createWidgetPositions() const {
-    decltype(m_widgetPositions) widgetPositions( static_cast<int>(WidgetType::NumWidgets) );
+    decltype(m_widgetPositions) widgetPositions(static_cast<int>(WidgetType::NumWidgets));
 
     static const std::map<std::string_view, WidgetPosition> m_posMap = {
-        {"top-left",      WidgetPosition::TOP_LEFT},
-        {"top-middle",    WidgetPosition::TOP_MID},
-        {"top-right",     WidgetPosition::TOP_RIGHT},
-        {"middle-left",   WidgetPosition::MID_LEFT},
-        {"middle-middle", WidgetPosition::MID_MID},
-        {"middle-right",  WidgetPosition::MID_RIGHT},
-        {"bottom-left",   WidgetPosition::BOT_LEFT},
-        {"bottom-middle", WidgetPosition::BOT_MID},
-        {"bottom-right",  WidgetPosition::BOT_RIGHT},
+        {"top-left",       WidgetPosition::TOP_LEFT },
+        { "top-middle",    WidgetPosition::TOP_MID  },
+        { "top-right",     WidgetPosition::TOP_RIGHT},
+        { "middle-left",   WidgetPosition::MID_LEFT },
+        { "middle-middle", WidgetPosition::MID_MID  },
+        { "middle-right",  WidgetPosition::MID_RIGHT},
+        { "bottom-left",   WidgetPosition::BOT_LEFT },
+        { "bottom-middle", WidgetPosition::BOT_MID  },
+        { "bottom-right",  WidgetPosition::BOT_RIGHT},
     };
 
     UserSettings& settings{ UserSettings::inst() };
-    widgetPositions[static_cast<int>(WidgetType::ProcessCPU)]  = m_posMap.at(settings.getVal<std::string>("Widgets-ProcessesCPU.Position"));
-    widgetPositions[static_cast<int>(WidgetType::ProcessRAM)]  = m_posMap.at(settings.getVal<std::string>("Widgets-ProcessesRAM.Position"));
-    widgetPositions[static_cast<int>(WidgetType::Time)]        = m_posMap.at(settings.getVal<std::string>("Widgets-Time.Position"));
-    widgetPositions[static_cast<int>(WidgetType::SystemStats)] = m_posMap.at(settings.getVal<std::string>("Widgets-SystemStats.Position"));
-    widgetPositions[static_cast<int>(WidgetType::Music)]       = m_posMap.at(settings.getVal<std::string>("Widgets-Music.Position"));
-    widgetPositions[static_cast<int>(WidgetType::CPUStats)]    = m_posMap.at(settings.getVal<std::string>("Widgets-CPUStats.Position"));
-    widgetPositions[static_cast<int>(WidgetType::HDD)]         = m_posMap.at(settings.getVal<std::string>("Widgets-Drives.Position"));
-    widgetPositions[static_cast<int>(WidgetType::Main)]        = m_posMap.at(settings.getVal<std::string>("Widgets-Main.Position"));
-    widgetPositions[static_cast<int>(WidgetType::FPS)]         = m_posMap.at(settings.getVal<std::string>("Widgets-FPS.Position"));
-    widgetPositions[static_cast<int>(WidgetType::NetStats)]    = m_posMap.at(settings.getVal<std::string>("Widgets-NetStats.Position"));
-    widgetPositions[static_cast<int>(WidgetType::CPUGraph)]    = m_posMap.at(settings.getVal<std::string>("Widgets-CPUGraph.Position"));
-    widgetPositions[static_cast<int>(WidgetType::RAMGraph)]    = m_posMap.at(settings.getVal<std::string>("Widgets-RAMGraph.Position"));
-    widgetPositions[static_cast<int>(WidgetType::NetGraph)]    = m_posMap.at(settings.getVal<std::string>("Widgets-NetGraph.Position"));
-    widgetPositions[static_cast<int>(WidgetType::GPUGraph)]    = m_posMap.at(settings.getVal<std::string>("Widgets-GPUGraph.Position"));
+    widgetPositions[static_cast<int>(WidgetType::ProcessCPU)] =
+        m_posMap.at(settings.getVal<std::string>("Widgets-ProcessesCPU.Position"));
+    widgetPositions[static_cast<int>(WidgetType::ProcessRAM)] =
+        m_posMap.at(settings.getVal<std::string>("Widgets-ProcessesRAM.Position"));
+    widgetPositions[static_cast<int>(WidgetType::Time)] =
+        m_posMap.at(settings.getVal<std::string>("Widgets-Time.Position"));
+    widgetPositions[static_cast<int>(WidgetType::SystemStats)] =
+        m_posMap.at(settings.getVal<std::string>("Widgets-SystemStats.Position"));
+    widgetPositions[static_cast<int>(WidgetType::Music)] =
+        m_posMap.at(settings.getVal<std::string>("Widgets-Music.Position"));
+    widgetPositions[static_cast<int>(WidgetType::CPUStats)] =
+        m_posMap.at(settings.getVal<std::string>("Widgets-CPUStats.Position"));
+    widgetPositions[static_cast<int>(WidgetType::HDD)] =
+        m_posMap.at(settings.getVal<std::string>("Widgets-Drives.Position"));
+    widgetPositions[static_cast<int>(WidgetType::Main)] =
+        m_posMap.at(settings.getVal<std::string>("Widgets-Main.Position"));
+    widgetPositions[static_cast<int>(WidgetType::FPS)] =
+        m_posMap.at(settings.getVal<std::string>("Widgets-FPS.Position"));
+    widgetPositions[static_cast<int>(WidgetType::NetStats)] =
+        m_posMap.at(settings.getVal<std::string>("Widgets-NetStats.Position"));
+    widgetPositions[static_cast<int>(WidgetType::CPUGraph)] =
+        m_posMap.at(settings.getVal<std::string>("Widgets-CPUGraph.Position"));
+    widgetPositions[static_cast<int>(WidgetType::RAMGraph)] =
+        m_posMap.at(settings.getVal<std::string>("Widgets-RAMGraph.Position"));
+    widgetPositions[static_cast<int>(WidgetType::NetGraph)] =
+        m_posMap.at(settings.getVal<std::string>("Widgets-NetGraph.Position"));
+    widgetPositions[static_cast<int>(WidgetType::GPUGraph)] =
+        m_posMap.at(settings.getVal<std::string>("Widgets-GPUGraph.Position"));
 
     return widgetPositions;
 }
@@ -139,15 +158,13 @@ RetroGraph::RetroGraph(HINSTANCE hInstance)
     , m_widgets{ createWidgets() }
     , m_widgetContainers{ createWidgetContainers() }
     , m_configRefreshedHandle{ RegisterConfigRefreshedCallback() } {
-
     setViewports(m_window.getWidth(), m_window.getHeight());
 
     update();
     draw();
 }
 
-RetroGraph::~RetroGraph() {
-}
+RetroGraph::~RetroGraph() {}
 
 void RetroGraph::run() {
     FPSLimiter fpsLimiter;
@@ -176,17 +193,28 @@ void RetroGraph::run() {
 void RetroGraph::update() {
     tryRefreshConfig();
 
-    if (m_cpuMeasure) m_cpuMeasure->update();
-    if (m_gpuMeasure) m_gpuMeasure->update();
-    if (m_ramMeasure) m_ramMeasure->update();
-    if (m_netMeasure) m_netMeasure->update();
-    if (m_processMeasure) m_processMeasure->update();
-    if (m_driveMeasure) m_driveMeasure->update();
-    if (m_musicMeasure) m_musicMeasure->update();
-    if (m_systemMeasure) m_systemMeasure->update();
-    if (m_animationState) m_animationState->update();
-    if (m_displayMeasure) m_displayMeasure->update();
-    if (m_timeMeasure) m_timeMeasure->update();
+    if (m_cpuMeasure)
+        m_cpuMeasure->update();
+    if (m_gpuMeasure)
+        m_gpuMeasure->update();
+    if (m_ramMeasure)
+        m_ramMeasure->update();
+    if (m_netMeasure)
+        m_netMeasure->update();
+    if (m_processMeasure)
+        m_processMeasure->update();
+    if (m_driveMeasure)
+        m_driveMeasure->update();
+    if (m_musicMeasure)
+        m_musicMeasure->update();
+    if (m_systemMeasure)
+        m_systemMeasure->update();
+    if (m_animationState)
+        m_animationState->update();
+    if (m_displayMeasure)
+        m_displayMeasure->update();
+    if (m_timeMeasure)
+        m_timeMeasure->update();
 }
 
 void RetroGraph::draw() const {
@@ -208,7 +236,7 @@ void RetroGraph::updateWindowSize(int newWidth, int newHeight) {
 }
 
 void RetroGraph::toggleWidget(WidgetType widgetType) {
-    auto* widget{ m_widgets[static_cast<int>(widgetType)].get()};
+    auto* widget{ m_widgets[static_cast<int>(widgetType)].get() };
     if (widget) {
         m_widgets[static_cast<int>(widgetType)] = nullptr;
         cleanupUnusedMeasures();
@@ -232,8 +260,7 @@ void RetroGraph::toggleWidgetBackgroundVisible() {
     }
 }
 
-void RetroGraph::shutdown() {
-}
+void RetroGraph::shutdown() {}
 
 void RetroGraph::tryRefreshConfig() {
     static Timer configChangedUpdateTimer{ std::chrono::seconds{ 5 } };
@@ -295,80 +322,84 @@ void RetroGraph::cleanupUnusedMeasures() {
 
 std::unique_ptr<Widget> RetroGraph::createWidget(WidgetType widgetType) {
     switch (widgetType) {
-    case WidgetType::ProcessCPU:
-        return std::make_unique<ProcessCPUWidget>(&m_fontManager, getOrCreate(m_processMeasure));
-    case WidgetType::ProcessRAM:
-        return std::make_unique<ProcessRAMWidget>(&m_fontManager, getOrCreate(m_processMeasure));
-    case WidgetType::Time:
-        return std::make_unique<TimeWidget>(&m_fontManager, getOrCreate(m_timeMeasure), getOrCreate(m_netMeasure));
-    case WidgetType::SystemStats:
-        return std::make_unique<SystemStatsWidget>(&m_fontManager, getOrCreate(m_cpuMeasure), getOrCreate(m_gpuMeasure), getOrCreate(m_ramMeasure), getOrCreate(m_displayMeasure), getOrCreate(m_systemMeasure));
-    case WidgetType::Music:
-        return std::make_unique<MusicWidget>(&m_fontManager, getOrCreate(m_musicMeasure));
-    case WidgetType::CPUStats:
-        return std::make_unique<CPUStatsWidget>(&m_fontManager, getOrCreate(m_cpuMeasure));
-    case WidgetType::HDD:
-        return std::make_unique<HDDWidget>(&m_fontManager, getOrCreate(m_driveMeasure));
-    case WidgetType::Main:
-        return std::make_unique<MainWidget>(&m_fontManager, getOrCreate(m_animationState));
-    case WidgetType::FPS:
-        return std::make_unique<FPSWidget>(&m_fontManager, m_fpsCounter);
-    case WidgetType::NetStats:
-        return std::make_unique<NetStatsWidget>(&m_fontManager, getOrCreate(m_netMeasure));
-    case WidgetType::CPUGraph:
-        return std::make_unique<CPUGraphWidget>(&m_fontManager, getOrCreate(m_cpuMeasure));
-    case WidgetType::RAMGraph:
-        return std::make_unique<RAMGraphWidget>(&m_fontManager, getOrCreate(m_ramMeasure));
-    case WidgetType::NetGraph:
-        return std::make_unique<NetGraphWidget>(&m_fontManager, getOrCreate(m_netMeasure));
-    case WidgetType::GPUGraph:
-        return std::make_unique<GPUGraphWidget>(&m_fontManager, getOrCreate(m_gpuMeasure));
-    default:
-        RGERROR("Unknown widget type.");
-        break;
+        case WidgetType::ProcessCPU:
+            return std::make_unique<ProcessCPUWidget>(&m_fontManager, getOrCreate(m_processMeasure));
+        case WidgetType::ProcessRAM:
+            return std::make_unique<ProcessRAMWidget>(&m_fontManager, getOrCreate(m_processMeasure));
+        case WidgetType::Time:
+            return std::make_unique<TimeWidget>(&m_fontManager, getOrCreate(m_timeMeasure), getOrCreate(m_netMeasure));
+        case WidgetType::SystemStats:
+            return std::make_unique<SystemStatsWidget>(&m_fontManager, getOrCreate(m_cpuMeasure),
+                                                       getOrCreate(m_gpuMeasure), getOrCreate(m_ramMeasure),
+                                                       getOrCreate(m_displayMeasure), getOrCreate(m_systemMeasure));
+        case WidgetType::Music:
+            return std::make_unique<MusicWidget>(&m_fontManager, getOrCreate(m_musicMeasure));
+        case WidgetType::CPUStats:
+            return std::make_unique<CPUStatsWidget>(&m_fontManager, getOrCreate(m_cpuMeasure));
+        case WidgetType::HDD:
+            return std::make_unique<HDDWidget>(&m_fontManager, getOrCreate(m_driveMeasure));
+        case WidgetType::Main:
+            return std::make_unique<MainWidget>(&m_fontManager, getOrCreate(m_animationState));
+        case WidgetType::FPS:
+            return std::make_unique<FPSWidget>(&m_fontManager, m_fpsCounter);
+        case WidgetType::NetStats:
+            return std::make_unique<NetStatsWidget>(&m_fontManager, getOrCreate(m_netMeasure));
+        case WidgetType::CPUGraph:
+            return std::make_unique<CPUGraphWidget>(&m_fontManager, getOrCreate(m_cpuMeasure));
+        case WidgetType::RAMGraph:
+            return std::make_unique<RAMGraphWidget>(&m_fontManager, getOrCreate(m_ramMeasure));
+        case WidgetType::NetGraph:
+            return std::make_unique<NetGraphWidget>(&m_fontManager, getOrCreate(m_netMeasure));
+        case WidgetType::GPUGraph:
+            return std::make_unique<GPUGraphWidget>(&m_fontManager, getOrCreate(m_gpuMeasure));
+        default:
+            RGERROR("Unknown widget type.");
+            break;
     }
 
     return nullptr;
 }
 
 ConfigRefreshedEvent::Handle RetroGraph::RegisterConfigRefreshedCallback() {
-    return UserSettings::inst().configRefreshed.attach(
-        [this]() {
-            using namespace std::chrono;
+    return UserSettings::inst().configRefreshed.attach([this]() {
+        using namespace std::chrono;
 
-            auto& settings{ UserSettings::inst() };
+        auto& settings{ UserSettings::inst() };
 
-            //if (m_cpuMeasure) m_cpuMeasure->update();
-            //if (m_gpuMeasure) m_gpuMeasure->update();
-            //if (m_netMeasure) m_netMeasure->update();
-            //if (m_processMeasure) m_processMeasure->update();
-            if (m_driveMeasure) m_driveMeasure->setUpdateInterval(milliseconds{ settings.getVal<int>("Measures-Drive.UpdateInterval") });
-            if (m_musicMeasure) m_musicMeasure->setUpdateInterval(milliseconds{ settings.getVal<int>("Measures-Music.UpdateInterval") });
-            //if (m_systemMeasure) m_systemMeasure->update();
-            //if (m_animationState) m_animationState->update();
-            //if (m_displayMeasure) m_displayMeasure->update();
-            if (m_ramMeasure) m_ramMeasure->setUpdateInterval(milliseconds{ settings.getVal<int>("Measures-RAM.UpdateInterval") });
-            if (m_timeMeasure) m_timeMeasure->setUpdateInterval(milliseconds{ settings.getVal<int>("Measures-Time.UpdateInterval") });
+        // if (m_cpuMeasure) m_cpuMeasure->update();
+        // if (m_gpuMeasure) m_gpuMeasure->update();
+        // if (m_netMeasure) m_netMeasure->update();
+        // if (m_processMeasure) m_processMeasure->update();
+        if (m_driveMeasure)
+            m_driveMeasure->setUpdateInterval(milliseconds{ settings.getVal<int>("Measures-Drive.UpdateInterval") });
+        if (m_musicMeasure)
+            m_musicMeasure->setUpdateInterval(milliseconds{ settings.getVal<int>("Measures-Music.UpdateInterval") });
+        // if (m_systemMeasure) m_systemMeasure->update();
+        // if (m_animationState) m_animationState->update();
+        // if (m_displayMeasure) m_displayMeasure->update();
+        if (m_ramMeasure)
+            m_ramMeasure->setUpdateInterval(milliseconds{ settings.getVal<int>("Measures-RAM.UpdateInterval") });
+        if (m_timeMeasure)
+            m_timeMeasure->setUpdateInterval(milliseconds{ settings.getVal<int>("Measures-Time.UpdateInterval") });
 
-            const auto widgetVisibilities{createWidgetVisibilities()};
+        const auto widgetVisibilities{ createWidgetVisibilities() };
 
-            getWidgetPropertiesFromSettings();
+        getWidgetPropertiesFromSettings();
 
-            // Update widget visibilities
-            for (auto i = size_t{ 0U }; i < static_cast<int>(WidgetType::NumWidgets); ++i) {
-                if (widgetVisibilities[i] != isWidgetVisible(static_cast<WidgetType>(i))) {
-                    toggleWidget(static_cast<WidgetType>(i));
-                }
+        // Update widget visibilities
+        for (auto i = size_t{ 0U }; i < static_cast<int>(WidgetType::NumWidgets); ++i) {
+            if (widgetVisibilities[i] != isWidgetVisible(static_cast<WidgetType>(i))) {
+                toggleWidget(static_cast<WidgetType>(i));
             }
-
-            // Update widget background
-            for (const auto& widgetContainer : m_widgetContainers) {
-                widgetContainer->setDrawBackground(m_drawWidgetBackgrounds);
-            }
-
-            setViewports(m_window.getWidth(), m_window.getHeight());
         }
-    );
+
+        // Update widget background
+        for (const auto& widgetContainer : m_widgetContainers) {
+            widgetContainer->setDrawBackground(m_drawWidgetBackgrounds);
+        }
+
+        setViewports(m_window.getWidth(), m_window.getHeight());
+    });
 }
 
 } // namespace rg

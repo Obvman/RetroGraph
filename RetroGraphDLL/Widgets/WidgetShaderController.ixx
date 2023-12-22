@@ -6,7 +6,10 @@ namespace rg {
 
 export class WidgetShaderController {
 public:
-    static WidgetShaderController& inst() { static WidgetShaderController instance; return instance; }
+    static WidgetShaderController& inst() {
+        static WidgetShaderController instance;
+        return instance;
+    }
 
     const Shader& getParticleLineShader() const { return m_particleLineShader; }
     const Shader& getParticleShader() const { return m_particleShader; }
@@ -20,4 +23,4 @@ private:
     Shader m_lineGraphShader{ "lineGraph" };
 };
 
-}
+} // namespace rg

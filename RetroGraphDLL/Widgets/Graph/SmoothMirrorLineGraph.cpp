@@ -15,7 +15,6 @@ namespace rg {
 SmoothMirrorLineGraph::SmoothMirrorLineGraph(size_t numGraphSamples)
     : m_topGraph{ numGraphSamples }
     , m_bottomGraph{ numGraphSamples } {
-
     glm::mat4 verticalInversionMatrix{};
     m_bottomGraph.setModelView(glm::scale(verticalInversionMatrix, { 1.0f, -1.0f, 1.0f }));
     m_bottomGraph.setDrawDecorations(false);
@@ -32,11 +31,13 @@ void SmoothMirrorLineGraph::draw() const {
     GraphGrid::inst().draw();
 
     // Draw a dividing line between the two graphs
-    glBegin(GL_LINES); {
+    glBegin(GL_LINES);
+    {
         glColor4f(GRAPHLINE_R, GRAPHLINE_G, GRAPHLINE_B, 0.3f);
         glVertex2f(-1.0f, 0.0f);
         glVertex2f(1.0f, 0.0f);
-    } glEnd();
+    }
+    glEnd();
 
     auto viewport{ getGLViewport() };
 
@@ -49,4 +50,4 @@ void SmoothMirrorLineGraph::draw() const {
     m_bottomGraph.draw();
 }
 
-}
+} // namespace rg

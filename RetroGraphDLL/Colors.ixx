@@ -3,7 +3,6 @@ export module Colors;
 namespace rg {
 
 export {
-
     constexpr float BLACK_R{ 0x00 / 255.0f };
     constexpr float BLACK_G{ 0x00 / 255.0f };
     constexpr float BLACK_B{ 0x00 / 255.0f };
@@ -97,4 +96,4 @@ export {
     constexpr float BARFREE_B{ GREY_B };
 }
 
-}
+} // namespace rg

@@ -4,8 +4,7 @@ import "WindowsHeaderUnit.h";
 
 static HMODULE dllHandle;
 
-BOOL APIENTRY DllMain(HMODULE hModule, DWORD /*ul_reason_for_call*/, LPVOID /*lpReserved*/)
-{
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD /*ul_reason_for_call*/, LPVOID /*lpReserved*/) {
     dllHandle = hModule;
     return TRUE;
 }

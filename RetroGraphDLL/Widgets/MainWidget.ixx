@@ -17,7 +17,7 @@ struct ParticleRenderData {
     ParticleRenderData() = default;
     ParticleRenderData(const Particle& particle)
         : position{ particle.x, particle.y }
-        , scale{ particle.size } { }
+        , scale{ particle.size } {}
 
     glm::vec2 position;
     float scale;

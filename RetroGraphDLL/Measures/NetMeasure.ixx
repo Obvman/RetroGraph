@@ -56,7 +56,7 @@ private:
     std::mutex m_netConnectionMutex;
     std::atomic<bool> m_isConnected{ false };
     std::atomic<bool> m_threadRunning{ false };
-    std::thread m_netConnectionThread{ };
+    std::thread m_netConnectionThread{};
 
     ConfigRefreshedEvent::Handle m_configRefreshedHandle;
 };

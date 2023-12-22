@@ -11,7 +11,10 @@ namespace rg {
 
 export class [[nodiscard]] VBOBindScope {
 public:
-    VBOBindScope(GLuint id, GLenum target_) : target{ target_ } { glBindBuffer(target, id); }
+    VBOBindScope(GLuint id, GLenum target_)
+        : target{ target_ } {
+        glBindBuffer(target, id);
+    }
     ~VBOBindScope() { glBindBuffer(target, 0); }
 
     VBOBindScope(const VBOBindScope&) = delete;
@@ -30,8 +33,7 @@ public:
     VBO() noexcept
         : id{ invalidGLID }
         , target{ GL_ARRAY_BUFFER }
-        , usage{ GL_STATIC_DRAW } {
-    }
+        , usage{ GL_STATIC_DRAW } {}
 
     explicit VBO(GLenum target_, GLenum usage_) noexcept;
 
@@ -45,9 +47,7 @@ public:
 
     VBOBindScope bind() const { return { id, target }; }
 
-    void bufferData(GLsizeiptr bytes, const void* data) const {
-        glBufferData(target, bytes, data, usage);
-    }
+    void bufferData(GLsizeiptr bytes, const void* data) const { glBufferData(target, bytes, data, usage); }
 
     void bufferSubData(GLintptr offset, GLsizeiptr bytes, const void* data) const {
         glBufferSubData(target, offset, bytes, data);
@@ -65,8 +65,7 @@ class OwningVBO : public VBO {
 public:
     OwningVBO(GLsizei size, GLenum target, GLenum usage) noexcept
         : VBO{ target, usage }
-        , m_data(size) {
-    }
+        , m_data(size) {}
 
     OwningVBO(OwningVBO&& other) { *this = std::move(other); }
     OwningVBO& operator=(OwningVBO&& other) {
@@ -84,9 +83,7 @@ public:
     GLsizei sizeBytes() const { return size() * elemBytes(); }
     GLsizei elemBytes() const { return sizeof(T); }
 
-    void bufferData() const {
-        VBO::bufferData(sizeBytes(), m_data.data());
-    }
+    void bufferData() const { VBO::bufferData(sizeBytes(), m_data.data()); }
 
     void bufferSubData(GLintptr offset, GLsizeiptr bytes) const {
         RGASSERT(offset + bytes <= sizeBytes(), "bufferSubData call out of range");
@@ -97,4 +94,4 @@ private:
     std::vector<T> m_data;
 };
 
-}
+} // namespace rg

@@ -6,7 +6,6 @@ GraphPointBuffer::GraphPointBuffer(size_t numPoints_)
     : m_rollingBuffer{ numPoints_ * 2 }
     , m_head{ numPoints_ == 0 ? 0 : numPoints_ - 1 }
     , m_tail{ 0 } {
-
     // Set initial points
     if (numPoints() != 0) {
         initPoints();
@@ -20,7 +19,7 @@ void GraphPointBuffer::setPoints(std::span<const float> values) {
 
     if (values.size() == 1) {
         m_rollingBuffer[0] = { 0.0f, values[0] };
-        m_rollingBuffer[1] = { 0.0f + 2*viewportWidth, viewportMin };
+        m_rollingBuffer[1] = { 0.0f + 2 * viewportWidth, viewportMin };
     } else if (!values.empty()) {
         for (size_t i = m_tail; i <= m_head; ++i) {
             const auto x{ static_cast<float>(i) / m_head * viewportWidth };
@@ -68,4 +67,4 @@ void GraphPointBuffer::initPoints() {
     }
 }
 
-}
+} // namespace rg

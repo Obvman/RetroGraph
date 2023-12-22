@@ -22,4 +22,4 @@ public:
     virtual OperatingSystemData getOperatingSystemData() const = 0;
 };
 
-}
+} // namespace rg

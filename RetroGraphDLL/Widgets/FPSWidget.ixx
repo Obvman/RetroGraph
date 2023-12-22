@@ -12,8 +12,7 @@ export class FPSWidget : public Widget {
 public:
     FPSWidget(const FontManager* fontManager, const FPSCounter& fpsLimiter)
         : Widget{ fontManager }
-        , m_fpsCounter{ &fpsLimiter } {
-    }
+        , m_fpsCounter{ &fpsLimiter } {}
     ~FPSWidget() noexcept = default;
 
     void draw() const override;
@@ -24,4 +23,4 @@ private:
     const FPSCounter* m_fpsCounter;
 };
 
-}
+} // namespace rg

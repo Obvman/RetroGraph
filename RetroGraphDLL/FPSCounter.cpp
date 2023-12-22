@@ -11,7 +11,6 @@ FPSCounter::FPSCounter()
     , m_freq{ 0 }
     , m_frameTimeHistory{ 0.0f }
     , m_currFrameIdx{ 0 } {
-
     QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&m_freq));
 }
 

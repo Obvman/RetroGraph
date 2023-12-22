@@ -13,4 +13,4 @@ private:
     seconds getCurrentUptime() const;
 };
 
-}
+} // namespace rg

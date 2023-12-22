@@ -23,7 +23,7 @@ TEST_CASE("Measures::RAMMeasure. Update", "[measure]") {
     constexpr float initialUsage{ 0.2f };
 
     auto ramDataSource{ std::make_unique<TestRAMDataSource>() };
-    auto* ramDataSourceRaw{ ramDataSource.get()};
+    auto* ramDataSourceRaw{ ramDataSource.get() };
     rg::RAMMeasure measure{ testMeasureUpdateInterval, std::move(ramDataSource) };
 
     ramDataSourceRaw->usage = initialUsage;

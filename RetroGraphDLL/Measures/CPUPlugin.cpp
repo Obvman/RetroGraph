@@ -5,12 +5,12 @@ import "RGAssert.h";
 
 namespace rg {
 
-using getCoreTempInfoFn = bool (WINAPI*)(CORE_TEMP_SHARED_DATA* pData);
+using getCoreTempInfoFn = bool(WINAPI*)(CORE_TEMP_SHARED_DATA* pData);
 getCoreTempInfoFn GetCoreTempInfo;
 
 // TODO This class should become a data source
-CPUPlugin::CPUPlugin() : m_libHandle{ LoadLibrary("GetCoreTempInfo.dll") } {
-
+CPUPlugin::CPUPlugin()
+    : m_libHandle{ LoadLibrary("GetCoreTempInfo.dll") } {
     if (m_libHandle) {
         // Get the address of the GetCoreTempInfo function from the DLL
         GetCoreTempInfo = (getCoreTempInfoFn)GetProcAddress(m_libHandle, "fnGetCoreTempInfoAlt");

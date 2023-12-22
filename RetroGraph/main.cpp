@@ -25,4 +25,3 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 
     return 0;
 }
-

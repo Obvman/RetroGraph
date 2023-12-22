@@ -14,8 +14,7 @@ void Monitors::fillMonitorData() {
              "Failed to enumerate monitors");
 }
 
-BOOL CALLBACK Monitors::MonitorCallback2(HMONITOR hMonitor, HDC, LPRECT,
-                                         LPARAM dwData) {
+BOOL CALLBACK Monitors::MonitorCallback2(HMONITOR hMonitor, HDC, LPRECT, LPARAM dwData) {
     static auto monitorCount = int{ 0 };
 
     auto* This{ reinterpret_cast<Monitors*>(dwData) };
@@ -31,10 +30,9 @@ BOOL CALLBACK Monitors::MonitorCallback2(HMONITOR hMonitor, HDC, LPRECT,
         refresh = dm.dmDisplayFrequency;
     }
 
-    This->m_monitors.emplace_back(monitorCount, hMonitor,
-            mi.rcMonitor.right - mi.rcMonitor.left, mi.rcMonitor.bottom - mi.rcMonitor.top,
-            mi.rcWork.right - mi.rcWork.left, mi.rcWork.bottom - mi.rcWork.top,
-            mi.rcWork.left, mi.rcWork.top, refresh);
+    This->m_monitors.emplace_back(monitorCount, hMonitor, mi.rcMonitor.right - mi.rcMonitor.left,
+                                  mi.rcMonitor.bottom - mi.rcMonitor.top, mi.rcWork.right - mi.rcWork.left,
+                                  mi.rcWork.bottom - mi.rcWork.top, mi.rcWork.left, mi.rcWork.top, refresh);
 
     ++monitorCount;
     return TRUE;

@@ -10,7 +10,8 @@ constexpr milliseconds testMeasureUpdateInterval{ 10 };
 
 class TestMeasure : public rg::Measure {
 public:
-    TestMeasure() : Measure{ testMeasureUpdateInterval } {}
+    TestMeasure()
+        : Measure{ testMeasureUpdateInterval } {}
 
 protected:
     bool updateInternal() override { return true; }
@@ -18,7 +19,8 @@ protected:
 
 class StaticTestMeasure : public rg::Measure {
 public:
-    StaticTestMeasure() : Measure{ std::nullopt } {}
+    StaticTestMeasure()
+        : Measure{ std::nullopt } {}
 
 protected:
     bool updateInternal() override { return false; }
@@ -65,7 +67,7 @@ TEST_CASE("Measures::Measure. Update", "[measure]") {
 TEST_CASE("Measures::Measure. Static Measure Update", "[measure]") {
     StaticTestMeasure measure;
     bool updateEventTriggered{ false };
-    auto handle{ measure.postUpdate.attach([&]() {updateEventTriggered = true; }) };
+    auto handle{ measure.postUpdate.attach([&]() { updateEventTriggered = true; }) };
 
     SECTION("Instant update does not trigger event") {
         measure.update();

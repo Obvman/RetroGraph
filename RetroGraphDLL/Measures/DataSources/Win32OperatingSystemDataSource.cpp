@@ -13,13 +13,13 @@ OperatingSystemData Win32OperatingSystemDataSource::getOperatingSystemData() con
     data.osVersion = getOSVersion();
 
     // Get the current computer name
-    char uNameBuf[MAX_COMPUTERNAME_LENGTH+1];
+    char uNameBuf[MAX_COMPUTERNAME_LENGTH + 1];
     DWORD uNameLen{ sizeof(uNameBuf) };
     GetUserName(uNameBuf, &uNameLen);
     data.userName = uNameBuf;
 
     // Get the computer name
-    char cNameBuf[MAX_COMPUTERNAME_LENGTH+1];
+    char cNameBuf[MAX_COMPUTERNAME_LENGTH + 1];
     DWORD cNameLen{ sizeof(cNameBuf) };
     GetComputerName(cNameBuf, &cNameLen);
     data.computerName = cNameBuf;
@@ -34,7 +34,8 @@ std::string Win32OperatingSystemDataSource::getOSVersion() const {
     DWORD dummy;
     const auto fileVersionInfoSize{ GetFileVersionInfoSize(filePath, &dummy) };
     std::vector<BYTE> versionInfoBuff(fileVersionInfoSize);
-    RGVERIFY(GetFileVersionInfo(filePath, 0, fileVersionInfoSize, versionInfoBuff.data()), "Could not get OS version\n");
+    RGVERIFY(GetFileVersionInfo(filePath, 0, fileVersionInfoSize, versionInfoBuff.data()),
+             "Could not get OS version\n");
 
     UINT uLen;
     VS_FIXEDFILEINFO* lpFfi;
@@ -52,4 +53,4 @@ std::string Win32OperatingSystemDataSource::getOSVersion() const {
     return std::format("{}.{}.{}.{}", dwLeftMost, dwSecondLeft, dwSecondRight, dwRightMost);
 }
 
-}
+} // namespace rg

@@ -23,4 +23,4 @@ public:
     virtual MusicData getMusicData() const = 0;
 };
 
-}
+} // namespace rg

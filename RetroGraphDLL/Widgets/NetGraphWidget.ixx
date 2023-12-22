@@ -22,8 +22,8 @@ public:
 
 private:
     std::string getScaleLabel(int64_t bytesTransferred) const;
-    void addUsageValue(NetBytesQueue& usageQueue, LineGraph& graph,
-                       int64_t& currentMaxValue, int64_t lowerBound, int64_t usageValue);
+    void addUsageValue(NetBytesQueue& usageQueue, LineGraph& graph, int64_t& currentMaxValue, int64_t lowerBound,
+                       int64_t usageValue);
 
     NetUsageEvent::Handle RegisterNetDownBytesCallback();
     NetUsageEvent::Handle RegisterNetUpBytesCallback();
@@ -45,4 +45,4 @@ private:
     NetBytesQueue m_upBytes;
 };
 
-}
+} // namespace rg

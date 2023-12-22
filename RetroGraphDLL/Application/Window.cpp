@@ -18,25 +18,25 @@ namespace rg {
 
 constexpr auto WM_NOTIFY_RG_TRAY = int{ 3141 };
 
-constexpr auto ID_EXIT                      = int{ 1 };
-constexpr auto ID_SEND_TO_BACK              = int{ 2 };
-constexpr auto ID_RESET_POSITION            = int{ 3 };
-constexpr auto ID_SET_WIDGET_BG             = int{ 4 };
-constexpr auto ID_TEST                      = int{ 5 };
-constexpr auto ID_TOGGLE_TIME_WIDGET        = int{ 6 };
-constexpr auto ID_TOGGLE_HDD_WIDGET         = int{ 7 };
-constexpr auto ID_TOGGLE_CPUSTATS_WIDGET    = int{ 8 };
+constexpr auto ID_EXIT = int{ 1 };
+constexpr auto ID_SEND_TO_BACK = int{ 2 };
+constexpr auto ID_RESET_POSITION = int{ 3 };
+constexpr auto ID_SET_WIDGET_BG = int{ 4 };
+constexpr auto ID_TEST = int{ 5 };
+constexpr auto ID_TOGGLE_TIME_WIDGET = int{ 6 };
+constexpr auto ID_TOGGLE_HDD_WIDGET = int{ 7 };
+constexpr auto ID_TOGGLE_CPUSTATS_WIDGET = int{ 8 };
 constexpr auto ID_TOGGLE_PROCESS_CPU_WIDGET = int{ 9 };
 constexpr auto ID_TOGGLE_PROCESS_RAM_WIDGET = int{ 10 };
 constexpr auto ID_TOGGLE_SYSTEMSTATS_WIDGET = int{ 11 };
-constexpr auto ID_TOGGLE_MAIN_WIDGET        = int{ 12 };
-constexpr auto ID_TOGGLE_MUSIC_WIDGET       = int{ 13 };
-constexpr auto ID_TOGGLE_FPS_WIDGET         = int{ 14 };
-constexpr auto ID_TOGGLE_CPU_GRAPH_WIDGET   = int{ 15 };
-constexpr auto ID_TOGGLE_GPU_GRAPH_WIDGET   = int{ 16 };
-constexpr auto ID_TOGGLE_RAM_GRAPH_WIDGET   = int{ 17 };
-constexpr auto ID_TOGGLE_NET_GRAPH_WIDGET   = int{ 18 };
-constexpr auto ID_CHANGE_DISPLAY_MONITOR    = int{ 19 }; // Should always be last ID in the list
+constexpr auto ID_TOGGLE_MAIN_WIDGET = int{ 12 };
+constexpr auto ID_TOGGLE_MUSIC_WIDGET = int{ 13 };
+constexpr auto ID_TOGGLE_FPS_WIDGET = int{ 14 };
+constexpr auto ID_TOGGLE_CPU_GRAPH_WIDGET = int{ 15 };
+constexpr auto ID_TOGGLE_GPU_GRAPH_WIDGET = int{ 16 };
+constexpr auto ID_TOGGLE_RAM_GRAPH_WIDGET = int{ 17 };
+constexpr auto ID_TOGGLE_NET_GRAPH_WIDGET = int{ 18 };
+constexpr auto ID_CHANGE_DISPLAY_MONITOR = int{ 19 }; // Should always be last ID in the list
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     // Get the Window pointer from the handle, and call the alternate WndProc if it was found
@@ -50,24 +50,21 @@ void Window::runTest() {
     m_retroGraph->toggleWidget(WidgetType::Main);
 }
 
-Window::Window(IRetroGraph* rg_, std::shared_ptr<const DisplayMeasure> displayMeasure, HINSTANCE hInstance, int startupMonitor)
+Window::Window(IRetroGraph* rg_, std::shared_ptr<const DisplayMeasure> displayMeasure, HINSTANCE hInstance,
+               int startupMonitor)
     : m_displayMeasure{ displayMeasure }
     , m_retroGraph{ rg_ }
     , m_currMonitor{ startupMonitor }
-    , m_width{ m_displayMeasure->getMonitors()->getWidth(m_currMonitor)}
+    , m_width{ m_displayMeasure->getMonitors()->getWidth(m_currMonitor) }
     , m_height{ m_displayMeasure->getMonitors()->getHeight(m_currMonitor) }
     , m_startPosX{ m_displayMeasure->getMonitors()->getX(m_currMonitor) }
     , m_startPosY{ m_displayMeasure->getMonitors()->getY(m_currMonitor) }
     , m_hInstance{ hInstance }
-    , m_configRefreshedHandle{
-        UserSettings::inst().configRefreshed.attach(
-            [&]() {
-                const auto newMonitor{ UserSettings::inst().getVal<int>("Window.Monitor") };
-                if (m_currMonitor != newMonitor)
-                    changeMonitor(m_hWndMain, newMonitor);
-            })
-    } {
-
+    , m_configRefreshedHandle{ UserSettings::inst().configRefreshed.attach([&]() {
+        const auto newMonitor{ UserSettings::inst().getVal<int>("Window.Monitor") };
+        if (m_currMonitor != newMonitor)
+            changeMonitor(m_hWndMain, newMonitor);
+    }) } {
     createWindow();
     createTrayIcon();
 }
@@ -202,13 +199,12 @@ void Window::createRClickMenu(HWND hWnd) {
         for (auto i = size_t{ 0U }; i < md.size(); ++i) {
             char optionName[] = "Move to display 0";
             optionName[16] = '0' + static_cast<char>(i);
-            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING,
-                       ID_CHANGE_DISPLAY_MONITOR + i, optionName);
+            InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING, ID_CHANGE_DISPLAY_MONITOR + i, optionName);
         }
     }
 
-    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING | MF_POPUP, 
-               reinterpret_cast<UINT_PTR>(widgetSubmenu), "Toggle Widgets");
+    InsertMenu(hPopupMenu, 0, MF_BYPOSITION | MF_STRING | MF_POPUP, reinterpret_cast<UINT_PTR>(widgetSubmenu),
+               "Toggle Widgets");
     InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_TIME_WIDGET, "Time Widget");
     InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_HDD_WIDGET, "HDD Widget");
     InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_CPUSTATS_WIDGET, "CPU Stats Widget");
@@ -224,11 +220,8 @@ void Window::createRClickMenu(HWND hWnd) {
     InsertMenu(widgetSubmenu, 0, MF_BYPOSITION | MF_STRING, ID_TOGGLE_MAIN_WIDGET, "Main Widget");
 
     // Display menu and wait for user's selection
-    const int selection{ TrackPopupMenuEx(hPopupMenu, TPM_TOPALIGN
-                                              | TPM_LEFTALIGN |
-                                              TPM_RIGHTBUTTON |
-                                              TPM_RETURNCMD, p.x, p.y,
-                                              hWnd, nullptr) };
+    const int selection{ TrackPopupMenuEx(hPopupMenu, TPM_TOPALIGN | TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD,
+                                          p.x, p.y, hWnd, nullptr) };
 
     switch (selection) {
         case ID_EXIT:
@@ -299,10 +292,7 @@ void Window::handleClick(DWORD clickX, DWORD clickY) {
     glReadPixels(clickX, clickY, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
 
     // If the pixel is the background color, we don't want to drag
-    if (pixels[0] == BGCOLOR_R &&
-        pixels[1] == BGCOLOR_B &&
-        pixels[2] == BGCOLOR_G &&
-        pixels[3] == BGCOLOR_A) {
+    if (pixels[0] == BGCOLOR_R && pixels[1] == BGCOLOR_B && pixels[2] == BGCOLOR_G && pixels[3] == BGCOLOR_A) {
         m_dragging = false;
     } else {
         m_dragging = true;
@@ -313,10 +303,7 @@ void Window::handleClick(DWORD clickX, DWORD clickY) {
 void Window::changeMonitor(HWND hWnd, int monIndex) {
     // Check monitor selection is in range and the monitor isn't
     // the currently selected one
-    if (monIndex >= 0 &&
-        monIndex < m_displayMeasure->getMonitors()->getNumMonitors() &&
-        monIndex != m_currMonitor) {
-
+    if (monIndex >= 0 && monIndex < m_displayMeasure->getMonitors()->getNumMonitors() && monIndex != m_currMonitor) {
         m_currMonitor = monIndex;
 
         const auto& md{ m_displayMeasure->getMonitors()->getMonitorData()[m_currMonitor] };
@@ -346,12 +333,11 @@ void Window::sendToBack() const {
     SetWindowPos(m_hWndMain, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
 }
 
-void GLAPIENTRY Window::GLMessageCallback(GLenum source, GLenum type, GLuint /*id*/,
-                                          GLenum severity, GLsizei /*length*/,
-                                          const GLchar * message, const void * /*userParam*/) {
-
+void GLAPIENTRY Window::GLMessageCallback(GLenum source, GLenum type, GLuint /*id*/, GLenum severity,
+                                          GLsizei /*length*/, const GLchar* message, const void* /*userParam*/) {
     const auto& msg{ std::format("GL CALLBACK: {} source = {}, type = {}, severity = {} message = {}\n",
-        (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""), source, type, severity, message)};
+                                 (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""), source, type, severity,
+                                 message) };
     std::cerr << msg << '\n';
 }
 
@@ -451,20 +437,16 @@ bool Window::createHGLRC() {
     if (m_arbMultisampleSupported) {
         const DWORD exStyles = WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW;
 
-        // Create main window with clicking through to windows underneath, 
+        // Create main window with clicking through to windows underneath,
         // no taskbar display, and transparency
-        m_hWndMain = CreateWindowEx(exStyles, "RetroGraph", windowName.c_str(),
-                WS_VISIBLE | WS_POPUP,
-                m_startPosX, m_startPosY, m_width, m_height,
-                nullptr, nullptr, m_hInstance, nullptr);
+        m_hWndMain = CreateWindowEx(exStyles, "RetroGraph", windowName.c_str(), WS_VISIBLE | WS_POPUP, m_startPosX,
+                                    m_startPosY, m_width, m_height, nullptr, nullptr, m_hInstance, nullptr);
     } else {
         // Create test window that doesn't appear in taskbar to query
         // anti-aliasing capabilities
-        m_hWndMain = CreateWindowEx(WS_EX_TOOLWINDOW | WS_EX_TRANSPARENT,
-                "RetroGraph", "Dummy",
-                WS_VISIBLE | WS_POPUP,
-                m_startPosX, m_startPosY, m_width, m_height,
-                nullptr, nullptr, m_hInstance, nullptr);
+        m_hWndMain =
+            CreateWindowEx(WS_EX_TOOLWINDOW | WS_EX_TRANSPARENT, "RetroGraph", "Dummy", WS_VISIBLE | WS_POPUP,
+                           m_startPosX, m_startPosY, m_width, m_height, nullptr, nullptr, m_hInstance, nullptr);
     }
 
     // Store a pointer to this Window object so we can reference members in WndProc
@@ -480,7 +462,7 @@ bool Window::createHGLRC() {
 
     // Make window transparent via dwm
     const auto hRgn{ CreateRectRgn(0, 0, -1, -1) };
-    DWM_BLURBEHIND bb = {0};
+    DWM_BLURBEHIND bb = { 0 };
     bb.dwFlags = DWM_BB_ENABLE | DWM_BB_BLURREGION;
     bb.hRgnBlur = hRgn;
     bb.fEnable = TRUE;
@@ -496,21 +478,31 @@ bool Window::createHGLRC() {
 
     PIXELFORMATDESCRIPTOR pfd = {
         sizeof(PIXELFORMATDESCRIPTOR),
-        1,                                // Version number
+        1, // Version number
         PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_SUPPORT_COMPOSITION | PFD_DOUBLEBUFFER,
         PFD_TYPE_RGBA,
-        32,                               // Color depth
-        0, 0, 0, 0, 0, 0,                 // Color bits ignored
-        8,                                // Alpha buffer
-        0,                                // Shift bit ignored
-        0,                                // No accumulation buffer
-        0, 0, 0, 0,                       // Accumulation bits ignored
-        24,                               // 16Bit Z-Buffer (Depth Buffer)
-        8,                                // Some stencil buffer
-        0,                                // No auxiliary buffer
-        PFD_MAIN_PLANE,                   // Main drawing layer
-        0,                                // Reserved
-        0, 0, 0                           // layer masks ignored
+        32, // Color depth
+        0,
+        0,
+        0,
+        0,
+        0,
+        0, // Color bits ignored
+        8, // Alpha buffer
+        0, // Shift bit ignored
+        0, // No accumulation buffer
+        0,
+        0,
+        0,
+        0, // Accumulation bits ignored
+        24, // 16Bit Z-Buffer (Depth Buffer)
+        8, // Some stencil buffer
+        0, // No auxiliary buffer
+        PFD_MAIN_PLANE, // Main drawing layer
+        0, // Reserved
+        0,
+        0,
+        0 // layer masks ignored
     };
 
     // On the first run, create a regular window with the previous pfd
@@ -541,7 +533,7 @@ bool Window::createHGLRC() {
 
     // Create an opengl context for the window
     m_hrc = wglCreateContext(m_hdc);
-    if (!m_hrc){
+    if (!m_hrc) {
         ReleaseDC(m_hWndMain, m_hdc);
         m_hdc = nullptr;
         DestroyWindow(m_hWndMain);
@@ -580,7 +572,8 @@ bool Window::wglIisExtensionSupported(const std::string& extension) {
     std::string supported;
 
     // Try To Use wglGetExtensionStringARB on current dc, if possible
-    const auto wglGetExtString{ reinterpret_cast<PFNWGLGETEXTENSIONSSTRINGARBPROC>(wglGetProcAddress("wglGetExtensionsStringARB")) };
+    const auto wglGetExtString{ reinterpret_cast<PFNWGLGETEXTENSIONSSTRINGARBPROC>(
+        wglGetProcAddress("wglGetExtensionsStringARB")) };
 
     if (wglGetExtString) {
         supported = wglGetExtString(wglGetCurrentDC());
@@ -597,16 +590,14 @@ bool Window::wglIisExtensionSupported(const std::string& extension) {
     }
 
     // Begin examination at start of string, increment by 1 on false match
-    for (const char* p = supported.c_str(); ; p++) {
+    for (const char* p = supported.c_str();; p++) {
         // Advance p up to the next possible match
         p = strstr(p, extension.c_str());
         if (!p) {
             return false;
         }
 
-        if ((p == supported.c_str() || p[-1] == ' ') &&
-            (p[extension.size()] == '\0' || p[extension.size()] == ' ')) {
-
+        if ((p == supported.c_str() || p[-1] == ' ') && (p[extension.size()] == '\0' || p[extension.size()] == ' ')) {
             return true;
         }
     }
@@ -618,7 +609,8 @@ bool Window::initMultisample() {
         return false;
     }
 
-    const auto wglChoosePixelFormatARB = reinterpret_cast<PFNWGLCHOOSEPIXELFORMATARBPROC>(wglGetProcAddress("wglChoosePixelFormatARB"));
+    const auto wglChoosePixelFormatARB =
+        reinterpret_cast<PFNWGLCHOOSEPIXELFORMATARBPROC>(wglGetProcAddress("wglChoosePixelFormatARB"));
     if (!wglChoosePixelFormatARB) {
         m_arbMultisampleSupported = false;
         return false;
@@ -629,19 +621,28 @@ bool Window::initMultisample() {
     // really focus on is the SAMPLE BUFFERS ARB and WGL SAMPLES.
     // These two are going to do the main testing for whether or not
     // we support multisampling on this hardware.
-    int iAttributes[] = {
-        WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
-        WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
-        WGL_ACCELERATION_ARB, WGL_FULL_ACCELERATION_ARB,
-        WGL_COLOR_BITS_ARB, 24,
-        WGL_ALPHA_BITS_ARB, 8,
-        WGL_DEPTH_BITS_ARB, 16,
-        WGL_STENCIL_BITS_ARB, 0,
-        WGL_DOUBLE_BUFFER_ARB, GL_TRUE,
-        WGL_SAMPLE_BUFFERS_ARB, GL_TRUE,
-        WGL_SAMPLES_ARB, 8,
-        0, 0
-    };
+    int iAttributes[] = { WGL_DRAW_TO_WINDOW_ARB,
+                          GL_TRUE,
+                          WGL_SUPPORT_OPENGL_ARB,
+                          GL_TRUE,
+                          WGL_ACCELERATION_ARB,
+                          WGL_FULL_ACCELERATION_ARB,
+                          WGL_COLOR_BITS_ARB,
+                          24,
+                          WGL_ALPHA_BITS_ARB,
+                          8,
+                          WGL_DEPTH_BITS_ARB,
+                          16,
+                          WGL_STENCIL_BITS_ARB,
+                          0,
+                          WGL_DOUBLE_BUFFER_ARB,
+                          GL_TRUE,
+                          WGL_SAMPLE_BUFFERS_ARB,
+                          GL_TRUE,
+                          WGL_SAMPLES_ARB,
+                          8,
+                          0,
+                          0 };
 
     int pixelFormat;
     int valid;
@@ -649,8 +650,7 @@ bool Window::initMultisample() {
     float fAttributes[] = { 0, 0 };
 
     // First we check to see if we can get a pixel format for 8 samples
-    valid = wglChoosePixelFormatARB(m_hdc, iAttributes, fAttributes, 1,
-                                    &pixelFormat, &numFormats);
+    valid = wglChoosePixelFormatARB(m_hdc, iAttributes, fAttributes, 1, &pixelFormat, &numFormats);
 
     // If we returned true, and our format count is greater than 1
     if (valid && numFormats >= 1) {
@@ -661,8 +661,7 @@ bool Window::initMultisample() {
 
     // Our pixel format with 8 samples failed, test for 4 samples
     iAttributes[19] = 4;
-    valid = wglChoosePixelFormatARB(m_hdc, iAttributes, fAttributes, 1,
-                                    &pixelFormat,&numFormats);
+    valid = wglChoosePixelFormatARB(m_hdc, iAttributes, fAttributes, 1, &pixelFormat, &numFormats);
     if (valid && numFormats >= 1) {
         m_arbMultisampleSupported = true;
         m_arbMultisampleFormat = pixelFormat;
@@ -671,8 +670,7 @@ bool Window::initMultisample() {
 
     // Our pixel format with 2 samples failed, test for 2 samples
     iAttributes[19] = 2;
-    valid = wglChoosePixelFormatARB(m_hdc, iAttributes, fAttributes, 1,
-                                    &pixelFormat,&numFormats);
+    valid = wglChoosePixelFormatARB(m_hdc, iAttributes, fAttributes, 1, &pixelFormat, &numFormats);
     if (valid && numFormats >= 1) {
         m_arbMultisampleSupported = true;
         m_arbMultisampleFormat = pixelFormat;

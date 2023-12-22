@@ -6,13 +6,11 @@ namespace rg {
 
 /* Per drive data storage container */
 export struct Drive {
-
     Drive(char _driveLetter, uint64_t initFreeBytes, uint64_t totalBytes, const char* volumeName)
         : driveLetter{ _driveLetter }
         , totalFreeBytes{ initFreeBytes }
         , totalBytes{ totalBytes }
-        , volumeName{ volumeName } {
-    }
+        , volumeName{ volumeName } {}
 
     auto operator<=>(const Drive&) const = default;
 
@@ -35,4 +33,4 @@ public:
     virtual DriveData getDriveData() const = 0;
 };
 
-}
+} // namespace rg
