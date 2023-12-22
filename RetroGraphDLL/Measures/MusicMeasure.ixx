@@ -35,7 +35,6 @@ protected:
 
 private:
     std::unique_ptr<const IMusicDataSource> m_musicDataSource;
-
     MusicData m_musicData;
 };
 

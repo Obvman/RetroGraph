@@ -18,14 +18,17 @@ std::shared_ptr<T> createMeasure() {
 
     auto& settings{ UserSettings::inst() };
 
-    if constexpr (std::is_same_v<T, MusicMeasure>) {
+    if constexpr (std::is_same_v<T, DriveMeasure>) {
+        return std::make_shared<T>(milliseconds{ settings.getVal<int>("Measures-Drive.UpdateInterval") },
+                                   std::make_unique<Win32DriveDataSource>());
+    } else if constexpr (std::is_same_v<T, MusicMeasure>) {
         return std::make_shared<T>(milliseconds{ settings.getVal<int>("Measures-Music.UpdateInterval") },
                                    std::make_unique<FoobarMusicDataSource>());
     } else if constexpr (std::is_same_v<T, RAMMeasure>) {
         return std::make_shared<T>(milliseconds{ settings.getVal<int>("Measures-RAM.UpdateInterval") },
                                    std::make_unique<Win32RAMDataSource>());
     } else if constexpr (std::is_same_v<T, SystemMeasure>) {
-        return std::make_shared<T>(std::make_unique<Win32RAMDataSource>());
+        return std::make_shared<T>(std::make_unique<Win32OperatingSystemDataSource>());
     } else if constexpr (std::is_same_v<T, TimeMeasure>) {
         return std::make_shared<T>(milliseconds{ settings.getVal<int>("Measures-Time.UpdateInterval") },
                                    std::make_unique<ChronoTimeDataSource>());
@@ -299,7 +302,7 @@ std::unique_ptr<Widget> RetroGraph::createWidget(WidgetType widgetType) {
     case WidgetType::Time:
         return std::make_unique<TimeWidget>(&m_fontManager, getOrCreate(m_timeMeasure), getOrCreate(m_netMeasure));
     case WidgetType::SystemStats:
-        return std::make_unique<SystemStatsWidget>(&m_fontManager, getOrCreate(m_cpuMeasure), getOrCreate(m_gpuMeasure), getOrCreate(m_displayMeasure), getOrCreate(m_systemMeasure));
+        return std::make_unique<SystemStatsWidget>(&m_fontManager, getOrCreate(m_cpuMeasure), getOrCreate(m_gpuMeasure), getOrCreate(m_ramMeasure), getOrCreate(m_displayMeasure), getOrCreate(m_systemMeasure));
     case WidgetType::Music:
         return std::make_unique<MusicWidget>(&m_fontManager, getOrCreate(m_musicMeasure));
     case WidgetType::CPUStats:
@@ -339,7 +342,7 @@ ConfigRefreshedEvent::Handle RetroGraph::RegisterConfigRefreshedCallback() {
             //if (m_gpuMeasure) m_gpuMeasure->update();
             //if (m_netMeasure) m_netMeasure->update();
             //if (m_processMeasure) m_processMeasure->update();
-            //if (m_driveMeasure) m_driveMeasure->update();
+            if (m_driveMeasure) m_driveMeasure->setUpdateInterval(milliseconds{ settings.getVal<int>("Measures-Drive.UpdateInterval") });
             if (m_musicMeasure) m_musicMeasure->setUpdateInterval(milliseconds{ settings.getVal<int>("Measures-Music.UpdateInterval") });
             //if (m_systemMeasure) m_systemMeasure->update();
             //if (m_animationState) m_animationState->update();

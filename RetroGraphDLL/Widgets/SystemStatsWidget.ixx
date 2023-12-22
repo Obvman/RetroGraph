@@ -14,6 +14,7 @@ public:
     SystemStatsWidget(const FontManager* fontManager,
                       std::shared_ptr<const CPUMeasure> cpuMeasure,
                       std::shared_ptr<const GPUMeasure> gpuMeasure,
+                      std::shared_ptr<const RAMMeasure> ramMeasure,
                       std::shared_ptr<const DisplayMeasure> displayMeasure,
                       std::shared_ptr<const SystemMeasure> systemMeasure);
     ~SystemStatsWidget() noexcept = default;

@@ -1,58 +1,20 @@
 module RG.Measures:SystemMeasure;
 
-import RG.Core;
-
-import "RGAssert.h";
 import "WindowsHeaderUnit.h";
-
-#pragma comment(lib, "version.lib")
 
 namespace rg {
 
-SystemMeasure::SystemMeasure(std::unique_ptr<const IRAMDataSource> ramDataSource)
+SystemMeasure::SystemMeasure(std::unique_ptr<const IOperatingSystemDataSource> operatingSystemDataSource)
     : Measure{ std::nullopt }
-    , m_ramDataSource{ std::move(ramDataSource) }
-    , m_ramDescription{ getRAMInfo(*m_ramDataSource) } {
+    , m_operatingSystemDataSource{ std::move(operatingSystemDataSource) } {
 
-    getOSVersionInfo();
+    const auto osData{ m_operatingSystemDataSource->getOperatingSystemData() };
     getCPUInfo();
 
-    // Get the current computer name
-    char uNameBuf[MAX_COMPUTERNAME_LENGTH+1];
-    DWORD uNameLen{ sizeof(uNameBuf) };
-    GetUserName(uNameBuf, &uNameLen);
-    m_userName.append(uNameBuf);
-
-    // Get the computer name
-    char cNameBuf[MAX_COMPUTERNAME_LENGTH+1];
-    DWORD cNameLen{ sizeof(cNameBuf) };
-    GetComputerName(cNameBuf, &cNameLen);
-    m_computerName.append(cNameBuf);
-}
-
-void SystemMeasure::getOSVersionInfo() {
-    // Use kernel32.dll's meta information to get the OS version
-    const char* filePath{ "kernel32.dll" };
-
-    DWORD dummy;
-    const auto fileVersionInfoSize{ GetFileVersionInfoSize(filePath, &dummy) };
-    std::vector<BYTE> versionInfoBuff(fileVersionInfoSize);
-    RGVERIFY(GetFileVersionInfo(filePath, 0, fileVersionInfoSize, versionInfoBuff.data()), "Could not get OS version\n");
-
-    UINT uLen;
-    VS_FIXEDFILEINFO* lpFfi;
-    const auto bVer{ VerQueryValue(versionInfoBuff.data(), "\\", (LPVOID*)&lpFfi, &uLen) };
-    RGASSERT(bVer && uLen != 0, "Failed to query OS value\n");
-
-    const DWORD osVersionMS = lpFfi->dwProductVersionMS;
-    const DWORD osVersionLS = lpFfi->dwProductVersionLS;
-
-    const DWORD dwLeftMost = HIWORD(osVersionMS);
-    const DWORD dwSecondLeft = LOWORD(osVersionMS);
-    const DWORD dwSecondRight = HIWORD(osVersionLS);
-    const DWORD dwRightMost = LOWORD(osVersionLS);
-
-    m_osInfoStr = std::format("Windows Version: {}.{}.{}.{}", dwLeftMost, dwSecondLeft, dwSecondRight, dwRightMost);
+    m_osName = osData.osName;
+    m_osVersion = osData.osVersion;
+    m_userName = osData.userName;
+    m_computerName = osData.computerName;
 }
 
 void SystemMeasure::getCPUInfo() {
@@ -76,12 +38,6 @@ void SystemMeasure::getCPUInfo() {
     }
 
     m_cpuDescription = "CPU: " + std::string{ CPUBrandString };
-}
-
-std::string SystemMeasure::getRAMInfo(const IRAMDataSource& ramDataSource) const {
-    char buff[64];
-    snprintf(buff, sizeof(buff), "RAM: %2.1fGB", ramDataSource.getRAMCapacity() / static_cast<float>(GB));
-    return buff;
 }
 
 } // namespace rg

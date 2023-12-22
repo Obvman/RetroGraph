@@ -13,6 +13,7 @@ import "WindowsHeaderUnit.h";
 
 namespace rg {
 
+// TODO DataSource
 ProcessMeasure::ProcessMeasure()
     : Measure{ seconds{ 2 } }
     , m_numCPUProcessesToDisplay{ UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesCPU.NumProcessesDisplayed") }
@@ -98,11 +99,8 @@ bool ProcessMeasure::updateInternal() {
 }
 
 int ProcessMeasure::getPIDFromName(std::string_view name) const {
-    const auto it{ std::find_if(m_allProcessData.cbegin(),
-                                m_allProcessData.cend(),
-            [&name](const auto& sp) {
-                return sp->getName() == name;
-            }) 
+    const auto it{ std::find_if(m_allProcessData.cbegin(), m_allProcessData.cend(),
+            [&name](const auto& sp) { return sp->getName() == name; }) 
     };
 
     if (it != m_allProcessData.cend()) {
@@ -158,9 +156,9 @@ bool ProcessMeasure::setDebugPrivileges(HANDLE hToken, LPCTSTR privilege,
 void ProcessMeasure::fillCPUData() {
     // Sort based on the current CPU usage of processes in descending order
     std::sort(m_allProcessData.begin(), m_allProcessData.end(),
-    [](const auto& ppd1, const auto& ppd2) {
-        return ppd1->getCpuUsage() > ppd2->getCpuUsage();
-    });
+        [](const auto& ppd1, const auto& ppd2) {
+            return ppd1->getCpuUsage() > ppd2->getCpuUsage();
+        });
 
     // Update the strings to be drawn
     m_procCPUListData.clear();

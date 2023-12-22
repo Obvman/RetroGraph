@@ -2,19 +2,23 @@ module RG.Widgets:SystemStatsWidget;
 
 import Colors;
 
+import RG.Core;
+
 namespace rg {
 
 SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
                                      std::shared_ptr<const CPUMeasure> cpuMeasure,
                                      std::shared_ptr<const GPUMeasure> gpuMeasure,
+                                     std::shared_ptr<const RAMMeasure> ramMeasure,
                                      std::shared_ptr<const DisplayMeasure> displayMeasure,
                                      std::shared_ptr<const SystemMeasure> systemMeasure)
     : Widget{ fontManager } {
 
     // Just create stats string here since we expect it not to change during
     // the lifetime of the program
-    m_statsStrings.emplace_back(std::string{ systemMeasure->getUserName() } +"@" + std::string{ systemMeasure->getComputerName() });
-    m_statsStrings.emplace_back(systemMeasure->getOSInfoStr());
+    m_statsStrings.emplace_back("User Name: " + systemMeasure->getUserName() + "@" + systemMeasure->getComputerName());
+    m_statsStrings.emplace_back("OS: " + systemMeasure->getOSName());
+    m_statsStrings.emplace_back("OS Version: " + systemMeasure->getOSVersion());
 
     if (cpuMeasure->getCoreTempInfoSuccess()) {
         const auto cpuName = cpuMeasure->getCPUName();
@@ -25,7 +29,7 @@ SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager,
         m_statsStrings.emplace_back(systemMeasure->getCPUDescription());
 
     m_statsStrings.emplace_back(gpuMeasure->getGpuDescription());
-    m_statsStrings.emplace_back(systemMeasure->getRAMDescription());
+    m_statsStrings.emplace_back(std::format("RAM: {:2.1f}GB", ramMeasure->getRAMCapacity() / static_cast<float>(GB)));
 
     // Monitor information
     const auto& monitors{ displayMeasure->getMonitors() };

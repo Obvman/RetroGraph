@@ -2,13 +2,15 @@ module RG.Widgets:HDDWidget;
 
 import Colors;
 
+import RG.Core;
 import RG.Rendering;
 
 import "GLHeaderUnit.h";
 
 namespace rg {
 
-HDDWidget::HDDWidget(const FontManager* fontManager, std::shared_ptr<const DriveMeasure> driveMeasure)
+HDDWidget::HDDWidget(const FontManager* fontManager,
+                     std::shared_ptr<const DriveMeasure> driveMeasure)
     : Widget{ fontManager }
     , m_driveMeasure{ driveMeasure }
     , m_postUpdateHandle{ RegisterPostUpdateCallback() } {
@@ -37,12 +39,21 @@ void HDDWidget::draw() const {
 
         // Draw the capacity up top
         m_fontManager->renderLine(RG_FONT_STANDARD,
-                                  drives[i].capacityStr.c_str(), 0, 0, 0, 0,
+                                  getCapacityStr(drives[i].totalBytes).c_str(), 0, 0, 0, 0,
                                   RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_TOP, 0, 10);
 
         drawVerticalProgressBar(0.3f, -0.5f, 0.5f,
                                 static_cast<float>(drives[i].totalBytes - drives[i].totalFreeBytes),
                                 static_cast<float>(drives[i].totalBytes), true);
+    }
+}
+
+std::string HDDWidget::getCapacityStr(uint64_t capacityBytes) const {
+    const auto capacityGB{ bToGB(capacityBytes) };
+    if (capacityGB < 1000) {
+        return std::format("{}GB", capacityGB);
+    } else {
+        return std::format("{:.1f}TB", capacityGB / 1024.0f);
     }
 }
 

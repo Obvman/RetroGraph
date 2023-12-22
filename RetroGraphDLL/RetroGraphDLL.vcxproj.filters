@@ -60,9 +60,6 @@
     <ClCompile Include="WindowsNetworkHeaderUnit.h">
       <Filter>Header Units</Filter>
     </ClCompile>
-    <ClCompile Include="Measures\Data\DriveInfo.ixx">
-      <Filter>Modules\Measures\Data</Filter>
-    </ClCompile>
     <ClCompile Include="Measures\Data\ProcessData.ixx">
       <Filter>Modules\Measures\Data</Filter>
     </ClCompile>
@@ -197,9 +194,6 @@
     </ClCompile>
     <ClCompile Include="Measures\DriveMeasure.cpp">
       <Filter>Modules\Measures</Filter>
-    </ClCompile>
-    <ClCompile Include="Measures\Data\DriveInfo.cpp">
-      <Filter>Modules\Measures\Data</Filter>
     </ClCompile>
     <ClCompile Include="Measures\GPUMeasure.cpp">
       <Filter>Modules\Measures</Filter>
@@ -478,6 +472,24 @@
       <Filter>Modules\Measures\DataSources</Filter>
     </ClCompile>
     <ClCompile Include="Measures\DataSources\Win32RAMDataSource.cpp">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\IOperatingSystemDataSource.ixx">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\Win32OperatingSystemDataSource.ixx">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\Win32OperatingSystemDataSource.cpp">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\IDriveDataSource.ixx">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\Win32DriveDataSource.ixx">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\Win32DriveDataSource.cpp">
       <Filter>Modules\Measures\DataSources</Filter>
     </ClCompile>
   </ItemGroup>
