@@ -75,11 +75,13 @@
     <OutDir>$(SolutionDir)bin\$(Configuration)$(Platform)\</OutDir>
     <IntDir>bin\$(Configuration)$(Platform)\</IntDir>
     <LibraryPath>$(SolutionDir)deps\lib\Debug\;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <IncludePath>$(SolutionDir)deps\include\;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\$(Configuration)$(Platform)\</OutDir>
     <IntDir>bin\$(Configuration)$(Platform)\</IntDir>
     <LibraryPath>$(SolutionDir)deps\lib\Release\;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <IncludePath>$(SolutionDir)deps\include\;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -173,7 +175,6 @@
     <ClCompile Include="UnitTests\Widgets\Graph\Test_GraphPointBuffer.ixx" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="catch2.hpp" />
     <ClCompile Include="Catch2HeaderUnit.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
