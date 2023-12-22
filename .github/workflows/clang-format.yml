@@ -1,16 +1,18 @@
 name: clang-format verification
 
-on: workflow_dispatch
+on: [push, workflow_dispatch]
 
 jobs:
-  build:
+  formatting-check:
+    name: Formatting Check
     runs-on: ubuntu-latest
 
     steps:
+    - uses: actions/checkout@v3
     - name: clang-format Check
       uses: jidicula/clang-format-action@v4.11.0
       with:
-        clang-format-version: 16
-        check-path: .
-        include-regex: ^.*\.((((c|C)(c|pp|xx|\+\+)?$)|(ixx)|((h|H)h?(pp|xx|\+\+)?$))|(ino|pde|proto|cu))$
-        exclude-regex: ^.*((deps)|(packages))\/
+        clang-format-version: '16'
+        check-path: '.'
+        include-regex: '^.*\.((((c|C)(c|pp|xx|\+\+)?$)|(ixx)|((h|H)h?(pp|xx|\+\+)?$))|(ino|pde|proto|cu))$'
+        exclude-regex: '^.*((deps)|(packages))\/'
