@@ -2,19 +2,10 @@ module Utils;
 
 import std.filesystem;
 
-import "CSTDHeaderUnit.h";
 import "RGAssert.h";
 import "WindowsHeaderUnit.h";
 
 namespace rg {
-
-ULARGE_INTEGER ftToULI(const FILETIME& ft) {
-    ULARGE_INTEGER uli;
-    uli.LowPart = ft.dwLowDateTime;
-    uli.HighPart = ft.dwHighDateTime;
-
-    return uli;
-}
 
 uint64_t subtractTimes(const FILETIME& ftA, const FILETIME& ftB) {
     LARGE_INTEGER a, b;

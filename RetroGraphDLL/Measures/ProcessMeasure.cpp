@@ -1,7 +1,5 @@
 module RG.Measures:ProcessMeasure;
 
-import :NtDefs;
-
 import Utils;
 
 import RG.Core;

@@ -3,6 +3,7 @@ export module RG.Measures:ProcessMeasure;
 import :Measure;
 
 import RG.Measures.Data;
+import RG.Measures.DataSources;
 import RG.UserSettings;
 
 import std.core;

@@ -52,5 +52,8 @@
     <ClCompile Include="UnitTests\Measures\Test_DriveMeasure.ixx">
       <Filter>UnitTests\Measures</Filter>
     </ClCompile>
+    <ClCompile Include="UnitTests\Measures\Test_CPUMeasure.ixx">
+      <Filter>UnitTests\Measures</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

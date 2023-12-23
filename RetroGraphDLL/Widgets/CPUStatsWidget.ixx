@@ -11,9 +11,7 @@ import std.core;
 
 namespace rg {
 
-/* Responsible for drawing widget containing CPU voltage, frequency and temperature
- * obtained from CoreTemp
- */
+/* Responsible for drawing widget containing CPU voltage, frequency and temperature */
 export class CPUStatsWidget : public Widget {
 public:
     CPUStatsWidget(const FontManager* fontManager, std::shared_ptr<const CPUMeasure> cpuMeasure);
@@ -27,9 +25,7 @@ private:
 
     void drawCoreGraphs() const;
     void drawStats() const;
-    void drawNoInfoState() const;
     CPUCoreUsageEvent::Handle RegisterOnCPUCoreUsageCallback();
-    CPUCoreDataStateChangedEvent::Handle RegisterOnCPUCoreDataStateChangedCallback();
     ConfigRefreshedEvent::Handle RegisterConfigRefreshedCallback();
 
     Viewport m_coreGraphViewport{};
@@ -37,12 +33,10 @@ private:
 
     std::shared_ptr<const CPUMeasure> m_cpuMeasure{ nullptr };
 
-    bool m_coreDataAvailable;
     int m_coreGraphSampleSize;
     std::vector<SmoothLineGraph> m_coreGraphs;
 
     CPUCoreUsageEvent::Handle m_onCPUCoreUsageHandle;
-    CPUCoreDataStateChangedEvent::Handle m_onCPUCoreDataStateChangedHandle;
     ConfigRefreshedEvent::Handle m_configRefreshedHandle;
 };
 

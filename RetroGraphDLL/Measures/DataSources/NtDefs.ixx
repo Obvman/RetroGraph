@@ -1,4 +1,4 @@
-export module RG.Measures:NtDefs;
+export module RG.Measures.DataSources:NtDefs;
 
 import "WindowsHeaderUnit.h";
 
@@ -98,6 +98,15 @@ export {
         LONGLONG ResidentAvailablePages; // since THRESHOLD
         ULONGLONG SharedCommittedPages; // since THRESHOLD
     }; // *PSYSTEM_PERFORMANCE_INFORMATION;
+
+    typedef struct _PROCESSOR_POWER_INFORMATION {
+        ULONG Number;
+        ULONG MaxMhz;
+        ULONG CurrentMhz;
+        ULONG MhzLimit;
+        ULONG MaxIdleState;
+        ULONG CurrentIdleState;
+    } PROCESSOR_POWER_INFORMATION, *PPROCESSOR_POWER_INFORMATION;
 }
 
 } // namespace rg

@@ -18,7 +18,11 @@ std::shared_ptr<T> createMeasure() {
 
     auto& settings{ UserSettings::inst() };
 
-    if constexpr (std::is_same_v<T, DriveMeasure>) {
+    if constexpr (std::is_same_v<T, CPUMeasure>) {
+        return std::make_shared<T>(milliseconds{ settings.getVal<int>("Measures-CPU.UpdateInterval") },
+                                   std::make_unique<Win32CPUDataSource>());
+        // std::make_unique<CoreTempCPUDataSource>());//TODO automatically pick right data source
+    } else if constexpr (std::is_same_v<T, DriveMeasure>) {
         return std::make_shared<T>(milliseconds{ settings.getVal<int>("Measures-Drive.UpdateInterval") },
                                    std::make_unique<Win32DriveDataSource>());
     } else if constexpr (std::is_same_v<T, MusicMeasure>) {
