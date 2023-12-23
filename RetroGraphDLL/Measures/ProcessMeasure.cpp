@@ -14,15 +14,11 @@ namespace rg {
 // TODO DataSource
 ProcessMeasure::ProcessMeasure()
     : Measure{ seconds{ 2 } }
-    , m_numCPUProcessesToDisplay{ UserSettings::inst().getVal<int, unsigned int>(
-          "Widgets-ProcessesCPU.NumProcessesDisplayed") }
-    , m_numRAMProcessesToDisplay{ UserSettings::inst().getVal<int, unsigned int>(
-          "Widgets-ProcessesRAM.NumProcessesDisplayed") }
+    , m_numCPUProcessesToDisplay{ UserSettings::inst().getVal<int>("Widgets-ProcessesCPU.NumProcessesDisplayed") }
+    , m_numRAMProcessesToDisplay{ UserSettings::inst().getVal<int>("Widgets-ProcessesRAM.NumProcessesDisplayed") }
     , m_configRefreshedHandle{ UserSettings::inst().configRefreshed.attach([&]() {
-        m_numCPUProcessesToDisplay =
-            UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesCPU.NumProcessesDisplayed");
-        m_numRAMProcessesToDisplay =
-            UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesRAM.NumProcessesDisplayed");
+        m_numCPUProcessesToDisplay = UserSettings::inst().getVal<int>("Widgets-ProcessesCPU.NumProcessesDisplayed");
+        m_numRAMProcessesToDisplay = UserSettings::inst().getVal<int>("Widgets-ProcessesRAM.NumProcessesDisplayed");
     }) } {
     if constexpr (!debugMode) {
         // Set the debug privilege in order to gain access to system processes

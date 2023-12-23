@@ -60,6 +60,7 @@ void UserSettings::readMembers(const INIReader& reader) {
 
     m_settings["Measures-CPU.UpdateInterval"] = reader.GetInteger("Measures-CPU", "UpdateInterval", 1000);
     m_settings["Measures-Drive.UpdateInterval"] = reader.GetInteger("Measures-Drive", "UpdateInterval", 30000);
+    m_settings["Measures-GPU.UpdateInterval"] = reader.GetInteger("Measures-GPU", "UpdateInterval", 1000);
     m_settings["Measures-Music.UpdateInterval"] = reader.GetInteger("Measures-Music", "UpdateInterval", 1000);
     m_settings["Measures-Net.PingServer"] = reader.Get("Measures-Net", "PingServer", "http://www.google.com/");
     m_settings["Measures-Net.PingFrequency"] = reader.GetInteger("Measures-Net", "PingFrequency", 10);

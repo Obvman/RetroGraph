@@ -10,7 +10,7 @@ public:
 
     void update() override;
 
-    std::string getCPUName() const override { return m_cpuName; }
+    const std::string& getCPUName() const override { return m_cpuName; }
     float getCPUUsage() const override { return m_cpuUsage; }
     int getNumCores() const override { return m_numCores; };
     float getCoreUsage(int /*coreIdx*/) const override { return m_cpuUsage; /*TODO*/ }

@@ -24,7 +24,6 @@ protected:
 
 private:
     std::unique_ptr<const IOperatingSystemDataSource> m_operatingSystemDataSource;
-
     OperatingSystemData m_operatingSystemData;
 };
 

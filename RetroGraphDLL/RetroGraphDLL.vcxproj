@@ -201,7 +201,6 @@
     <ClCompile Include="FPSCounter.cpp" />
     <ClCompile Include="FPSLimiter.cpp" />
     <ClCompile Include="FPSLimiter.ixx" />
-    <ClCompile Include="ICPUDataSource.ixx" />
     <ClCompile Include="Measures\AnimationState.cpp" />
     <ClCompile Include="Measures\CPUMeasure.cpp" />
     <ClCompile Include="Measures\DataSources\CoreTempCPUDataSource.cpp" />
@@ -209,7 +208,9 @@
     <ClCompile Include="Measures\DataSources\DataSources.ixx" />
     <ClCompile Include="Measures\DataSources\FoobarMusicDataSource.cpp" />
     <ClCompile Include="Measures\DataSources\FoobarMusicDataSource.ixx" />
+    <ClCompile Include="Measures\DataSources\ICPUDataSource.ixx" />
     <ClCompile Include="Measures\DataSources\IDriveDataSource.ixx" />
+    <ClCompile Include="Measures\DataSources\IGPUDataSource.ixx" />
     <ClCompile Include="Measures\DataSources\IMusicDataSource.ixx" />
     <ClCompile Include="Measures\DataSources\IOperatingSystemDataSource.ixx" />
     <ClCompile Include="Measures\DataSources\IRAMDataSource.ixx" />
@@ -217,6 +218,8 @@
     <ClCompile Include="Measures\DataSources\ChronoTimeDataSource.cpp" />
     <ClCompile Include="Measures\DataSources\ChronoTimeDataSource.ixx" />
     <ClCompile Include="Measures\DataSources\NtDefs.ixx" />
+    <ClCompile Include="Measures\DataSources\NvAPIGPUDataSource.cpp" />
+    <ClCompile Include="Measures\DataSources\NvAPIGPUDataSource.ixx" />
     <ClCompile Include="Measures\DataSources\Win32CPUDataSource.cpp" />
     <ClCompile Include="Measures\DataSources\Win32CPUDataSource.ixx" />
     <ClCompile Include="Measures\DataSources\Win32DriveDataSource.cpp" />

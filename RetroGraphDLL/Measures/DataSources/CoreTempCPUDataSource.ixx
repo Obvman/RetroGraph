@@ -17,7 +17,7 @@ public:
 
     void update() override;
 
-    std::string getCPUName() const { return m_ctData.sCPUName; }
+    const std::string& getCPUName() const { return m_cpuName; }
     float getCPUUsage() const override;
     int getNumCores() const override { return m_ctData.uiCoreCnt; };
     float getCoreUsage(int coreIdx) const override { return m_ctData.uiLoad[coreIdx] / 100.0f; }

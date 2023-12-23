@@ -54,10 +54,10 @@ private:
 
     std::vector<std::unique_ptr<ProcessData>> m_allProcessData;
 
-    unsigned int m_numCPUProcessesToDisplay{ 10U };
-    unsigned int m_numRAMProcessesToDisplay{ 10U };
-    std::vector<std::pair<std::string, double>> m_procCPUListData{ m_numCPUProcessesToDisplay };
-    std::vector<std::pair<std::string, size_t>> m_procRAMListData{ m_numRAMProcessesToDisplay };
+    int m_numCPUProcessesToDisplay;
+    int m_numRAMProcessesToDisplay;
+    std::vector<std::pair<std::string, double>> m_procCPUListData;
+    std::vector<std::pair<std::string, size_t>> m_procRAMListData;
     ConfigRefreshedEvent::Handle m_configRefreshedHandle;
 };
 

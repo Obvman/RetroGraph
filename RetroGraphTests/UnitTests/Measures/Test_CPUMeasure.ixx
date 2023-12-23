@@ -12,7 +12,7 @@ constexpr std::chrono::milliseconds testMeasureUpdateInterval{ 10 };
 export class TestCPUDataSource : public rg::ICPUDataSource {
 public:
     void update() override {}
-    std::string getCPUName() const override { return cpuName; }
+    const std::string& getCPUName() const override { return cpuName; }
     float getCPUUsage() const override { return cpuUsage; }
     int getNumCores() const override { return numCores; };
     float getCoreUsage(int coreIdx) const override { return usages[coreIdx]; }
