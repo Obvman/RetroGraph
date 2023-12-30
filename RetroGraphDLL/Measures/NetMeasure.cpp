@@ -12,7 +12,9 @@ bool NetMeasure::updateInternal() {
     // Check if the best network interface has changed and update to the new one if so.
     static Timer updateBestInterfaceTime{ std::chrono::seconds{ 30 } };
     if (updateBestInterfaceTime.hasElapsed()) {
-        m_netDataSource->updateBestAdapter();
+        if (m_netDataSource->updateBestAdapter()) {
+            onBestAdapterChanged.raise();
+        }
         updateBestInterfaceTime.restart();
     }
 

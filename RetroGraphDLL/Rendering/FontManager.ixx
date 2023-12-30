@@ -84,8 +84,8 @@ private:
        character width/pixel information */
     void createFont(int fontHeight, int weight, const char* typeface, RGFONTCODE code);
     void setFontCharacteristics(RGFONTCODE c, HDC hdc);
-    int calculateStringWidth(const char* text, size_t textLen, RGFONTCODE c) const;
     int calculateStringWidth(std::string_view text, RGFONTCODE c) const;
+    std::string getTruncated(RGFONTCODE fontCode, std::string_view str, int maxLengthPx) const;
     std::tuple<int, int, int> calculateLinesRenderParameters(int numLines, RGFONTCODE code, int alignFlags,
                                                              int areaHeight, int marginY) const;
     float getRasterXAlignment(int alignFlags, int strWidthPx, int areaWidth, int alignMargin) const;

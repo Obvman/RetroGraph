@@ -11,7 +11,7 @@ namespace rg {
 
 export using NetUsageEvent = CallbackEvent<int64_t>;
 export using ConnectionStatusChangedEvent = CallbackEvent<bool>;
-// #TODO event for when best adapter changes
+export using BestAdapterChangedEvent = CallbackEvent<>;
 
 export class NetMeasure : public Measure {
 public:
@@ -19,6 +19,7 @@ public:
 
     const std::string& getDNS() const { return m_netDataSource->getDNS(); }
     const std::string& getHostname() const { return m_netDataSource->getHostname(); }
+    const std::string& getAdapterName() const { return m_netDataSource->getAdapterName(); }
     const std::string& getAdapterMAC() const { return m_netDataSource->getAdapterMAC(); }
     const std::string& getAdapterIP() const { return m_netDataSource->getAdapterIP(); }
     bool isConnected() const { return m_netDataSource->isConnected(); }
@@ -26,6 +27,7 @@ public:
     NetUsageEvent onDownBytes;
     NetUsageEvent onUpBytes;
     ConnectionStatusChangedEvent onConnectionStatusChanged;
+    BestAdapterChangedEvent onBestAdapterChanged;
 
 protected:
     bool updateInternal() override;

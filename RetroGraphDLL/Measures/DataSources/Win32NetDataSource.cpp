@@ -1,5 +1,7 @@
 module RG.Measures.DataSources:Win32NetDataSource;
 
+import RG.Core;
+
 import "RGAssert.h";
 import "WindowsNetworkHeaderUnit.h";
 
@@ -9,26 +11,37 @@ namespace rg {
 
 Win32NetDataSource::Win32NetDataSource(std::chrono::milliseconds pingFrequency, const std::string& pingServer)
     : m_table{ getIfTable() }
-    , m_adapterRow{ getBestAdapterRow() }
+    , m_bestIfaceIndex{ getBestAdapterIndex() }
+    , m_adapterRow{ getBestAdapterRow(m_bestIfaceIndex) }
     , m_bestAdapter{ determineBestAdapter() }
     , m_dnsIP{ determineDNSIP() }
     , m_hostname{ determineHostname() }
+    , m_mainAdapterName{ wstrToStr(m_adapterRow->Description) }
     , m_mainAdapterMAC{ determineMAC(m_bestAdapter) }
     , m_mainAdapterIP{ m_bestAdapter.IpAddressList.IpAddress.String }
     , m_connectionChecker{ pingFrequency, pingServer } {}
 
-void Win32NetDataSource::updateBestAdapter() {
-    DWORD bestIfaceIndex;
-    if (GetBestInterface(INADDR_ANY, &bestIfaceIndex) != NO_ERROR) {
-        RGERROR("Failed to get best interface");
-        return;
+bool Win32NetDataSource::updateBestAdapter() {
+    int bestIfaceIndex{ getBestAdapterIndex() };
+
+    if (bestIfaceIndex != m_bestIfaceIndex) {
+        m_bestIfaceIndex = bestIfaceIndex;
+        m_table = getIfTable();
+
+        m_adapterRow = getBestAdapterRow(bestIfaceIndex);
+
+        m_bestAdapter = determineBestAdapter();
+
+        m_dnsIP = determineDNSIP();
+        m_hostname = determineHostname();
+        m_mainAdapterName = wstrToStr(m_adapterRow->Description);
+        m_mainAdapterMAC = determineMAC(m_bestAdapter);
+        m_mainAdapterIP = m_bestAdapter.IpAddressList.IpAddress.String;
+
+        return true;
     }
 
-    if (bestIfaceIndex != m_adapterRow->InterfaceIndex) {
-        m_table = getIfTable(); // #TODO test changing adapters
-        m_adapterRow = &(m_table->Table[bestIfaceIndex]);
-        RGVERIFY(GetIfEntry2(m_adapterRow) == NO_ERROR, "GetIfEntry2 failed");
-    }
+    return false;
 }
 
 void Win32NetDataSource::updateNetTraffic() {
@@ -46,14 +59,16 @@ _MIB_IF_TABLE2* Win32NetDataSource::getIfTable() const {
     return table;
 }
 
-_MIB_IF_ROW2* Win32NetDataSource::getBestAdapterRow() const {
-    /* Find and keep track of the entry for the most appropriate local network
-     * interface */
-    DWORD bestIfaceIndex;
+int Win32NetDataSource::getBestAdapterIndex() const {
+    DWORD bestIfaceIndex{ 0 };
     RGVERIFY(GetBestInterface(INADDR_ANY, &bestIfaceIndex) == NO_ERROR, "Failed to get best interface");
+    return bestIfaceIndex;
+}
 
+_MIB_IF_ROW2* Win32NetDataSource::getBestAdapterRow(int bestIfaceIndex) const {
+    // Find and keep track of the entry for the most appropriate local network interface
     for (auto i = size_t{ 0U }; i < m_table->NumEntries; ++i) {
-        if (m_table->Table[i].InterfaceIndex == bestIfaceIndex) {
+        if (static_cast<int>(m_table->Table[i].InterfaceIndex) == bestIfaceIndex) {
             std::wcout << L"Using interface " << m_table->Table[i].Description << '\n';
             return &m_table->Table[i];
         }
