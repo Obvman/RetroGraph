@@ -3,28 +3,25 @@ export module RG.Measures:NetMeasure;
 import :Measure;
 
 import RG.Core;
-import RG.UserSettings;
+import RG.Measures.DataSources;
 
 import std.core;
-import std.threading;
-
-import "WindowsNetworkHeaderUnit.h";
 
 namespace rg {
 
 export using NetUsageEvent = CallbackEvent<int64_t>;
 export using ConnectionStatusChangedEvent = CallbackEvent<bool>;
+// #TODO event for when best adapter changes
 
 export class NetMeasure : public Measure {
 public:
-    NetMeasure();
-    ~NetMeasure() noexcept;
+    NetMeasure(std::chrono::milliseconds updateInterval, std::unique_ptr<INetDataSource> netDataSource);
 
-    const std::string& getDNS() const { return m_DNSIP; }
-    const std::string& getHostname() const { return m_hostname; }
-    const std::string& getAdapterMAC() const { return m_mainAdapterMAC; }
-    const std::string& getAdapterIP() const { return m_mainAdapterIP; }
-    bool isConnected() const;
+    const std::string& getDNS() const { return m_netDataSource->getDNS(); }
+    const std::string& getHostname() const { return m_netDataSource->getHostname(); }
+    const std::string& getAdapterMAC() const { return m_netDataSource->getAdapterMAC(); }
+    const std::string& getAdapterIP() const { return m_netDataSource->getAdapterIP(); }
+    bool isConnected() const { return m_netDataSource->isConnected(); }
 
     NetUsageEvent onDownBytes;
     NetUsageEvent onUpBytes;
@@ -34,31 +31,7 @@ protected:
     bool updateInternal() override;
 
 private:
-    void startNetworkThread();
-    void destroyNetworkThread();
-    void setIsConnected(bool b);
-
-    void getDNSAndHostname();
-    void getMACAndLocalIP();
-
-    _MIB_IF_TABLE2* m_table{ nullptr };
-    _MIB_IF_ROW2* m_adapterEntry{ nullptr };
-
-    std::string m_DNSIP{ "0.0.0.0" };
-    std::string m_hostname{ "" };
-    std::string m_mainAdapterMAC{ "00-00-00-00-00-00" };
-    std::string m_mainAdapterIP{ "0.0.0.0" };
-
-    std::string m_pingServer{ "" };
-    int m_pingFreqSec{ 0U };
-
-    std::condition_variable m_netConnectionCV;
-    std::mutex m_netConnectionMutex;
-    std::atomic<bool> m_isConnected{ false };
-    std::atomic<bool> m_threadRunning{ false };
-    std::thread m_netConnectionThread{};
-
-    ConfigRefreshedEvent::Handle m_configRefreshedHandle;
+    std::unique_ptr<INetDataSource> m_netDataSource;
 };
 
 } // namespace rg

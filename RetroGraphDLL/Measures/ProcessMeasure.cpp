@@ -263,6 +263,8 @@ void ProcessMeasure::detectNewProcesses() {
     }
 
     // Loop over the process list for any new processes
+    // #TODO BUG: doesn't remove dead processes!
+    // #TODO use a map of PID -> data instead, should have much more efficient lookups for existing processes.
     for (; spi->NextEntryOffset;
          spi = reinterpret_cast<PSYSTEM_PROCESS_INFO>(reinterpret_cast<LPBYTE>(spi) + spi->NextEntryOffset)) {
         const auto procID{ reinterpret_cast<LONGLONG>(spi->ProcessId) };

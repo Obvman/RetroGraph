@@ -510,6 +510,21 @@
     <ClCompile Include="Measures\DataSources\NvAPIGPUDataSource.cpp">
       <Filter>Modules\Measures\DataSources</Filter>
     </ClCompile>
+    <ClCompile Include="Measures\DataSources\INetDataSource.ixx">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\NetworkConnectionChecker.ixx">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\Win32NetDataSource.ixx">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\Win32NetDataSource.cpp">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\NetworkConnectionChecker.cpp">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resources\resource.h">

@@ -31,6 +31,11 @@ std::shared_ptr<T> createMeasure() {
     } else if constexpr (std::is_same_v<T, MusicMeasure>) {
         return std::make_shared<T>(milliseconds{ settings.getVal<int>("Measures-Music.UpdateInterval") },
                                    std::make_unique<FoobarMusicDataSource>());
+    } else if constexpr (std::is_same_v<T, NetMeasure>) {
+        return std::make_shared<T>(milliseconds{ settings.getVal<int>("Measures-Net.UpdateInterval") },
+                                   std::make_unique<Win32NetDataSource>(
+                                       milliseconds{ UserSettings::inst().getVal<int>("Measures-Net.PingFrequency") },
+                                       UserSettings::inst().getVal<std::string>("Measures-Net.PingServer")));
     } else if constexpr (std::is_same_v<T, RAMMeasure>) {
         return std::make_shared<T>(milliseconds{ settings.getVal<int>("Measures-RAM.UpdateInterval") },
                                    std::make_unique<Win32RAMDataSource>());

@@ -9,7 +9,7 @@ namespace rg {
 NetStatsWidget::NetStatsWidget(const FontManager* fontManager, std::shared_ptr<const NetMeasure> netMeasure)
     : Widget{ fontManager }
     , m_netMeasure{ netMeasure }
-    , m_postUpdateHandle{ RegisterPostUpdateCallback() } {
+    , m_netConnectionStatusChangedHandle{ RegisterNetConnectionStatusChangedCallback() } {
     m_statsStrings.emplace_back("Hostname: " + m_netMeasure->getHostname());
     m_statsStrings.emplace_back("LAN IP: " + m_netMeasure->getAdapterIP());
     m_statsStrings.emplace_back("DNS: " + m_netMeasure->getDNS());
@@ -18,7 +18,7 @@ NetStatsWidget::NetStatsWidget(const FontManager* fontManager, std::shared_ptr<c
 }
 
 NetStatsWidget::~NetStatsWidget() {
-    m_netMeasure->postUpdate.detach(m_postUpdateHandle);
+    m_netMeasure->onConnectionStatusChanged.detach(m_netConnectionStatusChangedHandle);
 }
 
 void NetStatsWidget::draw() const {
@@ -27,9 +27,10 @@ void NetStatsWidget::draw() const {
                                RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL, 15, 10);
 }
 
-PostUpdateEvent::Handle NetStatsWidget::RegisterPostUpdateCallback() {
-    return m_netMeasure->postUpdate.attach([this]() {
-        m_statsStrings.back() = std::string{ "Connection Status: " } + (m_netMeasure->isConnected() ? "Up" : "Down");
+ConnectionStatusChangedEvent::Handle NetStatsWidget::RegisterNetConnectionStatusChangedCallback() {
+    return m_netMeasure->onConnectionStatusChanged.attach([this](bool isConnected) {
+        m_statsStrings.back() = std::string{ "Connection Status: " } + (isConnected ? "Up" : "Down");
+        invalidate();
     });
 }
 

@@ -17,7 +17,7 @@ NvAPIGPUDataSource::NvAPIGPUDataSource()
     , m_gpuCoreCount{ determineGPUCoreCount() }
     , m_gpuFrameBufferSizeKB{ determineGPUFrameBufferSize() } {
     if (NvAPI_Initialize() != NVAPI_OK) {
-        return;
+        throw std::exception("Failed to initialize NVIDIA API");
     }
 }
 

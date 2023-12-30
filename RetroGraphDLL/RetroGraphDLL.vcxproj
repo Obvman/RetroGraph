@@ -212,11 +212,14 @@
     <ClCompile Include="Measures\DataSources\IDriveDataSource.ixx" />
     <ClCompile Include="Measures\DataSources\IGPUDataSource.ixx" />
     <ClCompile Include="Measures\DataSources\IMusicDataSource.ixx" />
+    <ClCompile Include="Measures\DataSources\INetDataSource.ixx" />
     <ClCompile Include="Measures\DataSources\IOperatingSystemDataSource.ixx" />
     <ClCompile Include="Measures\DataSources\IRAMDataSource.ixx" />
     <ClCompile Include="Measures\DataSources\ITimeDataSource.ixx" />
     <ClCompile Include="Measures\DataSources\ChronoTimeDataSource.cpp" />
     <ClCompile Include="Measures\DataSources\ChronoTimeDataSource.ixx" />
+    <ClCompile Include="Measures\DataSources\NetworkConnectionChecker.cpp" />
+    <ClCompile Include="Measures\DataSources\NetworkConnectionChecker.ixx" />
     <ClCompile Include="Measures\DataSources\NtDefs.ixx" />
     <ClCompile Include="Measures\DataSources\NvAPIGPUDataSource.cpp" />
     <ClCompile Include="Measures\DataSources\NvAPIGPUDataSource.ixx" />
@@ -224,6 +227,8 @@
     <ClCompile Include="Measures\DataSources\Win32CPUDataSource.ixx" />
     <ClCompile Include="Measures\DataSources\Win32DriveDataSource.cpp" />
     <ClCompile Include="Measures\DataSources\Win32DriveDataSource.ixx" />
+    <ClCompile Include="Measures\DataSources\Win32NetDataSource.cpp" />
+    <ClCompile Include="Measures\DataSources\Win32NetDataSource.ixx" />
     <ClCompile Include="Measures\DataSources\Win32OperatingSystemDataSource.cpp" />
     <ClCompile Include="Measures\DataSources\Win32OperatingSystemDataSource.ixx" />
     <ClCompile Include="Measures\DataSources\Win32RAMDataSource.cpp" />
