@@ -21,16 +21,13 @@ auto CPUStatsWidget::createCoreGraphs(const CPUMeasure& cpuMeasure) {
 CPUStatsWidget::CPUStatsWidget(const FontManager* fontManager, std::shared_ptr<const CPUMeasure> cpuMeasure)
     : Widget{ fontManager }
     , m_cpuMeasure{ cpuMeasure }
-    , m_coreDataAvailable{ cpuMeasure->getCoreTempInfoSuccess() }
     , m_coreGraphSampleSize{ UserSettings::inst().getVal<int>("Widgets-CPUStats.NumUsageSamples") }
     , m_coreGraphs{ createCoreGraphs(*cpuMeasure) }
     , m_onCPUCoreUsageHandle{ RegisterOnCPUCoreUsageCallback() }
-    , m_onCPUCoreDataStateChangedHandle{ RegisterOnCPUCoreDataStateChangedCallback() }
     , m_configRefreshedHandle{ RegisterConfigRefreshedCallback() } {}
 
 CPUStatsWidget::~CPUStatsWidget() {
     UserSettings::inst().configRefreshed.detach(m_configRefreshedHandle);
-    m_cpuMeasure->onCPUCoreDataStateChanged.detach(m_onCPUCoreDataStateChangedHandle);
     m_cpuMeasure->onCPUCoreUsage.detach(m_onCPUCoreUsageHandle);
 }
 
@@ -41,18 +38,8 @@ void CPUStatsWidget::setViewport(const Viewport& vp) {
 };
 
 void CPUStatsWidget::draw() const {
-    if (m_coreDataAvailable) {
-        drawCoreGraphs();
-        drawStats();
-    } else {
-        drawNoInfoState();
-    }
-}
-
-void CPUStatsWidget::drawNoInfoState() const {
-    glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-    m_fontManager->renderLine(RG_FONT_TIME, "No Data", 0, 0, 0, 0,
-                              RG_ALIGN_CENTERED_HORIZONTAL | RG_ALIGN_CENTERED_VERTICAL, 0, 0);
+    drawCoreGraphs();
+    drawStats();
 }
 
 void CPUStatsWidget::drawStats() const {
@@ -114,18 +101,6 @@ CPUCoreUsageEvent::Handle CPUStatsWidget::RegisterOnCPUCoreUsageCallback() {
         }
 
         m_coreGraphs[coreIdx].addPoint(coreUsage);
-        invalidate();
-    });
-}
-
-CPUCoreDataStateChangedEvent::Handle CPUStatsWidget::RegisterOnCPUCoreDataStateChangedCallback() {
-    return m_cpuMeasure->onCPUCoreDataStateChanged.attach([this](bool enabled) {
-        m_coreDataAvailable = enabled;
-        if (m_coreDataAvailable) {
-            m_coreGraphs = createCoreGraphs(*m_cpuMeasure);
-        } else {
-            m_coreGraphs.clear();
-        }
         invalidate();
     });
 }

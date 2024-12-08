@@ -18,11 +18,9 @@ GPUGraphWidget::~GPUGraphWidget() {
 }
 
 void GPUGraphWidget::draw() const {
-    if (m_gpuMeasure->isEnabled()) {
-        // Set the viewport for the graph to be left section
-        glViewport(m_viewport.x, m_viewport.y, (m_viewport.width * 4) / 5, m_viewport.height);
-        m_graph.draw();
-    }
+    // Set the viewport for the graph to be left section
+    glViewport(m_viewport.x, m_viewport.y, (m_viewport.width * 4) / 5, m_viewport.height);
+    m_graph.draw();
 
     // Set viewport for text drawing
     glViewport(m_viewport.x + (4 * m_viewport.width) / 5, m_viewport.y, m_viewport.width / 5, m_viewport.height);
@@ -38,22 +36,18 @@ void GPUGraphWidget::draw() const {
 
 GPUUsageEvent::Handle GPUGraphWidget::RegisterGPUUsageCallback() {
     return m_gpuMeasure->onGPUUsage.attach([this](float usage) {
-        if (m_gpuMeasure->isEnabled()) {
-            m_graph.addPoint(usage);
-            invalidate();
-        }
+        m_graph.addPoint(usage);
+        invalidate();
     });
 }
 
 ConfigRefreshedEvent::Handle GPUGraphWidget::RegisterConfigRefreshedCallback() {
     return UserSettings::inst().configRefreshed.attach([this]() {
-        if (m_gpuMeasure->isEnabled()) {
-            const int newGraphSampleSize{ UserSettings::inst().getVal<int>("Widgets-GPUGraph.NumUsageSamples") };
-            if (m_graphSampleSize != newGraphSampleSize) {
-                m_graphSampleSize = newGraphSampleSize;
-                m_graph.resetPoints(m_graphSampleSize);
-                invalidate();
-            }
+        const int newGraphSampleSize{ UserSettings::inst().getVal<int>("Widgets-GPUGraph.NumUsageSamples") };
+        if (m_graphSampleSize != newGraphSampleSize) {
+            m_graphSampleSize = newGraphSampleSize;
+            m_graph.resetPoints(m_graphSampleSize);
+            invalidate();
         }
     });
 }

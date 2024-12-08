@@ -75,9 +75,6 @@
     <ClCompile Include="Measures\NetMeasure.ixx">
       <Filter>Modules\Measures</Filter>
     </ClCompile>
-    <ClCompile Include="Measures\NtDefs.ixx">
-      <Filter>Modules\Measures</Filter>
-    </ClCompile>
     <ClCompile Include="Measures\Particle.ixx">
       <Filter>Modules\Measures</Filter>
     </ClCompile>
@@ -100,9 +97,6 @@
       <Filter>Modules\Measures</Filter>
     </ClCompile>
     <ClCompile Include="Measures\DriveMeasure.ixx">
-      <Filter>Modules\Measures</Filter>
-    </ClCompile>
-    <ClCompile Include="Measures\CPUPlugin.ixx">
       <Filter>Modules\Measures</Filter>
     </ClCompile>
     <ClCompile Include="Widgets\MainWidget.ixx">
@@ -184,9 +178,6 @@
       <Filter>Modules\Measures\Data</Filter>
     </ClCompile>
     <ClCompile Include="Measures\CPUMeasure.cpp">
-      <Filter>Modules\Measures</Filter>
-    </ClCompile>
-    <ClCompile Include="Measures\CPUPlugin.cpp">
       <Filter>Modules\Measures</Filter>
     </ClCompile>
     <ClCompile Include="Measures\DisplayMeasure.cpp">
@@ -490,6 +481,48 @@
       <Filter>Modules\Measures\DataSources</Filter>
     </ClCompile>
     <ClCompile Include="Measures\DataSources\Win32DriveDataSource.cpp">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\CoreTempCPUDataSource.ixx">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\CoreTempCPUDataSource.cpp">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\Win32CPUDataSource.cpp">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\Win32CPUDataSource.ixx">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\NtDefs.ixx">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\ICPUDataSource.ixx">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\IGPUDataSource.ixx">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\NvAPIGPUDataSource.ixx">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\NvAPIGPUDataSource.cpp">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\INetDataSource.ixx">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\NetworkConnectionChecker.ixx">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\Win32NetDataSource.ixx">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\Win32NetDataSource.cpp">
+      <Filter>Modules\Measures\DataSources</Filter>
+    </ClCompile>
+    <ClCompile Include="Measures\DataSources\NetworkConnectionChecker.cpp">
       <Filter>Modules\Measures\DataSources</Filter>
     </ClCompile>
   </ItemGroup>

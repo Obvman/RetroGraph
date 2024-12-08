@@ -2,7 +2,6 @@ export module RG.Measures;
 
 export import :AnimationState;
 export import :CPUMeasure;
-export import :CPUPlugin;
 export import :DisplayMeasure;
 export import :DriveMeasure;
 export import :GPUMeasure;

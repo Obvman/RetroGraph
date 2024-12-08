@@ -9,16 +9,18 @@ namespace rg {
 NetStatsWidget::NetStatsWidget(const FontManager* fontManager, std::shared_ptr<const NetMeasure> netMeasure)
     : Widget{ fontManager }
     , m_netMeasure{ netMeasure }
-    , m_postUpdateHandle{ RegisterPostUpdateCallback() } {
-    m_statsStrings.emplace_back("Hostname: " + m_netMeasure->getHostname());
-    m_statsStrings.emplace_back("LAN IP: " + m_netMeasure->getAdapterIP());
-    m_statsStrings.emplace_back("DNS: " + m_netMeasure->getDNS());
-    m_statsStrings.emplace_back("MAC: " + m_netMeasure->getAdapterMAC());
-    m_statsStrings.emplace_back(std::string{ "Connection Status: " } + (m_netMeasure->isConnected() ? "Up" : "Down"));
-}
+    , m_statsStrings{ "Hostname: " + m_netMeasure->getHostname(),
+                      "Adapter: " + m_netMeasure->getAdapterName(),
+                      "LAN IP: " + m_netMeasure->getAdapterIP(),
+                      "DNS: " + m_netMeasure->getDNS(),
+                      "MAC: " + m_netMeasure->getAdapterMAC(),
+                      "Connection Status: " + std::string{ m_netMeasure->isConnected() ? "Up" : "Down" } }
+    , m_netConnectionStatusChangedHandle{ RegisterNetConnectionStatusChangedCallback() }
+    , m_bestAdapterChangedHandle{ RegisterBestAdapterChangedCallback() } {}
 
 NetStatsWidget::~NetStatsWidget() {
-    m_netMeasure->postUpdate.detach(m_postUpdateHandle);
+    m_netMeasure->onBestAdapterChanged.detach(m_bestAdapterChangedHandle);
+    m_netMeasure->onConnectionStatusChanged.detach(m_netConnectionStatusChangedHandle);
 }
 
 void NetStatsWidget::draw() const {
@@ -27,9 +29,22 @@ void NetStatsWidget::draw() const {
                                RG_ALIGN_LEFT | RG_ALIGN_CENTERED_VERTICAL, 15, 10);
 }
 
-PostUpdateEvent::Handle NetStatsWidget::RegisterPostUpdateCallback() {
-    return m_netMeasure->postUpdate.attach([this]() {
-        m_statsStrings.back() = std::string{ "Connection Status: " } + (m_netMeasure->isConnected() ? "Up" : "Down");
+ConnectionStatusChangedEvent::Handle NetStatsWidget::RegisterNetConnectionStatusChangedCallback() {
+    return m_netMeasure->onConnectionStatusChanged.attach([this](bool isConnected) {
+        m_statsStrings.back() = std::string{ "Connection Status: " } + (isConnected ? "Up" : "Down");
+        invalidate();
+    });
+}
+
+BestAdapterChangedEvent::Handle NetStatsWidget::RegisterBestAdapterChangedCallback() {
+    return m_netMeasure->onBestAdapterChanged.attach([this]() {
+        m_statsStrings = { "Hostname: " + m_netMeasure->getHostname(),
+                           "Adapter: " + m_netMeasure->getAdapterName(),
+                           "LAN IP: " + m_netMeasure->getAdapterIP(),
+                           "DNS: " + m_netMeasure->getDNS(),
+                           "MAC: " + m_netMeasure->getAdapterMAC(),
+                           "Connection Status: " + std::string{ m_netMeasure->isConnected() ? "Up" : "Down" } };
+        invalidate();
     });
 }
 

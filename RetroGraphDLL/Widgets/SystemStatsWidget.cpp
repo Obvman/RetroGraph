@@ -17,15 +17,8 @@ SystemStatsWidget::SystemStatsWidget(const FontManager* fontManager, std::shared
     m_statsStrings.emplace_back("User Name: " + systemMeasure->getUserName() + "@" + systemMeasure->getComputerName());
     m_statsStrings.emplace_back("OS: " + systemMeasure->getOSName());
     m_statsStrings.emplace_back("OS Version: " + systemMeasure->getOSVersion());
-
-    if (cpuMeasure->getCoreTempInfoSuccess()) {
-        const auto cpuName = cpuMeasure->getCPUName();
-        if (!cpuName.empty())
-            m_statsStrings.emplace_back(cpuName);
-    } else
-        m_statsStrings.emplace_back(systemMeasure->getCPUDescription());
-
-    m_statsStrings.emplace_back(gpuMeasure->getGpuDescription());
+    m_statsStrings.emplace_back("CPU: " + cpuMeasure->getCPUName());
+    m_statsStrings.emplace_back(std::format("GPU: {} ({})", gpuMeasure->getGPUName(), gpuMeasure->getDriverVersion()));
     m_statsStrings.emplace_back(std::format("RAM: {:2.1f}GB", ramMeasure->getRAMCapacity() / static_cast<float>(GB)));
 
     // Monitor information

@@ -11,6 +11,9 @@
 #include <debugapi.h>
 #include <dwmapi.h>
 #include <pathcch.h>
+#include <powerbase.h>
+#include <pdh.h>
+#include <pdhmsg.h>
 #include <Psapi.h>
 #include <tchar.h>
 #include <TlHelp32.h>

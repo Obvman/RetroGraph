@@ -53,11 +53,10 @@ void FontManager::renderLine(RGFONTCODE fontCode, std::string_view text, int are
         glViewport(vp[0] + areaX, vp[1] + areaY, areaWidth, areaHeight);
     }
 
-    auto rasterY = float{ 0.0f };
     const auto fontHeightPx{ m_fontCharHeights[fontCode] };
-    const auto textLen{ text.size() };
 
     // Handle vertical alignment
+    auto rasterY = float{ 0.0f };
     if (alignFlags & RG_ALIGN_CENTERED_VERTICAL) {
         const auto drawYMidPx{ (areaHeight - fontHeightPx) / 2 };
         rasterY = pixelsToVPCoords(drawYMidPx + m_fontCharDescents[fontCode], areaHeight);
@@ -67,55 +66,19 @@ void FontManager::renderLine(RGFONTCODE fontCode, std::string_view text, int are
         rasterY = pixelsToVPCoords(areaHeight - m_fontCharAscents[fontCode] - alignMarginY, areaHeight);
     }
 
+    const auto maxStrLenPx{ areaWidth - alignMarginX };
     auto strWidthPx{ calculateStringWidth(text, fontCode) };
+    const std::string& toRender{ (strWidthPx > maxStrLenPx) ? getTruncated(fontCode, text, maxStrLenPx)
+                                                            : std::string{ text } };
+    if (strWidthPx > maxStrLenPx)
+        strWidthPx = calculateStringWidth(toRender, fontCode);
 
-    // If the string is too large, then truncate it and add ellipses
-    if (strWidthPx > areaWidth - alignMarginX) {
-        char newText[255];
+    const auto rasterX{ getRasterXAlignment(alignFlags, strWidthPx, areaWidth, alignMarginX) };
 
-        // Copy char by char into the new buffer while there is enough width
-        auto newStrWidthPx = int{ 0U };
-        for (auto i = size_t{ 0U }; i < textLen; ++i) {
-            newText[i] = text[i];
-            newStrWidthPx += m_fontCharWidths[fontCode][newText[i]];
+    glRasterPos2f(rasterX, rasterY);
+    glListBase(m_fontBases[fontCode]);
+    glCallLists(static_cast<GLsizei>(toRender.size()), GL_UNSIGNED_BYTE, toRender.data());
 
-            // If we've gone over, remove last character and replace chars before
-            // with ellipses
-            if (newStrWidthPx > areaWidth - alignMarginX) {
-                // Ensure there are enough characters to put in ellipses
-                if (i > 2) {
-                    newText[i] = '\0';
-                    newText[i - 1] = '.';
-                    newText[i - 2] = '.';
-                } else {
-                    newText[i] = '\0';
-                }
-                break;
-            }
-        }
-
-        const auto truncTextLen{ strlen(newText) };
-        strWidthPx = calculateStringWidth(newText, truncTextLen, fontCode);
-
-        const auto rasterX{ getRasterXAlignment(alignFlags, strWidthPx, areaWidth, alignMarginX) };
-
-        glRasterPos2f(rasterX, rasterY);
-        // Render in the specified font, preserving the previously selected font
-        glPushAttrib(GL_LIST_BIT);
-        {
-            glListBase(m_fontBases[fontCode]);
-            glCallLists(static_cast<GLsizei>(truncTextLen), GL_UNSIGNED_BYTE, newText);
-        }
-        glPopAttrib();
-
-    } else {
-        // Handle horizontal alignment
-        const auto rasterX{ getRasterXAlignment(alignFlags, strWidthPx, areaWidth, alignMarginX) };
-
-        glRasterPos2f(rasterX, rasterY);
-        glListBase(m_fontBases[fontCode]);
-        glCallLists(static_cast<GLsizei>(textLen), GL_UNSIGNED_BYTE, text.data());
-    }
     glViewport(vp[0], vp[1], vp[2], vp[3]);
 }
 
@@ -134,14 +97,17 @@ void FontManager::renderLines(RGFONTCODE fontCode, const std::vector<std::string
         glViewport(vp[0] + areaX, vp[1] + areaY, areaWidth, areaHeight);
     }
 
+    const auto maxStrLenPx{ areaWidth - alignMarginX };
     auto [rasterYPx, rasterLineDeltaY, maxRenderableLines] =
         calculateLinesRenderParameters(static_cast<int>(lines.size()), fontCode, alignFlags, areaHeight, alignMarginY);
 
     // Start at top, render downwards
     for (int i{ 0 }; i < maxRenderableLines; ++i) {
         const auto& str{ lines[i] };
-        // Handle X alignment for the string
-        const auto strWidthPx{ calculateStringWidth(str.c_str(), str.size(), fontCode) };
+        auto strWidthPx{ calculateStringWidth(str, fontCode) };
+        const std::string& toRender{ (strWidthPx > maxStrLenPx) ? getTruncated(fontCode, str, maxStrLenPx) : str };
+        if (strWidthPx > maxStrLenPx)
+            strWidthPx = calculateStringWidth(toRender, fontCode);
 
         const auto rasterX{ getRasterXAlignment(alignFlags, strWidthPx, areaWidth, alignMarginX) };
         const auto rasterY{ pixelsToVPCoords(rasterYPx, areaHeight) };
@@ -149,13 +115,40 @@ void FontManager::renderLines(RGFONTCODE fontCode, const std::vector<std::string
         // Draw the string
         glRasterPos2f(rasterX, rasterY);
         glListBase(m_fontBases[fontCode]);
-        glCallLists(static_cast<GLsizei>(str.size()), GL_UNSIGNED_BYTE, str.c_str());
+        glCallLists(static_cast<GLsizei>(toRender.size()), GL_UNSIGNED_BYTE, toRender.c_str());
 
         // Set the raster position to the next line
-        rasterYPx -= static_cast<decltype(rasterYPx)>(rasterLineDeltaY);
+        rasterYPx -= rasterLineDeltaY;
     }
 
     glViewport(vp[0], vp[1], vp[2], vp[3]);
+}
+
+std::string FontManager::getTruncated(RGFONTCODE fontCode, std::string_view str, int maxLengthPx) const {
+    char newText[255];
+
+    // Copy char by char into the new buffer while there is enough width
+    auto newStrWidthPx = int{ 0U };
+    for (auto i = size_t{ 0U }; i < str.size(); ++i) {
+        newText[i] = str[i];
+        newStrWidthPx += m_fontCharWidths[fontCode][newText[i]];
+
+        // If we've gone over, remove last character and replace chars before
+        // with ellipses
+        if (newStrWidthPx > maxLengthPx) {
+            // Ensure there are enough characters to put in ellipses
+            if (i > 2) {
+                newText[i] = '\0';
+                newText[i - 1] = '.';
+                newText[i - 2] = '.';
+            } else {
+                newText[i] = '\0';
+            }
+            return { newText, i };
+        }
+    }
+
+    return newText;
 }
 
 void FontManager::initFonts(int windowHeight) {
@@ -210,9 +203,9 @@ void FontManager::setFontCharacteristics(RGFONTCODE c, HDC hdc) {
     m_fontCharInternalLeadings[c] = tm.tmInternalLeading;
 }
 
-int FontManager::calculateStringWidth(const char* text, size_t textLen, RGFONTCODE c) const {
+int FontManager::calculateStringWidth(std::string_view text, RGFONTCODE c) const {
     auto strWidthPx = int{ 0 };
-    for (auto i = size_t{ 0U }; i < textLen; ++i) {
+    for (auto i = size_t{ 0U }; i < text.size(); ++i) {
         // Make sure the character is in range, if not, add default value
         if (text[i] > RG_NUM_CHARS_IN_FONT || text[i] < 0) {
             strWidthPx += m_fontCharWidths[c]['A'];
@@ -221,10 +214,6 @@ int FontManager::calculateStringWidth(const char* text, size_t textLen, RGFONTCO
         }
     }
     return strWidthPx;
-}
-
-int FontManager::calculateStringWidth(std::string_view text, RGFONTCODE c) const {
-    return calculateStringWidth(text.data(), text.size(), c);
 }
 
 std::tuple<int, int, int> FontManager::calculateLinesRenderParameters(int numLines, RGFONTCODE code, int alignFlags,

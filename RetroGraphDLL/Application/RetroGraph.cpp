@@ -18,12 +18,24 @@ std::shared_ptr<T> createMeasure() {
 
     auto& settings{ UserSettings::inst() };
 
-    if constexpr (std::is_same_v<T, DriveMeasure>) {
+    if constexpr (std::is_same_v<T, CPUMeasure>) {
+        return std::make_shared<T>(milliseconds{ settings.getVal<int>("Measures-CPU.UpdateInterval") },
+                                   std::make_unique<Win32CPUDataSource>());
+        // std::make_unique<CoreTempCPUDataSource>());//TODO automatically pick right data source
+    } else if constexpr (std::is_same_v<T, DriveMeasure>) {
         return std::make_shared<T>(milliseconds{ settings.getVal<int>("Measures-Drive.UpdateInterval") },
                                    std::make_unique<Win32DriveDataSource>());
+    } else if constexpr (std::is_same_v<T, GPUMeasure>) {
+        return std::make_shared<T>(milliseconds{ settings.getVal<int>("Measures-GPU.UpdateInterval") },
+                                   std::make_unique<NvAPIGPUDataSource>());
     } else if constexpr (std::is_same_v<T, MusicMeasure>) {
         return std::make_shared<T>(milliseconds{ settings.getVal<int>("Measures-Music.UpdateInterval") },
                                    std::make_unique<FoobarMusicDataSource>());
+    } else if constexpr (std::is_same_v<T, NetMeasure>) {
+        return std::make_shared<T>(milliseconds{ settings.getVal<int>("Measures-Net.UpdateInterval") },
+                                   std::make_unique<Win32NetDataSource>(
+                                       milliseconds{ UserSettings::inst().getVal<int>("Measures-Net.PingFrequency") },
+                                       UserSettings::inst().getVal<std::string>("Measures-Net.PingServer")));
     } else if constexpr (std::is_same_v<T, RAMMeasure>) {
         return std::make_shared<T>(milliseconds{ settings.getVal<int>("Measures-RAM.UpdateInterval") },
                                    std::make_unique<Win32RAMDataSource>());

@@ -1,7 +1,5 @@
 module RG.Measures:ProcessMeasure;
 
-import :NtDefs;
-
 import Utils;
 
 import RG.Core;
@@ -16,15 +14,11 @@ namespace rg {
 // TODO DataSource
 ProcessMeasure::ProcessMeasure()
     : Measure{ seconds{ 2 } }
-    , m_numCPUProcessesToDisplay{ UserSettings::inst().getVal<int, unsigned int>(
-          "Widgets-ProcessesCPU.NumProcessesDisplayed") }
-    , m_numRAMProcessesToDisplay{ UserSettings::inst().getVal<int, unsigned int>(
-          "Widgets-ProcessesRAM.NumProcessesDisplayed") }
+    , m_numCPUProcessesToDisplay{ UserSettings::inst().getVal<int>("Widgets-ProcessesCPU.NumProcessesDisplayed") }
+    , m_numRAMProcessesToDisplay{ UserSettings::inst().getVal<int>("Widgets-ProcessesRAM.NumProcessesDisplayed") }
     , m_configRefreshedHandle{ UserSettings::inst().configRefreshed.attach([&]() {
-        m_numCPUProcessesToDisplay =
-            UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesCPU.NumProcessesDisplayed");
-        m_numRAMProcessesToDisplay =
-            UserSettings::inst().getVal<int, unsigned int>("Widgets-ProcessesRAM.NumProcessesDisplayed");
+        m_numCPUProcessesToDisplay = UserSettings::inst().getVal<int>("Widgets-ProcessesCPU.NumProcessesDisplayed");
+        m_numRAMProcessesToDisplay = UserSettings::inst().getVal<int>("Widgets-ProcessesRAM.NumProcessesDisplayed");
     }) } {
     if constexpr (!debugMode) {
         // Set the debug privilege in order to gain access to system processes
@@ -269,6 +263,8 @@ void ProcessMeasure::detectNewProcesses() {
     }
 
     // Loop over the process list for any new processes
+    // #TODO BUG: doesn't remove dead processes!
+    // #TODO use a map of PID -> data instead, should have much more efficient lookups for existing processes.
     for (; spi->NextEntryOffset;
          spi = reinterpret_cast<PSYSTEM_PROCESS_INFO>(reinterpret_cast<LPBYTE>(spi) + spi->NextEntryOffset)) {
         const auto procID{ reinterpret_cast<LONGLONG>(spi->ProcessId) };

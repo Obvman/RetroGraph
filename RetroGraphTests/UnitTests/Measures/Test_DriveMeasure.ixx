@@ -22,7 +22,6 @@ public:
 };
 
 TEST_CASE("Measures::DriveMeasure. Update", "[measure]") {
-    constexpr seconds initialElapsedTime{ 10 };
     const rg::DriveData defaultDriveData{};
     rg::DriveData testDriveData{
         .drives{{ 'C', 2 * rg::GB, 10 * rg::GB, "Test drive one" },
