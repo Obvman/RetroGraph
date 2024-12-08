@@ -58,5 +58,8 @@
     <ClCompile Include="UnitTests\Measures\Test_GPUMeasure.ixx">
       <Filter>UnitTests\Measures</Filter>
     </ClCompile>
+    <ClCompile Include="UnitTests\Measures\Test_NetMeasure.ixx">
+      <Filter>UnitTests\Measures</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

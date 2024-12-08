@@ -124,12 +124,13 @@
       <DisableSpecificWarnings>5050;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
       <EnableModules>true</EnableModules>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)RetroGraphDLL\bin\$(Configuration)$(Platform)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>GPUMeasure.obj;CPUMeasure.obj;DriveMeasure.obj;RAMMeasure.obj;TimeMeasure.obj;MusicMeasure.obj;Strings.obj;DrawUtils.ixx.obj;GLListContainer.obj;GraphPointBuffer.obj;DrawUtils.obj;glew64.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>NetMeasure.obj;GPUMeasure.obj;CPUMeasure.obj;DriveMeasure.obj;RAMMeasure.obj;TimeMeasure.obj;MusicMeasure.obj;Strings.obj;DrawUtils.ixx.obj;GLListContainer.obj;GraphPointBuffer.obj;DrawUtils.obj;glew64.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -147,6 +148,7 @@
       <DisableSpecificWarnings>5050;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
       <EnableModules>true</EnableModules>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -154,7 +156,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)RetroGraphDLL\bin\$(Configuration)$(Platform)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>GPUMeasure.obj;CPUMeasure.obj;DriveMeasure.obj;RAMMeasure.obj;TimeMeasure.obj;MusicMeasure.obj;Strings.obj;DrawUtils.ixx.obj;GLListContainer.obj;GraphPointBuffer.obj;DrawUtils.obj;glew64.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>NetMeasure.obj;GPUMeasure.obj;CPUMeasure.obj;DriveMeasure.obj;RAMMeasure.obj;TimeMeasure.obj;MusicMeasure.obj;Strings.obj;DrawUtils.ixx.obj;GLListContainer.obj;GraphPointBuffer.obj;DrawUtils.obj;glew64.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -172,6 +174,7 @@
     <ClCompile Include="UnitTests\Measures\Test_GPUMeasure.ixx" />
     <ClCompile Include="UnitTests\Measures\Test_Measure.ixx" />
     <ClCompile Include="UnitTests\Measures\Test_MusicMeasure.ixx" />
+    <ClCompile Include="UnitTests\Measures\Test_NetMeasure.ixx" />
     <ClCompile Include="UnitTests\Measures\Test_RAMMeasure.ixx" />
     <ClCompile Include="UnitTests\Measures\Test_TimeMeasure.ixx" />
     <ClCompile Include="UnitTests\Widgets\Graph\Test_GraphPointBuffer.ixx" />
