@@ -48,7 +48,7 @@ std::string Win32CPUDataSource::determineCPUName() const {
             memcpy(cpuBrandString + 32, cpuInfo, sizeof(cpuInfo));
     }
 
-    return trim (std::string{ cpuBrandString });
+    return trim(std::string{ cpuBrandString });
 }
 
 int Win32CPUDataSource::determineNumCores() const {

@@ -37,7 +37,8 @@ std::string ltrim(const std::string& str) {
 
 std::string rtrim(const std::string& str) {
     std::string cpy{ str };
-    cpy.erase(std::find_if(cpy.crbegin(), cpy.crend(), [](unsigned char ch) { return !std::isspace(ch); }).base(), cpy.cend());
+    cpy.erase(std::find_if(cpy.crbegin(), cpy.crend(), [](unsigned char ch) { return !std::isspace(ch); }).base(),
+              cpy.cend());
     return cpy;
 }
 
