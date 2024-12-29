@@ -4,6 +4,8 @@ import :NtDefs;
 
 import std.compat;
 
+import RG.Core;
+
 import "RGAssert.h";
 import "WindowsHeaderUnit.h";
 
@@ -46,7 +48,7 @@ std::string Win32CPUDataSource::determineCPUName() const {
             memcpy(cpuBrandString + 32, cpuInfo, sizeof(cpuInfo));
     }
 
-    return std::string{ cpuBrandString };
+    return trim (std::string{ cpuBrandString });
 }
 
 int Win32CPUDataSource::determineNumCores() const {

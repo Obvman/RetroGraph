@@ -23,4 +23,11 @@ T strToNum(std::string_view str) {
     return val;
 }
 
+// #TODO tests
+export std::string ltrim(const std::string& str);
+
+export std::string rtrim(const std::string& str);
+
+export std::string trim(const std::string& str);
+
 } // namespace rg
