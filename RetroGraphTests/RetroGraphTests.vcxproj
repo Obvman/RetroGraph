@@ -123,8 +123,8 @@
       <AdditionalOptions>/stdIfcDir "$(VC_IFCPath)" %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>5050;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
-      <EnableModules>true</EnableModules>
-      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <EnableModules>false</EnableModules>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,8 +147,8 @@
       <AdditionalOptions>/stdIfcDir "$(VC_IFCPath)" %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>5050;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
-      <EnableModules>true</EnableModules>
-      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <EnableModules>false</EnableModules>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

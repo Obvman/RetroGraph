@@ -2,7 +2,7 @@ export module RG.Application:IRetroGraph;
 
 import RG.Widgets;
 
-import std.core;
+import std;
 
 namespace rg {
 

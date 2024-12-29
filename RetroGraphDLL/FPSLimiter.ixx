@@ -2,7 +2,7 @@ export module FPSLimiter;
 
 import RG.UserSettings;
 
-import std.core;
+import std;
 
 namespace rg {
 

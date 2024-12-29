@@ -2,7 +2,7 @@ export module RG.Rendering:VBO;
 
 import :DrawUtils;
 
-import std.core;
+import std;
 
 import "GLHeaderUnit.h";
 import "RGAssert.h";

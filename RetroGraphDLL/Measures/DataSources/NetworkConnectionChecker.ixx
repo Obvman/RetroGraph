@@ -1,6 +1,6 @@
 export module RG.Measures.DataSources:NetworkConnectionChecker;
 
-import std.core;
+import std;
 
 namespace rg {
 

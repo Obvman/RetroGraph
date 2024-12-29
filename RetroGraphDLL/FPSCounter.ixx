@@ -1,6 +1,6 @@
 export module FPSCounter;
 
-import std.core;
+import std.compat;
 
 namespace rg {
 

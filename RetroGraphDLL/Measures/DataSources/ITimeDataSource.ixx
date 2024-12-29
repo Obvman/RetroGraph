@@ -1,6 +1,6 @@
 export module RG.Measures.DataSources:ITimeDataSource;
 
-import std.core;
+import std;
 
 namespace rg {
 

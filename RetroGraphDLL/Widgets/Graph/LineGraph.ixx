@@ -4,7 +4,7 @@ import :GraphPointBuffer;
 
 import RG.Rendering;
 
-import std.core;
+import std;
 
 import "GLHeaderUnit.h";
 

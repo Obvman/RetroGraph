@@ -5,7 +5,7 @@ import :Measure;
 import RG.Core;
 import RG.Measures.DataSources;
 
-import std.core;
+import std;
 
 namespace rg {
 

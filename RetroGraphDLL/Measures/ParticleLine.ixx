@@ -1,6 +1,6 @@
 export module RG.Measures:ParticleLine;
 
-import std.core;
+import std;
 
 import "GLHeaderUnit.h";
 

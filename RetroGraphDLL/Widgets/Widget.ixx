@@ -4,7 +4,7 @@ import Utils;
 
 import RG.Rendering;
 
-import std.memory;
+import std;
 
 namespace rg {
 

@@ -3,7 +3,7 @@ export module RG.Widgets.Graph:SmoothLineGraph;
 import :LineGraph;
 import :Spline;
 
-import std.core;
+import std;
 
 namespace rg {
 

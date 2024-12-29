@@ -7,7 +7,7 @@ import RG.Rendering;
 import RG.UserSettings;
 import RG.Widgets.Graph;
 
-import std.memory;
+import std;
 
 namespace rg {
 

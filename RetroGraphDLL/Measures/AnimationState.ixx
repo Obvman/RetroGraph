@@ -4,7 +4,7 @@ import :Measure;
 import :Particle;
 import :ParticleLine;
 
-import std.core;
+import std;
 
 namespace rg {
 

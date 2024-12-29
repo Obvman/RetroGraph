@@ -7,7 +7,7 @@ import Monitors;
 import RG.Measures;
 import RG.UserSettings;
 
-import std.core;
+import std;
 
 import "GLHeaderUnit.h";
 import "WindowsHeaderUnit.h";

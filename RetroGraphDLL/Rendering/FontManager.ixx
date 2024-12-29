@@ -1,6 +1,6 @@
 export module RG.Rendering:FontManager;
 
-import std.core;
+import std;
 
 import "GLHeaderUnit.h";
 

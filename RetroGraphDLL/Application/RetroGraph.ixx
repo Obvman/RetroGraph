@@ -11,7 +11,7 @@ import RG.Measures.DataSources;
 import RG.Rendering;
 import RG.Widgets;
 
-import std.core;
+import std;
 
 import "WindowsHeaderUnit.h";
 

@@ -1,6 +1,6 @@
 export module RG.Measures.DataSources:IDriveDataSource;
 
-import std.core;
+import std.compat;
 
 namespace rg {
 

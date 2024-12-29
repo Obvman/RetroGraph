@@ -6,7 +6,7 @@ import RG.Measures.Data;
 import RG.Measures.DataSources;
 import RG.UserSettings;
 
-import std.core;
+import std;
 
 import "WindowsHeaderUnit.h";
 

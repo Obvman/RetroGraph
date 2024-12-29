@@ -4,7 +4,7 @@ import :Viewport;
 
 import Colors;
 
-import std.core;
+import std;
 
 import "GLHeaderUnit.h";
 

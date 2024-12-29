@@ -1,6 +1,6 @@
 export module RG.Core:Time;
 
-import std.core;
+import std;
 
 namespace rg {
 

@@ -1,8 +1,13 @@
+module;
+
+// #TODO why doesn't WindowsHeaderUnit.h work here?
+#include <sys/types.h>
+#include <sys/stat.h>
+
 module RG.UserSettings;
 
-import std.filesystem;
-
 import "RGAssert.h";
+import "WindowsHeaderUnit.h";
 
 namespace rg {
 
@@ -13,7 +18,7 @@ UserSettings::UserSettings()
 }
 
 bool UserSettings::checkConfigChanged() const {
-    static const auto autoReadConfig{ UserSettings::inst().getVal<bool>("Application.AutoReadConfig") };
+    static const bool autoReadConfig{ UserSettings::inst().getVal<bool>("Application.AutoReadConfig") };
     if (!autoReadConfig)
         return false;
 

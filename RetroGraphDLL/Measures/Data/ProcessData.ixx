@@ -2,7 +2,7 @@ export module RG.Measures.Data:ProcessData;
 
 import RG.Core;
 
-import std.core;
+import std;
 
 import "WindowsHeaderUnit.h";
 

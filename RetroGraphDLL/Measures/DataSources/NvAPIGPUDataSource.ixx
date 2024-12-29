@@ -2,6 +2,8 @@ export module RG.Measures.DataSources:NvAPIGPUDataSource;
 
 import :IGPUDataSource;
 
+import std.compat;
+
 import "NvidiaHeaderUnit.h";
 
 namespace rg {

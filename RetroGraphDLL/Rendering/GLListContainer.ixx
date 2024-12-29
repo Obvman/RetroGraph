@@ -1,6 +1,6 @@
 export module RG.Rendering:GLListContainer;
 
-import std.core;
+import std;
 
 import "GLHeaderUnit.h";
 

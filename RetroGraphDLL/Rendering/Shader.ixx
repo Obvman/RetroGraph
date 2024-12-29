@@ -4,7 +4,7 @@ import Utils;
 
 import RG.Core;
 
-import std.core;
+import std;
 
 import "GLHeaderUnit.h";
 

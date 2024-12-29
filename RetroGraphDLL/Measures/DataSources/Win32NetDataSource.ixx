@@ -3,7 +3,7 @@ export module RG.Measures.DataSources:Win32NetDataSource;
 import :INetDataSource;
 import :NetworkConnectionChecker;
 
-import std.core;
+import std;
 
 import "WindowsNetworkHeaderUnit.h";
 

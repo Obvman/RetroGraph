@@ -1,6 +1,6 @@
 export module RG.Measures.DataSources:IRAMDataSource;
 
-import std.core;
+import std.compat;
 
 namespace rg {
 

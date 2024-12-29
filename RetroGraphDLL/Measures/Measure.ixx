@@ -2,7 +2,7 @@ export module RG.Measures:Measure;
 
 import RG.Core;
 
-import std.core;
+import std;
 
 namespace rg {
 

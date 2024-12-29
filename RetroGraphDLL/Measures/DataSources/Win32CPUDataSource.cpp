@@ -2,6 +2,8 @@ module RG.Measures.DataSources:Win32CPUDataSource;
 
 import :NtDefs;
 
+import std.compat;
+
 import "RGAssert.h";
 import "WindowsHeaderUnit.h";
 

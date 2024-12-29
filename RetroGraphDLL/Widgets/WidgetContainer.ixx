@@ -6,7 +6,7 @@ import :WidgetPosition;
 import RG.Rendering;
 import RG.UserSettings;
 
-import std.core;
+import std;
 
 namespace rg {
 

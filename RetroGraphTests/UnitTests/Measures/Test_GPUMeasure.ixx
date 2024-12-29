@@ -3,7 +3,7 @@ export module UnitTests.Test_GPUMeasure;
 import RG.Measures;
 import RG.Measures.DataSources;
 
-import std.core;
+import std;
 
 import "Catch2HeaderUnit.h";
 

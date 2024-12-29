@@ -2,7 +2,7 @@ export module RG.Measures.DataSources:FoobarMusicDataSource;
 
 import :IMusicDataSource;
 
-import std.core;
+import std;
 
 import "WindowsHeaderUnit.h";
 

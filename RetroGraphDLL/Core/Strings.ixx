@@ -1,6 +1,6 @@
 export module RG.Core:Strings;
 
-import std.core;
+import std;
 
 namespace rg {
 

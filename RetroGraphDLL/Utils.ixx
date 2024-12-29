@@ -1,6 +1,6 @@
 export module Utils;
 
-import std.core;
+import std.compat;
 
 import "WindowsHeaderUnit.h";
 

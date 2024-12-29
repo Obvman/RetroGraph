@@ -1,6 +1,6 @@
 export module RG.Measures:Particle;
 
-import std.core;
+import std;
 
 namespace rg {
 

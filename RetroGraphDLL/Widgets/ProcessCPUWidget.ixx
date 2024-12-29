@@ -5,7 +5,7 @@ import :Widget;
 import RG.Measures;
 import RG.Rendering;
 
-import std.memory;
+import std;
 
 namespace rg {
 

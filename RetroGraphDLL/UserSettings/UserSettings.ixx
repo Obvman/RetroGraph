@@ -6,7 +6,7 @@ import Utils;
 
 import RG.Core;
 
-import std.core;
+import std;
 
 import "RGAssert.h";
 import "WindowsHeaderUnit.h";

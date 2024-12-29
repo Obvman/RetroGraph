@@ -26,7 +26,7 @@
 
 export module RG.Widgets.Graph:Spline;
 
-import std.core;
+import std;
 
 import "RGAssert.h";
 

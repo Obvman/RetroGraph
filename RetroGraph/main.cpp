@@ -1,6 +1,6 @@
 import RG.Application;
 
-import std.core;
+import std;
 
 import "../RetroGraphDLL/RGAssert.h";
 import "../RetroGraphDLL/WindowsHeaderUnit.h";

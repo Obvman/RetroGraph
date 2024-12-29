@@ -1,6 +1,6 @@
 export module RG.Core:Units;
 
-import std.core;
+import std.compat;
 
 namespace rg {
 

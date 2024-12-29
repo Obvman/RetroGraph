@@ -2,6 +2,7 @@ module RG.Measures.DataSources:Win32NetDataSource;
 
 import RG.Core;
 
+import "CSTDHeaderUnit.h";
 import "RGAssert.h";
 import "WindowsNetworkHeaderUnit.h";
 

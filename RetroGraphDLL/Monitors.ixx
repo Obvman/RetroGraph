@@ -2,7 +2,7 @@ export module Monitors;
 
 import MonitorData;
 
-import std.core;
+import std;
 
 import "WindowsHeaderUnit.h";
 
