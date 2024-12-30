@@ -62,28 +62,27 @@ void CPUStatsWidget::drawStats() const {
 void CPUStatsWidget::drawCoreGraphs() const {
     setGLViewport(m_coreGraphViewport);
 
-    // Draw x rows of core graphs, with 2 graphs per row until all graphs
-    // are drawn
-    const auto numGraphs{ static_cast<int>(m_coreGraphs.size()) };
+    // Draw at most 8 graphs. More than that, and they appear too squashed
+    const auto numGraphsToDraw{ std::min(static_cast<int>(m_coreGraphs.size()), 8) };
 
-    for (int i = 0U; i < numGraphs; ++i) {
+    for (int i = 0U; i < numGraphsToDraw; ++i) {
         // Set the viewport for the current graph. Draws top to bottom
-        const auto yOffset{ (numGraphs - 1) * m_coreGraphViewport.height / numGraphs -
-                            i * m_coreGraphViewport.height / numGraphs };
+        const auto yOffset{ (numGraphsToDraw - 1) * m_coreGraphViewport.height / numGraphsToDraw -
+                            i * m_coreGraphViewport.height / numGraphsToDraw };
         glViewport(m_coreGraphViewport.x, m_coreGraphViewport.y + yOffset, 3 * m_coreGraphViewport.width / 4,
-                   m_coreGraphViewport.height / numGraphs);
+                   m_coreGraphViewport.height / numGraphsToDraw);
 
         m_coreGraphs[i].draw();
 
         // Draw a label for the core graph
         glColor4f(TEXT_R, TEXT_G, TEXT_B, TEXT_A);
-        char str[7];
+        char str[8];
         snprintf(str, sizeof(str), "Core %d", i);
         m_fontManager->renderLine(RG_FONT_SMALL, str, 0, 0, 0, 0, RG_ALIGN_TOP | RG_ALIGN_LEFT, 10, 10);
 
         // Draw the temperature next to the graph
         glViewport(m_coreGraphViewport.x + 3 * m_coreGraphViewport.width / 4, m_coreGraphViewport.y + yOffset,
-                   m_coreGraphViewport.width / 4, m_coreGraphViewport.height / static_cast<GLsizei>(numGraphs));
+                   m_coreGraphViewport.width / 4, m_coreGraphViewport.height / static_cast<GLsizei>(numGraphsToDraw));
         char tempBuff[6];
         snprintf(tempBuff, sizeof(tempBuff), "%.0fC", m_cpuMeasure->getTemp(i));
         m_fontManager->renderLine(RG_FONT_SMALL, tempBuff, 0, 0, 0, 0,
