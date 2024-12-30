@@ -163,6 +163,10 @@ LRESULT CALLBACK Window::WndProc2(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPa
             }
             break;
 
+        case WM_SETFOCUS:
+            m_retroGraph->invalidateWidgets();
+            break;
+
         case WM_QUIT:
         case WM_CLOSE:
             m_running = false;

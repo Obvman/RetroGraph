@@ -33,6 +33,7 @@ public:
     void reloadResources() override;
 
     void updateWindowSize(int width, int height) override;
+    void invalidateWidgets() override;
     void toggleWidget(WidgetType w) override;
     void toggleWidgetBackgroundVisible() override;
     void shutdown() override;

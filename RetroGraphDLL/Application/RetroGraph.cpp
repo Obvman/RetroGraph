@@ -242,6 +242,15 @@ void RetroGraph::draw() const {
     ReleaseDC(m_window.getHwnd(), hdc);
 }
 
+void RetroGraph::invalidateWidgets() {
+    for (auto i = int{ 0 }; i < static_cast<int>(WidgetType::NumWidgets); ++i) {
+        auto& widget{ m_widgets[i] };
+        if (widget) {
+            widget->invalidate();
+        }
+    }
+}
+
 void RetroGraph::updateWindowSize(int newWidth, int newHeight) {
     setViewports(newWidth, newHeight);
     m_fontManager.refreshFonts(newHeight);
