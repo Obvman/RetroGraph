@@ -30,26 +30,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -130,7 +130,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)RetroGraphDLL\bin\$(Configuration)$(Platform)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>NetMeasure.obj;GPUMeasure.obj;CPUMeasure.obj;DriveMeasure.obj;RAMMeasure.obj;TimeMeasure.obj;MusicMeasure.obj;Strings.obj;DrawUtils.ixx.obj;GLListContainer.obj;GraphPointBuffer.obj;DrawUtils.obj;glew64.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DriveMeasure.ixx.obj;IDriveDataSource.ixx.obj;MusicMeasure.ixx.obj;NetMeasure.ixx.obj;GLListContainer.ixx.obj;Time.ixx.obj;MonitorData.ixx.obj;Monitors.ixx.obj;GPUMeasure.ixx.obj;CPUMeasure.ixx.obj;GraphPointBuffer.ixx.obj;TimeMeasure.ixx.obj;Viewport.ixx.obj;Monitors.obj;Measure.ixx.obj;NetMeasure.obj;GPUMeasure.obj;CPUMeasure.obj;DriveMeasure.obj;RAMMeasure.obj;TimeMeasure.obj;MusicMeasure.obj;Strings.obj;DrawUtils.ixx.obj;GLListContainer.obj;GraphPointBuffer.obj;DrawUtils.obj;glew64.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

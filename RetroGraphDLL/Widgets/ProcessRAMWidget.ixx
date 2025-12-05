@@ -11,10 +11,7 @@ namespace rg {
 
 export class ProcessRAMWidget : public Widget {
 public:
-    ProcessRAMWidget(const FontManager* fontManager, std::shared_ptr<const ProcessMeasure> processMeasure)
-        : Widget{ fontManager }
-        , m_procMeasure{ processMeasure } {}
-
+    ProcessRAMWidget(const FontManager* fontManager, std::shared_ptr<const ProcessMeasure> processMeasure);
     ~ProcessRAMWidget();
 
     void draw() const override;
